@@ -7,12 +7,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Sanasto">
-  <meta name="description" content="Riveria Sanasto — финско-русский словарь для ухода, карточки и тренировка Mediatri. Работает офлайн после установки.">
+  <meta name="description" content="Sanastoyhteisö — учебное сообщество для изучения финского языка: словарь Riveria, карточки и тренировка Mediatri.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="stylesheet" href="style.css?v=2.0.4">
-  <title>Riveria Sanasto Community • FI / RU</title>
+  <title>Sanastoyhteisö — Riveria Sanasto Community</title>
 <style>
 /* Compact homepage links: works on desktop, iPhone and iPad; no extra toolbar. */
 .rs-home-control,.rs-heading-home{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;cursor:pointer;}
@@ -22,6 +22,11 @@
 .rs-heading-home h1{margin-top:0;}
 .rs-home-control:focus-visible,.rs-heading-home:focus-visible{outline:3px solid #177e99;outline-offset:4px;border-radius:5px;}
 #home-update-status{font-size:12px;max-width:270px;white-space:normal;}
+/* Public policy links remain visible on the signed-out Google login screen. */
+.rs-info-links{display:flex;gap:8px 15px;flex-wrap:wrap;align-items:center;font-size:13px;line-height:1.5;margin:13px 0 1px;}
+.rs-info-links a{color:#176d86;text-decoration:underline;text-underline-offset:3px;}
+.rs-info-links a:focus-visible{outline:2px solid #176d86;outline-offset:3px;}
+.rs-info-footer{display:flex;justify-content:center;gap:10px 17px;flex-wrap:wrap;margin-top:7px;}
 </style>
 </head>
 <body class="family-locked">
@@ -36,6 +41,11 @@
     </form>
     <p class="family-message" id="family-message" role="status">Для первого входа нужен интернет. Позже приложение работает офлайн на этом устройстве.</p>
     <p class="hint">Вход выполняется через Google. Доступ к учебным Google-таблицам запрашивается отдельно; ничего не публикуется без явного разрешения. Не вводите личные данные пациентов.</p>
+    <nav class="rs-info-links" aria-label="Общие сведения и конфиденциальность">
+      <a href="about.html">О проекте / About</a>
+      <a href="privacy.html">Конфиденциальность / Privacy</a>
+      <a href="terms.html">Условия / Terms</a>
+    </nav>
   </div>
 </div>
 <div class="shell">
@@ -62,7 +72,9 @@
     <main id="main-content" tabindex="-1">
       <div class="load-box">Открываю базу слов…</div>
     </main>
-    <footer>Riveria Sanasto v2.1.3 Community Beta • Только учебные примеры. Не вводите настоящие данные пациентов.</footer>
+    <footer>Riveria Sanasto v2.1.4 Community Beta • Только учебные примеры. Не вводите настоящие данные пациентов.
+      <nav class="rs-info-footer" aria-label="Информация о проекте"><a href="about.html">О проекте</a><a href="privacy.html">Конфиденциальность</a><a href="terms.html">Условия использования</a></nav>
+    </footer>
   </div>
 </div>
 <nav class="mobile-nav" aria-label="Разделы приложения — листай влево и вправо">
