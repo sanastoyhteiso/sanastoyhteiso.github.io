@@ -26,6 +26,8 @@ jobs:
         run: node staging/tests/firestore-diagnostics.test.cjs
       - name: Check personal JSON backup preflight without private data upload
         run: node staging/tests/personal-backup-audit.test.cjs
+      - name: Check browser test pages have no uploads or write operations
+        run: node staging/tests/browser-pages.test.cjs
       - name: Use Java for Firestore emulator
         uses: actions/setup-java@v4
         with:
