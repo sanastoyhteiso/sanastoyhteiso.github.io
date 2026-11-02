@@ -12,7 +12,7 @@
    opts=opts||{};
    var factory=opts.xhr||function(){return new XMLHttpRequest();};
    return function(method,url,body,token){
-     if(['GET','POST'].indexOf(method)===-1||!/^https:\/\/firestore\.googleapis\.com\/v1\//.test(url)||
+     if(['GET','POST','PATCH'].indexOf(method)===-1||!/^https:\/\/firestore\.googleapis\.com\/v1\//.test(url)||
         typeof token!=='string'||!token)return Promise.reject(Error('Invalid Firestore HTTP request'));
      return new Promise(function(resolve,reject){
        var x=factory();
