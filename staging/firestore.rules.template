@@ -38,7 +38,9 @@ service cloud.firestore {
     match /sync_v3/{uid}/events/{eventId} {
       allow get, list: if isOwner(uid);
       allow create: if isOwner(uid) && validEvent(uid,eventId);
-      allow update, delete: if false;
+      // Permit identical idempotent retries only; never edit an event's content.
+      allow update: if isOwner(uid) && request.resource.data == resource.data;
+      allow delete: if false;
     }
     // Keep user-authored word records private, and validate fields more
     // strictly when the exact word payload schema is finalized.
