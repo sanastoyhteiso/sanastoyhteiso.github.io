@@ -9,6 +9,8 @@ const T=require('../rs-firestore-transport.js');
 const Controller=require('../rs-sync-controller.js');
 const Audit=require('../rs-legacy-audit.js');
 const IDs=require('../rs-event-ids.js');
+const E=n=>'E_'+n.toString(16).padStart(32,'0');
+const DEVICE_MAC='D_'+'a'.repeat(32), DEVICE_PHONE='D_'+'b'.repeat(32);
 const baseline={scores:{T00001:{correct:1,wrong:0,seen:1,learned:true}},
   words:[],favorites:{}};
 const docs={},events={};
@@ -24,8 +26,8 @@ const transport=T.create({projectId:'demo-test',activeUid:()=>active,
   getToken:async()=>('token-never-persisted'),request});
 const json={};const storage={getItem:k=>json[k]||null,setItem:(k,v)=>{json[k]=v;}};
 let n=0,oldDriveOff=true,online=false,current=baseline;
-const journal=J.create({core:C,storage,uid:'testowner',device:'device_mac',
-  newId:()=>('E_'+(++n)),now:()=>1793650000000,legacySyncDisabled:()=>oldDriveOff});
+const journal=J.create({core:C,storage,uid:'testowner',device:DEVICE_MAC,
+  newId:()=>E(++n),now:()=>1793650000000,legacySyncDisabled:()=>oldDriveOff});
 const listeners={};
 const controller=Controller.create({journal,transport,uid:'testowner',
   activeUid:()=>active,legacySyncDisabled:()=>oldDriveOff,
@@ -59,11 +61,11 @@ async function run(){
   assert.equal(Object.keys(events).length,2);
   assert.equal(controller.capture().created,0); // reopen/re-read no duplicate
   // Independently generated events from a second device accumulate by event ID.
-  const phone=C.event('E_phone','device_iphone','answer','T00001',{correct:false},1793650001000);
+  const phone=C.event(E(3),DEVICE_PHONE,'answer','T00001',{correct:false},1793650001000);
   assert.deepEqual(await transport.putEvents('testowner',[phone]),['E_phone']);
   assert.deepEqual(await transport.putEvents('testowner',[phone]),['E_phone']); // idempotent retry
-  const all=[C.event('E_1','device_mac','answer','T00001',{correct:true},1793650000000),
-    C.event('E_2','device_mac','favorite_set','T00001',{starred:true},1793650000000),phone];
+  const all=[C.event(E(1),DEVICE_MAC,'answer','T00001',{correct:true},1793650000000),
+    C.event(E(2),DEVICE_MAC,'favorite_set','T00001',{starred:true},1793650000000),phone];
   const state=C.fold(C.legacyBaseline(baseline.scores,baseline.words,baseline.favorites),all);
   assert.equal(state.state.scores.T00001.seen,3);
   assert.equal(state.state.scores.T00001.correct,2);
