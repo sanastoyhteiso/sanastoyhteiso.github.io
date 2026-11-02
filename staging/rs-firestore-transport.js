@@ -35,7 +35,7 @@
     throw Error('Unsupported event data');
   }
   function record(uid,e){
-    if(!id(uid)||!e||!id(e.id)||!id(e.device)||!id(e.target)||
+    if(!id(uid)||!e||!/^E_[a-f0-9]{32}$/.test(e.id)||!/^D_[a-f0-9]{32}$/.test(e.device)||!id(e.target)||
        !/^(answer|learned_set|favorite_set|word_upsert|word_delete)$/.test(e.kind)||
        !safeNumber(e.time))throw Error('Invalid event envelope');
     var fields={v:val(3),uid:val(uid),id:val(e.id),device:val(e.device),
