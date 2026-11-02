@@ -32,3 +32,9 @@ jobs:
       - name: Verify original and proposed Firestore security rules in emulator
         timeout-minutes: 8
         run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso 'node staging/tests/firestore-rules.test.cjs'
+      - name: Verify minimal owner-only sync_v3 pilot rules in emulator
+        timeout-minutes: 8
+        env:
+          FIRESTORE_RULES_FILE: staging/firestore.rules.pilot.test
+          PILOT_ADMIN_DISABLED: '1'
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso 'node staging/tests/firestore-rules.test.cjs'
