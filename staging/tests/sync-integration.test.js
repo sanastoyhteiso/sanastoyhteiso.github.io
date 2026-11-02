@@ -62,8 +62,8 @@ async function run(){
   assert.equal(controller.capture().created,0); // reopen/re-read no duplicate
   // Independently generated events from a second device accumulate by event ID.
   const phone=C.event(E(3),DEVICE_PHONE,'answer','T00001',{correct:false},1793650001000);
-  assert.deepEqual(await transport.putEvents('testowner',[phone]),['E_phone']);
-  assert.deepEqual(await transport.putEvents('testowner',[phone]),['E_phone']); // idempotent retry
+  assert.deepEqual(await transport.putEvents('testowner',[phone]),[E(3)]);
+  assert.deepEqual(await transport.putEvents('testowner',[phone]),[E(3)]); // idempotent retry
   const all=[C.event(E(1),DEVICE_MAC,'answer','T00001',{correct:true},1793650000000),
     C.event(E(2),DEVICE_MAC,'favorite_set','T00001',{starred:true},1793650000000),phone];
   const state=C.fold(C.legacyBaseline(baseline.scores,baseline.words,baseline.favorites),all);
