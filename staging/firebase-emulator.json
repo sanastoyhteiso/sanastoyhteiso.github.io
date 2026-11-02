@@ -1,6 +1,6 @@
 {
   "firestore": {
-    "rules": "staging/firestore.rules.combined.test"
+    "rules": "firestore.rules.combined.test"
   },
   "emulators": {
     "firestore": {
