@@ -156,7 +156,7 @@
   function recognized(l){return l==='ru'||l==='en'||l==='fi';}
   function systemLanguage(){var list=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];
     for(var i=0;i<list.length;i++){var code=String(list[i]||'').toLowerCase().split('-')[0];if(recognized(code))return code;}return 'en';}
-  var lang='';try{lang=localStorage.getItem(KEY)||'';}catch(ignore){}
+  var lang='';try{lang=localStorage.getItem('sanastoyhteiso_language_mode')==='manual'?(localStorage.getItem(KEY)||''):'';}catch(ignore){}
   if(!recognized(lang))lang=systemLanguage();
   var priorText={};var lastRendered={};
   function renderDynamic(id,initialKey){var node=e(id);if(!node)return;
