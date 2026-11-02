@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sanastoyhteisö — локальная проверка JSON</title>
+  <style>
+   body{font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;max-width:700px;margin:32px auto;padding:16px;line-height:1.5;color:#203044}
+   h1{font-size:23px}.panel{border:1px solid #cfd9e4;padding:20px;border-radius:12px;background:#fff}
+   .muted{color:#596a7c}.ok{color:#136a45}.bad{color:#a12424}li{margin:7px 0}
+   input{max-width:100%;padding:12px 0}
+  </style>
+</head>
+<body>
+<main class="panel">
+ <h1>Проверка резервной копии Sanastoyhteisö</h1>
+ <p><strong>Только на этом устройстве.</strong> Выбранный JSON-файл анализируется браузером. Он никуда не отправляется, не записывается в Firestore и не заменяет существующие данные.</p>
+ <label for="file"><strong>Выбрать сохранённый файл riveria-sanasto-backup.json</strong></label>
+ <input id="file" type="file" accept=".json,application/json">
+ <p id="message" role="status">Файл ещё не выбран.</p>
+ <h2>Общие показатели</h2>
+ <ul id="metrics"></ul>
+ <h2>Проверки</h2>
+ <ul id="warnings"></ul>
+ <p class="muted">Исторические данные 2 ноября 2026 года: 254 ответа, из них 139 правильных и 115 неправильных, 138 терминов хотя бы с одним правильным ответом. Если текущая копия создана позднее, показатели могут отличаться.</p>
+ <p class="muted"><strong>Важно:</strong> совпадение итоговых чисел не является разрешением на перенос. Необходимо дополнительно сверить ID слов и самые свежие облачные события.</p>
+</main>
+<script src="./rs-personal-backup-audit.js"></script>
+<script>
+(function(){
+ 'use strict';
+ var input=document.getElementById('file'),message=document.getElementById('message'),
+     metrics=document.getElementById('metrics'),warnings=document.getElementById('warnings');
+ function line(parent,text){var li=document.createElement('li');li.textContent=text;parent.appendChild(li);}
+ function show(x){
+   metrics.textContent='';warnings.textContent='';
+   if(!x||!x.metrics){message.textContent='Формат не прошёл проверку.';message.className='bad';
+     (x&&x.errors||[]).forEach(function(s){line(warnings,s);});return;}
+   var names={scoredTerms:'Терминов с историей',seen:'Ответов всего',correct:'Правильных ответов',
+     wrong:'Неправильных ответов',termsWithCorrectAnswer:'Терминов с правильными ответами',
+     markedLearned:'Помечено выученными',userWords:'Личных слов',
+     favoriteTerms:'Избранных терминов',deletedWordIds:'Отметок удаления личных слов'};
+   Object.keys(names).forEach(function(k){line(metrics,names[k]+': '+x.metrics[k]);});
+   message.textContent=x.ok?'Формат резервной копии проверен. Перенос пока НЕ разрешён.':
+     'Найдены ошибки структуры или счётчиков. Перенос остановлен.';
+   message.className=x.ok?'ok':'bad';
+   (x.errors||[]).forEach(function(s){line(warnings,'Ошибка: '+s);});
+   (x.warnings||[]).forEach(function(s){line(warnings,'Внимание: '+s);});
+   if(!x.errors.length&&!x.warnings.length)line(warnings,'Ошибок структуры и расхождений агрегатов нет.');
+ }
+ input.addEventListener('change',function(){
+   var f=input.files&&input.files[0];if(!f)return;
+   if(f.size>20*1024*1024){message.textContent='Файл слишком большой; не загружаем.';return;}
+   var reader=new FileReader();
+   reader.onload=function(){
+     try{
+       var audit=window.RS_PERSONAL_BACKUP_AUDIT;
+       if(!audit)throw Error('Local audit module unavailable');
+       show(audit.check(reader.result,{
+         seen:254,correct:139,wrong:115,termsWithCorrectAnswer:138
+       }));
+     }catch(e){message.textContent='Не удалось проверить файл. Он никуда не отправлялся.';message.className='bad';}
+   };
+   reader.onerror=function(){message.textContent='Не удалось прочитать выбранный файл.';message.className='bad';};
+   reader.readAsText(f,'UTF-8');
+ });
+})();
+</script>
+</body>
+</html>
