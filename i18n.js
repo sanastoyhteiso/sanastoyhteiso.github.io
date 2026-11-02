@@ -27,7 +27,7 @@ function systemLanguage(){
 function chooseDefault(){
  var saved='',selectedMode='';
  try{saved=localStorage.getItem(KEY)||'';selectedMode=localStorage.getItem(MODE_KEY)||'';}catch(ignore){}
- mode=selectedMode==='auto'?'auto':supported(saved)?'manual':'auto';
+ mode=selectedMode==='manual'&&supported(saved)?'manual':'auto';
  return mode==='manual'&&supported(saved)?saved:systemLanguage();
 }
 var prefixRows=[["Последняя успешная синхронизация: ","Viimeisin onnistunut synkronointi: ","Last successful sync: "],["Личная таблица: ","Oma taulukko: ","Personal sheet: "],["Ошибка синхронизации: ","Synkronointivirhe: ","Sync error: "],["Ошибка сети: ","Verkkovirhe: ","Network error: "],["Ошибка проверки: ","Tarkistusvirhe: ","Verification error: "],["Ошибка входа: ","Kirjautumisvirhe: ","Sign-in error: "],["Ошибка выхода: ","Uloskirjautumisvirhe: ","Sign-out error: "],["Не удалось опубликовать: ","Julkaisu epäonnistui: ","Could not publish: "],["Отмена публикации не завершена: ","Julkaisun peruminen epäonnistui: ","Could not revoke publication: "],["Не удалось прочитать профиль: ","Profiilin luku epäonnistui: ","Could not read profile: "],["Настройки пока не загружены из облака: ","Asetuksia ei ladattu pilvestä: ","Settings not loaded from cloud: "],["Настройки сохранены на этом устройстве, но не в облаке: ","Asetukset tallennettiin laitteelle muttei pilveen: ","Settings saved on device but not in cloud: "]];
