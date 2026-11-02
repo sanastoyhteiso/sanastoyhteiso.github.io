@@ -32,7 +32,8 @@ service cloud.firestore {
              request.resource.data.kind in [
                'answer', 'learned_set', 'favorite_set', 'word_upsert', 'word_delete'
              ] &&
-             request.resource.size() < 10240;
+             eventId.size() > 0 && eventId.size() <= 180 &&
+             request.resource.data.data.keys().size() <= 12;
     }
     match /sync_v3/{uid}/events/{eventId} {
       allow get, list: if isOwner(uid);
