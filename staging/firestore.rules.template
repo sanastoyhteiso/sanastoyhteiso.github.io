@@ -1,0 +1,55 @@
+// DESIGN TEMPLATE ONLY. DO NOT DEPLOY AS A REPLACEMENT FOR LIVE FIRESTORE RULES.
+// Must be merged and emulator-tested against the actual existing project rules.
+// This sample covers NEW isolated paths only; do not remove existing users/settings/library rules.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+    function validEvent(uid, eventId) {
+      return request.resource.data.keys().hasOnly([
+               'v', 'uid', 'id', 'device', 'kind', 'target', 'time', 'data'
+             ]) &&
+             request.resource.data.keys().hasAll([
+               'v', 'uid', 'id', 'device', 'kind', 'target', 'time', 'data'
+             ]) &&
+             request.resource.data.v == 3 &&
+             request.resource.data.uid == uid &&
+             request.resource.data.id == eventId &&
+             request.resource.data.device is string &&
+             request.resource.data.device.size() <= 180 &&
+             request.resource.data.target is string &&
+             request.resource.data.target.size() <= 180 &&
+             request.resource.data.time is int &&
+             request.resource.data.data is map &&
+             request.resource.data.kind in [
+               'answer', 'learned_set', 'favorite_set', 'word_upsert', 'word_delete'
+             ] &&
+             request.resource.size() < 10240;
+    }
+    match /sync_v3/{uid}/events/{eventId} {
+      allow get, list: if isOwner(uid);
+      allow create: if isOwner(uid) && validEvent(uid,eventId);
+      allow update, delete: if false;
+    }
+    // Keep user-authored word records private, and validate fields more
+    // strictly when the exact word payload schema is finalized.
+    match /sync_v3/{uid}/words/{wordId} {
+      allow get, list: if isOwner(uid);
+      allow create, update, delete: if false;
+    }
+    // Summary metrics must be written by a trusted backend only.
+    match /site_admin/{docId} {
+      allow get: if isAdmin();
+      allow list: if false;
+      allow create, update, delete: if false;
+    }
+  }
+}
