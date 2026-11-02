@@ -1,16 +1,16 @@
-// DESIGN TEMPLATE ONLY. DO NOT DEPLOY AS A REPLACEMENT FOR LIVE FIRESTORE RULES.
-// Must be merged and emulator-tested against the actual existing project rules.
-// This sample covers NEW isolated paths only; do not remove existing users/settings/library rules.
+// STAGING RULES ONLY. Do NOT deploy or replace production rules.
+// This is an isolated additive example for review and emulator testing.
+// Existing users, libraries and settings rules must remain unchanged.
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
       return request.auth != null;
     }
-    function isOwner(uid) {
+    function owner(uid) {
       return signedIn() && request.auth.uid == uid;
     }
-    function isAdmin() {
+    function admin() {
       return signedIn() && request.auth.token.admin == true;
     }
     function validPayload() {
@@ -21,11 +21,14 @@ service cloud.firestore {
          d.keys().hasAll(['correct']) && d.correct is bool &&
          (!d.keys().hasAny(['reviewLearned']) || d.reviewLearned is bool))
         ||
-        (k == 'learned_set' && d.keys().hasOnly(['learned']) && d.learned is bool)
+        (k == 'learned_set' && d.keys().hasOnly(['learned']) &&
+         d.learned is bool)
         ||
-        (k == 'favorite_set' && d.keys().hasOnly(['starred']) && d.starred is bool)
+        (k == 'favorite_set' && d.keys().hasOnly(['starred']) &&
+         d.starred is bool)
         ||
-        (k == 'word_delete' && d.keys().hasOnly(['deleted']) && d.deleted == true)
+        (k == 'word_delete' && d.keys().hasOnly(['deleted']) &&
+         d.deleted == true)
         ||
         (k == 'word_upsert' && d.keys().size() <= 24 &&
          d.keys().hasAll(['fi','ru']) &&
@@ -33,196 +36,56 @@ service cloud.firestore {
          d.ru is string && d.ru.size() > 0 && d.ru.size() <= 300)
       );
     }
-    function validEvent(uid, eventId) {
+    function validEvent(uid,eventId) {
       return request.resource.data.keys().hasOnly([
-               'v', 'uid', 'id', 'device', 'kind', 'target', 'time', 'data'
+               'v','uid','id','device','kind','target','time','data'
              ]) &&
              request.resource.data.keys().hasAll([
-               'v', 'uid', 'id', 'device', 'kind', 'target', 'time', 'data'
+               'v','uid','id','device','kind','target','time','data'
              ]) &&
              request.resource.data.v == 3 &&
              request.resource.data.uid == uid &&
              request.resource.data.id == eventId &&
+             eventId.matches('^E_[a-f0-9]{32}$') &&
              request.resource.data.device is string &&
-             request.resource.data.device.size() <= 180 &&
+             request.resource.data.device.matches('^D_[a-f0-9]{32}$') &&
              request.resource.data.target is string &&
+             request.resource.data.target.size() > 0 &&
              request.resource.data.target.size() <= 180 &&
              request.resource.data.time is int &&
              request.resource.data.data is map &&
              request.resource.data.kind in [
-               'answer', 'learned_set', 'favorite_set', 'word_upsert', 'word_delete'
+               'answer','learned_set','favorite_set','word_upsert','word_delete'
              ] &&
-             eventId.size() > 0 && eventId.size() <= 180 &&
-             eventId.matches('^E_[a-f0-9]{32}
-    }
-    match /sync_v3/{uid}/events/{eventId} {
-      allow get, list: if isOwner(uid);
-      allow create: if isOwner(uid) && validEvent(uid,eventId);
-      // Permit identical idempotent retries only; never edit an event's content.
-      allow update: if isOwner(uid) && request.resource.data == resource.data;
-      allow delete: if false;
-    }
-    // One-time per-user imported baseline. Do NOT grant update/delete.
-    // Created only after a verified local + Google Sheets audit.
-    match /sync_v3/{uid}/state/baseline {
-      allow get: if isOwner(uid);
-      allow list: if false;
-      allow create: if isOwner(uid)
-        && request.resource.data.keys().hasOnly([
-             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
-           ])
-        && request.resource.data.keys().hasAll([
-             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
-           ])
-        && request.resource.data.v == 3
-        && request.resource.data.uid == uid
-        && request.resource.data.migrationId is string
-        && request.resource.data.migrationId.size() <= 180
-        && request.resource.data.importedAt is int
-        && request.resource.data.sha256 is string
-        && request.resource.data.sha256.matches('^[a-f0-9]{64}
-    // strictly when the exact word payload schema is finalized.
-    match /sync_v3/{uid}/words/{wordId} {
-      allow get, list: if isOwner(uid);
-      allow create, update, delete: if false;
-    }
-    // Summary metrics must be written by a trusted backend only.
-    match /site_admin/{docId} {
-      allow get: if isAdmin();
-      allow list: if false;
-      allow create, update, delete: if false;
-    }
-  }
-}
-)
-        && request.resource.data.source == 'approved-local-JSON'
-        && request.resource.data.snapshot is map
-        && request.resource.data.snapshot.keys().hasAll([
-             'scores','words','favorites'
-           ]);
-      allow update, delete: if false;
-    }
-    // Keep user-authored word records private, and validate fields more
-    // strictly when the exact word payload schema is finalized.
-    match /sync_v3/{uid}/words/{wordId} {
-      allow get, list: if isOwner(uid);
-      allow create, update, delete: if false;
-    }
-    // Summary metrics must be written by a trusted backend only.
-    match /site_admin/{docId} {
-      allow get: if isAdmin();
-      allow list: if false;
-      allow create, update, delete: if false;
-    }
-  }
-}
-) &&
-             request.resource.data.device.matches('^D_[a-f0-9]{32}
-    }
-    match /sync_v3/{uid}/events/{eventId} {
-      allow get, list: if isOwner(uid);
-      allow create: if isOwner(uid) && validEvent(uid,eventId);
-      // Permit identical idempotent retries only; never edit an event's content.
-      allow update: if isOwner(uid) && request.resource.data == resource.data;
-      allow delete: if false;
-    }
-    // One-time per-user imported baseline. Do NOT grant update/delete.
-    // Created only after a verified local + Google Sheets audit.
-    match /sync_v3/{uid}/state/baseline {
-      allow get: if isOwner(uid);
-      allow list: if false;
-      allow create: if isOwner(uid)
-        && request.resource.data.keys().hasOnly([
-             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
-           ])
-        && request.resource.data.keys().hasAll([
-             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
-           ])
-        && request.resource.data.v == 3
-        && request.resource.data.uid == uid
-        && request.resource.data.migrationId is string
-        && request.resource.data.migrationId.size() <= 180
-        && request.resource.data.importedAt is int
-        && request.resource.data.sha256 is string
-        && request.resource.data.sha256.matches('^[a-f0-9]{64}
-    // strictly when the exact word payload schema is finalized.
-    match /sync_v3/{uid}/words/{wordId} {
-      allow get, list: if isOwner(uid);
-      allow create, update, delete: if false;
-    }
-    // Summary metrics must be written by a trusted backend only.
-    match /site_admin/{docId} {
-      allow get: if isAdmin();
-      allow list: if false;
-      allow create, update, delete: if false;
-    }
-  }
-}
-)
-        && request.resource.data.source == 'approved-local-JSON'
-        && request.resource.data.snapshot is map
-        && request.resource.data.snapshot.keys().hasAll([
-             'scores','words','favorites'
-           ]);
-      allow update, delete: if false;
-    }
-    // Keep user-authored word records private, and validate fields more
-    // strictly when the exact word payload schema is finalized.
-    match /sync_v3/{uid}/words/{wordId} {
-      allow get, list: if isOwner(uid);
-      allow create, update, delete: if false;
-    }
-    // Summary metrics must be written by a trusted backend only.
-    match /site_admin/{docId} {
-      allow get: if isAdmin();
-      allow list: if false;
-      allow create, update, delete: if false;
-    }
-  }
-}
-) &&
              validPayload();
     }
+    // Append-only private per-user events.
     match /sync_v3/{uid}/events/{eventId} {
-      allow get, list: if isOwner(uid);
-      allow create: if isOwner(uid) && validEvent(uid,eventId);
-      // Permit identical idempotent retries only; never edit an event's content.
-      allow update: if isOwner(uid) && request.resource.data == resource.data;
+      allow get, list: if owner(uid);
+      allow create: if owner(uid) && validEvent(uid,eventId);
+      // Safe idempotent retries must not be able to alter the event body.
+      allow update: if owner(uid) && request.resource.data == resource.data;
       allow delete: if false;
     }
-    // One-time per-user imported baseline. Do NOT grant update/delete.
-    // Created only after a verified local + Google Sheets audit.
+    // One-time per-user verified import baseline; immutable after creation.
     match /sync_v3/{uid}/state/baseline {
-      allow get: if isOwner(uid);
+      allow get: if owner(uid);
       allow list: if false;
-      allow create: if isOwner(uid)
+      allow create: if owner(uid)
         && request.resource.data.keys().hasOnly([
-             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
+             'v','uid','migrationId','importedAt','sha256','source','snapshot'
            ])
         && request.resource.data.keys().hasAll([
-             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
+             'v','uid','migrationId','importedAt','sha256','source','snapshot'
            ])
         && request.resource.data.v == 3
         && request.resource.data.uid == uid
         && request.resource.data.migrationId is string
+        && request.resource.data.migrationId.size() > 0
         && request.resource.data.migrationId.size() <= 180
         && request.resource.data.importedAt is int
         && request.resource.data.sha256 is string
-        && request.resource.data.sha256.matches('^[a-f0-9]{64}
-    // strictly when the exact word payload schema is finalized.
-    match /sync_v3/{uid}/words/{wordId} {
-      allow get, list: if isOwner(uid);
-      allow create, update, delete: if false;
-    }
-    // Summary metrics must be written by a trusted backend only.
-    match /site_admin/{docId} {
-      allow get: if isAdmin();
-      allow list: if false;
-      allow create, update, delete: if false;
-    }
-  }
-}
-)
+        && request.resource.data.sha256.matches('^[a-f0-9]{64}$')
         && request.resource.data.source == 'approved-local-JSON'
         && request.resource.data.snapshot is map
         && request.resource.data.snapshot.keys().hasAll([
@@ -230,15 +93,14 @@ service cloud.firestore {
            ]);
       allow update, delete: if false;
     }
-    // Keep user-authored word records private, and validate fields more
-    // strictly when the exact word payload schema is finalized.
+    // Reserved separate collection; never permit client updates here yet.
     match /sync_v3/{uid}/words/{wordId} {
-      allow get, list: if isOwner(uid);
+      allow get, list: if owner(uid);
       allow create, update, delete: if false;
     }
-    // Summary metrics must be written by a trusted backend only.
-    match /site_admin/{docId} {
-      allow get: if isAdmin();
+    // Aggregate admin data only. Admin claim is assigned server-side.
+    match /site_admin/{documentId} {
+      allow get: if admin();
       allow list: if false;
       allow create, update, delete: if false;
     }
