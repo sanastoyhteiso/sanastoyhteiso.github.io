@@ -11,6 +11,21 @@
 - `staging/firestore.rules.template`: RESTRICTIVE STARTING POINT, **must not replace the existing rules**.
 - `staging/tests/smoke.test.js`: offline test suite. Run in a local repository clone with Node: `node staging/tests/smoke.test.js`.
 
+## Read-only Firebase audit — 2026-11-02
+
+Verified with the project owner using Firebase/Google Cloud Console screenshots and the **deployed** Firestore rules:
+
+- Project and database: `riveria-sanasto-community-test`, `(default)`, Spark free tier.
+- Existing collection names visible: `users` and `settings`; no `sync_v3` collection yet.
+- Existing `settings/{uid}` fields: `scope`, `subscriptions`, `updatedAt`. Existing `users/{uid}` fields: `alias`, `learned`, `publicStats`, `updatedAt`.
+- Firestore operation usage over one 24-hour view: 181 document reads, 45 writes; 283 permitted rules evaluations. These are historical observations, not current quotas.
+- Monitoring `Data and Index Storage Size` showed ~2.93 KiB for that database on 2026-11-02.
+- Security rules simulator `Get settings/<owner UID>`: unauthenticated => **DENIED**; authenticated with matching owner UID => **ALLOWED**; authenticated with different synthetic UID => **DENIED**.
+- These are simulated GET checks only. They do **not** establish write-rule correctness, safe migration behavior or any permissions for future paths.
+- Owner created two downloaded JSON progress snapshots and a separate private copy of the personal Google Sheets event log. Original Drive sheet remained intact.
+
+**Release gate:** no Firebase rules were published or changed during this audit. Before deployment, independently test new collection rules for create, update, delete, cross-user reads, malformed payloads and idempotent retry using the Rules Emulator against the actual combined ruleset.
+
 ## What the owner must authorize (one time)
 
 1. Access to the existing Firebase project in the supported Firebase/Codex environment. Do not paste Firebase admin service-account JSON, tokens, passwords, or private keys into ChatGPT.
