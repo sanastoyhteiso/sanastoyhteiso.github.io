@@ -6,7 +6,7 @@ const projectId='demo-sanastoyhteiso';
 async function run(){
   let uid='owner',methods=[],urls=[],count=0;
   const make=(replyFn,getToken)=>Diag.create({
-    projectId,activeUid:()=>uid,getToken:getToken||async()=>'synthetic-id-token',
+    projectId,activeUid:()=>uid,getToken:getToken||(async()=> 'synthetic-id-token'),
     request:async(method,url,body,token)=>{
       methods.push(method);urls.push(url);count++;
       assert.strictEqual(method,'GET');
