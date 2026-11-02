@@ -5,7 +5,7 @@ const fs=require('fs');
 const assert=require('assert');
 const {initializeTestEnvironment,assertFails,assertSucceeds}=require('@firebase/rules-unit-testing');
 const {doc,collection,getDoc,getDocs,query,where,setDoc,updateDoc,deleteDoc}=require('firebase/firestore');
-const RULES='staging/firestore.rules.combined.test';
+const RULES=process.env.FIRESTORE_RULES_FILE||'staging/firestore.rules.combined.test';
 const id='E_'+'a'.repeat(32),device='D_'+'b'.repeat(32),now=1793650000000;
 const event=(uid,kind='answer',data={correct:true})=>({
   v:3,uid,id,device,kind,target:'T00001',time:now,data
@@ -87,12 +87,15 @@ async function run(){
     await deny(setDoc(basePath(alice,'alice'),baseline('alice')),'baseline cannot be overwritten');
     await deny(setDoc(basePath(bob,'bob'),{...baseline('bob'),sha256:'bad'}),'invalid baseline hash rejected');
 
-    await allow(getDoc(at(admin,'site_admin','summary')),'claim admin sees aggregate metrics');
+    if(process.env.PILOT_ADMIN_DISABLED==='1')
+      await deny(getDoc(at(admin,'site_admin','summary')),'pilot does not yet enable admin path');
+    else
+      await allow(getDoc(at(admin,'site_admin','summary')),'claim admin sees aggregate metrics');
     await deny(getDoc(at(alice,'site_admin','summary')),'regular user cannot see admin metrics');
     await deny(setDoc(at(admin,'site_admin','summary'),{registered:999}),'even admin cannot change metrics from browser');
     await deny(getDoc(at(alice,'secret','unknown')),'unknown collections denied');
 
-    console.log('PASS: '+checked+' emulator permission tests, no production access');
+    console.log('PASS: '+checked+' emulator permission tests ('+RULES+'), no production access');
   }finally{await env.cleanup();}
 }
 run().catch(e=>{console.error(e);process.exitCode=1;});
