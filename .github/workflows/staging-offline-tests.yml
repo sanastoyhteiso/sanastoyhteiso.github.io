@@ -22,6 +22,8 @@ jobs:
         run: node staging/tests/smoke.test.js
       - name: Test offline sync, retries, account isolation and baseline
         run: node staging/tests/sync-integration.test.js
+      - name: Test read-only Firestore permissions diagnostic
+        run: node staging/tests/firestore-diagnostics.test.cjs
       - name: Use Java for Firestore emulator
         uses: actions/setup-java@v4
         with:
