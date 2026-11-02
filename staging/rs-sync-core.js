@@ -15,7 +15,7 @@
   function safeId(s){return typeof s==='string' && s.length>0 && s.length<=180 && !/[/#?]/.test(s);}
   function valid(e){
     if(!e||!safeId(e.id)||!safeId(e.target)||!safeId(e.device)||
-       !allowed[e.kind]||!Number.isFinite(Number(e.time))||typeof e.data!=='object'||!e.data)return false;
+       !allowed[e.kind]||!isFinite(Number(e.time))||typeof e.data!=='object'||!e.data)return false;
     if(e.kind==='answer' && typeof e.data.correct!=='boolean')return false;
     if(e.kind==='learned_set' && typeof e.data.learned!=='boolean')return false;
     if(e.kind==='favorite_set' && typeof e.data.starred!=='boolean')return false;
