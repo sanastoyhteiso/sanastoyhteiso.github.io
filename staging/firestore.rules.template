@@ -42,6 +42,46 @@ service cloud.firestore {
       allow update: if isOwner(uid) && request.resource.data == resource.data;
       allow delete: if false;
     }
+    // One-time per-user imported baseline. Do NOT grant update/delete.
+    // Created only after a verified local + Google Sheets audit.
+    match /sync_v3/{uid}/state/baseline {
+      allow get: if isOwner(uid);
+      allow list: if false;
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly([
+             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
+           ])
+        && request.resource.data.keys().hasAll([
+             'v', 'uid', 'migrationId', 'importedAt', 'sha256', 'source', 'snapshot'
+           ])
+        && request.resource.data.v == 3
+        && request.resource.data.uid == uid
+        && request.resource.data.migrationId is string
+        && request.resource.data.migrationId.size() <= 180
+        && request.resource.data.importedAt is int
+        && request.resource.data.sha256 is string
+        && request.resource.data.sha256.matches('^[a-f0-9]{64}
+    // strictly when the exact word payload schema is finalized.
+    match /sync_v3/{uid}/words/{wordId} {
+      allow get, list: if isOwner(uid);
+      allow create, update, delete: if false;
+    }
+    // Summary metrics must be written by a trusted backend only.
+    match /site_admin/{docId} {
+      allow get: if isAdmin();
+      allow list: if false;
+      allow create, update, delete: if false;
+    }
+  }
+}
+)
+        && request.resource.data.source == 'approved-local-JSON'
+        && request.resource.data.snapshot is map
+        && request.resource.data.snapshot.keys().hasAll([
+             'scores','words','favorites'
+           ]);
+      allow update, delete: if false;
+    }
     // Keep user-authored word records private, and validate fields more
     // strictly when the exact word payload schema is finalized.
     match /sync_v3/{uid}/words/{wordId} {
