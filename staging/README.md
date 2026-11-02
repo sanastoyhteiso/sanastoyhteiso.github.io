@@ -31,6 +31,21 @@ Run offline tests (no credentials): `node staging/tests/smoke.test.js` and `node
 - Local device storage may be wiped by the OS. It is a resilience layer, not the only backup. Maintain dated Sheets copies; retain old personal Drive sheets unmodified through rollback verification.
 - Never store private progress or admin Firebase credentials in GitHub Pages, public admin metrics or an open Google Sheet.
 
+## Emulator security verification (2026-11-02)
+
+The GitHub Actions workflow **Staging offline sync tests** completed successfully for the staging-only merged rule file. It runs two local JavaScript suites and **38 Firestore Security Rules emulator cases** using a `demo-` project ID. No real Firestore API calls, billing changes or changes to authentication users occurred.
+
+- **Existing behavior retained:** profile owners read/write as allowed; opt-in public profiles, private profiles, owner-only settings, approved public/private libraries, denial for guests.
+- **New paths:** authenticated owner can create and read well-formed immutable events, cannot overwrite or delete events; other users and guests cannot read or write another owner's event log.
+- **Migration baseline:** owner may create it once and read it; even owner cannot update/delete it; invalid hashes rejected.
+- **Admin metrics:** only a server-issued `admin` claim allows reading preseeded aggregate metrics, never writes from a browser.
+- **Unknown collections:** denied.
+- These tests establish only simulator behavior, not live production deployment or full browser/mobile integration.
+
+Test file: `staging/tests/firestore-rules.test.cjs`. Source: `staging/firestore.rules.combined.test`. CLI configuration: `staging/firebase-emulator.json`.
+
+**Do not paste `staging/firestore.rules.template` directly over live rules**. The combined fixture is based on the owner's November 2 pasted rules and must be compared with the actual current Firebase Rules tab before deploying anything.
+
 ## Confirmed read-only Firebase audit
 
 - Project `riveria-sanasto-community-test` on Spark; current default database contains existing `settings` and `users` collections.
