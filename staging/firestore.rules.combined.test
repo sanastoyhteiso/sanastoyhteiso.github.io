@@ -96,19 +96,9 @@ service cloud.firestore {
              request.resource.data.v == 3 &&
              request.resource.data.uid == uid &&
              request.resource.data.id == eventId &&
-             eventId.matches('^E_[a-f0-9]{32}
-      allow read, write: if false;
-    }
-  }
-}
-) &&
+             eventId.matches('^E_[a-f0-9]{32}$') &&
              request.resource.data.device is string &&
-             request.resource.data.device.matches('^D_[a-f0-9]{32}
-      allow read, write: if false;
-    }
-  }
-}
-) &&
+             request.resource.data.device.matches('^D_[a-f0-9]{32}$') &&
              request.resource.data.target is string &&
              request.resource.data.target.size() > 0 &&
              request.resource.data.target.size() <= 180 &&
@@ -145,12 +135,7 @@ service cloud.firestore {
         && request.resource.data.migrationId.size() <= 180
         && request.resource.data.importedAt is int
         && request.resource.data.sha256 is string
-        && request.resource.data.sha256.matches('^[a-f0-9]{64}
-      allow read, write: if false;
-    }
-  }
-}
-)
+        && request.resource.data.sha256.matches('^[a-f0-9]{64}$')
         && request.resource.data.source == 'approved-local-JSON'
         && request.resource.data.snapshot is map
         && request.resource.data.snapshot.keys().hasAll([
@@ -165,7 +150,7 @@ service cloud.firestore {
     }
     // Aggregate admin data only. Admin claim is assigned server-side.
     match /site_admin/{documentId} {
-      allow get: if v3Admin(;
+      allow get: if v3Admin();
       allow list: if false;
       allow create, update, delete: if false;
     }
