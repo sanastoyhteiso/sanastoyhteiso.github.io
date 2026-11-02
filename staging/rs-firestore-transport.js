@@ -44,9 +44,15 @@
     if(JSON.stringify(doc).length>15000)throw Error('Event exceeds size limit');
     return doc;
   }
+  function canonical(x){
+    if(x===null||typeof x!=='object')return JSON.stringify(x);
+    if(Object.prototype.toString.call(x)==='[object Array]')
+      return '['+x.map(canonical).join(',')+']';
+    return '{'+Object.keys(x).sort().map(function(k){return JSON.stringify(k)+':'+canonical(x[k]);}).join(',')+'}';
+  }
   function sameRecord(want,actual){
     if(!actual||!actual.fields)return false;
-    return JSON.stringify(want.fields)===JSON.stringify(actual.fields);
+    return canonical(want.fields)===canonical(actual.fields);
   }
   function create(opts){
     if(!opts||!id(opts.projectId)||typeof opts.getToken!=='function'||
@@ -66,7 +72,7 @@
         if(reply&&reply.status>=200&&reply.status<300)return e.id;
         if(!reply||![409,412].includes(reply.status))throw Error('Firestore write rejected: '+(reply&&reply.status||'network'));
         // A retry may find a prior commit. NEVER ACK mere ID collision.
-        return opts.getToken().then(function(token){
+        return Promise.resolve().then(function(){return opts.getToken();}).then(function(token){
           if(opts.activeUid()!==uid)throw Error('Account changed');
           return opts.request('GET',url+'/'+encodeURIComponent(e.id),null,token);
         }).then(function(existing){
