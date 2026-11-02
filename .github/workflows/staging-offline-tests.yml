@@ -22,3 +22,13 @@ jobs:
         run: node staging/tests/smoke.test.js
       - name: Test offline sync, retries, account isolation and baseline
         run: node staging/tests/sync-integration.test.js
+      - name: Use Java for Firestore emulator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install pinned emulator and testing SDKs (dev-only)
+        run: npm install --prefix staging --no-audit --no-fund
+      - name: Verify original and proposed Firestore security rules in emulator
+        timeout-minutes: 8
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso 'node staging/tests/firestore-rules.test.cjs'
