@@ -54,6 +54,18 @@
     if(!actual||!actual.fields)return false;
     return canonical(want.fields)===canonical(actual.fields);
   }
+  function baselineDocument(uid,migration){
+    if(!id(uid)||!migration||!id(migration.migrationId)||
+       !safeNumber(migration.createdAt)||!migration.snapshot||
+       !migration.snapshot.scores||!migration.snapshot.words||!migration.snapshot.favorites||
+       typeof migration.sha256!=='string'||!/^[a-f0-9]{64}$/.test(migration.sha256))
+       throw Error('Invalid verified migration baseline');
+    var obj={fields:{v:val(3),uid:val(uid),migrationId:val(migration.migrationId),
+       importedAt:val(migration.createdAt),sha256:val(migration.sha256),
+       source:val('approved-local-JSON'),snapshot:val(migration.snapshot)}};
+    if(JSON.stringify(obj).length>600000)throw Error('Migration baseline exceeds safe document size');
+    return obj;
+  }
   function create(opts){
     if(!opts||!id(opts.projectId)||typeof opts.getToken!=='function'||
        typeof opts.request!=='function'||typeof opts.activeUid!=='function')
@@ -95,7 +107,37 @@
         return ack;
       });
     }
-    return {putEvents:putEvents,putOne:putOne};
+    function getBaseline(uid){
+      if(!id(uid)||opts.activeUid()!==uid)return Promise.reject(Error('Account changed'));
+      var url=base+encodeURIComponent(uid)+'/state/baseline';
+      return Promise.resolve().then(function(){return opts.getToken();}).then(function(token){
+        if(opts.activeUid()!==uid)throw Error('Account changed');
+        return opts.request('GET',url,null,token);
+      }).then(function(reply){
+        if(reply&&reply.status===200)return reply.body;
+        if(reply&&reply.status===404)return null;
+        throw Error('Could not read migration baseline');
+      });
+    }
+    function putBaseline(uid,migration,approval){
+      if(approval!=='VERIFIED_PERSONAL_JSON_AND_SHEET')
+        return Promise.reject(Error('Migration not approved'));
+      if(!id(uid)||opts.activeUid()!==uid)
+        return Promise.reject(Error('Account changed'));
+      var wanted=baselineDocument(uid,migration),url=base+encodeURIComponent(uid)+'/state/baseline';
+      return Promise.resolve().then(function(){return opts.getToken();}).then(function(token){
+        if(opts.activeUid()!==uid)throw Error('Account changed');
+        return opts.request('PATCH',url+'?currentDocument.exists=false',wanted,token);
+      }).then(function(reply){
+        if(reply&&reply.status>=200&&reply.status<300)return {saved:true,alreadyExisted:false};
+        if(!reply||[409,412].indexOf(reply.status)<0)throw Error('Baseline write rejected');
+        return getBaseline(uid).then(function(actual){
+          if(!sameRecord(wanted,actual))throw Error('Existing migration baseline differs; never overwrite');
+          return {saved:true,alreadyExisted:true};
+        });
+      });
+    }
+    return {putEvents:putEvents,putOne:putOne,getBaseline:getBaseline,putBaseline:putBaseline};
   }
-  return {create:create,record:record,sameRecord:sameRecord};
+  return {create:create,record:record,baselineDocument:baselineDocument,sameRecord:sameRecord};
 });
