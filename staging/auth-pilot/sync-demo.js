@@ -34,7 +34,7 @@
    var buttons=d.querySelectorAll('[data-demo-target]');
    for(var i=0;i<buttons.length;i++)buttons[i].disabled=!ok||!!session.clearing||!!session.atLimit;
    el('retry').disabled=!ok||session.clearing||session.atLimit;
-   el('clear').disabled=!ok||session.clearing;
+   el('clear').disabled=!ok||session.clearing||session.uploading||w.navigator.onLine===false;
    var s=authState();
    el('login').disabled=!controller||!s||s.status==='verified'||
      s.status==='unverified'||s.status==='checking'||s.status==='signing_in';
@@ -70,6 +70,9 @@
        try{
          var docs=[];
          snapshot.forEach(function(doc){
+           // Pending local SDK writes are not yet confirmed by the server.
+           // Their copy stays in the dedicated local queue until ACK.
+           if(doc.metadata&&doc.metadata.hasPendingWrites)return;
            var e=doc.data();
            if(e.id!==doc.id||!core.valid(e,s.uid))
              throw Error('Unsafe server demo event');
