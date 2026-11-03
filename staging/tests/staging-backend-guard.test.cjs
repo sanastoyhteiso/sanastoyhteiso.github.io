@@ -4,7 +4,7 @@ const assert=require('assert'),fs=require('fs'),path=require('path'),acorn=requi
 const source=fs.readFileSync(path.join(__dirname,'../backend/v3-staging-project-guard.js'),'utf8');
 acorn.parse(source,{ecmaVersion:5});
 const guard=require('../backend/v3-staging-project-guard.js');
-const goodId='sanastoyhteiso-v3-laboratorio';
+const goodId='sanastoyhteiso-v3-development';
 const valid=()=>({
  site:{origin:'https://velardream-ctrl.github.io',
        pathname:'/riveria-sanasto-community-test/v3-classic/'},
