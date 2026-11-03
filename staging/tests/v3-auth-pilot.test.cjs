@@ -46,6 +46,7 @@ function makeSdk(){
     onAuthStateChanged(fn){calls.observer=fn;fn(this.currentUser);return()=>{calls.observer=null;};},
     signInWithPopup(provider){
       calls.popups++;calls.provider=provider;
+      if(calls.syntheticError)return Promise.reject({code:calls.syntheticError});
       const current={uid:'syntheticAuthUser',email:'demo@example.invalid',
         displayName:'Synthetic User',emailVerified:true,
         getIdToken:()=>Promise.resolve('NEVER-PUT-TOKEN-ON-PAGE'),
@@ -107,6 +108,17 @@ function tick(){return new Promise(resolve=>setImmediate(resolve))}
  assert.equal(d.getElementById('pilot-login').disabled,false);
  assert.equal(d.getElementById('pilot-email').textContent,'—');
  good.close();
+ const internal=bootstrap('https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3-classic/auth-pilot/',true);
+ internal.calls.syntheticError='auth/internal-error';
+ internal.w.document.querySelector('[data-pilot-lang="ru"]').click();
+ internal.w.document.getElementById('pilot-login').click();
+ await tick();await tick();
+ const guidance=internal.w.document.getElementById('pilot-message');
+ assert.equal(guidance.hidden,false,'Google OAuth failure should be visible');
+ assert.ok(guidance.textContent.includes('Safari'),'Internal errors must suggest external Safari');
+ assert.ok(guidance.textContent.includes('auth/internal-error'),'Support code should remain visible');
+ assert.equal(internal.w.localStorage.length,0,'No learning data persisted during failed popup');
+ internal.close();
  const outside=bootstrap('https://sanastoyhteiso.github.io/v3-classic/auth-pilot/',true);
  assert.equal(outside.calls.initialize,0,'Never initialize SDK on production origin');
  assert.equal(outside.w.document.getElementById('pilot-login').disabled,true);
