@@ -15,6 +15,28 @@
    return '{'+Object.keys(x).sort().map(function(k){return JSON.stringify(k)+':'+canonical(x[k]);}).join(',')+'}';
  }
  function validMap(x){return !!x&&typeof x==='object'&&!Array.isArray(x);}
+ function checkCounts(scores){
+   Object.keys(scores).forEach(function(id){
+     var s=scores[id];
+     if(!validMap(s)||!Number.isSafeInteger(Number(s.seen))||
+        !Number.isSafeInteger(Number(s.correct))||
+        !Number.isSafeInteger(Number(s.wrong))||
+        s.seen<0||s.correct<0||s.wrong<0||
+        s.seen!==s.correct+s.wrong)
+       throw Error('Score counters diverge; manual migration review required');
+   });
+ }
+ function checkWordConflicts(events){
+   var edited={};
+   events.forEach(function(e){
+     if(e.kind!=='word_upsert'&&e.kind!=='word_delete')return;
+     var prior=edited[e.target];
+     if(prior&&prior.device!==e.device&&
+        (prior.kind!==e.kind||canonical(prior.data)!==canonical(e.data)))
+       throw Error('Conflicting edits to a personal word from multiple devices');
+     edited[e.target]=e;
+   });
+ }
  function create(opts){
    if(!opts||!opts.core||!opts.transport||typeof opts.transport.getBaseline!=='function'||
      typeof opts.transport.listEvents!=='function'||typeof opts.activeUid!=='function'||
@@ -33,6 +55,7 @@
           !validMap(base.snapshot)||!validMap(base.snapshot.scores)||
           !validMap(base.snapshot.words)||!validMap(base.snapshot.favorites))
          throw Error('Invalid imported cloud baseline; do not merge');
+       checkCounts(base.snapshot.scores);
        return Promise.resolve().then(function(){return opts.verifyHash(base.snapshot);}).then(function(actualHash){
          if(actualHash!==base.sha256)throw Error('Cloud baseline checksum mismatch');
          if(uid!==opts.activeUid())throw Error('Account changed');
@@ -57,7 +80,9 @@
        }
        x.remote.forEach(accept);
        (localPending||[]).forEach(accept);
+       checkWordConflicts(unique);
        var folded=core.fold(x.base,unique);
+       checkCounts(folded.state.scores);
        if(folded.invalid||folded.duplicates||folded.applied!==unique.length)
          throw Error('Cloud fold incomplete; preserve original local data');
        return {ok:true,state:folded.state,cloudEvents:x.remote.length,
