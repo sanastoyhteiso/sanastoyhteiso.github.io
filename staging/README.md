@@ -153,3 +153,11 @@ https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3-classic/
 The page files were written to `v3-classic/` only in `velardream-ctrl/riveria-sanasto-community-test`. Page accessibility could not be verified by the web tool; test on a real device. Earlier `/v3/` remains a technical sandbox, not the intended appearance.
 
 Before integrating real remote storage into the classic UI, require new independent personal JSON+Sheets backup, concurrency tests, owner-approved real Firestore pilot and an explicit migration plan; maintain previous login UX and privacy.
+
+## Updated 2026-11-03: test root handoff and separate staging backend
+
+The earlier notes stating the separate TEST repo root was unchanged are historical. The test repo root has now intentionally been switched from its old Firebase-connected login to a **safe static v3-classic entry** (reviewed test source `staging/test-site-entry.html`, `test-entry-v3.js`). This is only the **test** repo `velardream-ctrl/riveria-sanasto-community-test`; the real site `sanastoyhteiso.github.io` and all its files remain unchanged. The test root retires its old registered service worker/cache and redirects to `./v3-classic/` while leaving other repo scopes untouched.
+
+The original test root previously loaded a `config.js` pointing at `riveria-sanasto-community-test`, a Firebase project actively used by the live website. Thus it is **not** a separate backend. Never re-enable that `config.js` for v3. Before introducing any real v3 cloud access, create an entirely separate Firebase project and satisfy the pure safety check in `staging/backend/v3-staging-project-guard.js` with all offline CI and security rules tests. See `staging/backend/TWO_SITES_AND_SAFE_FIREBASE_RU.md`.
+
+The classic test UI is still entirely synthetic/offline. Added trilingual demo-specific about/privacy/terms pages under `staging/classic/` and fixed its icon reference; they were published only to `v3-classic/` in the separate test repo. Verified staging GitHub Actions success for commit `e1c9a45c3f7f03b684827a8f5284648a60b51666` (run 41659438716). Live browser/old Safari behavior requires actual device verification. Later promotion is a controlled code/data release into the real GitHub Pages repository, **not a rename of user.github.io**.
