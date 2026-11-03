@@ -24,6 +24,8 @@ jobs:
         run: node staging/tests/smoke.test.js
       - name: Test offline sync, retries, account isolation and baseline
         run: node staging/tests/sync-integration.test.js
+      - name: Reject unsafe progress keys and conflicting word identities
+        run: node staging/tests/sync-core-security.test.cjs
       - name: Test safe paginated cloud pull on two devices
         run: node staging/tests/sync-cloud-read.test.cjs
       - name: Test guarded controller cloud preview and local change races
