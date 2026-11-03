@@ -13,7 +13,7 @@
    Audit=root.RS_SYNC_RECOVERY_AUDIT,Admin=root.RS_ADMIN_PREVIEW;
  var catalog=root.RS_V3_PUBLIC_CATALOG.create(root.RS_DATA);
  var uid='demo-v3-synthetic-only',lang='ru',tab='cards',cardIndex=0,
-   quizIndex=0,quizAnswered=false,medTab='phrases',medIndex=0,
+   quizIndex=0,quizAnswered=false,quizLastCorrect=false,medTab='phrases',medIndex=0,medReveal=false,
    busy=false,message='',record=null,auditData=null,done=Promise.resolve();
  var labels={
    ru:{cards:'Карточки',practice:'Тесты',mediatri:'Mediatri',dictionary:'Словарь',sync:'Синхронизация',recovery:'История',admin:'Администратор',
@@ -148,6 +148,56 @@
        ' '+escapeText(translate('star'))+'</button>'+
      '<button data-action="next">'+escapeText(translate('next'))+'</button></div></div>';
  }
+ function quizOptions(){
+   var n=vocabulary.length,t=vocabulary[quizIndex%n];
+   var wrongA=vocabulary[(quizIndex+19)%n],
+     wrongB=vocabulary[(quizIndex+97)%n];
+   var pool=[{text:t.ru,correct:true},
+     {text:wrongA.ru,correct:false},{text:wrongB.ru,correct:false}];
+   var offset=quizIndex%3,rotated=[];
+   for(var i=0;i<3;i++)rotated.push(pool[(i+offset)%3]);
+   return rotated;
+ }
+ function practice(){
+   var t=vocabulary[quizIndex%vocabulary.length],options=quizOptions();
+   var buttons=options.map(function(x,i){
+     return '<button type="button" data-action="quiz-choice" data-choice="'+i+'"'+
+       (quizAnswered?' disabled':'')+'>'+escapeText(x.text)+'</button>';
+   }).join('');
+   return '<section><h2>'+escapeText(translate('practice'))+'</h2>'+
+     '<p>'+escapeText(translate('choose'))+'</p><div class="demo-card">'+
+     '<h2>'+escapeText(t.fi)+'</h2>'+
+     '<div class="demo-actions">'+buttons+'</div>'+
+     (quizAnswered?'<p role="status">'+escapeText(translate(quizLastCorrect?'correct':'incorrect'))+
+       '</p><button type="button" class="primary" data-action="quiz-next">'+
+       escapeText(translate('next'))+'</button>':'')+'</div></section>';
+ }
+ function mediatri(){
+   var modes=['phrases','headings','scenarios'],arr=catalog[medTab](),
+     page=arr.slice(medIndex,medIndex+12);
+   var controls=modes.map(function(k){
+     return '<button type="button" data-action="med-switch" data-mode="'+k+'"'+
+       (medTab===k?' class="primary"':'')+'>'+escapeText(translate(k))+'</button>';
+   }).join('');
+   var items=page.map(function(m){
+     if(medTab==='scenarios'){
+       return '<li><strong>'+escapeText(m.task)+'</strong>'+
+         (medReveal?'<p>'+escapeText(m.answer)+'</p>':'')+'</li>';
+     }
+     return '<li><strong>'+escapeText(m.fi)+'</strong> — '+
+       escapeText(m.ru)+' <small>'+escapeText(m.en||'')+'</small></li>';
+   }).join('');
+   return '<section><h2>Mediatri</h2><p class="demo-muted">'+
+     escapeText(translate('medNotes'))+'</p><div class="demo-actions">'+
+     controls+'</div><ul id="demo-med-list">'+items+'</ul>'+
+     '<p>'+Math.min(medIndex+1,arr.length)+'–'+
+       Math.min(medIndex+page.length,arr.length)+' / '+arr.length+'</p>'+
+     '<div class="demo-actions">'+
+       (medTab==='scenarios'?'<button data-action="med-reveal">'+
+         escapeText(translate('showAnswer'))+'</button>':'')+
+       '<button data-action="med-next" class="primary">'+
+         escapeText(translate('medNext'))+'</button></div></section>';
+ }
  function dictionary(){
    var words=allWords().slice(0,60).map(function(w){
      return '<li><b>'+escapeText(w.fi)+'</b> — '+escapeText(w.ru)+
@@ -193,7 +243,8 @@
  function render(){
    if(!record){container.textContent=translate('loading');return;}
    header();
-   container.innerHTML=(tab==='cards'?cards():tab==='dictionary'?dictionary():
+   container.innerHTML=(tab==='cards'?cards():tab==='practice'?practice():
+     tab==='dictionary'?dictionary():tab==='mediatri'?mediatri():
      tab==='sync'?syncView():tab==='recovery'?recovery():admin());
  }
  var shadow=Shadow&&Shadow.create({
@@ -233,6 +284,20 @@
    enqueue(function(){
      return shadow.appendLocal(uid,event('answer',w.id,{correct:correct}),record.revision)
        .then(function(){message=translate('saved');});
+   });
+ }
+ function chooseQuiz(idx){
+   if(quizAnswered)return;
+   var options=quizOptions(),choice=options[idx];
+   if(!choice)return;
+   var correct=choice.correct===true;
+   var term=vocabulary[quizIndex%vocabulary.length];
+   enqueue(function(){
+     return shadow.appendLocal(uid,event('answer',term.id,{correct:correct}),record.revision)
+       .then(function(){
+         quizAnswered=true;quizLastCorrect=correct;
+         message=translate(correct?'correct':'incorrect');
+       });
    });
  }
  function addFavorite(){
@@ -278,6 +343,19 @@
    else if(action==='again')addAnswer(false);
    else if(action==='favorite')addFavorite();
    else if(action==='next'){cardIndex++;render();}
+   else if(action==='quiz-choice')chooseQuiz(Number(b.getAttribute('data-choice')));
+   else if(action==='quiz-next'){quizIndex++;quizAnswered=false;render();}
+   else if(action==='med-switch'){
+     var m=b.getAttribute('data-mode');
+     if(m==='phrases'||m==='headings'||m==='scenarios'){
+       medTab=m;medIndex=0;medReveal=false;render();
+     }
+   }
+   else if(action==='med-reveal'){medReveal=!medReveal;render();}
+   else if(action==='med-next'){
+     var arr=catalog[medTab]();
+     medIndex=(medIndex+12)%arr.length;medReveal=false;render();
+   }
    else if(action==='sync')simulate();
    else if(action==='audit')checkRecovery();
  }
