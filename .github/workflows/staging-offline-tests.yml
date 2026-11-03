@@ -40,6 +40,8 @@ jobs:
         run: node staging/tests/staging-backend-guard.test.cjs
       - name: Test Google registration and verified identities with isolated staging Auth SDK mocks
         run: node staging/tests/v3-auth-isolation.test.cjs
+      - name: Test independently configured Google Auth pilot page with a fake SDK
+        run: node staging/tests/v3-auth-pilot.test.cjs
       - name: Test profile registration preserves per-user alias, learned counts and privacy
         run: node staging/tests/v3-profile-registration.test.cjs
       - name: Prevent regressions of existing registration and profile UX
