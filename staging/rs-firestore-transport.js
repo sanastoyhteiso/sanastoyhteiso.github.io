@@ -75,6 +75,37 @@
     if(JSON.stringify(obj).length>600000)throw Error('Migration baseline exceeds safe document size');
     return obj;
   }
+  function decodeValue(v,depth){
+    depth=depth||0;
+    if(depth>12||!v||typeof v!=='object')throw Error('Invalid Firestore value');
+    if(Object.prototype.hasOwnProperty.call(v,'stringValue'))return v.stringValue;
+    if(Object.prototype.hasOwnProperty.call(v,'booleanValue'))return v.booleanValue;
+    if(Object.prototype.hasOwnProperty.call(v,'nullValue'))return null;
+    if(Object.prototype.hasOwnProperty.call(v,'integerValue')){
+      var n=Number(v.integerValue);
+      if(!safeNumber(n))throw Error('Firestore integer precision lost');
+      return n;
+    }
+    if(Object.prototype.hasOwnProperty.call(v,'doubleValue')){
+      var d=Number(v.doubleValue);
+      if(!isFinite(d))throw Error('Non-finite Firestore double');
+      return d;
+    }
+    if(Object.prototype.hasOwnProperty.call(v,'arrayValue'))
+      return ((v.arrayValue||{}).values||[]).map(function(x){return decodeValue(x,depth+1);});
+    if(Object.prototype.hasOwnProperty.call(v,'mapValue')){
+      var obj={},fields=(v.mapValue||{}).fields||{};
+      Object.keys(fields).forEach(function(k){obj[k]=decodeValue(fields[k],depth+1);});
+      return obj;
+    }
+    throw Error('Unsupported Firestore value type');
+  }
+  function decodeDocument(d){
+    if(!d||!d.fields)throw Error('Firestore document fields missing');
+    var result={};
+    Object.keys(d.fields).forEach(function(k){result[k]=decodeValue(d.fields[k],0);});
+    return result;
+  }
   function create(opts){
     if(!opts||!id(opts.projectId)||typeof opts.getToken!=='function'||
        typeof opts.request!=='function'||typeof opts.activeUid!=='function')
@@ -146,7 +177,50 @@
         });
       });
     }
-    return {putEvents:putEvents,putOne:putOne,getBaseline:getBaseline,putBaseline:putBaseline};
+    function listEvents(uid){
+      if(!id(uid)||opts.activeUid()!==uid)return Promise.reject(Error('Account changed'));
+      var url=base+encodeURIComponent(uid)+'/events',batchSize=100,maxPages=10;
+      var out=[],seen={},token=null,page=0;
+      function next(){
+        if(page>=maxPages)throw Error('Too many event pages; do not apply partial sync');
+        if(opts.activeUid()!==uid)throw Error('Account changed');
+        page++;
+        return Promise.resolve().then(function(){return opts.getToken();}).then(function(authToken){
+          if(opts.activeUid()!==uid)throw Error('Account changed');
+          if(!str(authToken)||!authToken)throw Error('Auth token unavailable');
+          var q='?pageSize='+batchSize+(token?'&pageToken='+encodeURIComponent(token):'');
+          return opts.request('GET',url+q,null,authToken);
+        }).then(function(reply){
+          if(!reply||reply.status!==200||!reply.body)throw Error('Firestore event listing rejected');
+          var docs=reply.body.documents||[];
+          if(!Array.isArray(docs)||docs.length>batchSize)throw Error('Invalid Firestore response page');
+          docs.forEach(function(d){
+            var x=decodeDocument(d);
+            var name=String(d.name||'').split('/').pop();
+            if(x.uid!==uid||x.id!==name||!/^E_[a-f0-9]{32}$/.test(x.id)||
+               !/^D_[a-f0-9]{32}$/.test(x.device)||!x.kind||!x.data)
+              throw Error('Cloud event identity invalid; cannot merge');
+            if(seen[x.id]){
+              if(seen[x.id]!==canonical(x))throw Error('Conflicting cloud event IDs');
+            }else{
+              seen[x.id]=canonical(x);out.push(x);
+            }
+          });
+          token=reply.body.nextPageToken||null;
+          if(token){
+            if(typeof token!=='string'||page>=maxPages)
+              throw Error('Event pagination limit; never apply partial snapshot');
+            return next();
+          }
+          if(opts.activeUid()!==uid)throw Error('Account changed');
+          return out;
+        });
+      }
+      return next();
+    }
+    return {putEvents:putEvents,putOne:putOne,getBaseline:getBaseline,
+      putBaseline:putBaseline,listEvents:listEvents};
   }
-  return {create:create,record:record,baselineDocument:baselineDocument,sameRecord:sameRecord};
+  return {create:create,record:record,baselineDocument:baselineDocument,
+    sameRecord:sameRecord,decodeValue:decodeValue,decodeDocument:decodeDocument};
 });
