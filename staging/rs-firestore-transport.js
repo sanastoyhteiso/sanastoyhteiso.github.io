@@ -219,7 +219,7 @@
       return next();
     }
     return {putEvents:putEvents,putOne:putOne,getBaseline:getBaseline,
-      putBaseline:putBaseline,listEvents:listEvents};
+      putBaseline:putBaseline,listEvents:listEvents,decodeDocument:decodeDocument};
   }
   return {create:create,record:record,baselineDocument:baselineDocument,
     sameRecord:sameRecord,decodeValue:decodeValue,decodeDocument:decodeDocument};
