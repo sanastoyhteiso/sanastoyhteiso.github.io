@@ -199,7 +199,10 @@
          escapeText(translate('medNext'))+'</button></div></section>';
  }
  function dictionary(){
-   var words=allWords().slice(0,60).map(function(w){
+   // Personal test terms come first so newly added words are visible despite the
+   // 1296-term public catalog being displayed in bounded 60-row slices.
+   var own=Object.keys(record.state.words).map(function(k){return record.state.words[k];});
+   var words=own.concat(vocabulary).slice(0,60).map(function(w){
      return '<li><b>'+escapeText(w.fi)+'</b> — '+escapeText(w.ru)+
        ' <small>'+escapeText(w.en||'—')+'</small></li>';
    }).join('');
