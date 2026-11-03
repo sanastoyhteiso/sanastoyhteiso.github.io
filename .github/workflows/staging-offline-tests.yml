@@ -32,6 +32,8 @@ jobs:
         run: node staging/tests/sync-local-adapter.test.cjs
       - name: Test atomic IndexedDB shadow store, browser tabs and offline outbox
         run: node staging/tests/sync-shadow-idb.test.cjs
+      - name: Test verified cloud read into isolated shadow without live app writes
+        run: node staging/tests/sync-shadow-reconcile.test.cjs
       - name: Test read-only multilingual admin preview and permission guard
         run: node staging/tests/admin-preview.test.cjs
       - name: Test read-only Firestore permissions diagnostic
