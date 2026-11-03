@@ -11,7 +11,7 @@ for(const name of ['rs-v3-auth-controller.js','rs-v3-firebase-compat-auth.js']){
   acorn.parse(src,{ecmaVersion:5});
   assert.ok(!/localStorage|sessionStorage|Firebase secret|PRIVATE KEY/.test(src));
 }
-const testId='sanastoyhteiso-v3-laboratorio';
+const testId='sanastoyhteiso-v3-development';
 const cfg={projectId:testId,authDomain:testId+'.firebaseapp.com',
   apiKey:'AIza'+'A'.repeat(35),appId:'1:111:web:222'};
 function options(){return {
