@@ -85,11 +85,21 @@ service cloud.firestore {
           data.keys().hasAll(['deleted']) && data.deleted == true)
         ||
         (kind == 'word_upsert' &&
-          data.keys().hasOnly(['fi', 'ru', 'en', 'cat', 'catRu',
-            'example', 'exampleRu', 'level', 'priority']) &&
+          data.keys().hasOnly(['id', 'fi', 'ru', 'en', 'cat', 'catRu',
+            'example', 'exampleRu', 'level', 'priority', 'updatedAt']) &&
           data.keys().hasAll(['fi', 'ru']) &&
           data.fi is string && data.fi.size() >= 1 && data.fi.size() <= 300 &&
-          data.ru is string && data.ru.size() >= 1 && data.ru.size() <= 300)
+          data.ru is string && data.ru.size() >= 1 && data.ru.size() <= 300 &&
+          data.get('id', request.resource.data.target) == request.resource.data.target &&
+          data.get('en', '') is string && data.get('en', '').size() <= 300 &&
+          data.get('cat', '') is string && data.get('cat', '').size() <= 120 &&
+          data.get('catRu', '') is string && data.get('catRu', '').size() <= 120 &&
+          data.get('example', '') is string && data.get('example', '').size() <= 3000 &&
+          data.get('exampleRu', '') is string && data.get('exampleRu', '').size() <= 3000 &&
+          data.get('level', '') is string && data.get('level', '').size() <= 30 &&
+          data.get('priority', 0) is int && data.get('priority', 0) >= 0 &&
+          data.get('priority', 0) <= 100 &&
+          data.get('updatedAt', 0) is int && data.get('updatedAt', 0) >= 0)
       );
     }
     function validEvent(uid, eventId) {
