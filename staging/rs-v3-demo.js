@@ -11,10 +11,12 @@
  var Core=root.RS_SYNC_CORE,Shadow=root.RS_SYNC_SHADOW_IDB,
    Coordinator=root.RS_SYNC_SHADOW_RECONCILE,
    Audit=root.RS_SYNC_RECOVERY_AUDIT,Admin=root.RS_ADMIN_PREVIEW;
+ var catalog=root.RS_V3_PUBLIC_CATALOG.create(root.RS_DATA);
  var uid='demo-v3-synthetic-only',lang='ru',tab='cards',cardIndex=0,
+   quizIndex=0,quizAnswered=false,medTab='phrases',medIndex=0,
    busy=false,message='',record=null,auditData=null,done=Promise.resolve();
  var labels={
-   ru:{cards:'Карточки',dictionary:'Словарь',sync:'Синхронизация',recovery:'История',admin:'Администратор',
+   ru:{cards:'Карточки',practice:'Тесты',mediatri:'Mediatri',dictionary:'Словарь',sync:'Синхронизация',recovery:'История',admin:'Администратор',
     heading:'Тестовая версия 3.0',note:'Только вымышленные данные. Не входит в твой аккаунт. Действующий сайт не меняется.',
     know:'Знаю',again:'Повторить',next:'Следующая',star:'Избранное',learned:'Выучено',pending:'Не отправлено',
     answers:'Ответов',terms:'Слов',add:'Добавить личное слово',fi:'Финский',ru:'Русский',en:'Английский',
@@ -25,8 +27,12 @@
     ready:'Тестовое хранилище готово',saved:'Ответ сохранён атомарно',wordSaved:'Тестовое слово добавлено',
     merged:'Имитированное событие второго устройства объединено',audited:'История проверена',
     empty:'Слов пока нет',error:'Тестовая операция отклонена: ',review:'Проверить синхронизацию без сервера',
-    sample:'Вымышленный пример',all:'Всего',favorite:'★ Избранное',starred:'★',notStarred:'☆'},
-   fi:{cards:'Kortit',dictionary:'Sanasto',sync:'Synkronointi',recovery:'Historia',admin:'Ylläpito',
+    sample:'Публичный словарь, результаты тестовые',all:'Всего',favorite:'★ Избранное',starred:'★',notStarred:'☆',
+    source:'Публичная база',correct:'Верно',incorrect:'Повторить',choose:'Выбери русский перевод',
+    phrases:'Фразы',headings:'Заголовки',scenarios:'Ситуации',showAnswer:'Показать ответ',
+    medNotes:'Учебные примеры Mediatri. Не вводи данные пациентов.',showMore:'Показаны первые 60 результатов',
+    medNext:'Далее'},
+   fi:{cards:'Kortit',practice:'Harjoitukset',mediatri:'Mediatri',dictionary:'Sanasto',sync:'Synkronointi',recovery:'Historia',admin:'Ylläpito',
     heading:'Testiversio 3.0',note:'Vain esimerkkitietoja. Ei käytä oikeaa tiliäsi eikä muuta toimivaa sivustoa.',
     know:'Osaan',again:'Kertaa',next:'Seuraava',star:'Suosikki',learned:'Opittu',pending:'Lähettämättä',
     answers:'Vastauksia',terms:'Sanoja',add:'Lisää oma sana',fi:'Suomi',ru:'Venäjä',en:'Englanti',
@@ -37,8 +43,12 @@
     ready:'Testitietokanta valmis',saved:'Vastaus tallennettu atomisesti',wordSaved:'Testisana lisätty',
     merged:'Toisen laitteen testitapahtuma yhdistetty',audited:'Historia tarkistettu',
     empty:'Ei vielä sanoja',error:'Testitoiminto hylättiin: ',review:'Testaa synkronointi ilman palvelinta',
-    sample:'Kuvitteellinen esimerkki',all:'Yhteensä',favorite:'★ Suosikki',starred:'★',notStarred:'☆'},
-   en:{cards:'Cards',dictionary:'Dictionary',sync:'Sync',recovery:'History',admin:'Admin',
+    sample:'Julkinen sanasto, testitulokset',all:'Yhteensä',favorite:'★ Suosikki',starred:'★',notStarred:'☆',
+    source:'Julkinen sanasto',correct:'Oikein',incorrect:'Kertaa',choose:'Valitse venäjänkielinen vastine',
+    phrases:'Lauseet',headings:'Otsikot',scenarios:'Tilanteet',showAnswer:'Näytä vastaus',
+    medNotes:'Mediatrin harjoitusesimerkkejä. Älä käytä potilastietoja.',showMore:'Ensimmäiset 60 tulosta',
+    medNext:'Seuraava'},
+   en:{cards:'Cards',practice:'Quizzes',mediatri:'Mediatri',dictionary:'Dictionary',sync:'Sync',recovery:'History',admin:'Admin',
     heading:'Test version 3.0',note:'Synthetic data only. No real sign-in and no changes to the live website.',
     know:'I know',again:'Practice again',next:'Next',star:'Favorite',learned:'Learned',pending:'Not sent',
     answers:'Answers',terms:'Words',add:'Add a personal word',fi:'Finnish',ru:'Russian',en:'English',
@@ -49,7 +59,11 @@
     ready:'Test storage ready',saved:'Answer saved atomically',wordSaved:'Test word added',
     merged:'Synthetic second-device event merged',audited:'History verified',
     empty:'No words yet',error:'Test operation rejected: ',review:'Test sync without a server',
-    sample:'Synthetic example',all:'Total',favorite:'★ Favorite',starred:'★',notStarred:'☆'}
+    sample:'Public vocabulary, synthetic progress',all:'Total',favorite:'★ Favorite',starred:'★',notStarred:'☆',
+    source:'Public catalog',correct:'Correct',incorrect:'Try again',choose:'Choose the Russian translation',
+    phrases:'Phrases',headings:'Headings',scenarios:'Scenarios',showAnswer:'Show answer',
+    medNotes:'Mediatri learning examples. Do not enter patient data.',showMore:'Showing the first 60 results',
+    medNext:'Next'}
  };
  var base={
   scores:{T00001:{seen:0,correct:0,wrong:0,learned:false},
@@ -57,11 +71,9 @@
     T00003:{seen:0,correct:0,wrong:0,learned:false}},
   words:{},favorites:{}
  };
- var vocabulary=[
-  {id:'T00001',fi:'hoiva-avustaja',ru:'помощник по уходу',en:'care assistant'},
-  {id:'T00002',fi:'lähihoitaja',ru:'практическая медсестра',en:'practical nurse'},
-  {id:'T00003',fi:'turvotus',ru:'отёк',en:'swelling'}
- ];
+ // Public vocabulary copied byte-for-byte from the already published main/data.js.
+ // Learner events and personal words remain synthetic and isolated.
+ var vocabulary=catalog.terms();
  var syntheticRemote=Core&&Core.event('E_'+'b'.repeat(32),'D_'+'c'.repeat(32),
    'answer','T00002',{correct:true},1793700000001);
  var device='D_'+randomHex(16);
@@ -106,7 +118,7 @@
  }
  function score(id){return record&&record.state.scores[id]||{};}
  function header(){
-   var navigation=['cards','dictionary','sync','recovery','admin'].map(function(name){
+   var navigation=['cards','practice','dictionary','mediatri','sync','recovery','admin'].map(function(name){
      return '<button type="button" data-tab="'+name+'" class="demo-tab'+
        (tab===name?' selected':'')+'">'+escapeText(translate(name))+'</button>';
    }).join('');
@@ -137,12 +149,13 @@
      '<button data-action="next">'+escapeText(translate('next'))+'</button></div></div>';
  }
  function dictionary(){
-   var words=allWords().map(function(w){
+   var words=allWords().slice(0,60).map(function(w){
      return '<li><b>'+escapeText(w.fi)+'</b> — '+escapeText(w.ru)+
        ' <small>'+escapeText(w.en||'—')+'</small></li>';
    }).join('');
    return '<section><label for="demo-search">'+escapeText(translate('search'))+
      '</label><input id="demo-search" type="search" maxlength="180" autocomplete="off">'+
+     '<p class="demo-muted" id="demo-search-hint">'+escapeText(translate('showMore'))+'</p>'+ 
      '<ul id="demo-results">'+words+'</ul></section>'+
      '<section class="demo-add"><h2>'+escapeText(translate('add'))+'</h2>'+
      '<form id="demo-word-form"><label>'+escapeText(translate('fi'))+
@@ -276,11 +289,14 @@
  function onInput(ev){
    if(!ev.target||ev.target.id!=='demo-search')return;
    var q=ev.target.value.toLocaleLowerCase();
-   var out=allWords().filter(function(w){
+   var found=allWords().filter(function(w){
      return [w.fi,w.ru,w.en].join(' ').toLocaleLowerCase().indexOf(q)>=0;
-   }).map(function(w){return '<li><b>'+escapeText(w.fi)+'</b> — '+
+   });
+   var out=found.slice(0,60).map(function(w){return '<li><b>'+escapeText(w.fi)+'</b> — '+
      escapeText(w.ru)+' <small>'+escapeText(w.en||'—')+'</small></li>';}).join('');
    doc.getElementById('demo-results').innerHTML=out||'<li>'+escapeText(translate('empty'))+'</li>';
+   doc.getElementById('demo-search-hint').textContent=
+     found.length>60?translate('showMore')+' / '+found.length:found.length+' / '+allWords().length;
  }
  var didStart=false;
  function start(){
