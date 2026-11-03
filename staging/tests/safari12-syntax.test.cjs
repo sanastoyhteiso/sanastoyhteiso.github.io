@@ -45,6 +45,9 @@ const stage=[
   'rs-catalog-release.js','rs-admin-preview.js'
 ];
 stage.forEach(file=>parseES5(read('staging/'+file),'staging/'+file));
+['app.js','rs-mediatri-guide.js','rs-demo-offline.js','i18n.js','mobile-nav.js',
+ 'rs-admin-preview.js'].forEach(file=>
+ parseES5(read('staging/classic/'+file),'staging/classic/'+file));
 // Exercise guard itself; newer syntax must be rejected as intended.
 assert.throws(()=>acorn.parse('const a = value?.result ?? 0;',{
   ecmaVersion:2018,sourceType:'script'}));
