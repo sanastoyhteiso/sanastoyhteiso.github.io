@@ -184,18 +184,28 @@
      '</p>'+categoriesHTML(arr,true);
  }
  function phraseView(){
+   var shifts=[['all','Kaikki vuorot','Все смены','All shifts'],
+     ['morning','Aamuvuoro','Утренняя смена','Morning shift'],
+     ['evening','Iltavuoro','Вечерняя смена','Evening shift'],
+     ['night','Yövuoro','Ночная смена','Night shift']];
+   var shiftOptions=shifts.map(function(x){return '<option value="'+x[0]+'"'+
+     (shift===x[0]?' selected':'')+'>'+safe(t(x[1]+' — '+x[2],x[1],x[1]+' — '+x[3]))+
+     '</option>';}).join('');
    return '<div class="panel"><h2>'+safe(t('Фразы по темам','Ilmaukset aiheittain',
      'Phrases by topic'))+'</h2><p class="hint">'+
      safe(t('Все существующие фразы сгруппированы. Раскрой нужную тему.',
      'Kaikki esimerkit on ryhmitelty. Avaa haluamasi aihe.',
      'All existing samples are grouped. Open a topic.'))+
-     '</p><label class="field"><span>'+safe(t('Поиск','Haku','Search'))+
+     '</p><label class="field"><span>'+safe(t('Смена','Työvuoro','Shift'))+
+     '</span><select id="rs-med-phrase-shift" class="control">'+shiftOptions+
+     '</select></label><label class="field"><span>'+safe(t('Поиск','Haku','Search'))+
      '</span><input id="rs-med-phrase-filter" class="control" type="search" maxlength="130" value="'+
      safe(phraseSearch)+'"></label><div id="rs-med-phrase-results"></div></div>';
  }
  function renderPhrases(){
    var el=root.document.getElementById('rs-med-phrase-results');if(!el)return;
    var arr=(data.mediatri||[]).filter(function(m){
+     if(shift!=='all'&&shiftTags(m).indexOf(shift)<0)return false;
      return !phraseSearch||[m.fi,m.ru,m.en,m.cat,m.catRu].join(' ').toLocaleLowerCase()
        .indexOf(phraseSearch.toLocaleLowerCase())>=0;
    });
@@ -274,6 +284,7 @@
      var id=e.target&&e.target.id;if(!id)return;
      if(id==='rs-med-shift'){shift=e.target.value;renderResults();}
      if(id==='rs-med-heading'){heading=e.target.value;renderResults();}
+     if(id==='rs-med-phrase-shift'){shift=e.target.value;renderPhrases();}
    });
    root.document.addEventListener('input',function(e){
      if(!e.target)return;
