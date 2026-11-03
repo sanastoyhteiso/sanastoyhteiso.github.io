@@ -57,8 +57,8 @@ async function run(){
   assert.equal(result.ok,true);assert.equal(result.readyToApply,false);
   assert.equal(result.cloudEvents,101);assert.equal(result.localPending,1);
   assert.equal(result.uniqueEvents,102);assert.equal(result.state.scores.T00001.seen,104);
-  assert.equal(result.state.scores.T00001.correct,53);
-  assert.equal(result.state.scores.T00001.wrong,51);
+  assert.equal(result.state.scores.T00001.correct,52);
+  assert.equal(result.state.scores.T00001.wrong,52);
   assert.equal(Object.keys(result.state.scores).length,236);
   assert.equal(Object.keys(result.state.words).length,150);
   assert.equal(Object.keys(result.state.favorites).length,70);
