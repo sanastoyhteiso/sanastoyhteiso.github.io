@@ -14,8 +14,9 @@ const store={},storage={writes:0,getItem:k=>store[k]||null,
   setItem:(k,v)=>{storage.writes++;store[k]=v;}};
 let active='owner',oldSyncOff=true,online=true,visible=true,local=JSON.parse(JSON.stringify(baseline));
 let calls=0,loader=null,timerFns=[],now=100000;
+let newIdN=4;
 const journal=Journal.create({core:Core,storage,uid:'owner',device,
-  newId:()=>E(5),now:()=>++now,legacySyncDisabled:()=>oldSyncOff});
+  newId:()=>E(++newIdN),now:()=>++now,legacySyncDisabled:()=>oldSyncOff});
 const cloudEvent=Core.event(E(9),'D_'+'d'.repeat(32),'answer','T00001',{correct:false},110000);
 const cloudState=Core.fold(Journal.snapshot(baseline),[cloudEvent]).state;
 function response(pending){
