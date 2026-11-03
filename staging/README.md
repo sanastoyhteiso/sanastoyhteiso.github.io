@@ -89,3 +89,10 @@ A separate STAGING-only native IndexedDB module, `rs-sync-shadow-idb.js`, stores
 The shadow database is named `sanastoyhteiso_staging_shadow_v3`; creation and writes require explicit staging enablement and approval. Neither module is included by the production site. **This does not migrate the existing legacy app.** Production still reads three separate localStorage keys. Linking its UI to a transactional state will require a new, carefully tested bootstrap/adapter and old iOS Safari compatibility checks, plus a verified real backup and owner approval.
 
 Tests with pinned fake-indexeddb exercise concurrent tab writes, version conflicts, 236 scores, 150 personal words, missing pending event IDs, old-state preservation, two devices, repeated cloud fetch, logout and interrupted network. The simulation is not proof of actual Safari, Firebase or physical-device behavior.
+
+Additional staging hardening:
+- The IndexedDB shadow store's acknowledge(uid, ids, expectedRevision, approval) removes only server-confirmed IDs, in one serialized transaction. It never decreases counters and refuses foreign, duplicate or stale acknowledgments.
+- rs-sync-core now rejects dangerous object-property IDs and conflicting custom-word IDs. New safe word-upsert folds assign the event target as the stable word ID. A word-delete event requires deleted=true.
+- New regression tests run in staging CI; any failure must block further rollout.
+
+No real Firestore document was created or deleted in this update. The shadow datastore is not yet an app-visible source of truth.
