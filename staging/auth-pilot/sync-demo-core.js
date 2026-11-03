@@ -79,6 +79,7 @@
  }
  function clear(storage,uid){save(storage,uid,[]);}
  function signature(e){return JSON.stringify(fields.map(function(k){return e[k];}));}
+ function sameEvent(a,b){return signature(a)===signature(b);}
  function fold(uid,cloud,pending){
    if(!uidOK(uid)||!Array.isArray(cloud)||!Array.isArray(pending)||
       cloud.length>100||pending.length>60)throw Error('Invalid DEMO event listing');
@@ -104,5 +105,5 @@
      pending:localOnly,events:Object.keys(all).map(function(id){return all[id];})};
  }
  return {valid:valid,newEvent:newEvent,load:load,append:append,ack:ack,
-   clear:clear,fold:fold,hex:hex,uidOK:uidOK};
+   clear:clear,fold:fold,sameEvent:sameEvent,hex:hex,uidOK:uidOK};
 });
