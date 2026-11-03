@@ -104,6 +104,23 @@ async function run(){
   await assert.rejects(()=>tabB.stageCloud('alice',
     preview(merged,[winner.id,loser.id]),2,'VERIFIED_READ_ONLY_PREVIEW_TO_SHADOW'),
     /revision conflict/);
+  // Partially confirmed uploads remove ONLY acknowledged IDs, never counters.
+  await assert.rejects(()=>tabA.acknowledge('alice',[winner.id],3,'NO'),
+    /not verified/);
+  await assert.rejects(()=>tabA.acknowledge('alice',[E(999)],3,
+    'VERIFIED_SERVER_EVENT_ACK_TO_SHADOW'),/does not match pending/);
+  await assert.rejects(()=>tabA.acknowledge('alice',[winner.id,winner.id],3,
+    'VERIFIED_SERVER_EVENT_ACK_TO_SHADOW'),/duplicate acknowledged/);
+  assert.equal((await tabA.read('alice')).revision,3);
+  status=await tabB.acknowledge('alice',[winner.id],3,
+    'VERIFIED_SERVER_EVENT_ACK_TO_SHADOW');
+  assert.equal(status.revision,4);
+  assert.equal(status.pending,1);
+  record=await tabA.read('alice');
+  assert.equal(record.state.scores.T00001.seen,5);
+  assert.equal(record.pending[0].id,loser.id);
+  await assert.rejects(()=>tabA.acknowledge('alice',[loser.id],3,
+    'VERIFIED_SERVER_EVENT_ACK_TO_SHADOW'),/revision conflict/);
   // Account isolation: changing active UID never exposes prior learner state.
   active='bob';
   await assert.rejects(()=>tabA.read('alice'),/account changed/);
@@ -113,8 +130,8 @@ async function run(){
   assert.equal((await tabB.read('bob')).uid,'bob');
   assert.equal((await tabB.read('bob')).pending.length,0);
   active='alice';
-  assert.equal((await tabA.read('alice')).revision,3);
-  assert.equal((await tabA.read('alice')).pending.length,2);
+  assert.equal((await tabA.read('alice')).revision,4);
+  assert.equal((await tabA.read('alice')).pending.length,1);
   assert.equal(legacyWrites,0);
   assert.equal(remoteWrites,0);
   console.log('PASS: atomic IndexedDB shadow transactions, tab conflict, 236 scores, 150 words, pending preservation, UID isolation');
