@@ -56,7 +56,9 @@ async function run(){
  assert.equal(shift.value,'night');
  click('[data-action="med-mode"][data-value="phrases"]');
  assert.ok(doc.querySelectorAll('.rs-med-fold').length>10,'Phrases must be grouped rather than one long list');
- assert.ok(doc.getElementById('rs-med-phrase-results').textContent.includes('Aamutoimet'));
+ assert.ok(w.RS_DATA.mediatri.some(x=>x.cat==='Aamutoimet'));
+ assert.ok(doc.getElementById('rs-med-phrase-results').textContent.length>1000,
+  'Original categorized morning-care phrases must remain available after localization');
  click('[data-action="med-mode"][data-value="headings"]');
  assert.ok(doc.getElementById('main-content').textContent.includes('MNA'));
  assert.ok(doc.getElementById('main-content').textContent.includes('BRADEN'));
