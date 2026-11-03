@@ -12,7 +12,7 @@ const root=path.resolve(__dirname,'../..');
 const html=fs.readFileSync(path.join(root,'staging/site-v3-demo.html'),'utf8');
 const indexedDB=new IDBFactory();
 const expected=[
- 'rs-sync-core.js','rs-sync-shadow-idb.js',
+ 'data-public.js','rs-v3-public-catalog.js','rs-sync-core.js','rs-sync-shadow-idb.js',
  'rs-sync-shadow-reconcile.js','rs-sync-recovery-audit.js',
  'rs-admin-preview.js','rs-v3-demo.js'
 ];
@@ -49,6 +49,10 @@ async function run(){
  assert.equal(record.phase,'shadow');
  assert.equal(record.revision,0);
  assert.equal(Object.keys(record.state.scores).length,3);
+ assert.equal(w.RS_DATA.terms.length,1296);
+ assert.equal(w.RS_DATA.mediatri.length,183);
+ assert.ok(w.document.getElementById('demo-metrics').textContent.includes('1296'));
+ assert.equal(w.RS_V3_PUBLIC_CATALOG.create(w.RS_DATA).count,1296);
  assert.equal(record.pending.length,0);
  const first=w.document.querySelector('.demo-card h2').textContent;
  assert.equal(first,'hoiva-avustaja');
@@ -74,10 +78,26 @@ async function run(){
  assert.equal(Object.keys(record.state.words).length,1);
  assert.equal(record.pending.length,3);
  assert.ok(w.document.getElementById('demo-results').textContent.includes('kuntoutus'));
+ assert.ok(w.document.getElementById('demo-metrics').textContent.includes('1297'));
+ assert.ok(w.document.querySelectorAll('#demo-results li').length<=60);
  const search=w.document.getElementById('demo-search');
  search.value='rehabilitation';
  search.dispatchEvent(new w.Event('input',{bubbles:true}));
  assert.equal(w.document.querySelectorAll('#demo-results li').length,1);
+ click(w,'[data-tab=practice]');
+ assert.ok(w.document.querySelectorAll('[data-action="quiz-choice"]').length===3);
+ click(w,'[data-action="quiz-choice"]');
+ await w.RS_V3_DEMO.idle();
+ assert.ok(w.document.querySelector('[data-action="quiz-next"]'));
+ click(w,'[data-action="quiz-next"]');
+ click(w,'[data-tab=mediatri]');
+ assert.equal(w.document.querySelectorAll('#demo-med-list li').length,12);
+ click(w,'[data-action="med-switch"][data-mode="scenarios"]');
+ assert.ok(w.document.querySelector('#demo-med-list').textContent.includes('Утром'));
+ click(w,'[data-action="med-reveal"]');
+ assert.ok(w.document.querySelector('#demo-med-list').textContent.includes('Asukas'));
+ click(w,'[data-action="med-next"]');
+ assert.ok(w.document.querySelector('#demo-med-list').textContent.length>20);
  click(w,'[data-tab=sync]');
  const beforeSeen=record.state.scores.T00002.seen;
  click(w,'[data-action=sync]');
@@ -85,7 +105,7 @@ async function run(){
  record=await w.RS_V3_DEMO.read();
  assert.equal(record.state.scores.T00002.seen,beforeSeen+1);
  assert.equal(record.state.scores.T00002.correct,1);
- assert.equal(record.pending.length,3,'Mock reconciliation must never drop unconfirmed answers');
+ assert.equal(record.pending.length,4,'Mock reconciliation must never drop unconfirmed answers');
  assert.equal(Object.keys(record.state.words).length,1);
  click(w,'[data-action=sync]');
  await w.RS_V3_DEMO.idle();
@@ -111,13 +131,15 @@ async function run(){
  const b=createWindow();
  await b.ready;
  const reopened=await b.w.RS_V3_DEMO.read();
- assert.equal(reopened.pending.length,3);
+ assert.equal(reopened.pending.length,4);
  assert.equal(reopened.state.scores.T00001.correct,1);
  assert.equal(reopened.state.scores.T00002.correct,1);
  assert.equal(Object.keys(reopened.state.words).length,1);
  assert.equal(reopened.revision,twice.revision);
  assert.equal(b.w.localStorage.length,0,'Demo must not write any production localStorage key');
+ assert.ok(b.w.document.getElementById('demo-metrics').textContent.includes('1297'));
+ assert.ok(b.w.RS_DATA.terms.length===1296);
  b.dom.window.close();
- console.log('PASS: staging v3 demo FI/RU/EN, card answer, favorites, personal word, fake two-device sync, recovery, admin, reload; no real data');
+ console.log('PASS: v3 demo full public 1296-term FI/RU/EN catalog, synthetic card and quiz, Mediatri, user word, fake two-device sync, recovery, admin, reload');
 }
 run().catch(e=>{console.error(e);process.exit(1);});
