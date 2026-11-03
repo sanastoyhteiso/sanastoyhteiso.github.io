@@ -9,7 +9,8 @@ const get=p=>fs.readFileSync(path.join(dir,p),'utf8');
 const html=get('index.html'),style=get('style.css');
 const scripts=Array.from(html.matchAll(/<script src="([^"]+)"><\/script>/g)).map(m=>m[1]);
 assert.deepStrictEqual(scripts,['data-public.js','rs-admin-preview.js',
- 'rs-mediatri-guide.js','rs-demo-offline.js','app.js','mobile-nav.js','i18n.js']);
+ 'rs-mediatri-guide.js','rs-library-model.js','rs-library-demo.js',
+ 'rs-demo-offline.js','app.js','mobile-nav.js','i18n.js']);
 assert.ok(html.includes("connect-src 'none'"));
 assert.ok(!html.includes('family-locked')&&!html.includes('id="family-gate"'));
 assert.ok(!/firebase|google\.com\/gsi|https:\/\/www\.gstatic\.com/i.test(html));
