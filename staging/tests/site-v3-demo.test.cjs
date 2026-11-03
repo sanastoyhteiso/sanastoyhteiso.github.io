@@ -83,7 +83,10 @@ async function run(){
  const search=w.document.getElementById('demo-search');
  search.value='rehabilitation';
  search.dispatchEvent(new w.Event('input',{bubbles:true}));
- assert.equal(w.document.querySelectorAll('#demo-results li').length,1);
+ assert.ok(w.document.querySelectorAll('#demo-results li').length>=1);
+ assert.ok(w.document.querySelectorAll('#demo-results li').length<=60);
+ assert.ok(w.document.getElementById('demo-results').textContent.includes('kuntoutus'));
+ // Other published words may share the same translation; do not require uniqueness.
  click(w,'[data-tab=practice]');
  assert.ok(w.document.querySelectorAll('[data-action="quiz-choice"]').length===3);
  click(w,'[data-action="quiz-choice"]');
