@@ -38,6 +38,8 @@ jobs:
         run: node staging/tests/test-site-entry.test.cjs
       - name: Reject production Firebase project in future staging backend configuration
         run: node staging/tests/staging-backend-guard.test.cjs
+      - name: Test Google registration and verified identities with isolated staging Auth SDK mocks
+        run: node staging/tests/v3-auth-isolation.test.cjs
       - name: Test original classic UI with bottom mobile nav, Mediatri guide and FI EN RU
         run: node staging/tests/classic-ui.test.cjs
       - name: Parse production scripts and staging modules with Safari 12 syntax limits
