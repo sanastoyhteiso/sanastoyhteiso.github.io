@@ -97,7 +97,8 @@ function tick(){return new Promise(resolve=>setImmediate(resolve))}
  await tick();await tick();
  assert.equal(d.getElementById('pilot-email').textContent,'demo@example.invalid');
  assert.equal(d.getElementById('pilot-login').disabled,true);
- assert.ok(d.getElementById('pilot-status').textContent.includes('подтверждён'));
+ assert.ok(d.getElementById('pilot-status').textContent.includes('подтверждён'),
+   'After synthetic Google login actual status: '+JSON.stringify(d.getElementById('pilot-status').textContent));
  assert.ok(!d.documentElement.textContent.includes('NEVER-PUT-TOKEN-ON-PAGE'));
  assert.equal(good.w.localStorage.length,0,'Pilot UI never saves personal learning data');
  d.getElementById('pilot-logout').click();
