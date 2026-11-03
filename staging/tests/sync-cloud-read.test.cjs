@@ -31,6 +31,14 @@ async function run(){
   const doc=T.baselineDocument(uid,{migrationId:'M_test',createdAt:1793650000000,sha256:sha,snapshot:baseline});
   assert.equal(Object.keys(doc.fields.snapshot.mapValue.fields.scores.mapValue.fields).length,236);
   assert.equal(Object.keys(doc.fields.snapshot.mapValue.fields.words.mapValue.fields).length,150);
+  const corruptScores=Object.assign({},scores,{T00001:Object.assign({},scores.T00001,{seen:999})});
+  const invalidBaseline={scores:corruptScores,words,favorites};
+  const badDoc=T.baselineDocument(uid,{migrationId:'M_invalid',createdAt:1793650000000,
+    sha256:await S.digest(invalidBaseline,crypto),snapshot:invalidBaseline});
+  const editA=C.event(eid(103),device1,'word_upsert','custom-word-0',
+    {fi:'Sana muokattu',ru:'изменено A'},1793650000201);
+  const editB=C.event(eid(104),device2,'word_upsert','custom-word-0',
+    {fi:'Toinen muutos',ru:'изменено B'},1793650000202);
   let active=uid,requests=[],mode='normal',token='test-token';
   const adapter=async(method,url,body,authorization)=>{
     assert.equal(method,'GET');assert.equal(body,null);assert.equal(authorization,token);
@@ -38,6 +46,7 @@ async function run(){
     requests.push(url);
     if(url.indexOf('/state/baseline')>-1){
       if(mode==='noBaseline')return{status:404};
+      if(mode==='badCounts')return{status:200,body:badDoc};
       return{status:200,body:mode==='badHash'?{
         fields:Object.assign({},doc.fields,{sha256:{stringValue:'0'.repeat(64)}})
       }:doc};
@@ -46,7 +55,8 @@ async function run(){
     if(mode==='network')throw Error('Offline');
     if(url.indexOf('pageToken=next')>-1){
       if(mode==='switchUser')active='bob';
-      return{status:200,body:{documents:events.slice(100).map(wrapEvent)}};
+      return{status:200,body:{documents:events.slice(100).concat(
+        mode==='wordConflict'?[editA,editB]:[]).map(wrapEvent)}};
     }
     return{status:200,body:{documents:events.slice(0,100).map(wrapEvent),nextPageToken:'next'}};
   };
@@ -69,6 +79,8 @@ async function run(){
   await assert.rejects(()=>reader.load(uid,[{...events[0],data:{correct:!events[0].data.correct}}]),/conflicting/);
   mode='noBaseline';await assert.rejects(()=>reader.load(uid),/baseline is missing/);
   mode='badHash';await assert.rejects(()=>reader.load(uid),/checksum mismatch/);
+  mode='badCounts';await assert.rejects(()=>reader.load(uid),/counters diverge/);
+  mode='wordConflict';await assert.rejects(()=>reader.load(uid),/Conflicting edits/);
   mode='normal';await assert.rejects(()=>reader.load('bob'),/Account changed/);
   mode='switchUser';await assert.rejects(()=>reader.load(uid),/Account changed/);active=uid;
   mode='network';await assert.rejects(()=>reader.load(uid),/Offline/);
