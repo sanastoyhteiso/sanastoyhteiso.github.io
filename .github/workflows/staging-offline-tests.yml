@@ -22,6 +22,8 @@ jobs:
         run: npm install --prefix staging --no-audit --no-fund
       - name: Validate baseline code and catalog
         run: node staging/tests/smoke.test.js
+      - name: Guard production modules, translations and script graph without deploying
+        run: node staging/tests/production-regression.test.cjs
       - name: Test offline sync, retries, account isolation and baseline
         run: node staging/tests/sync-integration.test.js
       - name: Reject unsafe progress keys and conflicting word identities
