@@ -24,6 +24,8 @@ jobs:
         run: node staging/tests/smoke.test.js
       - name: Guard production modules, translations and script graph without deploying
         run: node staging/tests/production-regression.test.cjs
+      - name: Parse production scripts and staging modules with Safari 12 syntax limits
+        run: node staging/tests/safari12-syntax.test.cjs
       - name: Test offline sync, retries, account isolation and baseline
         run: node staging/tests/sync-integration.test.js
       - name: Reject unsafe progress keys and conflicting word identities
