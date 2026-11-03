@@ -79,3 +79,13 @@ Test file: `staging/tests/firestore-rules.test.cjs`. Source: `staging/firestore.
 - CI adds sync-controller-cloud.test.cjs and sync-local-adapter.test.cjs plus new cloud-read regressions.
 
 Not implemented: UI adoption, atomic local progress replacement, browser tests on a real account or approved real Firestore writes. The live application, legacy Google Drive sync, main and real Firestore data are not modified.
+
+## 3 November — isolated transactional shadow store
+
+A separate STAGING-only native IndexedDB module, `rs-sync-shadow-idb.js`, stores one versioned record per UID with the complete scores, personal words, favorites and unsent events. Operations run inside a native `readwrite` IndexedDB transaction with expected-revision checks; two tabs cannot silently commit the same stale revision. There is no fallback to several localStorage writes.
+
+`rs-sync-shadow-reconcile.js` takes a verified read-only result from `rs-sync-cloud-read.js` and explicitly stages it in this shadow record, only after confirming the same UID, a verified disabled-legacy gate, included pending IDs, expected revision and nondecreasing answer counters. It refuses loss of personal words, double-processing of pending events and account changes. It does not clear pending events and does not acknowledge writes to Firestore.
+
+The shadow database is named `sanastoyhteiso_staging_shadow_v3`; creation and writes require explicit staging enablement and approval. Neither module is included by the production site. **This does not migrate the existing legacy app.** Production still reads three separate localStorage keys. Linking its UI to a transactional state will require a new, carefully tested bootstrap/adapter and old iOS Safari compatibility checks, plus a verified real backup and owner approval.
+
+Tests with pinned fake-indexeddb exercise concurrent tab writes, version conflicts, 236 scores, 150 personal words, missing pending event IDs, old-state preservation, two devices, repeated cloud fetch, logout and interrupted network. The simulation is not proof of actual Safari, Firebase or physical-device behavior.
