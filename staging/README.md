@@ -68,3 +68,14 @@ Test file: `staging/tests/firestore-rules.test.cjs`. Source: `staging/firestore.
 9. Create an independent dated private Sheets snapshot and verify restore before rollout; a mirror alone is not a backup.
 
 **No service account secret, OAuth refresh token, Firebase Admin SDK privilege or payment data should ever be added to this repository.**
+
+## Update 2026-11-03 — guarded cloud preview and local app adapter (staging only)
+
+- New rs-sync-local-adapter.js reads the existing per-UID rs_family_v1 keys (rs_scores_v1, rs_user_words_v1, rs_favorites_v1) without writing; it verifies account identity and detects corrupt or concurrently changed data.
+- rs-sync-journal.js exposes a defensive read-only inspect() of the atomic checkpoint + queue; capture rejects duplicate IDs already pending.
+- rs-sync-controller.js optionally accepts cloudReader and normalizeSnapshot. Its checkRemote() produces a READ-ONLY preview, which it discards after local changes, acknowledgement, logout, offline, or stop. It never applies any remote data to the app.
+- autoCheckRemote is false by default; optional previews on focus/online/start are throttled to at least 60 seconds between attempts, without polling.
+- rs-sync-cloud-read.js rejects inconsistent score totals and conflicting cross-device edits to the same personal word.
+- CI adds sync-controller-cloud.test.cjs and sync-local-adapter.test.cjs plus new cloud-read regressions.
+
+Not implemented: UI adoption, atomic local progress replacement, browser tests on a real account or approved real Firestore writes. The live application, legacy Google Drive sync, main and real Firestore data are not modified.
