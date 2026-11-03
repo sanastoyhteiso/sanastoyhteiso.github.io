@@ -40,6 +40,7 @@ assert.ok(!/serviceWorker\.register\(/.test(read('app.js')));
 const scripts=[...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(x=>x[1]);
 assert.deepEqual(scripts,[
  'data-public.js','rs-admin-preview.js','rs-mediatri-guide.js',
+ 'rs-library-model.js','rs-library-demo.js',
  'rs-demo-offline.js','app.js','mobile-nav.js','i18n.js']);
 scripts.forEach(name=>acorn.parse(read(name),{ecmaVersion:5}));
 const d=new JSDOM(html,{url:'https://example.invalid/v3/classic/',runScripts:'outside-only'});
@@ -98,6 +99,19 @@ function change(id,value){
  const keys=Object.keys(w.localStorage);
  assert.ok(keys.some(k=>k.startsWith('rs_v3_classic_synthetic_only__rs_scores_v1')));
  assert.ok(keys.every(k=>k.indexOf('rs_v3_classic_')===0),'No production account localStorage keys may be written');
+ click('[data-view="libraries"]');
+ assert.ok(doc.getElementById('rs-library-new-form'),'Existing Library menu now shows demo management');
+ assert.equal(doc.querySelectorAll('[data-demo-library-action="sub"]').length,2);
+ assert.equal(w.RS_COMM.subscribedTerms().length,0,'No auto-subscriptions');
+ click('[data-demo-library-action="sub"][data-library-id="lib_demo_hoiva_2026"]');
+ assert.equal(w.RS_COMM.subscribedTerms().length,3);
+ assert.ok(w.RS_COMM.subscribedTerms()[0].id.indexOf('shared_')===0);
+ click('[data-demo-library-action="unsub"][data-library-id="lib_demo_hoiva_2026"]');
+ assert.equal(w.RS_COMM.subscribedTerms().length,0);
+ assert.ok(doc.getElementById('main-content').textContent.includes('JSON'));
+ const libStorageKey=w.RS_FAMILY.storageKey('rs_libraries_v1');
+ assert.ok(libStorageKey.indexOf('rs_v3_classic_synthetic_only__')===0);
+ assert.ok(w.localStorage.getItem(libStorageKey),'Only synthetic library state should be written');
  click('[data-view="backup"]');
  assert.ok(doc.getElementById('main-content').textContent.includes('Настройки сайта'));
  assert.ok(doc.getElementById('main-content').textContent.includes('Google Drive и Firestore'));
