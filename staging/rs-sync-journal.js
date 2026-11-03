@@ -104,7 +104,15 @@
    }
    function status(){var o=read();return o?{phase:o.phase,pending:o.pending.length,acknowledgedAt:o.acknowledgedAt}:
      {phase:'migration_required',pending:0,acknowledgedAt:0};}
-   return {initialize:initialize,activate:activate,capture:capture,peek:peek,acknowledge:acknowledge,status:status};
+   // READ ONLY. One consistent checkpoint/outbox snapshot for cloud reconciliation.
+   // Keep private content in memory; never emit it in status or diagnostics.
+   function inspect(){
+     var o=read();
+     return o?copy({uid:o.uid,phase:o.phase,checkpoint:o.checkpoint,
+       pending:o.pending,acknowledgedAt:o.acknowledgedAt}):null;
+   }
+   return {initialize:initialize,activate:activate,capture:capture,peek:peek,
+     acknowledge:acknowledge,status:status,inspect:inspect};
  }
  return {create:create,snapshot:snapshot};
 });
