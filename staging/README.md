@@ -117,3 +117,20 @@ The standalone page has a restrictive CSP (`connect-src 'none'`), no public disc
 New `tests/site-v3-demo.test.cjs` executes the demo modules in synthetic JSDOM + fake-indexeddb, tests trilingual navigation, cards, favorites, custom word, mock two-device merge without double counting, read-only history, mock admin, and reopening the demo with preserved synthetic data. Run through staging-only GitHub Actions; tests are not a substitute for testing an actual old Safari browser or authorized site origin.
 
 **Next owner-approved steps:** a genuine isolated hosted preview (without reusing the production origin and before touching any production script); a complete old-Safari compatibility check; true browser tests of real existing learning modules; design a staging-only bootstrap bridging public catalog and shadow store; secure admin metrics source and custom claim; and a fresh owner-reviewed backup immediately before any real data migration. Do not deploy/migrate without explicit permission.
+
+## Isolated /v3 preview — 2026-11-03
+
+The full PUBLIC training catalog was copied byte-for-byte from production `main/data.js` to `staging/data-public.js` (1,296 terms, 84 phrases, 183 Mediatri notes, 212 keyterms, 40 scenarios, 21 headings). `rs-v3-public-catalog.js` validates identifiers and FI/RU/EN terms and provides bounded search; it never reads private progress. The STAGING UI now has cards, a real-public-vocabulary practice quiz, bounded dictionary search, Mediatri scenarios/phrases/headings, mock two-device sync, local recovery audit and a synthetic administrator preview.
+
+New tests `staging/tests/v3-public-catalog.test.cjs` and expanded `site-v3-demo.test.cjs` pass on the reviewed v3 source commit `32fdf6877b0a48de7a281217139803eaf163138f`, alongside emulator CI. This is a public dictionary SNAPSHOT; if the real site's data.js later changes, the next update must recompare and revalidate before redeploy.
+
+A copy of the 8 exact tested scripts plus demo HTML was created at **`v3/` only** in the separate existing test repository:
+https://github.com/velardream-ctrl/riveria-sanasto-community-test/tree/main/v3
+
+The existing TEST repo root index.html was independently checked and remains blob SHA `09e7b24556da193d013256bf271cd0bfd3eafe60`. Main Sanastoyhteiso production `main` is untouched, PR #8 remains DRAFT. No real accounts, Firebase, Firestore, Google Drive, personal words or scores were copied. The preview's synthetic answers live in an independent browser IndexedDB under a fixed fictional UID.
+
+EXPECTED GitHub Pages location if Pages publishes from test repo main:
+https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3/
+This URL was **not verified as served** from the available environment (network/DNS access unavailable); never claim browser/public deployment success without opening it. User should check the link on a physical device; CI is JSDOM and Firestore Emulator, not real Safari.
+
+Do not replace the old test repo root, its service worker, or any production HTML, do not link this v3 sandbox into production, and do not turn synthetic auth/metrics into real claims without a server-side admin role. Next: browser verification and targeted fixes, then only separately approved real Firebase pilot with fresh independent JSON + Sheets backup.
