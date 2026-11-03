@@ -75,5 +75,7 @@
              'History is not an independent backup; restoration requires review'};
        });
    }
-   return {create:create};
- });
+   return {audit:audit};
+  }
+  return {create:create};
+});
