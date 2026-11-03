@@ -100,6 +100,9 @@
      if(!config||!guard||!adapterFactory||!controllerFactory)
        throw Error('Missing gated Auth files');
      var site={origin:w.location.origin,pathname:w.location.pathname};
+     var allowed='/riveria-sanasto-community-test/v3-classic/auth-pilot/';
+     if(site.pathname!==allowed&&site.pathname!==allowed+'index.html')
+       throw Error('Auth pilot available only at its dedicated test URL');
      guard.validate({site:site,firebase:config.firebase,
        expectedProjectId:config.expectedProjectId,
        productionProjectId:config.productionProjectId});
