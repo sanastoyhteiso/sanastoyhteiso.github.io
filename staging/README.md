@@ -105,3 +105,15 @@ The owner's priority is **live site reliability** rather than exact learned-card
 - `rs-sync-recovery-audit.js` reads isolated shadow IndexedDB revision history and unacknowledged-event counts, validates it and reports only numeric summaries. It cannot restore data, overwrite history or replace independent dated backups. `tests/sync-recovery-audit.test.cjs` intentionally corrupts synthetic history and verifies failure-closed behavior.
 
 Keep all staged modules detached from `index.html`. Before a future owner-approved pilot: take a **fresh** personal JSON/Sheets backup (older Nov 2 snapshots cannot capture answers earned since), test browser workflows on iOS 12 and modern devices, and maintain rollback and existing Google Drive sync until verified migration.
+
+## 2026-11-03 — standalone trilingual v3 demo
+
+A new opt-in, staging-only synthetic UI is stored at `staging/site-v3-demo.html` and `staging/rs-v3-demo.js`, **not loaded by the live website**. It is a real interactive prototype of the future application shell, not a deployment.
+
+The page combines five sections in Finnish/Russian/English: cards, personal vocabulary, mock device reconciliation, read-only history audit and a synthetic read-only admin dashboard. It uses existing `rs-sync-core.js`, `rs-sync-shadow-idb.js`, `rs-sync-shadow-reconcile.js`, `rs-sync-recovery-audit.js` and `rs-admin-preview.js`. Cards, favorites and personal words are saved transactionally to a dedicated shadow IndexedDB under the constant synthetic UID `demo-v3-synthetic-only`. A hard-coded *synthetic event* represents a second device. No real Firebase credential, user UID, Firestore request, Google Drive connection or live vocab is used. The mock admin claim and all metrics are intentionally fabricated and do NOT grant real admin rights.
+
+The standalone page has a restrictive CSP (`connect-src 'none'`), no public discovery/indexing, no external scripts, no localStorage writes and no destructive user controls. Staging `site-v3-demo.html` has NOT been deployed or linked from `index.html`, and its GitHub file view is not itself an interactive browser deployment.
+
+New `tests/site-v3-demo.test.cjs` executes the demo modules in synthetic JSDOM + fake-indexeddb, tests trilingual navigation, cards, favorites, custom word, mock two-device merge without double counting, read-only history, mock admin, and reopening the demo with preserved synthetic data. Run through staging-only GitHub Actions; tests are not a substitute for testing an actual old Safari browser or authorized site origin.
+
+**Next owner-approved steps:** a genuine isolated hosted preview (without reusing the production origin and before touching any production script); a complete old-Safari compatibility check; true browser tests of real existing learning modules; design a staging-only bootstrap bridging public catalog and shadow store; secure admin metrics source and custom claim; and a fresh owner-reviewed backup immediately before any real data migration. Do not deploy/migrate without explicit permission.
