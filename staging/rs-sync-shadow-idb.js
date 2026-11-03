@@ -224,8 +224,39 @@
        return {record:r,response:statusView(r)};
      });
    }
+   function acknowledge(uid,ids,expectedRevision,approval){
+     if(approval!=='VERIFIED_SERVER_EVENT_ACK_TO_SHADOW')
+       return Promise.reject(Error('Server acknowledgment not verified'));
+     if(!Array.isArray(ids)||!ids.length||ids.length>12)
+       return Promise.reject(Error('Invalid server acknowledgment batch'));
+     var unique={},list=[];
+     try{
+       ids.forEach(function(id){
+         if(typeof id!=='string'||!/^E_[a-f0-9]{32}$/.test(id)||unique[id])
+           throw Error('Invalid or duplicate acknowledged event ID');
+         unique[id]=true;list.push(id);
+       });
+     }catch(e){return Promise.reject(e);}
+     return atomic(uid,function(old){
+       if(!old)throw Error('Shadow initialization required');
+       if(old.revision!==expectedRevision)
+         throw Error('Shadow revision conflict: re-read before retry');
+       var pending={};
+       old.pending.forEach(function(e){pending[e.id]=true;});
+       list.forEach(function(id){
+         if(!pending[id])throw Error('Server ACK does not match pending shadow event');
+       });
+       var r=clone(old);
+       r.pending=old.pending.filter(function(e){return !unique[e.id];});
+       r.history=history(old);
+       r.revision++;
+       // Do not roll back counters: the server has merely confirmed an event
+       // already reflected in this local shadow state.
+       return {record:r,response:statusView(r)};
+     });
+   }
    return {read:read,initialize:initialize,appendLocal:appendLocal,
-     stageCloud:stageCloud};
+     stageCloud:stageCloud,acknowledge:acknowledge};
  }
  return {create:create,snapshot:snapshot};
 });
