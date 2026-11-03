@@ -26,6 +26,8 @@ jobs:
         run: node staging/tests/production-regression.test.cjs
       - name: Run unmodified app modules in synthetic browser without real user accounts
         run: node staging/tests/production-dom-smoke.test.cjs
+      - name: Test trilingual v3 demo UI with isolated shadow sync and recovery
+        run: node staging/tests/site-v3-demo.test.cjs
       - name: Parse production scripts and staging modules with Safari 12 syntax limits
         run: node staging/tests/safari12-syntax.test.cjs
       - name: Test offline sync, retries, account isolation and baseline
