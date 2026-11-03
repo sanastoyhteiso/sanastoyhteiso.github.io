@@ -21,6 +21,10 @@ assert.equal(x.valid(a,other),false);
 assert.throws(()=>x.newEvent(uid,deviceA,'T00012',true,1,rng(4)));
 assert.throws(()=>x.newEvent(uid,deviceA,'DEMO_CARD_A',true,1,new Array(16).fill(300)));
 assert.equal(x.valid({...a,email:'private@example.invalid'},uid),false);
+assert.equal(x.sameEvent(a,{demo:true,correct:true,target:a.target,
+  time:a.time,kind:a.kind,device:a.device,id:a.id,uid:a.uid,v:1}),true,
+  'Firestore document key order must not invalidate idempotency');
+assert.equal(x.sameEvent(a,{...a,correct:false}),false);
 const localA=store(),localB=store();
 x.append(localA,uid,a);
 x.append(localB,uid,b);
