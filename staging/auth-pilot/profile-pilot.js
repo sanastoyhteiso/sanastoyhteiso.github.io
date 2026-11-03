@@ -5,7 +5,7 @@
 (function(w,d){
  'use strict';
  var CONFIG=w.RS_V3_AUTH_PILOT_CONFIG,guard=w.RS_V3_TEST_BACKEND_GUARD;
- var controller=null,client=null,store=null,db=null,busy=false,started=false;
+ var controller=null,client=null,store=null,db=null,busy=false,started=false,securityConfirmed=false;
  var PATH='/riveria-sanasto-community-test/v3-classic/auth-pilot/profile.html';
  function el(id){return d.getElementById(id);}
  function put(id,value){el(id).textContent=value;}
@@ -15,7 +15,7 @@
    var s=state(),v=verified();
    el('login').disabled=busy||!s||s.status==='verified'||s.status==='unverified'||s.status==='checking'||s.status==='signing_in';
    el('logout').disabled=busy||!s||!s.user;
-   el('read').disabled=busy||!v;el('register').disabled=busy||!v;
+   el('read').disabled=busy||!v;el('register').disabled=busy||!v||!securityConfirmed;
    el('deny').disabled=busy||!v;
  }
  function note(value,error){put('message',value);el('message').className=error?'state error':'state ok';}
@@ -35,13 +35,16 @@
    put('auth-status',names[s.status]||'Неизвестно');
    el('profile').hidden=true;
    put('profile-status',s.status==='verified'?'Нажми «Прочитать профиль»':'Требуется подтверждённый вход');
-   put('deny-status','Не проверено');controls();
+   put('deny-status','Не проверено');securityConfirmed=false;controls();
  }
  function run(action,success){
    if(!verified()||busy)return;
    busy=true;controls();note('Выполняется проверка…',false);
    Promise.resolve().then(action).then(function(value){
-     if(verified()){if(success)success(value);note('Проверка завершена.',false);}
+     if(verified()){
+       var result=success?success(value):null;
+       if(result!==false)note('Проверка завершена.',false);
+     }
    },function(err){if(verified())note('Ошибка: '+errorCode(err),true);}).then(function(){
      busy=false;controls();
    },function(){busy=false;controls();});
@@ -114,8 +117,10 @@
            throw err;
          });
      },function(denied){
+       securityConfirmed=!!denied;
        put('deny-status',denied?'PASS: Firestore отказал в доступе':'ОПАСНО: Firestore разрешил чужое чтение');
-       if(!denied)note('Правила сервера необходимо проверить. Дальнейшие записи останови.',true);
+       controls();
+       if(!denied){note('Правила сервера необходимо проверить. Создание профилей запрещено.',true);return false;}
      });
    });
  }
