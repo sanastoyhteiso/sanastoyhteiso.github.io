@@ -96,3 +96,12 @@ Additional staging hardening:
 - New regression tests run in staging CI; any failure must block further rollout.
 
 No real Firestore document was created or deleted in this update. The shadow datastore is not yet an app-visible source of truth.
+
+## 2026-11-03 — module stability, Safari syntax and recovery audit
+
+The owner's priority is **live site reliability** rather than exact learned-card count. Existing learners continue answering cards on the published site. Therefore:
+- `tests/safari12-syntax.test.cjs` uses a pinned Acorn parser to reject ES2019+ syntax in production scripts/inline bootstrap and enforce ES5 source syntax in isolated staging runtime modules. **Parser compatibility does not prove actual Safari iOS 12 support.**
+- `tests/production-dom-smoke.test.cjs` runs **the unchanged real `data.js` and `app.js`** in JSDOM with synthetic accounts and in-memory/local test storage. It checks cards, answers, quizzes, dictionary, Mediatri phrases and headings, personal words, Data, users, library and account isolation. It performs **no network requests and no production writes**. It is a simulated DOM, not a Safari device/browser.
+- `rs-sync-recovery-audit.js` reads isolated shadow IndexedDB revision history and unacknowledged-event counts, validates it and reports only numeric summaries. It cannot restore data, overwrite history or replace independent dated backups. `tests/sync-recovery-audit.test.cjs` intentionally corrupts synthetic history and verifies failure-closed behavior.
+
+Keep all staged modules detached from `index.html`. Before a future owner-approved pilot: take a **fresh** personal JSON/Sheets backup (older Nov 2 snapshots cannot capture answers earned since), test browser workflows on iOS 12 and modern devices, and maintain rollback and existing Google Drive sync until verified migration.
