@@ -65,7 +65,7 @@
      if(active()!==uid)throw Error('Account changed during profile operation');
    }
    function read(){
-     var uid=active();
+     var uid;try{uid=active();}catch(e){return Promise.reject(e);}
      return Promise.resolve().then(function(){assertSame(uid);return opts.store.read(uid);})
        .then(function(profile){
          assertSame(uid);
@@ -75,7 +75,8 @@
        });
    }
    function ensure(){
-     var uid=active(),identity=opts.auth.getState().user;
+     var uid;try{uid=active();}catch(e){return Promise.reject(e);}
+     var identity=opts.auth.getState().user;
      return read().then(function(profile){
        assertSame(uid);
        if(profile)return profile; // never reset existing nickname, privacy or count
@@ -93,7 +94,7 @@
      });
    }
    function update(alias,publicStats){
-     var uid=active();
+     var uid;try{uid=active();}catch(e){return Promise.reject(e);}
      return read().then(function(profile){
        assertSame(uid);
        if(!profile)throw Error('Profile missing; register before editing');
