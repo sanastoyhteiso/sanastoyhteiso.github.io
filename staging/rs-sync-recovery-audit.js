@@ -13,12 +13,12 @@
    Math.floor(x)===x&&x>=0&&x<=9007199254740991;}
  function create(opts){
    if(!opts||!opts.shadow||typeof opts.shadow.read!=='function'||
-      typeof opts.shadow.snapshot!=='function'||
+      typeof opts.normalizeSnapshot!=='function'||
       !opts.core||typeof opts.core.valid!=='function'||
       typeof opts.activeUid!=='function')
      throw Error('Read-only recovery auditor dependencies missing');
    function summary(s){
-     var state=opts.shadow.snapshot(s),seen=0,correct=0,wrong=0;
+     var state=opts.normalizeSnapshot(s),seen=0,correct=0,wrong=0;
      Object.keys(state.scores).forEach(function(id){
        seen+=state.scores[id].seen;
        correct+=state.scores[id].correct;
