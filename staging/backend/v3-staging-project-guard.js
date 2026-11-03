@@ -13,6 +13,8 @@
 })(this,function(){
  'use strict';
  var LIVE=['riveria-sanasto-community-test'];
+ // Project ID confirmed from the owner's separate Firebase Console screenshot.
+ var VERIFIED_STAGING='sanastoyhteiso-v3-development';
  var ORIGIN='https://velardream-ctrl.github.io';
  var PATH='/riveria-sanasto-community-test/v3-classic/';
  function safeId(s){
@@ -27,8 +29,8 @@
      throw Error('A verified, exact new staging Firebase project is required');
    if(LIVE.indexOf(id)!==-1)
      throw Error('The existing Firebase project is used by the live site');
-   if(id.indexOf('sanastoyhteiso-v3-')!==0)
-     throw Error('Use a dedicated sanastoyhteiso-v3-* Firebase staging project');
+   if(id!==VERIFIED_STAGING)
+     throw Error('Use only the exact verified independent staging Firebase project');
    if(project.authDomain!==id+'.firebaseapp.com')
      throw Error('The test Firebase auth domain must match its staging project');
    if(typeof project.apiKey!=='string'||!/^AIza[A-Za-z0-9_-]{30,}$/.test(project.apiKey))
@@ -40,5 +42,5 @@
    return Object.freeze?Object.freeze({isolated:true,projectId:id,testSite:PATH}):
      {isolated:true,projectId:id,testSite:PATH};
  }
- return {validate:check,liveProjectIds:LIVE.slice(),testOrigin:ORIGIN,testPath:PATH};
+ return {validate:check,liveProjectIds:LIVE.slice(),verifiedStagingProjectId:VERIFIED_STAGING,testOrigin:ORIGIN,testPath:PATH};
 });
