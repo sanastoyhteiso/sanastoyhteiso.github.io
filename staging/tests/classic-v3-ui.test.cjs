@@ -16,6 +16,16 @@ assert.ok(html.includes('<div class="shell">')&&html.includes('class="mobile-nav
 assert.ok(html.includes('class="sidebar"')&&html.includes('id="main-content"'));
 assert.ok(html.includes('connect-src &#39;none&#39;')||html.includes("connect-src 'none'"));
 assert.ok(html.includes('noindex,nofollow'));
+
+assert.ok(html.includes('href="../icon-192.png"'),'Classic favicon should use existing root icon');
+['about.html','privacy.html','terms.html'].forEach(name=>{
+  assert.ok(html.includes('href="'+name+'"'),'Classic footer must link to '+name);
+  const doc=read(name);
+  assert.ok(doc.includes('DEMO ONLY'),'Test information should be labeled demo');
+  assert.ok(doc.includes("connect-src 'none'"),'Information pages must not contact real backend');
+  assert.ok(doc.includes('Suomi')&&doc.includes('English')&&doc.includes('Русский'));
+});
+
 assert.ok(!html.includes('rs-ui-language'),'Do not show automatic language selector');
 assert.ok(!html.includes('id="family-gate"'),'No real authentication in demo');
 assert.ok(!html.includes('https://accounts.google.com'));
