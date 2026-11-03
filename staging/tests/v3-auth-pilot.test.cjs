@@ -22,6 +22,10 @@ assert.ok(publicConfig.includes("apiKey:'AIzaSyDGkOv5dw2e0UuBPJkATlgxHYdlSqKleHo
 assert.ok(!publicConfig.includes('initializeApp('));
 assert.ok(!publicConfig.includes('PRIVATE KEY'));
 assert.ok(html.includes('noindex,nofollow'));
+assert.ok(/script-src[^;]*https:\/\/apis\.google\.com/.test(html),'Firebase Auth popup must load Google API scripts');
+assert.ok(/connect-src[^;]*https:\/\/apis\.google\.com/.test(html),'Google API request must be allowed');
+assert.ok(/frame-src[^;]*https:\/\/accounts\.google\.com/.test(html),'OAuth frame must be allowed');
+assert.ok(!/script-src[^;]*'unsafe-inline'/.test(html),'Keep local JS restriction');
 assert.ok(html.includes("default-src 'none'"));
 assert.ok(!html.includes("connect-src 'none'"),'Auth pilot must explicitly allow Firebase Auth');
 assert.ok(!html.includes('firebase-firestore'));
@@ -46,7 +50,8 @@ function makeSdk(){
     onAuthStateChanged(fn){calls.observer=fn;fn(this.currentUser);return()=>{calls.observer=null;};},
     signInWithPopup(provider){
       calls.popups++;calls.provider=provider;
-      if(calls.syntheticError)return Promise.reject({code:calls.syntheticError});
+      if(calls.syntheticError)return Promise.reject({code:calls.syntheticError,
+        customData:calls.syntheticUnderlying?{originalError:{message:calls.syntheticUnderlying}}:{}});
       const current={uid:'syntheticAuthUser',email:'demo@example.invalid',
         displayName:'Synthetic User',emailVerified:true,
         getIdToken:()=>Promise.resolve('NEVER-PUT-TOKEN-ON-PAGE'),
@@ -119,6 +124,28 @@ function tick(){return new Promise(resolve=>setImmediate(resolve))}
  assert.ok(guidance.textContent.includes('auth/internal-error'),'Support code should remain visible');
  assert.equal(internal.w.localStorage.length,0,'No learning data persisted during failed popup');
  internal.close();
+ const storageProblem=bootstrap('https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3-classic/auth-pilot/',true);
+ storageProblem.calls.syntheticError='auth/internal-error';
+ storageProblem.calls.syntheticUnderlying='Database is closing/hidden';
+ storageProblem.w.document.querySelector('[data-pilot-lang="ru"]').click();
+ storageProblem.w.document.getElementById('pilot-login').click();
+ await tick();await tick();
+ const detail=storageProblem.w.document.getElementById('pilot-message').textContent;
+ assert.ok(detail.includes('IndexedDB'),'Storage diagnosis should survive sanitized controller');
+ assert.ok(!detail.includes('Database is closing/hidden'),'Do not expose raw SDK exceptions');
+ storageProblem.close();
+ const cspProblem=bootstrap('https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3-classic/auth-pilot/',true);
+ cspProblem.calls.syntheticError='auth/internal-error';
+ cspProblem.w.document.querySelector('[data-pilot-lang="ru"]').click();
+ const violation=new cspProblem.w.Event('securitypolicyviolation');
+ Object.defineProperty(violation,'blockedURI',{value:'https://apis.google.com/js/api.js?ignored'});
+ cspProblem.w.document.dispatchEvent(violation);
+ cspProblem.w.document.getElementById('pilot-login').click();
+ await tick();await tick();
+ const cspText=cspProblem.w.document.getElementById('pilot-message').textContent;
+ assert.ok(cspText.includes('заблокировал ресурс Google'),'Only classify recognized Google CSP failures');
+ assert.ok(!cspText.includes('ignored'),'Do not leak blocked URL paths');
+ cspProblem.close();
  const outside=bootstrap('https://sanastoyhteiso.github.io/v3-classic/auth-pilot/',true);
  assert.equal(outside.calls.initialize,0,'Never initialize SDK on production origin');
  assert.equal(outside.w.document.getElementById('pilot-login').disabled,true);
