@@ -225,21 +225,13 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
-
-    // ISOLATED, DELETABLE PILOT EVENTS. No real study words or migration baseline.
-    // Must be deployed only to the independent V3 development Firebase project.
+    // ISOLATED, DELETABLE PILOT EVENTS — new project only.
     match /sync_demo_v3/{uid}/events/{eventId} {
       allow get: if own(uid);
       allow list: if own(uid) && request.query.limit != null &&
         request.query.limit <= 100;
       allow create: if own(uid) &&
-        eventId.matches('^P_[a-f0-9]{32}
-    match /{document=**} {
-      allow read, write: if false;
-    }
-  }
-}
-) &&
+        eventId.matches('^P_[a-f0-9]{32}$') &&
         request.resource.data.keys().hasAll([
           'v', 'uid', 'id', 'device', 'kind', 'target', 'time', 'correct', 'demo'
         ]) &&
@@ -250,13 +242,7 @@ service cloud.firestore {
         request.resource.data.uid == uid &&
         request.resource.data.id == eventId &&
         request.resource.data.device is string &&
-        request.resource.data.device.matches('^D_[a-f0-9]{32}
-    match /{document=**} {
-      allow read, write: if false;
-    }
-  }
-}
-) &&
+        request.resource.data.device.matches('^D_[a-f0-9]{32}$') &&
         request.resource.data.kind == 'answer' &&
         request.resource.data.target in [
           'DEMO_CARD_A', 'DEMO_CARD_B', 'DEMO_CARD_C'
@@ -266,8 +252,7 @@ service cloud.firestore {
         request.resource.data.correct is bool &&
         request.resource.data.demo == true;
       allow update: if false;
-      // Only the verified owner may remove this DEMO record. No live v3
-      // history can be removed via these rules.
+      // Only the owner may delete this synthetic demonstration event.
       allow delete: if own(uid) && resource.data.demo == true &&
         resource.data.uid == uid && resource.data.id == eventId;
     }
