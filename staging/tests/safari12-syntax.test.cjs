@@ -40,7 +40,7 @@ const stage=[
   'rs-firestore-transport.js','rs-sync-http.js','rs-sync-controller.js',
   'rs-sync-cloud-read.js','rs-sync-local-adapter.js','rs-sync-shadow-idb.js',
   'rs-sync-shadow-reconcile.js','rs-sync-recovery-audit.js',
-  'rs-v3-demo.js',
+  'rs-v3-demo.js','rs-v3-public-catalog.js',
   'rs-sha256.js','rs-backup-plan.js',
   'rs-catalog-release.js','rs-admin-preview.js'
 ];
