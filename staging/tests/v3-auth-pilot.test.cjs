@@ -40,7 +40,8 @@ assert.deepStrictEqual(scriptRefs,[
  'config.js','guard.js',
  'https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js',
  'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js',
- 'adapter.js','controller.js','pilot.js'
+ 'adapter.js','controller.js?v=oauth-csp-20261103',
+ 'pilot.js?v=oauth-csp-20261103'
 ]);
 function makeSdk(){
   const calls={initialize:0,popups:0,signouts:0,active:null,observer:null,
