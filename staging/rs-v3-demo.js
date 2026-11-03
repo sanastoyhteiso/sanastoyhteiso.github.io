@@ -282,7 +282,10 @@
      escapeText(w.ru)+' <small>'+escapeText(w.en||'—')+'</small></li>';}).join('');
    doc.getElementById('demo-results').innerHTML=out||'<li>'+escapeText(translate('empty'))+'</li>';
  }
+ var didStart=false;
  function start(){
+   if(didStart)return;
+   didStart=true;
    doc.getElementById('demo-tabs').addEventListener('click',click);
    container.addEventListener('click',click);
    container.addEventListener('submit',onSubmit);
