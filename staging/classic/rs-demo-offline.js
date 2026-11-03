@@ -27,6 +27,14 @@
      '<p>Тестовая версия: публичный словарь включён. Облачная библиотека отключена.</p></div>';},
    renderUsers:function(el){el.innerHTML='<div class="panel"><h2>Пользователи</h2>'+
      '<p>Здесь нет реальных аккаунтов или пользовательских данных. Тестовая сборка работает локально.</p></div>';},
-   dataPanel:function(){return '<div class="panel"><p>Google Drive и Firestore в демонстрации отключены.</p></div>';}
+   dataPanel:function(){
+     var html=w.RS_ADMIN_PREVIEW?w.RS_ADMIN_PREVIEW.render(
+       {admin:true},{catalogVersion:'DEMO — offline preview'},
+       w.RS_I18N?w.RS_I18N.getLanguage():'ru'):'';
+     return '<div class="panel"><h2>Настройки сайта — учебный макет</h2>'+
+       '<p>Панель администратора здесь только пример интерфейса. ' +
+       'Авторизация, список реальных пользователей, Firebase и Google Drive отключены.</p>'+
+       '<p>Настоящие права администратора впоследствии проверяются сервером.</p>'+html+'</div>';
+   }
  };
 })(this);
