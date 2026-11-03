@@ -78,6 +78,8 @@ jobs:
         run: node staging/tests/admin-preview.test.cjs
       - name: Test read-only Firestore permissions diagnostic
         run: node staging/tests/firestore-diagnostics.test.cjs
+      - name: Compare two personal backups locally without uploads or writes
+        run: node staging/tests/migration-preflight.test.cjs
       - name: Check personal JSON backup preflight without private data upload
         run: node staging/tests/personal-backup-audit.test.cjs
       - name: Check browser test pages have no uploads or write operations
