@@ -58,14 +58,14 @@ async function run(){
   assert.equal(result.ok,false);
   assert.equal(calls,firstCalls,'uncaptured local changes must block cloud fetch');
   assert.equal(storage.writes,startWrites);
-  journal.capture(local);
+  assert.equal(controller.capture().created,1);
   assert.equal(journal.status().pending,1);
   assert.equal(storage.writes,startWrites+1);
   let hold=deferred();loader=()=>hold.promise;
   const inFlight=controller.checkRemote();
   await Promise.resolve();
   local.favorites.T00001=true;
-  journal.capture(local);
+  assert.equal(controller.capture().created,1);
   hold.release(response([]));
   result=await inFlight;
   assert.equal(result.ok,false,'new answer/change during cloud read must discard stale preview');
