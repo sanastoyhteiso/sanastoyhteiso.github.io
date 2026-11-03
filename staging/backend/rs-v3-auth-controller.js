@@ -49,6 +49,7 @@
      throw Error('Unverified isolation is not authorization');
    var status='signed_out',current=null,revision=0,started=false,
      disposed=false,watchers=[],unsubscribe=null,pending=false,
+     blockedAfterLogout=false,
      initFailed=null;
    function publish(){
      var state=snapshot();
@@ -64,7 +65,8 @@
      revision++;status=next;current=user||null;initFailed=error||null;publish();
    }
    function applyAuth(user){
-     if(disposed)return;
+     // A late SDK callback must never re-open a session after explicit logout.
+     if(disposed||blockedAfterLogout)return;
      try{
        var safe=userView(user);
        change(safe?(safe.verified?'verified':'unverified'):'signed_out',safe,null);
@@ -93,7 +95,7 @@
    function signIn(){
      if(disposed||!started)return Promise.reject(Error('Auth not started'));
      if(pending)return Promise.reject(Error('Sign-in already underway'));
-     pending=true;
+     pending=true;blockedAfterLogout=false;
      change('signing_in',null,null);
      // Popup must open synchronously within the original user click.
      // Delaying it to Promise.then() loses activation on some Safari versions.
@@ -115,7 +117,7 @@
    }
    function verifiedUser(){
      var user=opts.adapter.currentUser();
-     if(status!=='verified'||!current||!current.verified||!user||
+     if(blockedAfterLogout||status!=='verified'||!current||!current.verified||!user||
         user.uid!==current.uid||user.emailVerified!==true)
        throw Error('Verified authenticated account required');
      return {user:user,uid:current.uid,revision:revision};
@@ -137,7 +139,8 @@
      });
    }
    function refreshVerification(){
-     if(!started||disposed)return Promise.reject(Error('Auth not started'));
+     if(!started||disposed||blockedAfterLogout)
+       return Promise.reject(Error('Auth not started'));
      var user=opts.adapter.currentUser();
      if(!user||!current||user.uid!==current.uid)
        return Promise.reject(Error('No signed-in account'));
@@ -154,8 +157,9 @@
    }
    function logout(){
      if(disposed)return Promise.reject(Error('Controller closed'));
-     var previous=opts.adapter.currentUser();
-     // Deny all token access immediately, even if network sign-out fails.
+     // Deny all token access immediately, even if sign-out takes time
+     // or a delayed Firebase callback tries to restore an old user.
+     blockedAfterLogout=true;
      change('signed_out',null,null);
      return Promise.resolve().then(function(){
        return opts.adapter.signOut();
@@ -165,7 +169,7 @@
      });
    }
    function close(){
-     disposed=true;pending=false;
+     disposed=true;pending=false;blockedAfterLogout=true;
      if(unsubscribe)unsubscribe();
      unsubscribe=null;current=null;status='signed_out';watchers=[];
      revision++;
