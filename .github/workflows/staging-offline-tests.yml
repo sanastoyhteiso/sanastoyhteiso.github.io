@@ -30,6 +30,8 @@ jobs:
         run: node staging/tests/v3-public-catalog.test.cjs
       - name: Test trilingual v3 demo UI with isolated shadow sync and recovery
         run: node staging/tests/site-v3-demo.test.cjs
+      - name: Test original classic UI with bottom mobile nav, Mediatri guide and FI EN RU
+        run: node staging/tests/classic-ui.test.cjs
       - name: Parse production scripts and staging modules with Safari 12 syntax limits
         run: node staging/tests/safari12-syntax.test.cjs
       - name: Test offline sync, retries, account isolation and baseline
