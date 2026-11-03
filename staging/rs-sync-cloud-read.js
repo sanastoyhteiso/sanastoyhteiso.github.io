@@ -87,7 +87,9 @@
        if(folded.invalid||folded.duplicates||folded.applied!==unique.length)
          throw Error('Cloud fold incomplete; preserve original local data');
        return {ok:true,state:folded.state,cloudEvents:x.remote.length,
-         localPending:(localPending||[]).length,uniqueEvents:unique.length,
+         localPending:(localPending||[]).length,
+         includedPendingIds:(localPending||[]).map(function(e){return e.id;}),
+         uniqueEvents:unique.length,
          applied:folded.applied,readyToApply:false,
          message:'Read-only preview. Application to this device requires an explicit migration gate.'};
      });
