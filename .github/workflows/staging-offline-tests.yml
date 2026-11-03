@@ -40,6 +40,8 @@ jobs:
         run: node staging/tests/staging-backend-guard.test.cjs
       - name: Test isolated two-device demo sync core, offline queue and ES5 syntax
         run: node staging/tests/v3-sync-demo-core.test.cjs
+      - name: Check isolated Firebase 8 two-device demo browser shell without network
+        run: node staging/tests/v3-sync-demo-browser.test.cjs
       - name: Test Google registration and verified identities with isolated staging Auth SDK mocks
         run: node staging/tests/v3-auth-isolation.test.cjs
       - name: Test independently configured Google Auth pilot page with a fake SDK
