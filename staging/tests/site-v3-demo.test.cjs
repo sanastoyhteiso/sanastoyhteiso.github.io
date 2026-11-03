@@ -135,7 +135,7 @@ async function run(){
  await b.ready;
  const reopened=await b.w.RS_V3_DEMO.read();
  assert.equal(reopened.pending.length,4);
- assert.equal(reopened.state.scores.T00001.correct,1);
+ assert.equal(reopened.state.scores.T00001.correct,2,'Card and quiz each add a unique correct event');
  assert.equal(reopened.state.scores.T00002.correct,1);
  assert.equal(Object.keys(reopened.state.words).length,1);
  assert.equal(reopened.revision,twice.revision);
