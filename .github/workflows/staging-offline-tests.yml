@@ -40,6 +40,8 @@ jobs:
         run: node staging/tests/sync-shadow-idb.test.cjs
       - name: Test verified cloud read into isolated shadow without live app writes
         run: node staging/tests/sync-shadow-reconcile.test.cjs
+      - name: Audit saved shadow history without restoring or modifying progress
+        run: node staging/tests/sync-recovery-audit.test.cjs
       - name: Test read-only multilingual admin preview and permission guard
         run: node staging/tests/admin-preview.test.cjs
       - name: Test read-only Firestore permissions diagnostic
