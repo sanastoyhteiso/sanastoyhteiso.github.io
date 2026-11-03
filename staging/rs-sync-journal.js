@@ -57,6 +57,7 @@
        throw Error('Cloud migration not safely activated');
      var now=Number(opts.now?opts.now():Date.now());
      var latest=snapshot(next),base=old.checkpoint,events=[],ids={};
+     old.pending.forEach(function(e){ids[e.id]=true;});
      function add(kind,target,data){
        var id=String(opts.newId());
        if(ids[id])throw Error('Duplicate generated ID');
