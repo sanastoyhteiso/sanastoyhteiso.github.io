@@ -95,8 +95,13 @@
      if(pending)return Promise.reject(Error('Sign-in already underway'));
      pending=true;
      change('signing_in',null,null);
-     return Promise.resolve().then(function(){return opts.adapter.signInWithGoogle();})
-       .then(function(result){
+     // Popup must open synchronously within the original user click.
+     // Delaying it to Promise.then() loses activation on some Safari versions.
+     var loginPromise;
+     try{loginPromise=opts.adapter.signInWithGoogle();}
+     catch(e){pending=false;change('error',null,safeError(e));
+       return Promise.reject(Error(safeError(e)));}
+     return Promise.resolve(loginPromise).then(function(result){
          pending=false;
          if(disposed)return snapshot();
          // The observer is authoritative, not arbitrary result fields.
