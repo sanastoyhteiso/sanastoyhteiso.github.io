@@ -134,3 +134,22 @@ https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3/
 This URL was **not verified as served** from the available environment (network/DNS access unavailable); never claim browser/public deployment success without opening it. User should check the link on a physical device; CI is JSDOM and Firestore Emulator, not real Safari.
 
 Do not replace the old test repo root, its service worker, or any production HTML, do not link this v3 sandbox into production, and do not turn synthetic auth/metrics into real claims without a server-side admin role. Next: browser verification and targeted fixes, then only separately approved real Firebase pilot with fresh independent JSON + Sheets backup.
+
+## 2026-11-03 — original-layout Mediatri classic demo
+
+The v3 `staging/classic/` preview now uses exact production **visual structure**, sidebar, mobile bottom nav, cards and dictionary layout. The existing production files remain unmodified. The **only** additions to the classic UX are: (1) a default-open Mediatri Kirjaamisopas with shift, clinical topic and grouped example selection; (2) topic-grouped Mediatri phrase lists and an expandable source-photo heading/assessment reference; (3) right-side FI/EN/RU tap-friendly buttons with browser-language autodetection on first use; and (4) a strictly synthetic admin panel in existing Data view.
+
+The source material is user-provided photographs of the actual Mediatri `Hoidon toteutus`, `Yöhoito`, `Vuorohoito`, `Lisäotsikot`, `Mittarit` groups. Routine care headings and special/instrument sections are kept separate; examples are illustrative only and clinical accuracy must be checked against the user's institution. No patient information belongs on the site.
+
+The **mobile nav regression** was addressed in the classic-only stylesheet: `position: fixed`, explicit `bottom: 0` (never `bottom: env(...)`), CSS safe-area bottom padding, additional content clearance, and the nav as a body-level sibling outside the scrollable main area. CSS/static and JSDOM behavior are covered by `staging/tests/classic-ui.test.cjs` and ES5 syntax gate. Real Safari iOS12 and mobile keyboard dynamics are NOT verified yet.
+
+The classic preview runs on an isolated, fictitious account, with a dedicated `rs_v3_classic_` localStorage namespace, read-only PUBLIC catalog, no Firebase, no Google login, no Drive, no service worker registration, no upload/import of live JSON, no real administrator. CSP forbids network connections. It is NOT a live migration, real multi-device sync or an admin dashboard with privileges.
+
+CI passed on reviewed SHA `1351982b9d9f1f310794712baa0c9f98219a453f`. All eight staging/classic resource files were compared by Git blob SHA with the isolated test repo and matched. The separate test repository's root index was separately verified unchanged.
+
+Expected GitHub Pages URL:
+https://velardream-ctrl.github.io/riveria-sanasto-community-test/v3-classic/
+
+The page files were written to `v3-classic/` only in `velardream-ctrl/riveria-sanasto-community-test`. Page accessibility could not be verified by the web tool; test on a real device. Earlier `/v3/` remains a technical sandbox, not the intended appearance.
+
+Before integrating real remote storage into the classic UI, require new independent personal JSON+Sheets backup, concurrency tests, owner-approved real Firestore pilot and an explicit migration plan; maintain previous login UX and privacy.
