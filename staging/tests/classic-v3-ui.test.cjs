@@ -90,7 +90,7 @@ function change(id,value){
  assert.ok(keys.every(k=>k.indexOf('rs_v3_classic_')===0),'No production account localStorage keys may be written');
  click('[data-view="backup"]');
  assert.ok(doc.getElementById('main-content').textContent.includes('Настройки сайта'));
- assert.ok(doc.getElementById('main-content').textContent.includes('Авторизация'));
+ assert.ok(doc.getElementById('main-content').textContent.includes('Google Drive и Firestore'));
  changeLocale('fi');
  assert.equal(w.RS_I18N.getLanguage(),'fi');
  changeLocale('en');
