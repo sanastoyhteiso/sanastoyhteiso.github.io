@@ -109,6 +109,26 @@ async function main(){
     ...event('alice'),id:'E_'+'e'.repeat(32),email:'secret'}),
     'private extra metadata forbidden');
 
+  const fullWord={
+    id:'L1793740000000',fi:'päivittäinen hoito',ru:'ежедневный уход',
+    cat:'Hoitotyö',catRu:'Уход',example:'Autettu peseytymisessä.',
+    exampleRu:'Оказана помощь при умывании.',level:'B1',priority:1,
+    updatedAt:NOW
+  };
+  const wordEventId='E_'+'f'.repeat(32);
+  await ok(setDoc(events(alice,'alice',wordEventId),{
+    ...event('alice'),id:wordEventId,kind:'word_upsert',
+    target:fullWord.id,data:fullWord}),
+    'real app personal word fields accepted as private owner event');
+  await no(setDoc(events(alice,'alice','E_'+'1'.repeat(32)),{
+    ...event('alice'),id:'E_'+'1'.repeat(32),kind:'word_upsert',
+    target:fullWord.id,data:{...fullWord,id:'another-word'}}),
+    'word ID cannot differ from event target');
+  await no(setDoc(events(alice,'alice','E_'+'2'.repeat(32)),{
+    ...event('alice'),id:'E_'+'2'.repeat(32),kind:'word_upsert',
+    target:fullWord.id,data:{...fullWord,privateToken:'secret'}}),
+    'word upload must reject unknown private fields');
+
   await ok(getDoc(base(alice,'alice')),'owner may inspect existing migration baseline');
   await no(getDoc(base(bob,'alice')),'foreign migration baseline private');
   await no(setDoc(base(bob,'bob'),{v:3,uid:'bob',migrationId:'unauthorized'}),
