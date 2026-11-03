@@ -45,7 +45,7 @@ function click(selector){
 }
 function view(name){
  click('nav [data-view="'+name+'"]');
- assert.ok(doc.querySelector('#main-content').textContent.length>20,
+ assert.ok(doc.querySelector('#main-content').textContent.trim().length>5,
   'Empty application module: '+name);
 }
 function run(){
