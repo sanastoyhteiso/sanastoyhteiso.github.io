@@ -44,12 +44,16 @@
        var seen={},unique=[];
        function accept(e){
          if(!core.valid(e))throw Error('Malformed event; refuse partial merge');
-         var stable=canonical(e);
+         // Firestore envelopes include v/uid but locally queued events do not.
+         // Compare only the immutable event payload, not transport metadata.
+         var normalized={id:e.id,device:e.device,kind:e.kind,target:e.target,
+           time:e.time,data:e.data};
+         var stable=canonical(normalized);
          if(Object.prototype.hasOwnProperty.call(seen,e.id)){
            if(seen[e.id]!==stable)throw Error('Same event ID has conflicting contents');
            return;
          }
-         seen[e.id]=stable;unique.push(e);
+         seen[e.id]=stable;unique.push(normalized);
        }
        x.remote.forEach(accept);
        (localPending||[]).forEach(accept);
