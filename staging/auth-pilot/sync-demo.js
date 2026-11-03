@@ -32,8 +32,8 @@
  function view(){
    var active=session&&isActive(session),ok=active&&session.permission===true;
    var buttons=d.querySelectorAll('[data-demo-target]');
-   for(var i=0;i<buttons.length;i++)buttons[i].disabled=!ok||!!session.clearing;
-   el('retry').disabled=!ok||session.clearing;
+   for(var i=0;i<buttons.length;i++)buttons[i].disabled=!ok||!!session.clearing||!!session.atLimit;
+   el('retry').disabled=!ok||session.clearing||session.atLimit;
    el('clear').disabled=!ok||session.clearing;
    var s=authState();
    el('login').disabled=!controller||!s||s.status==='verified'||
@@ -79,9 +79,11 @@
          s.cloud=docs;
          if(!snapshot.metadata.fromCache){
            s.permission=true;
+           s.atLimit=docs.length>=100;
            s.offline=false;
            show('cloud-status','Подключено — обновления в реальном времени');
-           note('Облачная проверка пройдена. Можно отвечать на карточки.',false);
+           note(s.atLimit?'Лимит 100 демособытий. Сначала удали демоответы.':
+             'Облачная проверка пройдена. Можно отвечать на карточки.',!!s.atLimit);
            flush(s);
          }else{
            s.offline=true;
@@ -104,12 +106,12 @@
  function confirmExisting(doc,e){
    if(!doc.exists)return false;
    var data=doc.data();
-   if(data.id!==doc.id||!core.valid(data,e.uid)||JSON.stringify(data)!==JSON.stringify(e))
+   if(data.id!==doc.id||!core.valid(data,e.uid)||!core.sameEvent(data,e))
      throw Error('Event collision on server');
    return true;
  }
  function flush(s){
-   if(!isActive(s)||!s.permission||s.uploading||s.clearing||
+   if(!isActive(s)||!s.permission||s.atLimit||s.uploading||s.clearing||
      (w.navigator&&w.navigator.onLine===false))return;
    var queue;
    try{queue=core.load(w.localStorage,s.uid);}
@@ -147,7 +149,7 @@
    disconnect();
    if(!state||state.status!=='verified'||!state.user||!state.user.verified)return;
    var s={uid:state.user.uid,revision:state.revision,cloud:[],permission:false,
-     collection:null,unsubscribe:null,uploading:false,clearing:false,offline:false};
+     collection:null,unsubscribe:null,uploading:false,clearing:false,atLimit:false,offline:false};
    try{core.load(w.localStorage,s.uid);device();}
    catch(e){note('На устройстве недоступно сохранение демоответов.',true);return;}
    session=s;show('cloud-status','Соединяемся с Firestore…');
@@ -160,7 +162,7 @@
    startSession(state);view();
  }
  function answer(target,correct){
-   var s=session;if(!isActive(s)||!s.permission||s.clearing)return;
+   var s=session;if(!isActive(s)||!s.permission||s.atLimit||s.clearing)return;
    try{
      var e=core.newEvent(s.uid,device(),target,correct,Date.now(),
        (function(){var bytes=new Uint8Array(16);w.crypto.getRandomValues(bytes);return bytes;})());
