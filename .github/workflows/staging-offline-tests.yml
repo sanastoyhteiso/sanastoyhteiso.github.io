@@ -26,6 +26,8 @@ jobs:
         run: node staging/tests/sync-cloud-read.test.cjs
       - name: Test guarded controller cloud preview and local change races
         run: node staging/tests/sync-controller-cloud.test.cjs
+      - name: Test read-only current app storage adapter and pending ID collisions
+        run: node staging/tests/sync-local-adapter.test.cjs
       - name: Test read-only Firestore permissions diagnostic
         run: node staging/tests/firestore-diagnostics.test.cjs
       - name: Check personal JSON backup preflight without private data upload
