@@ -12,27 +12,36 @@
   function id(v){return typeof v==='string'&&/^[a-zA-Z0-9_-]{1,180}$/.test(v);}
   function str(s){return typeof s==='string';}
   function safeNumber(x){return typeof x==='number'&&isFinite(x)&&Math.floor(x)===x&&Math.abs(x)<=9007199254740991;}
-  function val(x,depth){
-    depth=depth||0;if(depth>8)throw Error('Nested event data too deep');
+  function val(x,depth,largeBaseline){
+    depth=depth||0;
+    // The snapshot contains hundreds of distinct scores, not a small event.
+    var maxDepth=largeBaseline?12:8;
+    if(depth>maxDepth)throw Error('Firestore value nesting exceeds safe limit');
     if(x===null)return {nullValue:null};
-    if(str(x)){if(x.length>8000)throw Error('Event text exceeds limit');return {stringValue:x};}
+    if(str(x)){
+      if(x.length>(largeBaseline?32000:8000))throw Error('Text exceeds safe limit');
+      return {stringValue:x};
+    }
     if(typeof x==='boolean')return {booleanValue:x};
     if(safeNumber(x))return {integerValue:String(x)};
     if(typeof x==='number'&&isFinite(x))return {doubleValue:x};
     if(Object.prototype.toString.call(x)==='[object Array]'){
-      if(x.length>100)throw Error('Event array too large');
-      return {arrayValue:{values:x.map(function(a){return val(a,depth+1);})}};
+      if(x.length>(largeBaseline?5000:100))throw Error('Array too large');
+      return {arrayValue:{values:x.map(function(a){return val(a,depth+1,largeBaseline);})}};
     }
     if(x&&typeof x==='object'){
       var out={},keys=Object.keys(x);
-      if(keys.length>40)throw Error('Event has too many fields');
+      if(keys.length>(largeBaseline?5000:40))throw Error('Map has too many fields');
       keys.forEach(function(k){
-        if(!/^[A-Za-z_][A-Za-z0-9_]{0,90}$/.test(k))throw Error('Invalid event field');
-        out[k]=val(x[k],depth+1);
+        // Baseline may include user word IDs with hyphens. Firebase map keys
+        // accept such UTF-8 names, while reserved __...__ names are excluded.
+        if(!k||k.length>240||/^__.*__$/.test(k)||/[\u0000-\u001f\u007f]/.test(k))
+          throw Error('Unsafe Firestore map key');
+        out[k]=val(x[k],depth+1,largeBaseline);
       });
       return {mapValue:{fields:out}};
     }
-    throw Error('Unsupported event data');
+    throw Error('Unsupported value in Firestore document');
   }
   function record(uid,e){
     if(!id(uid)||!e||!/^E_[a-f0-9]{32}$/.test(e.id)||!/^D_[a-f0-9]{32}$/.test(e.device)||!id(e.target)||
@@ -62,7 +71,7 @@
        throw Error('Invalid verified migration baseline');
     var obj={fields:{v:val(3),uid:val(uid),migrationId:val(migration.migrationId),
        importedAt:val(migration.createdAt),sha256:val(migration.sha256),
-       source:val('approved-local-JSON'),snapshot:val(migration.snapshot)}};
+       source:val('approved-local-JSON'),snapshot:val(migration.snapshot,0,true)}};
     if(JSON.stringify(obj).length>600000)throw Error('Migration baseline exceeds safe document size');
     return obj;
   }
