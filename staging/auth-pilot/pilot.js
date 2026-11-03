@@ -9,7 +9,7 @@
  var config=w.RS_V3_AUTH_PILOT_CONFIG,guard=w.RS_V3_TEST_BACKEND_GUARD;
  var adapterFactory=w.RS_V3_FIREBASE_AUTH_ADAPTER;
  var controllerFactory=w.RS_V3_AUTH_CONTROLLER;
- var currentLang='ru',control=null;
+ var currentLang='ru',control=null,readyDone=false;
  var words={
   ru:{title:'Проверка Google-входа',subtitle:'Отдельный тестовый Firebase-проект. Настоящие словари и результаты не подключены.',
     notice:'При первом входе Firebase создаст новую тестовую учётную запись. Это не аккаунт рабочего Sanastoyhteisö. Здесь нет Firestore и личных учебных данных.',
@@ -83,6 +83,10 @@
    el('pilot-refresh').disabled=!u;
  }
  function ready(){
+   // Prevent duplicate DOMContentLoaded delivery from creating two Auth observers
+   // or resetting a language explicitly selected by the user.
+   if(readyDone)return;
+   readyDone=true;
    currentLang=(function(){
      var code=(w.navigator.language||'').slice(0,2).toLowerCase();
      return code==='fi'||code==='ru'||code==='en'?code:'en';
