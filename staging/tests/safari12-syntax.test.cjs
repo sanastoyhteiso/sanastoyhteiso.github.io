@@ -39,7 +39,8 @@ const stage=[
   'rs-sync-core.js','rs-event-ids.js','rs-sync-journal.js',
   'rs-firestore-transport.js','rs-sync-http.js','rs-sync-controller.js',
   'rs-sync-cloud-read.js','rs-sync-local-adapter.js','rs-sync-shadow-idb.js',
-  'rs-sync-shadow-reconcile.js','rs-sha256.js','rs-backup-plan.js',
+  'rs-sync-shadow-reconcile.js','rs-sync-recovery-audit.js',
+  'rs-sha256.js','rs-backup-plan.js',
   'rs-catalog-release.js','rs-admin-preview.js'
 ];
 stage.forEach(file=>parseES5(read('staging/'+file),'staging/'+file));
