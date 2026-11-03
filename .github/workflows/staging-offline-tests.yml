@@ -46,6 +46,8 @@ jobs:
         run: node staging/tests/v3-profile-registration.test.cjs
       - name: Verify no-overwrite owner-only Firebase profile store against a fake SDK
         run: node staging/tests/v3-firestore-profile-store.test.cjs
+      - name: Verify owner-triggered isolated V3 profile pilot page
+        run: node staging/tests/v3-profile-pilot.test.cjs
       - name: Prevent regressions of existing registration and profile UX
         run: node staging/tests/registration-compatibility.test.cjs
       - name: Test original classic UI with bottom mobile nav, Mediatri guide and FI EN RU
