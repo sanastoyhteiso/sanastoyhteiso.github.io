@@ -89,6 +89,9 @@ jobs:
       - name: Verify new independent development Firestore rules with two fake accounts
         timeout-minutes: 8
         run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso-v3-development 'node staging/tests/firestore-v3-development.test.cjs'
+      - name: Verify deletable owner-only synthetic sync pilot in development emulator
+        timeout-minutes: 8
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso-v3-development 'node staging/tests/firestore-v3-sync-demo.test.cjs'
       - name: Verify minimal owner-only sync_v3 pilot rules in emulator
         timeout-minutes: 8
         env:
