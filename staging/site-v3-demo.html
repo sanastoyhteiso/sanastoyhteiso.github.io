@@ -49,10 +49,10 @@ footer{font-size:13px;color:var(--muted);text-align:center;padding:20px;border-t
 <header>
 <small>Sanastoyhteisö • staging only • FI / RU / EN</small>
 <h1 id="demo-heading">Тестовая версия 3.0</h1>
-<p id="demo-note">Только вымышленные данные. Действующий сайт не меняется.</p>
+<p id="demo-note">Публичный учебный словарь, но только вымышленные результаты. Действующий сайт не меняется.</p>
 </header>
 <div class="wrap">
-<div class="demo-ribbon"><strong>DEMO ONLY / VAIN TESTI / ТОЛЬКО ДЕМО</strong> — No real Firebase Auth, Firestore, Google Drive, or personal vocabulary. No data is sent to a server. The demo saves only synthetic data in its own separate browser IndexedDB.</div>
+<div class="demo-ribbon"><strong>DEMO ONLY / VAIN TESTI / ТОЛЬКО ДЕМО</strong> — The FI/RU/EN vocabulary is a public snapshot copied from the existing published dictionary. Accounts, answers and personal words are DEMO ONLY. No Firebase, Firestore or Google Drive connection. No data is sent to a server. Synthetic answers stay in a separate IndexedDB.</div>
 <div class="demo-toolbar">
 <label for="demo-language">FI / RU / EN
 <select id="demo-language"><option value="ru">Русский</option><option value="fi">Suomi</option><option value="en">English</option></select>
@@ -64,6 +64,8 @@ footer{font-size:13px;color:var(--muted);text-align:center;padding:20px;border-t
 <main id="demo-content" tabindex="-1">Opening demo storage…</main>
 </div>
 <footer>Sanastoyhteisö 3.0 isolated preview — the published website is unchanged. This is a prototype, not a verified migration or live administrator login.</footer>
+<script src="data-public.js"></script>
+<script src="rs-v3-public-catalog.js"></script>
 <script src="rs-sync-core.js"></script>
 <script src="rs-sync-shadow-idb.js"></script>
 <script src="rs-sync-shadow-reconcile.js"></script>
