@@ -79,6 +79,9 @@ function mock(){
  await auth.signOut();
  assert.equal(m.signouts(),1);
  assert.equal(auth.getState().status,'signed_out');
+ // A stale SDK event must not log the user back in after explicit sign-out.
+ m.set(another);
+ assert.equal(auth.getState().status,'signed_out');
  await assert.rejects(auth.getVerifiedIdToken(),/Verified/);
  unsub();auth.close();
  assert.throws(()=>auth.start(),/closed/);
