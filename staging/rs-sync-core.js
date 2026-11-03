@@ -12,14 +12,18 @@
   var allowed={answer:1,learned_set:1,favorite_set:1,word_upsert:1,word_delete:1};
   function copy(x){return JSON.parse(JSON.stringify(x===undefined?null:x));}
   function nonnegative(x){return Math.max(0,Math.floor(Number(x)||0));}
-  function safeId(s){return typeof s==='string' && s.length>0 && s.length<=180 && !/[/#?]/.test(s);}
+  function safeId(s){return typeof s==='string' && s.length>0 && s.length<=180 &&
+    s!=='__proto__'&&s!=='prototype'&&s!=='constructor'&&
+    !/[\x00-\x1f\x7f\/#?]/.test(s);}
   function valid(e){
     if(!e||!safeId(e.id)||!safeId(e.target)||!safeId(e.device)||
        !allowed[e.kind]||!isFinite(Number(e.time))||typeof e.data!=='object'||!e.data)return false;
     if(e.kind==='answer' && typeof e.data.correct!=='boolean')return false;
     if(e.kind==='learned_set' && typeof e.data.learned!=='boolean')return false;
     if(e.kind==='favorite_set' && typeof e.data.starred!=='boolean')return false;
-    if(e.kind==='word_upsert' && (!e.data.fi||!e.data.ru))return false;
+    if(e.kind==='word_upsert' && (!e.data.fi||!e.data.ru||
+       (e.data.id!==undefined&&e.data.id!==e.target)))return false;
+    if(e.kind==='word_delete'&&e.data.deleted!==true)return false;
     return true;
   }
   function event(id,device,kind,target,data,time){
@@ -64,7 +68,9 @@
         sc=state.scores[id]||{correct:0,wrong:0,seen:0,last:0,learned:false,learnedUpdatedAt:0};
         sc.learned=a.learned;sc.learnedUpdatedAt=e.time;state.scores[id]=sc;
       }else if(e.kind==='favorite_set')state.favorites[id]=a.starred;
-      else if(e.kind==='word_upsert')state.words[id]=copy(a);
+      else if(e.kind==='word_upsert'){
+        var w=copy(a);w.id=id;state.words[id]=w;
+      }
       else if(e.kind==='word_delete')delete state.words[id];
     });
     return {state:state,applied:applied,duplicates:dupes,invalid:invalid};
