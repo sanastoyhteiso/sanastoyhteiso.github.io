@@ -15,14 +15,15 @@
    return '{'+Object.keys(x).sort().map(function(k){return JSON.stringify(k)+':'+canonical(x[k]);}).join(',')+'}';
  }
  function validMap(x){return !!x&&typeof x==='object'&&!Array.isArray(x);}
+ function safeCount(n){
+   return typeof n==='number'&&isFinite(n)&&Math.floor(n)===n&&
+     n>=0&&n<=9007199254740991;
+ }
  function checkCounts(scores){
    Object.keys(scores).forEach(function(id){
      var s=scores[id];
-     if(!validMap(s)||!Number.isSafeInteger(Number(s.seen))||
-        !Number.isSafeInteger(Number(s.correct))||
-        !Number.isSafeInteger(Number(s.wrong))||
-        s.seen<0||s.correct<0||s.wrong<0||
-        s.seen!==s.correct+s.wrong)
+     if(!validMap(s)||!safeCount(s.seen)||!safeCount(s.correct)||
+        !safeCount(s.wrong)||s.seen!==s.correct+s.wrong)
        throw Error('Score counters diverge; manual migration review required');
    });
  }
