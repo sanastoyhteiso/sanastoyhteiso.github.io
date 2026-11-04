@@ -1,0 +1,32 @@
+'use strict';
+const a=require('assert'),vm=require('vm'),fs=require('fs');
+const diff=require('../v3-sync-diff.js');
+new vm.Script(fs.readFileSync('v3-sync-diff.js','utf8'));
+const empty={scores:{},words:{},favorites:{}};
+const s1={scores:{T00001:{correct:1,wrong:0,seen:1,learned:true}},words:{},favorites:{}};
+let ev=diff.changes(empty,s1);a.equal(ev.unsafe.length,0);
+a.equal(ev.events.length,1);a.deepEqual(ev.events[0],{
+ kind:'answer',target:'T00001',value:{correct:true,reviewLearned:false}});
+const s2={scores:{T00001:{correct:1,wrong:1,seen:2,learned:true}},words:{},favorites:{}};
+ev=diff.changes(s1,s2);a.equal(ev.events.length,1);
+a.deepEqual(ev.events[0].value,{correct:false,reviewLearned:false});
+const s3={scores:{T00001:{correct:1,wrong:1,seen:2,learned:false}},words:{},favorites:{}};
+ev=diff.changes(s2,s3);a.deepEqual(ev.events,[{kind:'learned_set',target:'T00001',value:false}]);
+const phrase={scores:{H00001:{seen:1,correct:1,wrong:0,learned:true},
+ M00014:{seen:1,correct:0,wrong:1,learned:false}},words:{},favorites:{}};
+ev=diff.changes(empty,phrase);a.equal(ev.events.length,2);
+const id='W_'+'a'.repeat(32);
+const personal={scores:{},favorites:{T00003:true},words:{[id]:{id,fi:'peseytyminen',ru:'умывание'}}};
+ev=diff.changes(empty,personal);
+a.equal(ev.events.filter(e=>e.kind==='word_upsert').length,1);
+a.equal(ev.events.filter(e=>e.kind==='favorite_set').length,1);
+ev=diff.changes(personal,personal);a.equal(ev.events.length,0);
+ev=diff.changes(personal,{scores:{},favorites:{T00003:true},
+ words:{[id]:{id,fi:'peseytyminen',ru:'отличается'}}});
+a.deepEqual(ev.unsafe,['conflicting-word:'+id]);
+ev=diff.changes(s2,s1);a.ok(ev.unsafe.length,'Counter rollback blocked');
+const wrong={scores:{T00001:{seen:2,correct:1,wrong:0,learned:true}},words:{},favorites:{}};
+a.ok(diff.changes(s1,wrong).unsafe.length,'Incomplete answer counter blocked');
+a.equal(diff.target('L112233'),false);
+a.equal(diff.target('H00001'),true);
+console.log('PASS: UI→V3 answer, review, favorites, personal words and Mediatri diff, fail-closed');

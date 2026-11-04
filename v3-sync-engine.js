@@ -156,6 +156,9 @@
      var data;
      if(kind==='answer'&&typeof value==='boolean')
        data=value?{correct:true}:{correct:false,reviewLearned:true};
+     else if(kind==='answer'&&value&&typeof value==='object'&&
+       typeof value.correct==='boolean'&&typeof value.reviewLearned==='boolean')
+       data={correct:value.correct,reviewLearned:value.reviewLearned};
      else if(kind==='learned_set'&&typeof value==='boolean')data={learned:value};
      else if(kind==='favorite_set'&&typeof value==='boolean')data={starred:value};
      else if(kind==='collection_set'&&value&&typeof value==='object'&&
