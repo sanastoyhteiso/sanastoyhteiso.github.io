@@ -1,0 +1,24 @@
+name: Release V3 preflight (no deployment)
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'ipad-selects.js'
+      - 'ipad-selects.css'
+      - 'config.js'
+      - 'release-checks/**'
+      - '.github/workflows/release-v3-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Ensure existing Auth/Drive remain and iPad/Mediatri scripts are safe
+        run: node release-checks/preflight-static.cjs
