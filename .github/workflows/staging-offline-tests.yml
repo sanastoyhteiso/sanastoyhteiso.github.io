@@ -30,6 +30,8 @@ jobs:
         run: node staging/tests/v3-public-catalog.test.cjs
       - name: Test trilingual v3 demo UI with isolated shadow sync and recovery
         run: node staging/tests/site-v3-demo.test.cjs
+      - name: Validate iPad iOS12 readable dropdown polyfill and native change events
+        run: node staging/tests/ipad-selects.test.cjs
       - name: Regression-test classic app layout, guided Mediatri and FI/EN/RU
         run: node staging/tests/classic-v3-ui.test.cjs
       - name: Test opt-in offline library sharing and untrusted JSON protection
