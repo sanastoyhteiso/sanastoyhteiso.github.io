@@ -1,0 +1,93 @@
+// Synthetic emulator only: tested additive V3 block against deny-all base.
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+// Sanastoyhteisö V3 PRODUCTION ADDITIVE BLOCK (owner-only, append-only).
+// Paste INSIDE the existing service cloud.firestore ->
+// match /databases/{database}/documents { ... } block, BEFORE final catch-all.
+// DO NOT replace existing users, libraries, settings, site_admin rules.
+// Project: riveria-sanasto-community-test. NEVER paste into V3 dev project.
+// If /sync_v3 rules already exist, compare/remove old sync_v3 block first.
+function v3ReleaseOwner(uid) {
+  return request.auth != null &&
+    request.auth.uid == uid &&
+    request.auth.token.email_verified == true;
+}
+function v3ReleasePayload() {
+  let e = request.resource.data;
+  let d = e.data;
+  let k = e.kind;
+  return (
+    (k == 'answer' &&
+      (e.target.matches('^[TMH][0-9]{5,7}$') ||
+       e.target.matches('^W_[a-f0-9]{32}$')) &&
+      d.keys().hasOnly(['correct','reviewLearned']) &&
+      d.keys().hasAll(['correct']) &&
+      d.correct is bool &&
+      (!d.keys().hasAny(['reviewLearned']) || d.reviewLearned is bool))
+    ||
+    (k == 'learned_set' &&
+      (e.target.matches('^[TMH][0-9]{5,7}$') ||
+       e.target.matches('^W_[a-f0-9]{32}$')) &&
+      d.keys().hasOnly(['learned']) &&
+      d.keys().hasAll(['learned']) && d.learned is bool)
+    ||
+    (k == 'favorite_set' &&
+      (e.target.matches('^[TMH][0-9]{5,7}$') ||
+       e.target.matches('^W_[a-f0-9]{32}$')) &&
+      d.keys().hasOnly(['starred']) &&
+      d.keys().hasAll(['starred']) && d.starred is bool)
+    ||
+    (k == 'word_upsert' &&
+      e.target.matches('^W_[a-f0-9]{32}$') &&
+      d.keys().hasOnly(['id','fi','ru','en','cat','catRu','updatedAt']) &&
+      d.keys().hasAll(['id','fi','ru','en','cat','catRu','updatedAt']) &&
+      d.id == e.target &&
+      d.fi is string && d.fi.size() >= 1 && d.fi.size() <= 120 &&
+      d.ru is string && d.ru.size() >= 1 && d.ru.size() <= 180 &&
+      d.en is string && d.en.size() <= 180 &&
+      d.cat is string && d.cat.size() >= 1 && d.cat.size() <= 120 &&
+      d.catRu is string && d.catRu.size() >= 1 && d.catRu.size() <= 120 &&
+      d.updatedAt is int && d.updatedAt > 0)
+    ||
+    (k == 'collection_set' &&
+      (e.target.matches('^T[0-9]{5,7}$') ||
+       e.target.matches('^W_[a-f0-9]{32}$')) &&
+      d.keys().hasOnly(['list','added','topic','note']) &&
+      d.keys().hasAll(['list','added','topic','note']) &&
+      d.list == 'finds' &&
+      d.added is bool &&
+      d.topic in ['practice','study','other'] &&
+      d.note is string && d.note.size() <= 350)
+  );
+}
+function v3ReleaseEvent(uid,eventId) {
+  let e = request.resource.data;
+  return e.keys().hasAll(['v','uid','id','device','kind','target','time','data']) &&
+    e.keys().hasOnly(['v','uid','id','device','kind','target','time','data']) &&
+    e.v == 3 && e.uid == uid && e.id == eventId &&
+    eventId.matches('^E_[a-f0-9]{32}$') &&
+    e.device is string && e.device.matches('^D_[a-f0-9]{32}$') &&
+    e.target is string && e.target.size() >= 1 && e.target.size() <= 180 &&
+    e.time is int && e.time > 0 && e.data is map &&
+    e.kind in ['answer','learned_set','favorite_set','word_upsert','collection_set'] &&
+    v3ReleasePayload();
+}
+match /sync_v3/{uid}/events/{eventId} {
+  allow get, list: if v3ReleaseOwner(uid);
+  allow create: if v3ReleaseOwner(uid) && v3ReleaseEvent(uid,eventId);
+  allow update, delete: if false;
+}
+match /sync_v3/{uid}/state/baseline {
+  allow get: if v3ReleaseOwner(uid);
+  allow list: if false;
+  allow create, update, delete: if false;
+}
+match /sync_v3/{uid}/words/{wordId} {
+  allow get, list: if v3ReleaseOwner(uid);
+  allow create, update, delete: if false;
+}
+
+ match /{document=**} { allow read, write: if false; }
+ }
+}
