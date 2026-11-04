@@ -401,6 +401,9 @@
    auth=w.firebase.auth();db=w.firebase.firestore();
    auth.onAuthStateChanged(function(user){
      if(!validUser(user)){stop();return;}
+     // Google can switch between two VERIFIED accounts without a null
+     // state. Always close the previous owner's session first.
+     if(uid&&uid!==user.uid)stop();
      if(active()&&user.uid===uid)return;
      if(consent(user.uid))attach(user,false);
      else status();
