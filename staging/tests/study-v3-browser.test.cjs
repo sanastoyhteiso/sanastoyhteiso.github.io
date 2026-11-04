@@ -1,0 +1,28 @@
+/* Browser entry static guard for isolated real FI/RU term V3 pilot. */
+'use strict';
+const fs=require('fs'),assert=require('assert'),acorn=require('acorn'),path=require('path');
+const d=path.join(__dirname,'../auth-pilot');
+const html=fs.readFileSync(path.join(d,'study-v3.html'),'utf8');
+const js=fs.readFileSync(path.join(d,'study-v3-page.js'),'utf8');
+const isolatedShadow=fs.readFileSync(path.join(d,'study-v3-shadow-idb.js'),'utf8');
+acorn.parse(js,{ecmaVersion:5});acorn.parse(isolatedShadow,{ecmaVersion:5});
+assert.match(html,/sanastoyhteiso-v3-development/);
+assert.match(html,/firebasejs\/8\.10\.1\/firebase-app\.js/);
+assert.match(html,/\.\.\/data-public\.js/);
+assert.match(html,/study-v3-engine\.js/);
+assert.match(html,/connect-src https:\/\/firestore\.googleapis\.com/);
+assert.match(html,/noindex,nofollow/);
+assert.match(isolatedShadow,/sanastoyhteiso_real_terms_pilot_v3/);
+assert.doesNotMatch(isolatedShadow,/sanastoyhteiso_staging_shadow_v3/);
+assert.match(js,/guard\.validate/);
+assert.match(js,/site\.pathname!==PATH/);
+assert.match(js,/sync_v3/);
+assert.match(js,/start'\)\.addEventListener\('click',start\)/);
+assert.match(js,/controller\.signInWithGoogle/);
+assert.match(js,/engine\.record/);
+assert.match(js,/engine\.upload/);
+assert.match(js,/engine\.refresh/);
+assert.match(js,/source:'server'/);
+assert.match(js,/onSnapshot/);
+assert.doesNotMatch(js,/rs_scores_v1|rs_user_words_v1|rs_favorites_v1|GoogleDrive|console\./);
+console.log('PASS: isolated, owner-opted, real public terms browser pilot, ES5 shadow, Firebase 8');
