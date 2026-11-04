@@ -38,6 +38,8 @@ jobs:
         run: node staging/tests/test-site-entry.test.cjs
       - name: Reject production Firebase project in future staging backend configuration
         run: node staging/tests/staging-backend-guard.test.cjs
+      - name: Test duplicate-safe local Finnish finds and deterministic IDs
+        run: node staging/tests/study-v3-finds.test.cjs
       - name: Verify real FI/RU term pilot browser isolation and ES5
         run: node staging/tests/study-v3-browser.test.cjs
       - name: Test complete Firestore V3 history pagination across 500 answers
