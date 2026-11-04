@@ -147,3 +147,12 @@
 - Действие: сверить незакрытый RUN-008, GitHub TEST PR #3, наличие admin regression test/audit report, исходный TEST HEAD, сохранность production; подготовить передачу следующему чату без повторения неизвестных операций.
 - Repo/branch: журнал в release/v3-safe-integration-20261104; тестовая ветка feat/admin-control-center-package-spec-20261104.
 - Ограничение: проверка без изменения тестового кода, Firestore, Auth или production main.
+
+### RUN-20261104-009 / ЗАВЕРШИЛ / DONE (проверка прерванного Work)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Факт: RUN-20261104-002…007 имеют НАЧАЛ и ЗАВЕРШИЛ; RUN-20261104-008 имеет только НАЧАЛ (подготовка admin audit/handoff). Это незакрытая операция предыдущего Work.
+- TEST PR #3 всё ещё DRAFT/open, remote head 7b4f851389673050444073763d9cedd03661b189. В ветке отсутствуют admin/tests/admin-access.test.cjs и admin/ADMIN_TECHNICAL_AUDIT_2026-11-04_RU.md; последние изменения admin-page.js/admin-entry.js описаны как локальные и НЕ закоммиченные. Удалённый тестовый код не получил fail-closed исправления.
+- Из предыдущего RUN-007 следует 58/58 PASS на локальных mocks и PASS существующего manifest check. Это НЕ GitHub CI и НЕ доказательство реального Firebase/браузера. Локальные файлы Work из другого чата здесь не подтверждены доступными.
+- Issue #10 получил NEW-002, мастер-план TASK-20261104-005 имеет статус ЧАСТИЧНО; production main остаётся d29813cf409af9dc60804105ca3141f98ec12fcd. TEST main остаётся 49695b560e8ab77d04f508c9d95b5195d2b3fd9e.
+- Итог: механизм записи НАЧАЛ→ЗАВЕРШИЛ реально помог определить точную остановку, но Work не успел сохранить исправленный код и локальные тесты в GitHub. Действие RUN-008 остаётся открытым в исторической записи; это не подтверждение завершения.
+- Следующий безопасный шаг: в TEST PR #3 сперва проверить/подготовить admin/tests/admin-access.test.cjs, исправить fail-closed NEW-002 (app config/смена пользователей/token refresh/async stale), прогнать node tests, затем commit файлов и отчёта по шагам START/END. Не выполнять merge и не трогать production Firebase. Для восстановления не предполагать, что несохранённая локальная папка Work доступна.
