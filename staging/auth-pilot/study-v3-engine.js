@@ -105,12 +105,21 @@
      if(started)return seq(function(){return current();});
      started=true;checking=true;emit();
      return seq(function(){
+       // Reopening a previously verified local study while disconnected must
+       // not discard IndexedDB progress. First-ever startup still needs the
+       // server, and no unseen account may be initialized while offline.
+       if(opts.online&&opts.online()===false){
+         return shadow.read(uid).then(function(record){
+           if(!record||record.uid!==uid||record.phase!=='shadow')
+             throw Error('First study start requires online verification');
+           return record;
+         });
+       }
        return query().then(function(events){
          return initialize().then(function(){return rebuild(events);});
-       }).then(function(record){
-         ready=true;checking=false;lastError='';emit();
-         return record;
        });
+     }).then(function(record){
+       ready=true;checking=false;lastError='';emit();return record;
      }).catch(function(e){ready=false;checking=false;lastError=e.message||'Unsafe start';
        emit();throw e;});
    }
