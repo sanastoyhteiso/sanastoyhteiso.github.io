@@ -274,3 +274,16 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - Задача: закрепить результат 15/15 в TEST technical audit / handoff, добавить точный read-only план проверки реального Rules/claim без секретов; обновить MASTER TASK-005 и Issue #10, сохранить финальные ссылки на CI; завершить RUN-014. Изолированный fixture не интегрировать в live rules.
 - Исходный TEST HEAD=3d15e3321914ae2f0cc403502c70ff656c463656. Production и Firebase не трогать.
+
+### RUN-20261104-014.3 / ЗАВЕРШИЛ / DONE (audit + master + Issue синхронизированы)
+- Дата: 2026-11-04, Europe/Helsinki.
+- TEST [audit/handoff commit b6d844c](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/b6d844cee16eaf63e85c8719055b8c14db469806), файлы прочитаны обратно. TEST PR #3 DRAFT/open/not merged, HEAD b6d844cee16eaf63e85c8719055b8c14db469806.
+- MASTER ROADMAP дополнен TASK-20261104-007 в [commit c4ad5d5](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/c4ad5d55da746f99d69263065de9b3a3228af71f); Issue #10 дополнен checkpoint RUN-013/014. Read-back подтверждает обе записи и открытый Issue.
+- На точном TEST HEAD b6d844c: [GitHub Actions #41918720460](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41918720460) SUCCESS для emulator contract, [#41918720247](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41918720247) SUCCESS для client regression.
+- Это не реальная серверная проверка TEST Firebase. Изолированный deny-all fixture не deploy. A–K не закрывать.
+
+### RUN-20261104-014 / ЗАВЕРШИЛ / DONE (только TEST fixture, Stage C остаётся частично)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Сохранены TEST contracts, 15/15 native emulator PASS; client regression 29/29 PASS, журнал, report, мастер-документ и Issue #10 обновлены. Никакие production/Firebase cloud/данные/тарифы/merge не затронуты.
+- **Остаётся:** получить полный read-only актуальный deployed ruleset `sanastoyhteiso-v3-development`, совместить с исходными student правилами, протестировать полный набор, подтвердить тестовый server-issued claim и два аккаунта; Stage C/E/H остаются OPEN.
+- Следующий безопасный шаг: RUN-015 — проверка возможности read-only получить TEST deployed rules, без паролей/токенов и без изменения Firebase; если недоступно — отметить BLOCKED, затем продолжить независимыми тестами браузерного интерфейса на TEST.
