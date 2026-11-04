@@ -287,3 +287,9 @@
 - Сохранены TEST contracts, 15/15 native emulator PASS; client regression 29/29 PASS, журнал, report, мастер-документ и Issue #10 обновлены. Никакие production/Firebase cloud/данные/тарифы/merge не затронуты.
 - **Остаётся:** получить полный read-only актуальный deployed ruleset `sanastoyhteiso-v3-development`, совместить с исходными student правилами, протестировать полный набор, подтвердить тестовый server-issued claim и два аккаунта; Stage C/E/H остаются OPEN.
 - Следующий безопасный шаг: RUN-015 — проверка возможности read-only получить TEST deployed rules, без паролей/токенов и без изменения Firebase; если недоступно — отметить BLOCKED, затем продолжить независимыми тестами браузерного интерфейса на TEST.
+
+### RUN-20261104-015 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- Этап C: read-only поиск актуального полного TEST Firestore ruleset и server-issued role без секрета. Проверить доступные разрешённые источники (GitHub и прежние проектные материалы); установить, может ли имеющийся доступ подтвердить deployed ruleset или нужен Firebase connector.
+- Исходный TEST PR #3 HEAD b6d844cee16eaf63e85c8719055b8c14db469806. Изменения cloud запрещены, PR остаётся Draft.
+- Результат ожидается честный: READ_VERIFIED или BLOCKED_READ_ONLY с доказательствами. Нельзя выдавать ранее вставленный черновик Rules за текущую опубликованную версию.
