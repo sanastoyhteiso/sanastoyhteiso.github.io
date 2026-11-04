@@ -70,6 +70,10 @@
      if(!Object.prototype.hasOwnProperty.call(after.words,id))
        throw Error('Cloud preview would remove a personal word');
    });
+   Object.keys(before.finds||{}).forEach(function(id){
+     if(!Object.prototype.hasOwnProperty.call(after.finds||{},id))
+       throw Error('Cloud preview would remove a saved personal selection');
+   });
  }
  function create(opts){
    if(!opts||opts.enableStagingWrites!==true||

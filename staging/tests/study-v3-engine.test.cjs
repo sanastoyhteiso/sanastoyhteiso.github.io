@@ -69,19 +69,33 @@ async function run(){
  const wordId='W_'+'9'.repeat(32);
  await b.record('word_upsert',wordId,{fi:'testihoiva',ru:'тестовый уход',en:'test care'});
  assert.equal((await b.view()).state.words[wordId].fi,'testihoiva');
+ await b.record('collection_set','T00001',
+   {list:'finds',added:true,topic:'practice',note:'Heard during a shift'});
+ assert.equal((await b.view()).state.finds.T00001.added,true);
  await b.record('favorite_set','T00003',true);
  await b.record('learned_set','T00002',true);
  await b.upload();
  await a.refresh();
  state=await a.view();
  assert.equal(state.state.words[wordId].ru,'тестовый уход');
+ assert.equal(state.state.finds.T00001.topic,'practice');
+ assert.equal(state.state.finds.T00001.note,'Heard during a shift');
  assert.equal(state.state.favorites.T00003,true);
  await a.record('answer',wordId,true);
  await a.upload();
  await b.refresh();
  assert.equal((await b.view()).state.scores[wordId].correct,1);
+ // An unselect event keeps a tombstone for cloud completeness checks.
+ await a.record('collection_set','T00001',
+   {list:'finds',added:false,topic:'practice',note:''});
+ await a.upload();await b.refresh();
+ assert.equal((await b.view()).state.finds.T00001.added,false);
  assert.equal(engine.isWord(wordId),true);
  assert.equal(engine.isWord('T00001'),false);
+ assert.throws(()=>a.makeEvent('collection_set','T00001',
+   {list:'finds',added:true,topic:'private',note:''},1),/Invalid/);
+ assert.throws(()=>a.makeEvent('collection_set','T00001',
+   {list:'finds',added:true,topic:'study',note:'x'.repeat(351)},1),/Invalid/);
  assert.throws(()=>a.makeEvent('word_upsert',wordId,{fi:'',ru:'нет'},1),/Invalid/);
  assert.throws(()=>a.makeEvent('word_upsert','W_bad',{fi:'test',ru:'test'},1),/target/);
  assert.equal(state.state.scores.T00002.learned,true);
