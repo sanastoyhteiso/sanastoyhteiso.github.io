@@ -219,3 +219,15 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - План: append-only обновить TASK-20261104-005 / NEW-002 в MASTER ROADMAP и Issue #10 с проверенными TEST commits 91fa4f7, 5f4ae30, 49971ca и Actions run 41915536733. Сохранить все галочки A–K незакрытыми, а real Admin/Security Rules — как blocker.
 - Repo / branch docs: sanastoyhteiso/sanastoyhteiso.github.io / release/v3-safe-integration-20261104. TEST remote HEAD 49971ca0dc24ecf400960a9a3e5505145401a879.
+
+### RUN-20261104-012.3 / ЗАВЕРШИЛ / DONE (master TASK-005 + Issue #10)
+- Дата: 2026-11-04, Europe/Helsinki.
+- [MASTER ROADMAP](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/blob/release/v3-safe-integration-20261104/docs/MASTER_ROADMAP_V3_ADMIN_RELEASE_2026-11-04_RU.md) обновлён append-only записью TASK-20261104-005: [commit ab08e5e](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/ab08e5e5901bdbf2d44e06ec5f7e455ea57a3dd6).
+- [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10) обновлён NEW-002 CHECKPOINT; read-back подтвердил запись, issue open. Этапы A–K не отмечены как выполненные.
+- TEST PR #3 remote head [49971ca](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/49971ca0dc24ecf400960a9a3e5505145401a879), draft/open, merged=false. Повторный Actions [run 41915839350](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41915839350) на **точном HEAD 49971ca**: success, syntax checks, native fake-Firebase admin regression и release manifest все success.
+
+### RUN-20261104-012 / ЗАВЕРШИЛ / DONE (локальный NEW-002 исправлен и опубликован; admin не готов)
+- Дата: 2026-11-04, Europe/Helsinki.
+- По RUN-011/012 зафиксированы проверенные TEST code 91fa4f7, CI 5f4ae30, audit/handoff 49971ca; `admin/tests/admin-access.test.cjs` доступен в GitHub; native Node CI 29/29 PASS на TEST, включая финальный HEAD. Предыдущий RUN-008 остаётся RECOVERED_NOT_PUSHED, НЕ DONE.
+- **Открыто:** серверный custom claim и Firestore Security Rules, прямые permission deny/permit, реальные Auth/Firestore, iOS12 и современные браузеры, серверные агрегаты/мониторинг, backup+restore и ZIP rollout. Это блокеры этапов C/E/H/I; A–K остаются НЕ ЗАКРЫТЫ.
+- **Следующий чат:** начать с [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10) и [TEST admin audit](https://github.com/velardream-ctrl/riveria-sanasto-community-test/blob/feat/admin-control-center-package-spec-20261104/admin/ADMIN_TECHNICAL_AUDIT_2026-11-04_RU.md); проверить PR #3 HEAD=49971ca и CI; добавить новый RUN START; read-only аудит Security Rules/test admin claim, затем отдельные emulator и browser тесты по согласованным безопасным шагам. Запрет на merge, production, Firebase writes и платные тарифы сохраняется.
