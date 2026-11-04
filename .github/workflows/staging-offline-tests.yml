@@ -40,6 +40,8 @@ jobs:
         run: node staging/tests/staging-backend-guard.test.cjs
       - name: Verify real FI/RU term pilot browser isolation and ES5
         run: node staging/tests/study-v3-browser.test.cjs
+      - name: Test complete Firestore V3 history pagination across 500 answers
+        run: node staging/tests/study-v3-pages.test.cjs
       - name: Validate real-term fresh-start shadow study against two synthetic devices
         run: node staging/tests/study-v3-engine.test.cjs
       - name: Test isolated two-device demo sync core, offline queue and ES5 syntax
