@@ -52,6 +52,16 @@ button:disabled{opacity:.42}button:focus-visible{outline:3px solid #bb8c22;outli
 <p class="small">Нажми «Показать перевод», затем «Знаю» или «Нужно повторить».</p>
 <div id="study"><p>Войди и выбери «Начать обучение V3».</p></div>
 </section>
+<section class="card"><h2>Добавить личное слово</h2>
+<p class="small">Сохраняется только в твоём аккаунте V3. Пока можно создавать новые слова, но изменение и удаление ещё не включены. Не добавляй сведения о пациентах или коллегах.</p>
+<label for="word-fi">Финский (FI)</label>
+<input id="word-fi" type="text" maxlength="120" placeholder="Например: aamuvuoro" autocomplete="off">
+<label for="word-ru">Русский (RU)</label>
+<input id="word-ru" type="text" maxlength="180" placeholder="Утренняя смена" autocomplete="off">
+<label for="word-en">Английский (EN, по желанию)</label>
+<input id="word-en" type="text" maxlength="180" placeholder="Morning shift" autocomplete="off">
+<button type="button" id="add-word" disabled>Сохранить личное слово</button>
+</section>
 <p class="small">Это проверка нового механизма хранения, а не основной сайт. Пока не используйте для своих единственных резервных копий.</p>
 </main>
 <script defer src="config.js"></script><script defer src="guard.js"></script>

@@ -13,11 +13,16 @@
  var current=0,reveal=false,last=null,bootStage='INIT',initializing=false;
  var terms=[],localDevice=null;
  function el(id){return d.getElementById(id);}
+ function allTerms(){
+   var words=last&&last.state&&last.state.words||{};
+   var ids=Object.keys(words).sort();
+   return terms.concat(ids.map(function(id){return words[id];}));
+ }
  function visibleTerms(){
    var q=(el('search').value||'').toLowerCase().trim(),
        cat=el('category').value,mode=el('filter').value;
    var s=last&&last.state||{scores:{},favorites:{}};
-   return terms.filter(function(t){
+   return allTerms().filter(function(t){
      if(cat&&t.cat!==cat)return false;
      if(q&&[t.id,t.fi,t.ru,t.en||'',t.cat||'',t.catRu||''].join(' ')
        .toLowerCase().indexOf(q)<0)return false;
@@ -36,6 +41,10 @@
        names.push(t.cat);
      }
    });
+   if(!found['Omat sanat']){
+     found['Omat sanat']={label:'Мои слова / Omat sanat'};
+     names.push('Omat sanat');
+   }
    names.sort(function(a,b){return a.localeCompare(b);});
    names.forEach(function(k){
      var option=d.createElement('option');
@@ -131,6 +140,7 @@
    el('start').disabled=busy||!logged()||!!engine;
    el('refresh').disabled=busy||!engine||!engine.status().ready;
    el('send').disabled=busy||!engine||!engine.status().ready;
+   el('add-word').disabled=busy||!engine||!engine.status().ready;
  }
  function counters(record){
    var ss=record&&record.state&&record.state.scores||{},seen=0,correct=0,wrong=0,learned=0;
@@ -157,7 +167,7 @@
    }
    counters(last);statusView();
    var list=visibleTerms();
-   set('found',String(list.length)+' / '+terms.length);
+   set('found',String(list.length)+' / '+allTerms().length);
    if(!list.length){
      el('study').appendChild(element('p','small','В выбранной категории нет подходящих терминов.'));
      return;
@@ -224,6 +234,33 @@
      last=row;note('Очередь отправлена и сверена с сервером.',false);
    },function(){note('Отправка ещё не завершена. Локальная очередь сохранена.',true);
    }).then(function(){busy=false;render();});
+ }
+
+ function addPersonalWord(){
+   if(!engine||busy||!matching())return;
+   var fi=el('word-fi').value.trim(),ru=el('word-ru').value.trim(),
+       en=el('word-en').value.trim();
+   if(!fi||!ru||fi.length>120||ru.length>180||en.length>180){
+     note('Для личного слова нужны FI и RU, каждый в пределах длины.',true);
+     return;
+   }
+   var id;
+   try{id='W_'+hex();}catch(e){note('Защищённый ID слова не создан.',true);return;}
+   busy=true;statusView();
+   engine.record('word_upsert',id,{fi:fi,ru:ru,en:en}).then(function(row){
+     last=row;
+     el('word-fi').value='';el('word-ru').value='';el('word-en').value='';
+     el('category').value='Omat sanat';el('search').value='';
+     el('filter').value='all';current=0;reveal=false;
+     note('Личное слово сохранено в IndexedDB. Отправляем в облако…',false);
+     render();
+     return engine.upload().then(function(){return engine.view();}).then(function(record){
+       last=record;note('Личное слово синхронизировано.',false);
+     },function(){
+       note('Личное слово сохранено локально и ждёт интернета.',false);
+     });
+   },function(){note('Личное слово не сохранено, старые данные не затронуты.',true);
+   }).then(function(){busy=false;render();},function(){busy=false;render();});
  }
  function stop(){
    if(sub){sub();sub=null;}
@@ -318,6 +355,7 @@
    el('start').addEventListener('click',start);
    el('refresh').addEventListener('click',reload);
    el('send').addEventListener('click',send);
+   el('add-word').addEventListener('click',addPersonalWord);
    ['search','category','filter'].forEach(function(id){
      el(id).addEventListener(id==='search'?'input':'change',function(){
        current=0;reveal=false;render();
