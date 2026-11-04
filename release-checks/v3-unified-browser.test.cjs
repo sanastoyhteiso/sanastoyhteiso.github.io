@@ -52,7 +52,8 @@ function colRef(){
 }
 const firestore=function(){return{collection:()=>({doc:()=>({collection:()=>colRef()})})};};
 firestore.FieldPath={documentId:()=>({key:'documentId'})};
-const auth={currentUser:user,onAuthStateChanged:cb=>{cb(user);return ()=>{};}};
+let authObserver=null;
+const auth={currentUser:user,onAuthStateChanged:cb=>{authObserver=cb;cb(user);return ()=>{};}};
 w.firebase={auth:()=>auth,firestore:firestore};
 w.RS_FIREBASE_CONFIG={projectId:'riveria-sanasto-community-test'};
 const scripts=['data.js','v3-mediatri-guide.js','app.js','v3-sync-core.js','v3-sync-shadow.js',
@@ -102,7 +103,28 @@ async function run(){
  'existing term must be saved as a find, without creating private duplicate');
  assert.equal(Object.values(events).filter(x=>x.kind==='word_upsert').length,0);
  assert.ok(Object.keys(w.RS_V3_RELEASE.getState().finds).length>=1);
- console.log('PASS unified real UI: opt-in Auth, backup, IndexedDB, answer event, find existing word, no duplicate');
+ // Switching Google accounts without an intermediate signed-out event must
+ // invalidate the old owner. A queued old answer cannot become new-owner data.
+ const beforeSwitch=Object.keys(events).length;
+ d.querySelector('[data-view="cards"]').click();
+ d.querySelector('[data-action="flip"]').click();
+ d.querySelector('[data-action="mark-good"]').click();
+ const secondUser={uid:'mock-second-owner',email:'second@example.invalid',emailVerified:true};
+ w.RS_FAMILY.uid=secondUser.uid;
+ auth.currentUser=secondUser;
+ authObserver(secondUser);
+ await sleep(120);
+ assert.equal(w.RS_V3_RELEASE.isActive(),false,'old V3 session must close on direct account switch');
+ assert.equal(w.RS_V3_RELEASE.getState(),null,'old account snapshot must disappear');
+ assert.equal(Object.keys(events).length,beforeSwitch,'old pending write cannot run under another account');
+ // Return to the same owner: verified local deltas should be recovered once.
+ w.RS_FAMILY.uid=user.uid;
+ auth.currentUser=user;
+ authObserver(user);
+ await sleep(280);
+ assert.equal(w.RS_V3_RELEASE.isActive(),true,'original account can safely resume');
+ assert.equal(Object.keys(events).length,beforeSwitch+1,'local answer recovered exactly once');
+ console.log('PASS unified real UI: V3 opt-in, full UI, no duplicate finds, direct account switch and pending-event recovery');
  dom.window.close();
 }
 run().catch(e=>{console.error(e);process.exitCode=1;dom.window.close();});
