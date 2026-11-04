@@ -184,3 +184,16 @@
 - Действие: пересоздать детерминированные admin regression tests и исправить fail-closed обработку конфигурации, Auth/token/смены пользователей/stale запросов исключительно в TEST PR #3; обновить кеш-версии, провести доступные проверки, немедленно сохранить отдельными commit и проверить удалённый HEAD. Затем отчёт/передача и закрытие RUN.
 - Исходный TEST HEAD: 7b4f851389673050444073763d9cedd03661b189; TEST branch feat/admin-control-center-package-spec-20261104; PR #3 draft/open.
 - Нельзя: production/main, Firebase Auth/Firestore/Rules, данные, тарифы, merge; реальный admin login остаётся неподтверждённым.
+
+### RUN-20261104-011 / ЗАВЕРШИЛ / DONE (код и тесты сохранены в TEST, НЕ приёмка admin)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Восстановлены NEW-002 fail-closed JS, версии HTML/SW и новый admin/tests/admin-access.test.cjs (29 детерминированных кейсов).
+- Проверка: 29/29 PASS в изолированном V8, выполняющем тот же Node-test source с имитациями node:test/assert/fs/vm; JS parsing PASS, Firebase network/writes отсутствуют. Это НЕ нативный node --test, НЕ GitHub CI, НЕ реальный Firebase/Rules/iOS12.
+- TEST commit: [91fa4f7](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/91fa4f79ff2b8564c1a3671153e55ab0057e346d), шесть файлов; remote PR #3 DRAFT/open, HEAD=91fa4f79ff2b8564c1a3671153e55ab0057e346d; файл тестов и код прочитаны обратно из удалённой ветки.
+- Остаётся: нативное выполнение тестов/CI, независимый audit/handoff, настоящая auth-role/Firestore Rules/browser проверка, пересмотр master TASK-005 и Issue #10. NEW-002 частично исправлен в TEST; этапы A–K не закрывать.
+
+### RUN-20261104-012 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- TASK-20261104-005 / NEW-002; TEST branch feat/admin-control-center-package-spec-20261104, remote HEAD 91fa4f79ff2b8564c1a3671153e55ab0057e346d.
+- Действие: выполнить доступную независимую проверку сохранённого тестового набора (native Node/CI по возможности), записать ограничения, создать audit/handoff исключительно в TEST, обновить мастер-план и Issue #10 и оставить точный следующий шаг.
+- Запреты: не изменять production/Firebase/данные/тарифы; PR не объединять.
