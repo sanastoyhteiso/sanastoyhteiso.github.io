@@ -12,7 +12,7 @@ const w=dom.window,d=w.document,events={};
 const user={uid:'mock-owner',email:'owner@example.invalid',emailVerified:true};
 Object.defineProperty(w,'indexedDB',{configurable:true,value:new IDBFactory()});
 Object.defineProperty(w,'crypto',{configurable:true,value:crypto.webcrypto});
-w.confirm=()=>true;w.alert=()=>{};
+w.confirm=()=>true;w.alert=()=>{};w.scrollTo=()=>{};
 function get(k,other){const x=w.localStorage.getItem('test_uid__'+k);return x?JSON.parse(x):other;}
 function put(k,v){w.localStorage.setItem('test_uid__'+k,JSON.stringify(v));}
 w.RS_FAMILY={
@@ -82,7 +82,16 @@ async function run(){
  const answer=d.querySelector('[data-action="mark-good"]');
  assert.ok(answer);
  answer.click();
- await sleep(100);
+ for(let i=0;i<24&&Object.keys(events).length===0;i++)await sleep(50);
+ if(Object.keys(events).length!==1){
+   console.error('DIAGNOSTIC first answer',{
+     active:w.RS_V3_RELEASE.isActive(),
+     status:d.getElementById('v3-release-bar')?.textContent,
+     localScores:w.RS_FAMILY.getState().scores,
+     cloudEvents:Object.keys(events),
+     snapshot:w.RS_V3_RELEASE.getState()?.scores
+   });
+ }
  assert.equal(Object.keys(events).length,1,'one public answer goes to immutable server history');
  assert.equal(Object.values(events)[0].kind,'answer');
  assert.match(Object.values(events)[0].target,/^T\d{5,7}$/);
