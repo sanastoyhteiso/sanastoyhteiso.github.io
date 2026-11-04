@@ -90,3 +90,14 @@
 - TASK-20261104-005 / NEW-002.
 - Планирую действие: добавить в локальную копию TEST ветки Node regression tests, исполняющие реальные admin-page.js/admin-entry.js с контролируемыми DOM/Firebase-заглушками. Проверить загрузку/config, обычных и анонимных пользователей, строгий claim, смену аккаунта/токена, запоздалые запросы, отсутствие Firebase writes.
 - Repo / branch / HEAD: TEST `feat/admin-control-center-package-spec-20261104` / `7b4f851389673050444073763d9cedd03661b189`. Пока без commit в GitHub; запуск тестов будет отдельным RUN.
+
+### RUN-20261104-004 / ЗАВЕРШИЛ / DONE
+- Время (Europe/Helsinki): 2026-11-04 23:06:00.
+- Добавлен локальный `admin/tests/admin-access.test.cjs`: реальные скрипты страницы и ссылки исполняются в Node VM с управляемыми асинхронными ответами Auth/Firestore и минимальным DOM. Проверяются HTML/SDK/cache, claim, проект, смена сессий, отказ чтения, stale metrics. Настоящая сеть Firebase не используется.
+- Пока файл не закоммичен и тесты не запускались; код панели остаётся на [7b4f851](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/7b4f851389673050444073763d9cedd03661b189). Публикация проверенного набора файлов будет отдельным RUN.
+- Следующий шаг: baseline-запуск и подтверждение воспроизводимости NEW-002.
+
+### RUN-20261104-005 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:06:00.
+- TASK-20261104-005 / NEW-002; TEST ветка `feat/admin-control-center-package-spec-20261104`, исходный SHA `7b4f851389673050444073763d9cedd03661b189`.
+- Действие: запустить `node --test admin/tests/admin-access.test.cjs` на неизменённых исходных admin скриптах. Ожидаются отказы воспроизводящих тестов; сохранить точное число и причины, затем исправлять.
