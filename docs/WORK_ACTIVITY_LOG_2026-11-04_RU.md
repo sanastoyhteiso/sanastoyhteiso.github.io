@@ -251,3 +251,14 @@
 - TASK-20261104-005 / NEW-002; этап C/H, тестовый изолированный контракт доступа к `admin_metrics/current`.
 - План: добавить в TEST PR #3 `admin/security-tests/` с автономными правилами для безопасного emulator fixture и тестами: admin read только точного документа, отказ обычным/анонимным/неподтверждённым, запрещены любые client writes и list, запрет других путей; GitHub Actions workflow запускает emulator без Firebase token. Проверить на сервере CI; не переносить fixture в deployed rules.
 - TEST branch исходный HEAD 49971ca0dc24ecf400960a9a3e5505145401a879; PR Draft/open. Не изменять Firebase cloud, production/main, данные, тарифы или merge.
+
+### RUN-20261104-014.1 / ОШИБКА / FAILED (первый CI: разрешение зависимостей)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Сохранён TEST commit [6a3599e](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/6a3599e1ba9d92e899ec039666c09cf38d58110d) с изолированными `admin/security-tests` и CI workflow. GitHub Actions [#41918184887](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41918184887) завершился **failure** до запуска emulator tests.
+- Причина из логов: `ERESOLVE` — `@firebase/rules-unit-testing@6.0.0` требует peer `firebase@^13.0.0`, но указан `firebase@12.5.0`. **Никакие Firestore rules тесты не были запущены, PASS не заявляется.**
+- Ограничения: не изменялись production, реальный Firebase, Rules/данные/тарифы.
+
+### RUN-20261104-014.2 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- Задача: устранить точный conflict в isolated test-only `package.json` (Firebase JS SDK 13.x в паре с rules-unit-testing 6), не использовать `--force`/`--legacy-peer-deps`. Повторно проверить GitHub Actions, затем при необходимости исправить обнаруженные реальные emulator failures и задокументировать результат.
+- TEST branch исходный HEAD=6a3599e1ba9d92e899ec039666c09cf38d58110d. Никаких Firebase cloud изменений.
