@@ -179,7 +179,7 @@
      }
      // For previously activated users, first reconcile any local edits made
      // just before an unexpected browser shutdown (positive deltas only).
-     var pending=consent(uid)&&!manual?diff.changes(r.state,existing):{events:[],unsafe:[]};
+     var pending=consent(uid)&&!manual?diff.recover(r.state,existing):{events:[],unsafe:[]};
      if(pending.unsafe.length)throw Error('Local history conflict; old state preserved');
      ready=true;row=r;
      observed=diff.project(r.state);

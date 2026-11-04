@@ -66,5 +66,24 @@
    });
    return {events:out,unsafe:unsafe};
  }
- return {project:project,changes:changes,target:target,wordId:wordId};
+ function recover(cloud,local){
+   // Newer cloud counts on another device are NORMAL, not a rollback.
+   // Recover ONLY independently proven positive local deltas. Never import
+   // historical data automatically when a person first opts in.
+   var c=project(cloud),l=project(local),subset={scores:{},words:{},favorites:{}},
+     baseline={scores:{},words:{},favorites:{}};
+   Object.keys(l.scores).forEach(function(id){
+     var a=c.scores[id]||{seen:0,correct:0,wrong:0,learned:false};
+     var b=l.scores[id];
+     if(b.seen>a.seen&&b.correct>=a.correct&&b.wrong>=a.wrong&&
+       b.seen-a.seen===b.correct-a.correct+b.wrong-a.wrong){
+       subset.scores[id]=b;baseline.scores[id]=a;
+     }
+   });
+   Object.keys(l.words).forEach(function(id){
+     if(!c.words[id])subset.words[id]=l.words[id];
+   });
+   return changes(baseline,subset);
+ }
+ return {project:project,changes:changes,recover:recover,target:target,wordId:wordId};
 });

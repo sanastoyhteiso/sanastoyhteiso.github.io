@@ -29,4 +29,11 @@ const wrong={scores:{T00001:{seen:2,correct:1,wrong:0,learned:true}},words:{},fa
 a.ok(diff.changes(s1,wrong).unsafe.length,'Incomplete answer counter blocked');
 a.equal(diff.target('L112233'),false);
 a.equal(diff.target('H00001'),true);
+let recovery=diff.recover(s2,s1);
+a.equal(recovery.unsafe.length,0);
+a.equal(recovery.events.length,0,'Newer cloud scores must not block another device');
+recovery=diff.recover(s1,s2);
+a.equal(recovery.events.length,1,'Recover a locally completed answer missing from cloud shadow');
+a.equal(recovery.events[0].value.correct,false);
+
 console.log('PASS: UI→V3 answer, review, favorites, personal words and Mediatri diff, fail-closed');
