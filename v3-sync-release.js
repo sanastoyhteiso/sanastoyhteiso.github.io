@@ -155,6 +155,7 @@
    if(!consent(user.uid)&&!manual)return Promise.resolve(false);
    if(!engineAPI||!shadowAPI||!pages||!core||!diff||!finds||!sha)
      {text('Не все модули V3 загрузились.',true);return Promise.resolve(false);}
+   var hadConsent=consent(user.uid);
    starting=true;tip='';status();uid=user.uid;
    var remote=sessionRemote(uid),storage;
    try{
@@ -179,7 +180,7 @@
      }
      // For previously activated users, first reconcile any local edits made
      // just before an unexpected browser shutdown (positive deltas only).
-     var pending=consent(uid)&&!manual?diff.recover(r.state,existing):{events:[],unsafe:[]};
+     var pending=hadConsent?diff.recover(r.state,existing):{events:[],unsafe:[]};
      if(pending.unsafe.length)throw Error('Local history conflict; old state preserved');
      ready=true;row=r;
      observed=diff.project(r.state);

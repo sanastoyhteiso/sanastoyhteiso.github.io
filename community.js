@@ -57,7 +57,7 @@ function snapshot(){return {scores:own('rs_scores_v1',{}),words:own('rs_user_wor
 function cleanState(o){var m={},x,k;(o.words||[]).forEach(function(w){if(w&&w.id)m[w.id]=w;});return {scores:o.scores||{},words:m,fav:o.fav||{},fm:o.fm||{},deleted:o.deleted||{},scope:o.scope||{},subs:o.subs||{}};}
 function stable(v){return JSON.stringify(v===undefined?null:v);}
 function eid(){return 'E'+Date.now().toString(36)+Math.floor(Math.random()*1e12).toString(36);}
-function capture(force){if(!uid()||applying)return;var cur=cleanState(snapshot()),prev=get(key('observed'),null)||{scores:{},words:{},fav:{},fm:{},deleted:{},subs:{},scope:{}};
+function capture(force){if(!uid()||applying||window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())return;var cur=cleanState(snapshot()),prev=get(key('observed'),null)||{scores:{},words:{},fav:{},fm:{},deleted:{},subs:{},scope:{}};
  var q=get(key('queue'),[]),n=Date.now(),kind;function diff(type,items,old){Object.keys(items||{}).forEach(function(id){if(force||stable(items[id])!==stable((old||{})[id]))q.push({id:eid(),time:n,device:deviceId,kind:type,target:id,data:items[id]});});}
  diff('score',cur.scores,prev.scores);diff('word',cur.words,prev.words);diff('fav',cur.fm,prev.fm);diff('delete',cur.deleted,prev.deleted);diff('subscribe',cur.subs,prev.subs);
  if(force||stable(cur.scope)!==stable(prev.scope))q.push({id:eid(),time:n,device:deviceId,kind:'scope',target:'scope',data:cur.scope});
@@ -76,7 +76,10 @@ function materialize(events){var out={scores:{},words:{},fav:{},fm:{},deleted:{}
  Object.keys(out.words).forEach(function(id){if(Number(out.deleted[id]||0)>=Number(out.words[id].updatedAt||0))delete out.words[id];});
  return out;}
 function unpack(rows){var a=[];(rows||[]).forEach(function(row){if(row.length<6)return;try{a.push({id:row[0],time:Number(row[1])||1,device:row[2],kind:row[3],target:row[4],data:JSON.parse(row[5]||'null')});}catch(e){}});return a;}
-function apply(events){var state=materialize(events),current=snapshot();applying=true;
+function apply(events){
+ if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())
+   throw Error('Legacy Drive cannot overwrite active V3 learning data');
+ var state=materialize(events),current=snapshot();applying=true;
  var changes=[['rs_scores_v1',state.scores],['rs_user_words_v1',Object.keys(state.words).map(function(id){return state.words[id];})],['rs_favorites_v1',state.fav],['rs_favorite_meta_v1',state.fm],['rs_deleted_words_v1',state.deleted],['rs_family_scope_v1',state.scope]];
  for(var i=0;i<changes.length;i++){if(!ownPut(changes[i][0],changes[i][1])){applying=false;throw Error('Нет места для локального сохранения');}}
  put(key('subs'),state.subs);put(key('observed'),cleanState(snapshot()));applying=false;
