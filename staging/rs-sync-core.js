@@ -80,7 +80,17 @@
         state.finds[id]={added:a.added,topic:a.topic,note:a.note,updatedAt:e.time};
       }
       else if(e.kind==='word_upsert'){
-        var w=copy(a);w.id=id;state.words[id]=w;
+        var w=copy(a);w.id=id;
+        // Same deterministic personal word ID on two devices: identical text
+        // is idempotent. Conflicting translations require an explicit review;
+        // NEVER silently apply a last-writer-wins edit.
+        var previous=state.words[id];
+        if(previous){
+          function norm(x){return String(x||'').replace(/\s+/g,' ').trim().toLowerCase();}
+          if(norm(previous.fi)!==norm(w.fi)||norm(previous.ru)!==norm(w.ru)||
+             norm(previous.en)!==norm(w.en))
+            throw Error('Conflicting definitions for one personal word ID');
+        }else state.words[id]=w;
       }
       else if(e.kind==='word_delete')delete state.words[id];
     });
