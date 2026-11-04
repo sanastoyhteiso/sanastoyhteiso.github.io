@@ -14,6 +14,8 @@ assert.ok(app.includes('var originalFi=String(answer).trim()===String(x.answer).
 assert.ok(style.includes('font-size:19px')&&style.includes('min-height:52px'));
 assert.ok(ipad.includes('rs-ipad-select-trigger')&&ipad.includes('select.dispatchEvent(event)'));
 assert.ok(!html.includes('v3-classic/auth-pilot/study-v3.html'));
+assert.ok(html.includes('v3-mediatri-guide.js'));
+assert.ok(sw.includes('v3-mediatri-guide.js'));
 assert.ok(!html.includes('TEST 3.0 / Тестовая копия'));
 for(const file of ['app.js','ipad-selects.js'])new vm.Script(fs.readFileSync(file,'utf8'));
 const sw=fs.readFileSync('sw.js','utf8');

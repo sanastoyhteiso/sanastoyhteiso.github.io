@@ -69,3 +69,8 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 @media (max-width:750px) {
   .main-column {padding-top:18px;padding-left:14px;padding-right:14px}
 }
+
+/* V3 Mediatri interactive learning guide; no patient data. */
+.rs-med-fold{background:#f5fbfd;border:1px solid #b6d8e3;padding:10px 13px;border-radius:12px;margin:9px 0}
+.rs-med-fold summary{cursor:pointer;font-weight:700;font-size:16px;min-height:32px}
+.rs-med-reference .dict-row{margin:7px 0}

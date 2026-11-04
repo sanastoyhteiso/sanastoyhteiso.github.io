@@ -6,7 +6,7 @@
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
   var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null,
-    medMode:'situations', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
+    medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
   function byId(id){return document.getElementById(id);}
   function safe(v){return String(v===undefined||v===null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -70,9 +70,16 @@
   function renderDictItems(){var q=clean(state.dictQuery),pool=allTerms().concat(state.dictIncludePhrases&&sharedEnabled()?D.phrases.concat(D.mediatri):[]),out=[];for(var i=0;i<pool.length;i++){var x=pool[i];if(state.dictFilter!=='all'&&x.cat!==state.dictFilter)continue;if(q&&clean([x.fi,x.ru,x.en,x.cat,x.catRu,x.example,x.keywords].join(' ')).indexOf(q)<0)continue;if(state.dictDirection!=='all'&&!eligible(x,state.dictDirection))continue;out.push(x);}
     var el=byId('dict-results');if(!el)return;var count=byId('dict-count');count.textContent='('+out.length+')';if(!out.length){el.innerHTML='<div class="empty">Совпадений нет. Попробуй другое слово.</div>';return;}var s='';for(var j=0;j<Math.min(out.length,120);j++){var x=out[j];var v=state.dictDirection==='all'?'<b>FI: '+safe(x.fi)+'</b><p>RU: '+safe(x.ru)+'</p>'+(word(x,'en')?'<p>EN: '+safe(x.en)+'</p>':''):('<b>'+safe(word(x,pair(state.dictDirection).from))+'</b><p>'+safe(word(x,pair(state.dictDirection).to))+'</p>');s+='<div class="dict-row"><div>'+v+'<small>'+safe(categoryName(x))+'</small></div><button class="tiny-btn" data-action="copy-fi" data-value="'+safe(x.fi)+'">Копировать</button></div>';}if(out.length>120)s+='<div class="empty">Показаны первые 120. Уточни поиск, чтобы увидеть остальные.</div>';el.innerHTML=s;
   }
-  function medTabs(){return tabsHtml(state.medMode,[['situations','Ситуации'],['phrases','Фразы'],['headings','Заголовки'],['draft','Подбор слов']],'med-mode');}
+  function medTabs(){return tabsHtml(state.medMode,[['guide','Помощник записи'],['situations','Ситуации'],['phrases','Фразы'],['headings','Заголовки'],['draft','Подбор слов']],'med-mode');}
   function renderMediatri(){basePage('Тренировка Mediatri','Учимся писать короткие профессиональные записи без реальных данных пациентов.');var s=englishWarning(state.medDirection)+'<div class="banner warning"><b>Только учебный тренажёр</b><p>Не вводи имена, даты рождения, диагнозы или другие сведения настоящих жильцов. Образцы — не реальные записи и не инструкция по назначению лекарств.</p></div><div class="panel"><label class="field"><span>Направление</span>'+directionSelect('med-dir',state.medDirection,false)+'</label></div>'+medTabs();
-    if(state.medMode==='situations')s+=medSituations();else if(state.medMode==='phrases')s+=medPhrases();else if(state.medMode==='headings')s+=medHeadings();else s+=medDraft();root.innerHTML=s;if(state.medMode==='phrases')renderPhraseItems();if(state.medMode==='headings')renderHeadingItems();
+    if(state.medMode==='guide'&&window.RS_MED_GUIDE)s+=window.RS_MED_GUIDE.guideView();
+    else if(state.medMode==='situations')s+=medSituations();
+    else if(state.medMode==='phrases')s+=medPhrases();
+    else if(state.medMode==='headings')s+=medHeadings();else s+=medDraft();
+    root.innerHTML=s;
+    if(state.medMode==='guide'&&window.RS_MED_GUIDE)window.RS_MED_GUIDE.renderGuide();
+    if(state.medMode==='phrases')renderPhraseItems();
+    if(state.medMode==='headings')renderHeadingItems();
   }
   function medSituations(){var x=D.scenarios[state.scenario]||D.scenarios[0],p=medPair(),task=p.from==="en"?x.taskEn:p.from==="fi"?x.answer:x.task,answer=p.to==="en"?x.translationEn:p.to==="ru"?x.translation:x.answer;var s='<div class="panel"><div class="section-title"><h2>Ситуация '+(state.scenario+1)+' / '+D.scenarios.length+'</h2><p>'+safe(categoryName(x))+'</p></div><p class="hint">Задание: переведи или составь краткую запись на выбранном языке.</p><div class="answer">'+safe(task)+'</div><label class="field"><span>Твоя попытка (ничего не отправляется в интернет)</span><textarea id="scenario-input" class="control" placeholder="Asukas oli..." rows="4">'+safe(state.scenarioDraft)+'</textarea></label><div class="btn-row"><button class="btn primary" data-action="med-reveal">◉ '+(state.scenarioRevealed?'Скрыть образец':'Показать образец')+'</button><button class="btn white" data-action="med-next">Следующая ситуация →</button></div>';
     if(state.scenarioRevealed){
