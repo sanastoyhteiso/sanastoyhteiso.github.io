@@ -339,3 +339,16 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - Действие: сохранить TEST audit/handoff checkpoint NEW-003 с CI 46/46; повторно прочитать TEST файлы и PR/CI; синхронизировать NEW-003/TASK-008 в master и Issue #10; закрыть RUN-016 с точным remaining blocker. Не утверждать реальную авторизацию или полную совместимость без текущих deployed Rules.
 - TEST HEAD fd6d94d0da7bda24ec4dc3359f346d27a790d1ad.
+
+### RUN-20261104-016.4 / ЗАВЕРШИЛ / DONE (NEW-003 checkpoint синхронизирован)
+- Дата: 2026-11-04, Europe/Helsinki.
+- TEST [audit/handoff commit e353295](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/e35329534c8d8e7a6300a026bb1a827f98de88b2). Повторный read-back показал `admin/security-tests/security.integrated.test.cjs` с 29 кейсами, технический audit с RUN-015/016, TEST PR #3 DRAFT/open/not merged, HEAD e35329534c8d8e7a6300a026bb1a827f98de88b2.
+- На **точном финальном HEAD**: [Actions #41920432803](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41920432803) SUCCESS, нативный локальный Firestore emulator **46/46 PASS, 0 FAIL**, [client admin regression #41920432780](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41920432780) SUCCESS.
+- MASTER TASK-20261104-008 обновлён в [commit 23323c6](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/23323c6a396603e9b4835c64f2b3e6a0a63add6f); Issue #10 дополнен NEW-003 checkpoint, оба read-back подтверждены, Issue остаётся open. Ни одна галочка A–K не закрыта.
+- Весь набор правил — только историческая offline-копия и synthetic emulator data, НЕ действующие TEST Firebase Rules.
+
+### RUN-20261104-016 / ЗАВЕРШИЛ / DONE (offline исправление NEW-003; cloud gate BLOCKED)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Сделано: зафиксирована несогласованность пути `site_admin` vs `admin_metrics/current`; создан изолированный полный исторический TEST ruleset snapshot из PR #8 с additive admin_metrics и сохранением student access. В GitHub commit 2e9a5ac были 42/43 PASS (1 FAIL), ошибка про слишком широкий provider не скрывалась; исправлено в fd6d94d и независимо подтверждено нативными **46/46 PASS** на точном HEAD e353295. PR не merged.
+- **Открытые условия:** отсутствует независимый доступ к актуальной опубликованной конфигурации Rules тестового облачного Firebase `sanastoyhteiso-v3-development`; нет подтверждения server-issued claim, реального admin/user deny/allow и испытаний Safari/iOS12; слепой deploy исторического fixture недопустим. NEW-003 остаётся ЧАСТИЧНО, Stage C/E/H OPEN.
+- **Следующему чату:** сначала проверить журнал, TEST PR #3 HEAD=e353295 и Actions 41920432803. Создать RUN START, read-only получить полный текущий deployed TEST ruleset (через безопасный разрешённый доступ к Firebase), сравнить с PR #8 и TEST fixture; до этого НЕ выполнять Firebase deploy/claims/merge/production. Другой Firebase проект `riveria-sanasto-community-test` не трогать. При отсутствии read-only доступа честно указать BLOCKED и продолжать лишь независимые браузерные/статические тесты на TEST.
