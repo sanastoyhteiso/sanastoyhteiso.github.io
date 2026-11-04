@@ -13,6 +13,36 @@
  var current=0,reveal=false,last=null,bootStage='INIT',initializing=false;
  var terms=[],localDevice=null;
  function el(id){return d.getElementById(id);}
+ function visibleTerms(){
+   var q=(el('search').value||'').toLowerCase().trim(),
+       cat=el('category').value,mode=el('filter').value;
+   var s=last&&last.state||{scores:{},favorites:{}};
+   return terms.filter(function(t){
+     if(cat&&t.cat!==cat)return false;
+     if(q&&[t.id,t.fi,t.ru,t.en||'',t.cat||'',t.catRu||''].join(' ')
+       .toLowerCase().indexOf(q)<0)return false;
+     var score=s.scores[t.id];
+     if(mode==='favorites'&&s.favorites[t.id]!==true)return false;
+     if(mode==='learned'&&!(score&&score.learned===true))return false;
+     if(mode==='review'&&score&&score.learned===true)return false;
+     return true;
+   });
+ }
+ function addCategories(){
+   var found=Object.create(null),names=[],choose=el('category');
+   terms.forEach(function(t){
+     if(t.cat&&!found[t.cat]){
+       found[t.cat]={label:t.catRu?t.catRu+' / '+t.cat:t.cat};
+       names.push(t.cat);
+     }
+   });
+   names.sort(function(a,b){return a.localeCompare(b);});
+   names.forEach(function(k){
+     var option=d.createElement('option');
+     option.value=k;option.textContent=found[k].label;
+     choose.appendChild(option);
+   });
+ }
  function set(id,value){el(id).textContent=value;}
  function note(message,problem){
    set('message',message);el('message').className='state '+(problem?'error':'ok');
@@ -34,8 +64,7 @@
    if(value&&/^D_[a-f0-9]{32}$/.test(value))return value;
    value='D_'+hex();w.localStorage.setItem(name,value);return value;
  }
- function eventSignature(e){return JSON.stringify([e.id,e.device,e.kind,e.target,
-   e.time,JSON.stringify(e.data)]);}
+ // Firestore may reorder map fields; compare canonical event payloads.
  function remoteAdapter(){
    var collection=db.collection('sync_v3').doc(activeUid).collection('events');
    return {
@@ -70,7 +99,7 @@
      return r.get({source:'server'}).then(function(doc){
        if(!matching())throw Error('Account changed during write');
        if(doc.exists){
-         if(eventSignature(doc.data())!==eventSignature(e)||doc.data().uid!==uid)
+         if(!studyApi.sameEvent(doc.data(),e)||doc.data().uid!==uid)
            throw Error('Cloud event collision; preserve local data');
          return;
        }
@@ -127,7 +156,13 @@
      counters(null);statusView();return;
    }
    counters(last);statusView();
-   var list=terms.slice(0,12),t=list[current%list.length],p=last.state.scores[t.id]||{seen:0,correct:0,wrong:0};
+   var list=visibleTerms();
+   set('found',String(list.length)+' / '+terms.length);
+   if(!list.length){
+     el('study').appendChild(element('p','small','В выбранной категории нет подходящих терминов.'));
+     return;
+   }
+   var t=list[current%list.length],p=last.state.scores[t.id]||{seen:0,correct:0,wrong:0};
    var wrap=element('div','item');
    wrap.appendChild(element('p','small','Термин '+(current%list.length+1)+' / '+list.length+
      ' · '+t.id+' · '+(p.learned?'Выучено':'В изучении')));
@@ -156,7 +191,7 @@
    if(!engine||busy||!matching())return;
    busy=true;statusView();render();
    engine.record(kind,id,value).then(function(row){
-     last=row;if(advance){current=(current+1)%12;reveal=false;}
+     last=row;if(advance){current=(current+1)%Math.max(1,visibleTerms().length);reveal=false;}
      note('Ответ записан в IndexedDB. Отправляем в облако…',false);
      render();
      return engine.upload().then(function(){return engine.view();}).then(function(row){
@@ -244,6 +279,8 @@
      terms=w.RS_DATA.terms.filter(function(t){
        return /^T[0-9]{5,7}$/.test(t.id)&&t.fi&&t.ru;
      });
+     if(terms.length<1296)throw Error('Incomplete public catalog');
+     addCategories();
      bootStage='PROJECT';
      var site={origin:w.location.origin,pathname:w.location.pathname};
      if(site.pathname!==PATH)throw Error('Wrong pilot path');
@@ -281,6 +318,11 @@
    el('start').addEventListener('click',start);
    el('refresh').addEventListener('click',reload);
    el('send').addEventListener('click',send);
+   ['search','category','filter'].forEach(function(id){
+     el(id).addEventListener(id==='search'?'input':'change',function(){
+       current=0;reveal=false;render();
+     });
+   });
    w.addEventListener('online',function(){if(engine&&matching())send();});
    d.addEventListener('visibilitychange',function(){if(!d.hidden&&engine&&matching())reload();});
    render();
