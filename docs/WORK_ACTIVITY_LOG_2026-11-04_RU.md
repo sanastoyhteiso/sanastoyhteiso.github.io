@@ -328,3 +328,14 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - Задача: заменить проверку provider `!= anonymous` на строго `== 'google.com'` только в isolated fixture и интеграционном admin_metrics match; обновить README и повторить обе группы тестов на GitHub CI. Это TEST пилот с Google Authentication; другие провайдеры нельзя молча разрешать.
 - Исходный TEST HEAD=2e9a5accde7334cef2f95feb41e66511e346ac68, PR #3 draft/open. Не облачный deploy, не production, не secrets.
+
+### RUN-20261104-016.3 / ЗАВЕРШИЛ / DONE (TEST полный исторический ruleset + новый admin path)
+- Дата: 2026-11-04, Europe/Helsinki.
+- TEST commit [fd6d94d](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/fd6d94d0da7bda24ec4dc3359f346d27a790d1ad) сохраняет строгое `sign_in_provider == 'google.com'` в обоих изолированных fixtures, дополнительные отрицательные tests и README. Ранее commit [2e9a5ac](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/2e9a5accde7334cef2f95feb41e66511e346ac68) внёс snapshot полного исторического V3 ruleset от PR #8, аддитивный match `admin_metrics/current` и integration tests для `users/settings/sync_v3/libraries_v3`.
+- Native [GitHub Actions #41920093362](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41920093362) `success`; 46 tests, **46 PASS, 0 FAIL**, настоящий локальный Firestore Emulator, exit 0. Предыдущий [FAIL #41919685700](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41919685700) (42/43) оставлен в истории как диагностический промежуточный результат.
+- Прямая read-back check итоговых файлов и статус PR ещё выполнить; это не deployed Rules. `firebase deploy` не вызывался. Client/production/Firebase cloud/пользовательские данные и тарифы не менялись.
+
+### RUN-20261104-016.4 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- Действие: сохранить TEST audit/handoff checkpoint NEW-003 с CI 46/46; повторно прочитать TEST файлы и PR/CI; синхронизировать NEW-003/TASK-008 в master и Issue #10; закрыть RUN-016 с точным remaining blocker. Не утверждать реальную авторизацию или полную совместимость без текущих deployed Rules.
+- TEST HEAD fd6d94d0da7bda24ec4dc3359f346d27a790d1ad.
