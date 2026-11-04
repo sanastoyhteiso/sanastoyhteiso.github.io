@@ -13,7 +13,7 @@ let nextId=0,connected=true,forgedMissing=false;
 function remote(){
  return {
   list:async(owner,limit)=>{
-    assert.equal(owner,uid);assert.equal(limit,500);
+    assert.equal(owner,uid);assert.equal(limit,10000);
     if(!connected)throw Error('offline');
     const xs=Object.values(events);
     return forgedMissing?xs.filter(x=>x.target!=='T00001'):xs;
@@ -79,6 +79,18 @@ async function run(){
  forgedMissing=false;
  await a.refresh();
  assert.equal((await a.view()).state.scores.T00001.correct,1);
+ // Large history regression: >500 immutable real-term answer events must
+ // be reconstructed without discarding the original history.
+ for(let i=0;i<610;i++){
+   const id='E_'+(100+i).toString(16).padStart(32,'0');
+   events[id]={v:3,uid,id,device:'D_'+'a'.repeat(32),
+     kind:'answer',target:'T00005',time:1793900000000+i,
+     data:{correct:true}};
+ }
+ const highVolume=await b.refresh();
+ assert.equal(highVolume.state.scores.T00005.seen,610,
+  'History after 500 answers must be intact');
+ assert.equal(highVolume.state.scores.T00001.correct,1);
  // Repeat account opening must not reset previously stored scores.
  assert.equal((await b.start()).state.scores.T00001.correct,1);
  active='intruder';

@@ -8,7 +8,7 @@
  else root.RS_V3_STUDY_ENGINE=api;
 })(this,function(){
  'use strict';
- var MAX_REMOTE=500;
+ var MAX_REMOTE=10000;
  function empty(){return {scores:{},words:{},favorites:{}};}
  function safeUid(x){return typeof x==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(x);}
  function isTerm(x){return typeof x==='string'&&/^T[0-9]{5,7}$/.test(x);}

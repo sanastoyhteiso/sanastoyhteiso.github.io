@@ -6,7 +6,7 @@
  'use strict';
  var cfg=w.RS_V3_AUTH_PILOT_CONFIG,guard=w.RS_V3_TEST_BACKEND_GUARD,
   core=w.RS_SYNC_CORE,shadowApi=w.RS_SYNC_SHADOW_IDB,
-  studyApi=w.RS_V3_STUDY_ENGINE;
+  studyApi=w.RS_V3_STUDY_ENGINE,pagesApi=w.RS_V3_STUDY_PAGES;
  var PATH='/riveria-sanasto-community-test/v3-classic/auth-pilot/study-v3.html';
  var controller=null,db=null,engine=null,shadow=null,sub=null;
  var activeUid='',activeRevision=0,busy=false,started=false;
@@ -40,16 +40,29 @@
    var collection=db.collection('sync_v3').doc(activeUid).collection('events');
    return {
     list:function(uid,limit){
-     if(!matching()||uid!==activeUid) return Promise.reject(Error('Account changed'));
-     return collection.orderBy('time','asc').limit(limit).get({source:'server'})
-       .then(function(s){
-         if(!matching())throw Error('Account changed during cloud read');
-         var events=[];
-         s.forEach(function(doc){var v=doc.data();
-           if(!v||v.id!==doc.id)throw Error('Cloud event ID mismatch');
-           events.push(v);
-         });return events;
-       });
+     if(!matching()||uid!==activeUid)
+       return Promise.reject(Error('Account changed'));
+     if(limit!==10000)return Promise.reject(Error('Unapproved cloud history cap'));
+     // Deterministic document-ID order prevents losing answers with identical
+     // millisecond timestamps. Paginate until a short/empty page is confirmed.
+     var reader=pagesApi.create({active:matching,pageSize:100,maxEvents:10000,
+       fetchPage:function(cursor,number){
+         var q=collection.orderBy(w.firebase.firestore.FieldPath.documentId(),'asc')
+           .limit(number);
+         if(cursor!==null)q=q.startAfter(cursor);
+         return q.get({source:'server'}).then(function(s){
+           if(!matching())throw Error('Account changed during history fetch');
+           var items=[],lastDoc=null;
+           s.forEach(function(doc){
+             var e=doc.data();
+             if(!e||e.id!==doc.id)
+               throw Error('Cloud event ID mismatch');
+             items.push(e);lastDoc=doc;
+           });
+           return {items:items,cursor:lastDoc};
+         });
+       }});
+     return reader.list();
     },
     put:function(uid,e){
      if(!matching()||uid!==activeUid)return Promise.reject(Error('Account changed'));
@@ -65,10 +78,15 @@
      });
     },
     watch:function(callback){
-      return collection.orderBy('time','asc').limit(500).onSnapshot(
+      // A small tail listener avoids rereading the first 500 historical
+      // events on each change and keeps detecting new answers after 500.
+      return collection.orderBy('time','desc').limit(5).onSnapshot(
        {includeMetadataChanges:true},function(s){
-        if(matching()&&!s.metadata.fromCache&&!s.hasPendingWrites)
-          callback(s.size);
+        if(matching()&&!s.metadata.fromCache&&!s.hasPendingWrites){
+          var ids=[];
+          s.forEach(function(doc){ids.push(doc.id);});
+          callback(ids.join('|'));
+        }
        },function(){if(matching())note('Обновления временно недоступны; локальные ответы сохранены.',true);});
     }
    };
@@ -198,7 +216,7 @@
        last=row;set('cloud',w.navigator.onLine===false?
          'Локальная история (офлайн)':'Соединение подтверждено');
        note('История открыта. Можно учиться.',false);
-       var lastNotified=0;
+       var lastNotified='';
        sub=remote.watch(function(size){
          if(!matching()||busy||size===lastNotified)return;
          lastNotified=size;reload();
@@ -219,7 +237,7 @@
    if(started)return;started=true;
    try{
      bootStage='SDK';
-     if(!cfg||!guard||!core||!shadowApi||!studyApi||!w.firebase||
+     if(!cfg||!guard||!core||!shadowApi||!studyApi||!pagesApi||!w.firebase||
        !w.RS_V3_FIREBASE_AUTH_ADAPTER||!w.RS_V3_AUTH_CONTROLLER||
        !w.RS_DATA||!w.RS_DATA.terms||w.RS_DATA.terms.length<1296)
        throw Error('SDK or public dictionary missing');
