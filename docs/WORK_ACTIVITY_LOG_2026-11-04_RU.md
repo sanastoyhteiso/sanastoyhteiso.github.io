@@ -293,3 +293,17 @@
 - Этап C: read-only поиск актуального полного TEST Firestore ruleset и server-issued role без секрета. Проверить доступные разрешённые источники (GitHub и прежние проектные материалы); установить, может ли имеющийся доступ подтвердить deployed ruleset или нужен Firebase connector.
 - Исходный TEST PR #3 HEAD b6d844cee16eaf63e85c8719055b8c14db469806. Изменения cloud запрещены, PR остаётся Draft.
 - Результат ожидается честный: READ_VERIFIED или BLOCKED_READ_ONLY с доказательствами. Нельзя выдавать ранее вставленный черновик Rules за текущую опубликованную версию.
+
+### RUN-20261104-015 / ЗАВЕРШИЛ / DONE (read-only поиск, deployed ruleset остаётся недоступен)
+- Дата: 2026-11-04, Europe/Helsinki.
+- В историческом [PR #8](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/8), HEAD 828d702430037aeca271786bbcf067e202f10c0c, обнаружены полные **подготовительные**, не обязательно deployed, Rules для изолированного TEST проекта `sanastoyhteiso-v3-development`: `staging/backend/firestore.v3-development.rules` (234 строки, SHA blob 8f5da135e34de7e03437b85ce54e1e1aac1d7563) и сценарии эмулятора. В них `match /site_admin/{docId}` для claim admin, но **нет `match /admin_metrics/{metricId}`**; admin page PR #3 читает `admin_metrics/current`. Это конфигурационное расхождение исторической модели и нынешнего клиента.
+- Найдены также separate historic combined Rules для `riveria-sanasto-community-test` (совсем другого Firebase проекта). Вопросы действительного deployment не разрешены: user прошлых чатов сообщал о Publish, но независимого read-only извлечения опубликованных Rules сейчас нет. Не переносить правила между проектами.
+- Firebase connector (возможный доступ через отдельное подключение) сейчас не установлен; другой способ через доступные GitHub инструменты читать **живой deployed ruleset** не подтверждён. Никакие облачные правила, claims, данные не менялись.
+- Выявлен **NEW-003 / HIGH:** mismatch `site_admin` vs `admin_metrics/current`, потенциальный blocker E/C при интеграции. Не утверждать, что облачные Rules обязательно такие же; статус `HISTORICAL_CONTRACT_MISMATCH`.
+- Следующий шаг: записать NEW-003 в master+Issue, затем offline integration regression на полном историческом TEST ruleset плюс аддитивный match `admin_metrics/current`, запрет клиентских записей и сохранение student paths. Это тестовый проект-файл, **не deployed rules**.
+
+### RUN-20261104-016 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- TASK-20261104-008 / NEW-003, этапы C/E/H.
+- План: зарегистрировать NEW-003 в MASTER ROADMAP/Issue #10, создать в TEST PR #3 изолированный regression suite на полном историческом TEST ruleset PR #8 (точный source commit 828d702), проверить правомерность и безвредность аддитивного `admin_metrics/current` вместе с существующими `users/settings/sync_v3/libraries_v3` правилами, получить нативный GitHub Actions результат; ни одного cloud deploy.
+- Исходный TEST PR #3 HEAD=b6d844cee16eaf63e85c8719055b8c14db469806, DRAFT/open/not merged. Документация release ветка. Firebase cloud/production/тарифы/данные не менять.
