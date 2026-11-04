@@ -307,3 +307,13 @@
 - TASK-20261104-008 / NEW-003, этапы C/E/H.
 - План: зарегистрировать NEW-003 в MASTER ROADMAP/Issue #10, создать в TEST PR #3 изолированный regression suite на полном историческом TEST ruleset PR #8 (точный source commit 828d702), проверить правомерность и безвредность аддитивного `admin_metrics/current` вместе с существующими `users/settings/sync_v3/libraries_v3` правилами, получить нативный GitHub Actions результат; ни одного cloud deploy.
 - Исходный TEST PR #3 HEAD=b6d844cee16eaf63e85c8719055b8c14db469806, DRAFT/open/not merged. Документация release ветка. Firebase cloud/production/тарифы/данные не менять.
+
+### RUN-20261104-016.1 / ЗАВЕРШИЛ / DONE (NEW-003 зарегистрирован)
+- Дата: 2026-11-04, Europe/Helsinki.
+- NEW-003 / HIGH `site_admin` vs `admin_metrics/current` записан в [MASTER ROADMAP commit 0fa7dca](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/0fa7dca5442951fb86db2e1c2e90b40001ffd692) и [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10); исходный snapshot правил [PR #8 commit 828d702](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/828d702430037aeca271786bbcf067e202f10c0c) найден, текущий deployed Rules не установлен.
+- Никаких изменений TEST кода, Firebase cloud, production или данных.
+
+### RUN-20261104-016.2 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- Действие: создать в TEST PR #3 сохранённую копию исторического V3 ruleset из PR #8 (точная SHA и пометка NOT DEPLOYABLE), добавить минимальное `admin_metrics/current` правило без изменения других путей, Node emulator integration tests для admin и student `users/settings/sync_v3/libraries_v3`; запустить CI и проверить удалённый commit.
+- Исходный TEST HEAD b6d844cee16eaf63e85c8719055b8c14db469806. Не deploy; всё только offline.
