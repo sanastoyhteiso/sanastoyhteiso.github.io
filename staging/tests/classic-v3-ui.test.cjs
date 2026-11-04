@@ -86,6 +86,30 @@ function change(id,value){
  assert.ok(doc.getElementById('main-content').textContent.includes('Kognit.toim.kyky'));
  click('[data-action="med-mode"][data-value="situations"]');
  assert.ok(doc.getElementById('scenario-input'));
+ // Regression reported on an actual iPhone: the Finnish sentence was shown
+ // twice under "Возможный вариант ответа" and "Оригинал FI".
+ change('med-dir','ru-fi');
+ click('[data-action="med-reveal"]');
+ var fiSample=doc.querySelector('#main-content .answer.correct');
+ assert.ok(fiSample,'Mediatri answer reveal missing');
+ assert.ok(fiSample.textContent.includes('Возможный вариант ответа'));
+ assert.ok(!fiSample.textContent.includes('Оригинал FI'),
+   'Target Finnish must not repeat the same original text');
+ assert.ok(fiSample.textContent.trim().length>30);
+ click('[data-action="med-next"]');
+ click('[data-action="med-reveal"]');
+ fiSample=doc.querySelector('#main-content .answer.correct');
+ assert.ok(!fiSample.textContent.includes('Оригинал FI'),
+   'Duplicate check must hold for next scenario too');
+ change('med-dir','fi-ru');
+ var ruSample=doc.querySelector('#main-content .answer.correct');
+ assert.ok(ruSample.textContent.includes('Оригинал FI'),
+   'For Russian translation the original Finnish must remain available');
+ assert.equal((ruSample.textContent.match(/Оригинал FI/g)||[]).length,1);
+ change('med-dir','fi-en');
+ var enSample=doc.querySelector('#main-content .answer.correct');
+ assert.ok(enSample.textContent.includes('Оригинал FI'),
+   'For English translation the original Finnish must remain available');
  click('[data-action="med-mode"][data-value="draft"]');
  assert.ok(doc.getElementById('draft-input'));
  click('[data-view="dictionary"]');
