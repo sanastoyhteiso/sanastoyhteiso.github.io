@@ -48,6 +48,8 @@ assert.match(html,/id="search"/);
 assert.match(html,/id="category"/);
 assert.match(html,/id="filter"/);
 assert.match(html,/1296\+/);
+assert.match(html,/\.\.\/ipad-selects\.js\?v=ipad12-readable-1/);
+assert.match(html,/\.\.\/ipad-selects\.css\?v=ipad12-readable-1/);
 assert.match(js,/startAfter\(cursor\)/);
 assert.match(js,/FieldPath\.documentId\(\)/);
 assert.match(js,/limit\(5\)\.onSnapshot/);

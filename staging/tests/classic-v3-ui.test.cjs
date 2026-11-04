@@ -10,6 +10,9 @@ const root=path.resolve(__dirname,'../..');
 const dir=path.join(root,'staging/classic');
 const read=(name)=>fs.readFileSync(path.join(dir,name),'utf8');
 const html=read('index.html'),css=read('style.css');
+const ipadCss=read('ipad-selects.css');
+assert.ok(html.includes('ipad-selects.css?v=ipad12-readable-1'));
+assert.match(ipadCss,/font-size:19px/);
 const main=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const mainCss=fs.readFileSync(path.join(root,'style.css'),'utf8');
 assert.ok(html.includes('<div class="shell">')&&html.includes('class="mobile-nav"'));
@@ -41,14 +44,14 @@ const scripts=[...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(x=>x[1
 assert.deepEqual(scripts,[
  'data-public.js','rs-admin-preview.js','rs-mediatri-guide.js',
  'rs-library-model.js','rs-library-demo.js',
- 'rs-demo-offline.js','app.js','mobile-nav.js','i18n.js']);
-scripts.forEach(name=>acorn.parse(read(name),{ecmaVersion:5}));
+ 'rs-demo-offline.js','app.js','mobile-nav.js','i18n.js','ipad-selects.js?v=ipad12-readable-1']);
+scripts.forEach(name=>acorn.parse(read(name.split('?')[0]),{ecmaVersion:5}));
 const d=new JSDOM(html,{url:'https://example.invalid/v3/classic/',runScripts:'outside-only'});
 const w=d.window,doc=w.document;
 w.scrollTo=function(){};
 w.fetch=function(){throw Error('No browser network allowed in classic demo');};
 w.XMLHttpRequest=function(){throw Error('Network disabled')};
-scripts.forEach(name=>w.eval(read(name)+'\n//# sourceURL=staging/classic/'+name));
+scripts.forEach(name=>w.eval(read(name.split('?')[0])+'\n//# sourceURL=staging/classic/'+name));
 doc.dispatchEvent(new w.Event('DOMContentLoaded'));
 function click(q){
  const node=doc.querySelector(q);
