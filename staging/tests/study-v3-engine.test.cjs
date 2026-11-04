@@ -35,11 +35,12 @@ function build(idb,device){
   enableStagingWrites:true,now:()=>1793800000000
  });
  return engine.create({stagingOnly:true,uid,core,shadow,remote:remote(),
-  activeUid:()=>active,device:'D_'+device.repeat(32),now:()=>1793800000000+(++nextId),
+  activeUid:()=>active,online:()=>connected,device:'D_'+device.repeat(32),now:()=>1793800000000+(++nextId),
   random:()=>random(nextId)});
 }
 async function run(){
- const a=build(new IDBFactory(),'a'),b=build(new IDBFactory(),'b');
+ const iA=new IDBFactory(),iB=new IDBFactory();
+ const a=build(iA,'a'),b=build(iB,'b');
  const first=await a.start();assert.equal(first.state.scores.T00001,undefined);
  await a.record('answer','T00001',true);
  let state=await a.view();
@@ -48,6 +49,12 @@ async function run(){
  connected=false;
  await a.record('answer','T00002',false);
  assert.equal((await a.view()).pending.length,2);
+ // Relaunching the same verified device offline reads the same IndexedDB.
+ const relaunched=build(iA,'a');
+ const reopened=await relaunched.start();
+ assert.equal(reopened.state.scores.T00002.wrong,1);
+ assert.equal(reopened.pending.length,2);
+ await assert.rejects(()=>build(new IDBFactory(),'c').start(),/First study start requires online/);
  await assert.rejects(()=>a.upload(),/offline/);
  assert.equal((await a.view()).pending.length,2);
  connected=true;

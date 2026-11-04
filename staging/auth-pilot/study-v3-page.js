@@ -190,11 +190,13 @@
        enableStagingWrites:true,now:Date.now});
      engine=studyApi.create({stagingOnly:true,uid:activeUid,device:localDevice,
        core:core,shadow:shadow,remote:remote,random:hex,now:Date.now,
+       online:function(){return w.navigator.onLine!==false;},
        activeUid:function(){return matching()?activeUid:null;}});
      set('cloud','Проверяем сервер…');
      engine.start().then(function(row){
        if(!matching())return;
-       last=row;set('cloud','Соединение подтверждено');
+       last=row;set('cloud',w.navigator.onLine===false?
+         'Локальная история (офлайн)':'Соединение подтверждено');
        note('История открыта. Можно учиться.',false);
        var lastNotified=0;
        sub=remote.watch(function(size){
