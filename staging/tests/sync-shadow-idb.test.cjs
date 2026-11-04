@@ -84,6 +84,19 @@ async function run(){
   await assert.rejects(()=>tabA.stageCloud('alice',
     preview(downgraded,[winner.id,loser.id]),2,'VERIFIED_READ_ONLY_PREVIEW_TO_SHADOW'),
     /would lose local answer counters/);
+  // Real-world regression 2026-11-04: totals can increase while an old
+  // learned term with one correct answer vanishes from the new snapshot.
+  const vanishedLearned=JSON.parse(JSON.stringify(merged));
+  assert.equal(vanishedLearned.scores.T00002.correct,1);
+  delete vanishedLearned.scores.T00002;
+  assert.ok(Object.keys(vanishedLearned.scores).length<
+    Object.keys(merged.scores).length);
+  await assert.rejects(()=>tabA.stageCloud('alice',
+    preview(vanishedLearned,[winner.id,loser.id]),2,
+    'VERIFIED_READ_ONLY_PREVIEW_TO_SHADOW'),
+    /would lose local answer counters/);
+  assert.equal((await tabA.read('alice')).revision,2,
+    'missing old learned answer must never replace shadow state');
   const removedWord=JSON.parse(JSON.stringify(merged));
   delete removedWord.words['custom-word-0'];
   await assert.rejects(()=>tabA.stageCloud('alice',
