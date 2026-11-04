@@ -12,9 +12,19 @@
  function empty(){return {scores:{},words:{},favorites:{}};}
  function safeUid(x){return typeof x==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(x);}
  function isTerm(x){return typeof x==='string'&&/^T[0-9]{5,7}$/.test(x);}
- function same(a,b){return JSON.stringify([a.id,a.device,a.kind,a.target,a.time,
-   JSON.stringify(a.data)])===JSON.stringify([b.id,b.device,b.kind,b.target,b.time,
-   JSON.stringify(b.data)]);}
+ function canonical(v){
+   if(v===null||typeof v!=='object')return JSON.stringify(v);
+   if(Object.prototype.toString.call(v)==='[object Array]')
+     return '['+v.map(canonical).join(',')+']';
+   return '{'+Object.keys(v).sort().map(function(k){
+     return JSON.stringify(k)+':'+canonical(v[k]);
+   }).join(',')+'}';
+ }
+ function same(a,b){
+   return !!a&&!!b&&a.id===b.id&&a.device===b.device&&
+     a.kind===b.kind&&a.target===b.target&&a.time===b.time&&
+     canonical(a.data)===canonical(b.data);
+ }
  function normalized(x,uid,core){
    if(!x||x.v!==3||x.uid!==uid||!core.valid(x)||
      !/^E_[a-f0-9]{32}$/.test(x.id)||!/^D_[a-f0-9]{32}$/.test(x.device)||
@@ -138,7 +148,8 @@
      if(!isTerm(target)||typeof when!=='number'||!isFinite(when)||when<=0||
        Math.floor(when)!==when)throw Error('Invalid real term target/date');
      var data;
-     if(kind==='answer'&&typeof value==='boolean')data={correct:value};
+     if(kind==='answer'&&typeof value==='boolean')
+       data=value?{correct:true}:{correct:false,reviewLearned:true};
      else if(kind==='learned_set'&&typeof value==='boolean')data={learned:value};
      else if(kind==='favorite_set'&&typeof value==='boolean')data={starred:value};
      else throw Error('Invalid learning action');
@@ -186,5 +197,6 @@
    return {start:start,refresh:refresh,record:record,upload:upload,
      view:view,status:status,makeEvent:makeEvent};
  }
- return {create:create,empty:empty,normalized:normalized,isTerm:isTerm};
+ return {create:create,empty:empty,normalized:normalized,
+   isTerm:isTerm,sameEvent:same};
 });

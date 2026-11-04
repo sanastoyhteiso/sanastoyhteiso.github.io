@@ -99,6 +99,14 @@ async function run(){
  active=uid;
  assert.throws(()=>a.makeEvent('answer','PRIVATE_WORD',true,1),/target/);
  assert.throws(()=>engine.create({stagingOnly:false}),/dependencies/);
+ const event=a.makeEvent('answer','T00009',false,1793900000000);
+ assert.deepEqual(event.data,{correct:false,reviewLearned:true},
+   'Needs review must clear learned status, not only count a wrong answer');
+ assert.equal(engine.sameEvent(
+   {...event,data:{reviewLearned:true,correct:false}},event),true,
+   'Field reordering in Firestore does not create a false event collision');
+ assert.equal(engine.sameEvent(
+   {...event,data:{reviewLearned:false,correct:false}},event),false);
  console.log('PASS: isolated real-term V3, two devices, offline durable queue, exact cloud ID, learned/favorite, loss gate and account isolation');
 }
 run().catch(e=>{console.error(e);process.exitCode=1;});

@@ -32,6 +32,8 @@
            throw Error('Malformed or oversized study history page');
          if(result.items.length&&!result.cursor)
            throw Error('Missing page cursor; refuse incomplete history');
+         if(result.items.length===PAGE&&cursor!==null&&result.cursor===cursor)
+           throw Error('Non-advancing cloud history cursor');
          result.items.forEach(function(item){
            if(!item||typeof item.id!=='string'||!/^E_[a-f0-9]{32}$/.test(item.id)||
              ids[item.id])throw Error('Duplicate or invalid study event across pages');
