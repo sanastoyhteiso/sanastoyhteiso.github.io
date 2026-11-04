@@ -4,6 +4,10 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'family.js'
+      - 'community.js'
+      - 'sw.js'
+      - 'v3-sync-*.js'
       - 'ipad-selects.js'
       - 'ipad-selects.css'
       - 'config.js'
@@ -22,3 +26,5 @@ jobs:
           node-version: '22'
       - name: Ensure existing Auth/Drive remain and iPad/Mediatri scripts are safe
         run: node release-checks/preflight-static.cjs
+      - name: Verify UI changes map to idempotent V3 event intents
+        run: node release-checks/v3-diff.test.cjs
