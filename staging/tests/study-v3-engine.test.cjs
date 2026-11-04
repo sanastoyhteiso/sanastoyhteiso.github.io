@@ -81,6 +81,13 @@ async function run(){
  assert.equal(state.state.finds.T00001.topic,'practice');
  assert.equal(state.state.finds.T00001.note,'Heard during a shift');
  assert.equal(state.state.favorites.T00003,true);
+ // Repeating a personal word from another device never creates a new card.
+ await a.record('word_upsert',wordId,{fi:'testihoiva',ru:'тестовый уход',en:'test care'});
+ assert.equal(Object.keys((await a.view()).state.words).length,1);
+ await assert.rejects(
+   ()=>a.record('word_upsert',wordId,{fi:'testihoiva',ru:'другой перевод',en:'test care'}),
+   /Conflicting definitions/);
+ assert.equal((await a.view()).state.words[wordId].ru,'тестовый уход');
  await a.record('answer',wordId,true);
  await a.upload();
  await b.refresh();

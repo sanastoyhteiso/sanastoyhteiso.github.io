@@ -200,6 +200,12 @@
      update('favorite_set',t.id,!last.state.favorites[t.id],false);
    });wrap.appendChild(star);
    var selection=last.state.finds&&last.state.finds[t.id],has=!!(selection&&selection.added);
+   if(has){
+     var source=selection.topic==='practice'?'Практика':
+       selection.topic==='study'?'Учёба':'Другое';
+     wrap.appendChild(element('p','small','Моя находка · '+source+
+       (selection.note?' · '+selection.note:'')));
+   }
    var findBtn=element('button','',has?'✓ В моих находках — убрать':'＋ В мои находки');
    findBtn.disabled=busy;
    findBtn.addEventListener('click',function(){
