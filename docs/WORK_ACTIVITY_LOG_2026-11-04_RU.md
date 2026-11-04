@@ -126,3 +126,17 @@
 - Время (Europe/Helsinki): 2026-11-04 23:07:18.
 - TASK-20261104-005 / NEW-002; TEST branch `feat/admin-control-center-package-spec-20261104`, remote HEAD `7b4f851389673050444073763d9cedd03661b189` + локальное исправление.
 - Действие: `node --test --test-reporter=tap admin/tests/admin-access.test.cjs`, `node admin/tests/release-manifest.test.cjs`, `node --check` для изменённых JS и извлечённых inline scripts. Все проверки без real Auth/Firestore; проверить отсутствие секретов/посторонних изменений.
+
+### RUN-20261104-007 / ЗАВЕРШИЛ / DONE (локальные проверки)
+- Время (Europe/Helsinki): 2026-11-04 23:08:45.
+- `node --test --test-reporter=tap admin/tests/admin-access.test.cjs`: **58/58 PASS, 0 FAIL**, exit 0.
+- `node admin/tests/release-manifest.test.cjs`: PASS (существующий набор проверок манифеста).
+- `node --check`: PASS для admin-page.js, admin-entry.js, sw.js, admin-access.test.cjs; PASS для единственного inline script учебного index.html. В admin/index.html inline JS отсутствует.
+- Diff просмотрен: только два admin-скрипта и их HTML/SW версии + новый тест. config.js не изменён; приватные данные/секреты не добавлены. Запрос метрик только read-only `admin_metrics/current`, `source:server`.
+- Это Node VM/DOM/SDK doubles, НЕ реальный Firebase, не Firestore emulator и не браузер/iOS12. CI не запускался. Remote TEST HEAD по-прежнему 7b4f851 до отдельного commit.
+- Следующий шаг: сохранить отчёт и конкретный handoff перед commit.
+
+### RUN-20261104-008 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:08:45.
+- TASK-20261104-005 / NEW-002; TEST branch `feat/admin-control-center-package-spec-20261104`, исходный remote HEAD `7b4f851389673050444073763d9cedd03661b189`.
+- Действие: подготовить `admin/ADMIN_TECHNICAL_AUDIT_2026-11-04_RU.md` и append-only дополнение handoff с результатами пяти проверок, командами, ограничениями и следующим шагом. Код больше не менять.
