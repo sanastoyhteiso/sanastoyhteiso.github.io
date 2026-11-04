@@ -55,7 +55,7 @@ firestore.FieldPath={documentId:()=>({key:'documentId'})};
 const auth={currentUser:user,onAuthStateChanged:cb=>{cb(user);return ()=>{};}};
 w.firebase={auth:()=>auth,firestore:firestore};
 w.RS_FIREBASE_CONFIG={projectId:'riveria-sanasto-community-test'};
-const scripts=['data.js','app.js','v3-sync-core.js','v3-sync-shadow.js',
+const scripts=['data.js','v3-mediatri-guide.js','app.js','v3-sync-core.js','v3-sync-shadow.js',
  'v3-sync-engine.js','v3-sync-pages.js','v3-sync-finds.js',
  'v3-sync-sha256.js','v3-sync-diff.js','v3-sync-release.js'];
 scripts.forEach(n=>w.eval(fs.readFileSync(n,'utf8')+'\n//# sourceURL='+n));
@@ -63,6 +63,12 @@ d.dispatchEvent(new w.Event('DOMContentLoaded',{bubbles:true}));
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 async function run(){
  assert.ok(d.getElementById('main-content').textContent.includes('Карточ'));
+ const medButton=d.querySelector('[data-view="mediatri"]');
+ medButton.click();
+ assert.ok(d.getElementById('rs-med-guide-results'),
+   'Mediatri guide should appear in full unified interface');
+ assert.ok(d.getElementById('rs-med-guide-results').textContent.length>15);
+ d.querySelector('[data-view="cards"]').click();
  assert.ok(d.getElementById('v3-release-bar'));
  assert.equal(w.RS_V3_RELEASE.isActive(),false);
  const enabled=await w.RS_V3_RELEASE.begin(true);
