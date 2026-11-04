@@ -231,3 +231,10 @@
 - По RUN-011/012 зафиксированы проверенные TEST code 91fa4f7, CI 5f4ae30, audit/handoff 49971ca; `admin/tests/admin-access.test.cjs` доступен в GitHub; native Node CI 29/29 PASS на TEST, включая финальный HEAD. Предыдущий RUN-008 остаётся RECOVERED_NOT_PUSHED, НЕ DONE.
 - **Открыто:** серверный custom claim и Firestore Security Rules, прямые permission deny/permit, реальные Auth/Firestore, iOS12 и современные браузеры, серверные агрегаты/мониторинг, backup+restore и ZIP rollout. Это блокеры этапов C/E/H/I; A–K остаются НЕ ЗАКРЫТЫ.
 - **Следующий чат:** начать с [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10) и [TEST admin audit](https://github.com/velardream-ctrl/riveria-sanasto-community-test/blob/feat/admin-control-center-package-spec-20261104/admin/ADMIN_TECHNICAL_AUDIT_2026-11-04_RU.md); проверить PR #3 HEAD=49971ca и CI; добавить новый RUN START; read-only аудит Security Rules/test admin claim, затем отдельные emulator и browser тесты по согласованным безопасным шагам. Запрет на merge, production, Firebase writes и платные тарифы сохраняется.
+
+### RUN-20261104-013 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- TASK-20261104-005 / NEW-002, следующий этап C (серверная безопасность) и H (тесты).
+- Действие: безопасно изучить состояние security rules, конфигурации Firebase и подтверждения тестового admin custom claim в репозиториях/TEST PR #3; проверить существующие emulator tests и создать план проверок. Только read-only GitHub, без раскрытия секретов и запросов к реальной базе.
+- Исходный TEST PR #3 HEAD=49971ca0dc24ecf400960a9a3e5505145401a879, DRAFT/open/not merged. Основная documentation ветка release/v3-safe-integration-20261104.
+- Ожидаемый результат: подтверждённая инвентаризация, безопасный следующий шаг, конкретные отсутствующие тесты. Запрещено менять production/Firebase/Rules в облаке/тарифы/данные, нельзя merge.
