@@ -208,3 +208,14 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - План: сохранить подтверждённый technical audit и handoff в TEST, обновить в master roadmap TASK-005 и Issue #10 статус NEW-002 с коммитами/CI, затем закрыть RUN-012 с указанием следующего шага. PRODUCTION и Firebase не трогать.
 - Исходный TEST HEAD: 5f4ae30af80736f582c7c6eb01b4c731a609ea63.
+
+### RUN-20261104-012.2 / ЗАВЕРШИЛ / DONE (TEST audit/handoff)
+- Дата: 2026-11-04, Europe/Helsinki.
+- В TEST branch опубликованы `admin/ADMIN_TECHNICAL_AUDIT_2026-11-04_RU.md` и append-only дополнение `admin/WORK_HANDOFF_START_HERE_RU.md`.
+- Commit [49971ca](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/49971ca0dc24ecf400960a9a3e5505145401a879). Повторно прочитаны оба удалённых файла; PR #3 draft/open, merged=false, remote HEAD 49971ca0dc24ecf400960a9a3e5505145401a879.
+- В audit отражён независимый CI 29/29 PASS, границы проверок, исходный RUN-008 и необходимые C/E/H проверки. Ни одной правки production/Firebase.
+
+### RUN-20261104-012.3 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- План: append-only обновить TASK-20261104-005 / NEW-002 в MASTER ROADMAP и Issue #10 с проверенными TEST commits 91fa4f7, 5f4ae30, 49971ca и Actions run 41915536733. Сохранить все галочки A–K незакрытыми, а real Admin/Security Rules — как blocker.
+- Repo / branch docs: sanastoyhteiso/sanastoyhteiso.github.io / release/v3-safe-integration-20261104. TEST remote HEAD 49971ca0dc24ecf400960a9a3e5505145401a879.
