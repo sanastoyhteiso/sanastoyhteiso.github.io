@@ -114,3 +114,15 @@
 - TASK-20261104-005 / NEW-002; TEST `feat/admin-control-center-package-spec-20261104`, исходный HEAD `7b4f851389673050444073763d9cedd03661b189`.
 - Действие: локально исправить admin-page.js/admin-entry.js: сверка default app с TEST config, onIdTokenChanged с ограниченным force refresh, немедленное скрытие/очистка, поколение сессии для async callbacks, безопасная обработка отказов; обновить HTML/SW версии скриптов. Никаких Firebase writes, Rules, deploy или merge.
 - Проверка после редактирования — отдельный RUN; затем атомарный commit в ту же тестовую ветку.
+
+### RUN-20261104-006 / ЗАВЕРШИЛ / DONE (редактирование)
+- Время (Europe/Helsinki): 2026-11-04 23:07:18.
+- В локальной копии изменены admin-page.js/admin-entry.js: fail-closed TEST app/config, onIdTokenChanged, строгий boolean claim и проверенный неанонимный аккаунт, generation+user guards для async, очистка report/DOM при смене состояния, обработка ошибок SDK.
+- Версии обоих admin скриптов в HTML и SW согласованы как `admin-auth-2`, cache bump `20261104-v6`. Сам config.js не менялся.
+- Изменения ещё не закоммичены; исходная ветка остаётся [7b4f851](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/7b4f851389673050444073763d9cedd03661b189). Готовность не объявляется до проверок.
+- Следующий шаг: regression + существующий manifest test + syntax check.
+
+### RUN-20261104-007 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:07:18.
+- TASK-20261104-005 / NEW-002; TEST branch `feat/admin-control-center-package-spec-20261104`, remote HEAD `7b4f851389673050444073763d9cedd03661b189` + локальное исправление.
+- Действие: `node --test --test-reporter=tap admin/tests/admin-access.test.cjs`, `node admin/tests/release-manifest.test.cjs`, `node --check` для изменённых JS и извлечённых inline scripts. Все проверки без real Auth/Firestore; проверить отсутствие секретов/посторонних изменений.
