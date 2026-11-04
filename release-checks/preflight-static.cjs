@@ -16,10 +16,10 @@ assert.ok(ipad.includes('rs-ipad-select-trigger')&&ipad.includes('select.dispatc
 assert.ok(!html.includes('v3-classic/auth-pilot/study-v3.html'));
 assert.ok(html.includes('v3-mediatri-guide.js'));
 new vm.Script(fs.readFileSync('v3-mediatri-guide.js','utf8'));
-assert.ok(sw.includes('v3-mediatri-guide.js'));
 assert.ok(!html.includes('TEST 3.0 / Тестовая копия'));
 for(const file of ['app.js','ipad-selects.js'])new vm.Script(fs.readFileSync(file,'utf8'));
 const sw=fs.readFileSync('sw.js','utf8');
+assert.ok(sw.includes('v3-mediatri-guide.js'));
 assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc1'));
 for(const name of ['v3-sync-core.js','v3-sync-shadow.js','v3-sync-engine.js',
  'v3-sync-pages.js','v3-sync-finds.js','v3-sync-sha256.js',
