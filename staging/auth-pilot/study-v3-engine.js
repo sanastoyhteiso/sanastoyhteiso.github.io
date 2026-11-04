@@ -140,7 +140,9 @@
    }
    function record(kind,target,value){
      if(!ready)return Promise.reject(Error('Study cloud not verified yet'));
-     var event=makeEvent(kind,target,value,(opts.now||Date.now)());
+     var event;
+     try{event=makeEvent(kind,target,value,(opts.now||Date.now)());}
+     catch(e){return Promise.reject(e);}
      return seq(function(){
        return current().then(function(old){
          if(old.pending.length>=4000)throw Error('Local study queue at safety limit');
