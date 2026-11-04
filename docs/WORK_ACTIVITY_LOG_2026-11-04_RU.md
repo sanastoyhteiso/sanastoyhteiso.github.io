@@ -79,3 +79,14 @@
 - TASK-20261104-005 / NEW-002; этапы B/C/E.
 - Действие: добавить результаты аудита и NEW-002 в реестр/журнал master roadmap и Issue #10. Это только документация, галочки A–K не закрывать.
 - Repo / branch / HEAD: TEST PR #3 `feat/admin-control-center-package-spec-20261104` = `7b4f851389673050444073763d9cedd03661b189`; документация `release/v3-safe-integration-20261104` = `d271b86e6a7c24fa964db7b8e816a3af980e85d1`.
+
+### RUN-20261104-003 / ЗАВЕРШИЛ / DONE
+- Время (Europe/Helsinki): 2026-11-04 23:04:36.
+- NEW-002 и TASK-20261104-005 добавлены в мастер-план: [abd30f0](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/abd30f04fd4035bd40ab3365b815052e283f59f2); Issue #10 обновлён с тем же NEW-002. Галочки A–K не изменены.
+- Следующий шаг: добавить локальные детерминированные тесты без реальной Firebase.
+
+### RUN-20261104-004 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:04:36.
+- TASK-20261104-005 / NEW-002.
+- Планирую действие: добавить в локальную копию TEST ветки Node regression tests, исполняющие реальные admin-page.js/admin-entry.js с контролируемыми DOM/Firebase-заглушками. Проверить загрузку/config, обычных и анонимных пользователей, строгий claim, смену аккаунта/токена, запоздалые запросы, отсутствие Firebase writes.
+- Repo / branch / HEAD: TEST `feat/admin-control-center-package-spec-20261104` / `7b4f851389673050444073763d9cedd03661b189`. Пока без commit в GitHub; запуск тестов будет отдельным RUN.
