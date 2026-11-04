@@ -262,3 +262,15 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - Задача: устранить точный conflict в isolated test-only `package.json` (Firebase JS SDK 13.x в паре с rules-unit-testing 6), не использовать `--force`/`--legacy-peer-deps`. Повторно проверить GitHub Actions, затем при необходимости исправить обнаруженные реальные emulator failures и задокументировать результат.
 - TEST branch исходный HEAD=6a3599e1ba9d92e899ec039666c09cf38d58110d. Никаких Firebase cloud изменений.
+
+### RUN-20261104-014.2 / ЗАВЕРШИЛ / DONE (dependency fix + real Firestore emulator PASS)
+- Дата: 2026-11-04, Europe/Helsinki.
+- TEST commit [3d15e33](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/3d15e3321914ae2f0cc403502c70ff656c463656) поменял только `admin/security-tests/package.json` на `firebase@13.0.0`, соответствующий peer `@firebase/rules-unit-testing@6.0.0`; без `--force` или игнорирования зависимостей.
+- [GitHub Actions #41918317702](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41918317702) conclusion SUCCESS. Реальный Firestore emulator, JS SDK 13.0.0, native Node tests **15/15 PASS, 0 FAIL**, включая ожидаемые `PERMISSION_DENIED` и разрешение для verified admin. Local demo project, без сетевой Firebase.
+- На точном TEST HEAD 3d15e33: push и PR Actions для client admin regression **success**, push и PR Actions для isolated Firestore contract **success**. PR #3 DRAFT/open/not merged.
+- Ограничение: это **только изолированный fixture**, не deployed rules или реальная выдача custom claim. Stage C/E/H не закрыты; production/main/Firebase cloud/данные/тарифы не менялись.
+
+### RUN-20261104-014.3 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- Задача: закрепить результат 15/15 в TEST technical audit / handoff, добавить точный read-only план проверки реального Rules/claim без секретов; обновить MASTER TASK-005 и Issue #10, сохранить финальные ссылки на CI; завершить RUN-014. Изолированный fixture не интегрировать в live rules.
+- Исходный TEST HEAD=3d15e3321914ae2f0cc403502c70ff656c463656. Production и Firebase не трогать.
