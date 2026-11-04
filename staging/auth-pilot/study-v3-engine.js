@@ -12,6 +12,12 @@
  function empty(){return {scores:{},words:{},favorites:{}};}
  function safeUid(x){return typeof x==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(x);}
  function isTerm(x){return typeof x==='string'&&/^T[0-9]{5,7}$/.test(x);}
+ function isWord(x){return typeof x==='string'&&/^W_[a-f0-9]{32}$/.test(x);}
+ function validTarget(kind,id){
+   if(kind==='word_upsert')return isWord(id);
+   return ['answer','learned_set','favorite_set'].indexOf(kind)>=0&&
+     (isTerm(id)||isWord(id));
+ }
  function canonical(v){
    if(v===null||typeof v!=='object')return JSON.stringify(v);
    if(Object.prototype.toString.call(v)==='[object Array]')
@@ -28,7 +34,7 @@
  function normalized(x,uid,core){
    if(!x||x.v!==3||x.uid!==uid||!core.valid(x)||
      !/^E_[a-f0-9]{32}$/.test(x.id)||!/^D_[a-f0-9]{32}$/.test(x.device)||
-     !isTerm(x.target)||['answer','learned_set','favorite_set'].indexOf(x.kind)<0)
+     !validTarget(x.kind,x.target))
      throw Error('Untrusted V3 study event; preserve local data');
    return {id:x.id,device:x.device,kind:x.kind,target:x.target,
      time:x.time,data:x.data};
@@ -81,7 +87,7 @@
        var byId={},included=[];
        remoteEvents.forEach(function(e){byId[e.id]=e;});
        old.pending.forEach(function(e){
-         if(!isTerm(e.target)||['answer','learned_set','favorite_set'].indexOf(e.kind)<0)
+         if(!validTarget(e.kind,e.target))
            throw Error('Non-study pending event; stop');
          if(byId[e.id]){
            if(!same(byId[e.id],e))throw Error('Pending event collides with server');
@@ -145,14 +151,22 @@
    }
    function makeEvent(kind,target,value,when){
      assertActive();
-     if(!isTerm(target)||typeof when!=='number'||!isFinite(when)||when<=0||
+     if(!validTarget(kind,target)||typeof when!=='number'||!isFinite(when)||when<=0||
        Math.floor(when)!==when)throw Error('Invalid real term target/date');
      var data;
      if(kind==='answer'&&typeof value==='boolean')
        data=value?{correct:true}:{correct:false,reviewLearned:true};
      else if(kind==='learned_set'&&typeof value==='boolean')data={learned:value};
      else if(kind==='favorite_set'&&typeof value==='boolean')data={starred:value};
-     else throw Error('Invalid learning action');
+     else if(kind==='word_upsert'&&value&&typeof value==='object'&&
+       typeof value.fi==='string'&&typeof value.ru==='string'&&
+       value.fi.trim().length>=1&&value.ru.trim().length>=1&&
+       value.fi.length<=120&&value.ru.length<=180&&
+       (!value.en||typeof value.en==='string'&&value.en.length<=180)){
+       data={id:target,fi:value.fi.trim(),ru:value.ru.trim(),
+         en:(value.en||'').trim(),cat:'Omat sanat',
+         catRu:'Мои слова',updatedAt:when};
+     }else throw Error('Invalid learning action');
      var hex=opts.random();
      if(typeof hex!=='string'||!/^[a-f0-9]{32}$/.test(hex))
        throw Error('Secure event ID required');
@@ -198,5 +212,5 @@
      view:view,status:status,makeEvent:makeEvent};
  }
  return {create:create,empty:empty,normalized:normalized,
-   isTerm:isTerm,sameEvent:same};
+   isTerm:isTerm,isWord:isWord,sameEvent:same};
 });

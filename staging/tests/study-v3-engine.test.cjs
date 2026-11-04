@@ -64,12 +64,26 @@ async function run(){
  const bReady=await b.start();
  assert.equal(bReady.state.scores.T00001.correct,1);
  assert.equal(bReady.state.scores.T00002.wrong,1);
+ // Owner-only personal term: must be durable locally, synchronized across
+ // devices, and usable as an answer target without any legacy Google Drive.
+ const wordId='W_'+'9'.repeat(32);
+ await b.record('word_upsert',wordId,{fi:'testihoiva',ru:'тестовый уход',en:'test care'});
+ assert.equal((await b.view()).state.words[wordId].fi,'testihoiva');
  await b.record('favorite_set','T00003',true);
  await b.record('learned_set','T00002',true);
  await b.upload();
  await a.refresh();
  state=await a.view();
+ assert.equal(state.state.words[wordId].ru,'тестовый уход');
  assert.equal(state.state.favorites.T00003,true);
+ await a.record('answer',wordId,true);
+ await a.upload();
+ await b.refresh();
+ assert.equal((await b.view()).state.scores[wordId].correct,1);
+ assert.equal(engine.isWord(wordId),true);
+ assert.equal(engine.isWord('T00001'),false);
+ assert.throws(()=>a.makeEvent('word_upsert',wordId,{fi:'',ru:'нет'},1),/Invalid/);
+ assert.throws(()=>a.makeEvent('word_upsert','W_bad',{fi:'test',ru:'test'},1),/target/);
  assert.equal(state.state.scores.T00002.learned,true);
  assert.equal(state.state.scores.T00001.correct,1,'cross-device refresh no double count');
  // With one old event missing, monotonic shadow protection rejects cloud replacement.
