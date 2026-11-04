@@ -317,3 +317,14 @@
 - Дата: 2026-11-04, Europe/Helsinki.
 - Действие: создать в TEST PR #3 сохранённую копию исторического V3 ruleset из PR #8 (точная SHA и пометка NOT DEPLOYABLE), добавить минимальное `admin_metrics/current` правило без изменения других путей, Node emulator integration tests для admin и student `users/settings/sync_v3/libraries_v3`; запустить CI и проверить удалённый commit.
 - Исходный TEST HEAD b6d844cee16eaf63e85c8719055b8c14db469806. Не deploy; всё только offline.
+
+### RUN-20261104-016.2 / ОШИБКА / FAILED (неполная строгость провайдера в новом тестовом правиле)
+- Дата: 2026-11-04, Europe/Helsinki.
+- TEST commit [2e9a5ac](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/2e9a5accde7334cef2f95feb41e66511e346ac68), 28 новых full historical-rules integration tests + прежние 15 standalone.
+- Native [GitHub Actions #41919685700](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41919685700) завершился FAILURE: **43 tests, 42 PASS, 1 FAIL**, `admin_metrics rejects missing provider details`. В Firebase emulator `authenticatedContext` без explicit firebase provider получает `sign_in_provider=custom`; выражение `!= 'anonymous'` допускало такой вход, хотя для текущего админ-пилота ожидается только Google. Это **ошибка контракта**, не повод ослабить тест.
+- Ни один реальный deployed ruleset не менялся; исходный PR #8 untouched. В остальных кейсах student paths остались зелёными.
+
+### RUN-20261104-016.3 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- Задача: заменить проверку provider `!= anonymous` на строго `== 'google.com'` только в isolated fixture и интеграционном admin_metrics match; обновить README и повторить обе группы тестов на GitHub CI. Это TEST пилот с Google Authentication; другие провайдеры нельзя молча разрешать.
+- Исходный TEST HEAD=2e9a5accde7334cef2f95feb41e66511e346ac68, PR #3 draft/open. Не облачный deploy, не production, не secrets.
