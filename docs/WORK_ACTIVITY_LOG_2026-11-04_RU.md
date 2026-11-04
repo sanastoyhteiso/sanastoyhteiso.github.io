@@ -238,3 +238,16 @@
 - Действие: безопасно изучить состояние security rules, конфигурации Firebase и подтверждения тестового admin custom claim в репозиториях/TEST PR #3; проверить существующие emulator tests и создать план проверок. Только read-only GitHub, без раскрытия секретов и запросов к реальной базе.
 - Исходный TEST PR #3 HEAD=49971ca0dc24ecf400960a9a3e5505145401a879, DRAFT/open/not merged. Основная documentation ветка release/v3-safe-integration-20261104.
 - Ожидаемый результат: подтверждённая инвентаризация, безопасный следующий шаг, конкретные отсутствующие тесты. Запрещено менять production/Firebase/Rules в облаке/тарифы/данные, нельзя merge.
+
+### RUN-20261104-013 / ЗАВЕРШИЛ / DONE (только read-only аудит; серверный этап C не закрыт)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Сверены TEST PR #3, Git tree HEAD 49971ca0dc24ecf400960a9a3e5505145401a879, master и TEST handoff, TEST config. В TEST дереве нет `firestore.rules`, `firebase.json`, Rules emulator test/CI, а значит отсутствует воспроизводимая проверка server authorization. Production и TEST main деревья также не содержат таких файлов; это **не** доказывает, что облачные правила отсутствуют, только что они не сохранены в проверенных Git refs.
+- TEST config указывает на `sanastoyhteiso-v3-development`, но фактически опубликованные Rules и наличие тестового server-issued admin claim из GitHub не установлены. Не запрашивали реальные данные и не меняли Firebase.
+- Подтверждены требования Firebase: правила используют `request.auth.token.admin == true` и `email_verified`; локальный `firebase emulators:exec` + rules-unit-testing может проверить изолированную модель, без облачного deploy.
+- Следующий шаг: новый RUN-014 — исключительно **изоляционный контракт** Firestore Rules, не production rules и не полная замена текущего deployed rules; Node emulator тесты на deny/allow/get/list/write и отдельная TEST-only CI. Любая интеграция с реальными правилами требует read-only сверки полного deployed ruleset, исключающей переписывание существующего учебного доступа.
+
+### RUN-20261104-014 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- TASK-20261104-005 / NEW-002; этап C/H, тестовый изолированный контракт доступа к `admin_metrics/current`.
+- План: добавить в TEST PR #3 `admin/security-tests/` с автономными правилами для безопасного emulator fixture и тестами: admin read только точного документа, отказ обычным/анонимным/неподтверждённым, запрещены любые client writes и list, запрет других путей; GitHub Actions workflow запускает emulator без Firebase token. Проверить на сервере CI; не переносить fixture в deployed rules.
+- TEST branch исходный HEAD 49971ca0dc24ecf400960a9a3e5505145401a879; PR Draft/open. Не изменять Firebase cloud, production/main, данные, тарифы или merge.
