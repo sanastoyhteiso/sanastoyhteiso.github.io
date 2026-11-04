@@ -32,3 +32,20 @@ jobs:
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7
       - name: Exercise unified UI, Google account stub and offline V3 storage
         run: node release-checks/v3-unified-browser.test.cjs
+
+  firestore-v3-rules-emulator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install isolated test-only Firebase emulator dependencies
+        run: npm install --no-save firebase-tools@14.27.0 @firebase/rules-unit-testing@5.0.2 firebase@12.5.0
+      - name: Verify additive owner-only V3 rules without any real Firebase
+        run: npx firebase emulators:exec --only firestore --config release-checks/firebase-emulator.json --project demo-sanastoyhteiso-production 'node release-checks/firestore-prod-v3.test.cjs'
