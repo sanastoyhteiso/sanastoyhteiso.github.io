@@ -29,6 +29,16 @@ for(const term of ['PRIVATE_WORD_ID','PRIVATE_FI','PRIVATE_RU','TERM_SECRET','SE
 let bad=JSON.parse(JSON.stringify(newer));
 bad.scores.TERM_SECRET={seen:1,correct:1,wrong:0};
 assert.equal(compare(older,bad,auditor).metrics.differences.decreasedCounters,1);
+bad=JSON.parse(JSON.stringify(newer));
+delete bad.scores.TERM_SECRET;
+let lost=compare(older,bad,auditor);
+assert.equal(lost.ok,false);
+assert.equal(lost.metrics.differences.missingScores,1);
+assert.equal(lost.metrics.differences.missingScoreAnswers,2);
+assert.equal(lost.metrics.differences.missingScoreCorrect,1);
+assert.equal(lost.metrics.differences.missingScoreWrong,1);
+assert.equal(lost.metrics.differences.missingLearned,1);
+assert.equal(JSON.stringify(lost).includes('TERM_SECRET'),false);
 bad=JSON.parse(JSON.stringify(newer));bad.userWords.shift();
 assert.equal(compare(older,bad,auditor).metrics.differences.removedWords,1);
 bad=JSON.parse(JSON.stringify(newer));delete bad.deletedWords.DELETED_PRIVATE;
