@@ -86,9 +86,8 @@
         // NEVER silently apply a last-writer-wins edit.
         var previous=state.words[id];
         if(previous){
-          function norm(x){return String(x||'').replace(/\s+/g,' ').trim().toLowerCase();}
-          if(norm(previous.fi)!==norm(w.fi)||norm(previous.ru)!==norm(w.ru)||
-             norm(previous.en)!==norm(w.en))
+          if(String(previous.fi||'').replace(/\s+/g,' ').trim().toLowerCase()!==String(w.fi||'').replace(/\s+/g,' ').trim().toLowerCase()||String(previous.ru||'').replace(/\s+/g,' ').trim().toLowerCase()!==String(w.ru||'').replace(/\s+/g,' ').trim().toLowerCase()||
+             String(previous.en||'').replace(/\s+/g,' ').trim().toLowerCase()!==String(w.en||'').replace(/\s+/g,' ').trim().toLowerCase())
             throw Error('Conflicting definitions for one personal word ID');
         }else state.words[id]=w;
       }
