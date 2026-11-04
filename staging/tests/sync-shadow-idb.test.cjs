@@ -146,6 +146,34 @@ async function run(){
   assert.equal((await tabA.read('alice')).revision,4);
   assert.equal((await tabA.read('alice')).pending.length,1);
   assert.equal(legacyWrites,0);
+  // Local personal notes survive a stale or partial cloud read.
+  active='carol';
+  await tabA.initialize('carol',{scores:{},words:{},favorites:{}},
+    'VERIFIED_STAGING_SHADOW_ONLY');
+  const selected=Core.event(E(98765),D1,'collection_set','T00014',
+    {list:'finds',added:true,topic:'study',note:'Saved locally'},1793700987650);
+  await tabA.appendLocal('carol',selected,0);
+  const findState=(await tabA.read('carol')).state;
+  assert.equal(findState.finds.T00014.note,'Saved locally');
+  const missingFind=JSON.parse(JSON.stringify(findState));
+  delete missingFind.finds.T00014;
+  await assert.rejects(()=>tabA.stageCloud('carol',
+    preview(missingFind,[selected.id]),1,'VERIFIED_READ_ONLY_PREVIEW_TO_SHADOW'),
+    /would remove a saved personal selection/);
+  const staleFind=JSON.parse(JSON.stringify(findState));
+  staleFind.finds.T00014.updatedAt--;
+  staleFind.finds.T00014.note='stale cloud note';
+  await assert.rejects(()=>tabA.stageCloud('carol',
+    preview(staleFind,[selected.id]),1,'VERIFIED_READ_ONLY_PREVIEW_TO_SHADOW'),
+    /overwrite a newer personal selection/);
+  const conflictFind=JSON.parse(JSON.stringify(findState));
+  conflictFind.finds.T00014.note='changed with same timestamp';
+  await assert.rejects(()=>tabA.stageCloud('carol',
+    preview(conflictFind,[selected.id]),1,'VERIFIED_READ_ONLY_PREVIEW_TO_SHADOW'),
+    /conflicting personal selection revision/);
+  assert.equal((await tabA.read('carol')).revision,1);
+  assert.equal((await tabA.read('carol')).state.finds.T00014.note,'Saved locally');
+  active='alice';
   assert.equal(remoteWrites,0);
   console.log('PASS: atomic IndexedDB shadow transactions, tab conflict, 236 scores, 150 words, pending preservation, UID isolation');
 }
