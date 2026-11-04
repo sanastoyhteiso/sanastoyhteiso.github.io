@@ -15,6 +15,11 @@
   <!-- ES5 enhancement: only old iPad Safari; native selects remain intact. -->
   <link rel="stylesheet" href="ipad-selects.css?v=ipad12-readable-1">
   <title>Sanastoyhteisö — Riveria Sanasto Community</title>
+<style>#v3-release-bar{margin:12px 18px;padding:12px 18px}
+#v3-release-bar button{margin:5px 8px 0 0}
+#v3-finds-panel{margin-top:16px}
+#v3-find-matches button{margin:5px}
+@media(max-width:700px){#v3-release-bar{margin:10px 9px;padding:12px}}</style>
 <style>
 /* Compact homepage links: works on desktop, iPhone and iPad; no extra toolbar. */
 .rs-home-control,.rs-heading-home{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;cursor:pointer;}
@@ -87,6 +92,7 @@
       <div><div class="rs-ui-locale"><label for="rs-ui-language">Язык сайта</label><select id="rs-ui-language" aria-label="Язык интерфейса"><option value="auto">Автоматически</option><option value="ru">Русский</option><option value="fi">Suomi</option><option value="en">English</option></select></div><div id="heading-home-button" class="rs-heading-home" role="button" tabindex="0" title="На главную — к карточкам"><span class="eyebrow">TERVETULOA OPISKELEMAAN!</span><h1 id="page-title">Изучаем финский</h1></div><p id="page-subtitle">Термины и фразы, которые пригодятся на практике.</p><p id="rs-english-pending" class="rs-i18n-note" hidden>Английские переводы составлены автоматически и могут содержать ошибки. Особенно проверяйте медицинские термины.</p></div>
       <div class="header-badges"><span id="home-update-status" class="status muted" role="status" aria-live="polite" hidden></span><span class="account-badge" id="family-account-badge" hidden></span><span class="status" id="online-status">● Проверка связи</span><span class="status muted" id="storage-status">Проверка сохранения</span></div>
     </header>
+    <section id="v3-release-bar" class="banner" hidden role="status" aria-live="polite"></section>
     <main id="main-content" tabindex="-1">
       <div class="load-box">Открываю базу слов…</div>
     </main>
@@ -114,6 +120,7 @@
 <script src="config.js?v=2.0.4"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
 /* Sanastoyhteisö public login localization v2.1.6. No credentials or OAuth changes. */
@@ -203,5 +210,13 @@
 <script src="home-refresh.js?v=2.1.3"></script>
 <script src="i18n.js?v=0.2.0"></script>
 <script src="ipad-selects.js?v=ipad12-readable-1"></script>
+<script src="v3-sync-core.js?v=release-preview-1"></script>
+<script src="v3-sync-shadow.js?v=release-preview-1"></script>
+<script src="v3-sync-engine.js?v=release-preview-1"></script>
+<script src="v3-sync-pages.js?v=release-preview-1"></script>
+<script src="v3-sync-finds.js?v=release-preview-1"></script>
+<script src="v3-sync-sha256.js?v=release-preview-1"></script>
+<script src="v3-sync-diff.js?v=release-preview-1"></script>
+<script src="v3-sync-release.js?v=release-preview-1"></script>
 </body>
 </html>

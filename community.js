@@ -62,7 +62,7 @@ function capture(force){if(!uid()||applying)return;var cur=cleanState(snapshot()
  diff('score',cur.scores,prev.scores);diff('word',cur.words,prev.words);diff('fav',cur.fm,prev.fm);diff('delete',cur.deleted,prev.deleted);diff('subscribe',cur.subs,prev.subs);
  if(force||stable(cur.scope)!==stable(prev.scope))q.push({id:eid(),time:n,device:deviceId,kind:'scope',target:'scope',data:cur.scope});
  put(key('queue'),q);put(key('observed'),cur);if(q.length)setMessage(q.length+' локальных изменений ожидают Google Drive');}
-function onLocalChange(){capture(false);if(window.RS_ACCOUNT)window.RS_ACCOUNT.onLocalChange();if(clock)clearTimeout(clock);clock=setTimeout(function(){if(googleToken&&navigator.onLine)sync();},4500);}
+function onLocalChange(){if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())return;capture(false);if(window.RS_ACCOUNT)window.RS_ACCOUNT.onLocalChange();if(clock)clearTimeout(clock);clock=setTimeout(function(){if(googleToken&&navigator.onLine)sync();},4500);}
 function materialize(events){var out={scores:{},words:{},fav:{},fm:{},deleted:{},subs:{},scope:{value:'mine',updatedAt:0}};
  var vs={word:{},fav:{},delete:{},subscribe:{},scope:0};events.sort(function(a,b){return a.time-b.time||a.id.localeCompare(b.id);});
  events.forEach(function(ev){if(!ev||!ev.kind)return;var id=ev.target,d=ev.data||{},at=ev.time;
@@ -82,7 +82,7 @@ function apply(events){var state=materialize(events),current=snapshot();applying
  put(key('subs'),state.subs);put(key('observed'),cleanState(snapshot()));applying=false;
  if(window.RS_FAMILY_REFRESH)window.RS_FAMILY_REFRESH(false);
 }
-function sync(){if(!uid()){setMessage('Сначала войди в аккаунт','warning');return Promise.resolve(false);}if(busy){setMessage('Синхронизация уже выполняется','working');return Promise.resolve(false);}var sessionUid=uid();capture(false);if(!navigator.onLine){setMessage('Офлайн: изменения сохранены локально и ожидают синхронизации','warning');return Promise.resolve(false);}if(!googleToken||Date.now()>tokenExpires){setMessage('Сначала подключи Google Drive','warning');return Promise.resolve(false);}busy=true;setSyncBusy(true);setMessage('⏳ Синхронизация идёт: сверяю Google-таблицу…','working');
+function sync(){if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())return window.RS_V3_RELEASE.refresh();if(!uid()){setMessage('Сначала войди в аккаунт','warning');return Promise.resolve(false);}if(busy){setMessage('Синхронизация уже выполняется','working');return Promise.resolve(false);}var sessionUid=uid();capture(false);if(!navigator.onLine){setMessage('Офлайн: изменения сохранены локально и ожидают синхронизации','warning');return Promise.resolve(false);}if(!googleToken||Date.now()>tokenExpires){setMessage('Сначала подключи Google Drive','warning');return Promise.resolve(false);}busy=true;setSyncBusy(true);setMessage('⏳ Синхронизация идёт: сверяю Google-таблицу…','working');
  return findOrCreateSheet().then(function(){if(uid()!==sessionUid)throw Error('Аккаунт сменился во время синхронизации');return drive('GET',SHEETS+'/'+kv(sheetId)+'/values/'+kv('Events!A2:F')+'?majorDimension=ROWS');}).then(function(r){
  var existing=unpack(r.values),ids={};existing.forEach(function(e){ids[e.id]=true;});var waiting=get(key('queue'),[]).filter(function(e){return !ids[e.id];});
  if(!waiting.length)return existing;
