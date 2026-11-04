@@ -19,7 +19,7 @@ function v3ReleasePayload() {
   let k = e.kind;
   return (
     (k == 'answer' &&
-      (e.target.matches('^[TMH][0-9]{5,7}$') ||
+      (e.target.matches('^[TMPH][0-9]{5,7}$') ||
        e.target.matches('^W_[a-f0-9]{32}$')) &&
       d.keys().hasOnly(['correct','reviewLearned']) &&
       d.keys().hasAll(['correct']) &&
@@ -27,13 +27,13 @@ function v3ReleasePayload() {
       (!d.keys().hasAny(['reviewLearned']) || d.reviewLearned is bool))
     ||
     (k == 'learned_set' &&
-      (e.target.matches('^[TMH][0-9]{5,7}$') ||
+      (e.target.matches('^[TMPH][0-9]{5,7}$') ||
        e.target.matches('^W_[a-f0-9]{32}$')) &&
       d.keys().hasOnly(['learned']) &&
       d.keys().hasAll(['learned']) && d.learned is bool)
     ||
     (k == 'favorite_set' &&
-      (e.target.matches('^[TMH][0-9]{5,7}$') ||
+      (e.target.matches('^[TMPH][0-9]{5,7}$') ||
        e.target.matches('^W_[a-f0-9]{32}$')) &&
       d.keys().hasOnly(['starred']) &&
       d.keys().hasAll(['starred']) && d.starred is bool)

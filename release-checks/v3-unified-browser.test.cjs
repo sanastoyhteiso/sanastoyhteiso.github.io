@@ -94,7 +94,7 @@ async function run(){
  }
  assert.equal(Object.keys(events).length,1,'one public answer goes to immutable server history');
  assert.equal(Object.values(events)[0].kind,'answer');
- assert.match(Object.values(events)[0].target,/^T\d{5,7}$/);
+ assert.match(Object.values(events)[0].target,/^[TMPH]\d{5,7}$/);
  const stored=w.RS_FAMILY.getState();
  assert.ok(Object.keys(stored.scores).length>=1);
  const add=d.querySelector('[data-view="add"]');

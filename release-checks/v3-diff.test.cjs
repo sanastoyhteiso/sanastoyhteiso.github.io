@@ -29,6 +29,10 @@ const wrong={scores:{T00001:{seen:2,correct:1,wrong:0,learned:true}},words:{},fa
 a.ok(diff.changes(s1,wrong).unsafe.length,'Incomplete answer counter blocked');
 a.equal(diff.target('L112233'),false);
 a.equal(diff.target('H00001'),true);
+a.equal(diff.target('P00055'),true);
+ev=diff.changes(empty,{scores:{P00055:{seen:1,correct:1,wrong:0,learned:true}},
+  words:{},favorites:{}});
+a.equal(ev.events[0].target,'P00055');
 let recovery=diff.recover(s2,s1);
 a.equal(recovery.unsafe.length,0);
 a.equal(recovery.events.length,0,'Newer cloud scores must not block another device');

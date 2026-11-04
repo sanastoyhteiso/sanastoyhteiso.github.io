@@ -22,6 +22,7 @@ async function run(){
  try{
    await assertSucceeds(setDoc(ref(alice,'alice',E('a')),event('alice',E('a'),'answer','T00001',{correct:true})));
    await assertSucceeds(setDoc(ref(alice,'alice',E('b')),event('alice',E('b'),'answer','H00001',{correct:false,reviewLearned:false})));
+   await assertSucceeds(setDoc(ref(alice,'alice',E('9')),event('alice',E('9'),'answer','P00055',{correct:true})));
    await assertSucceeds(setDoc(ref(alice,'alice',E('c')),event('alice',E('c'),'answer','M00012',{correct:true})));
    const wordId='W_'+'c'.repeat(32);
    await assertSucceeds(setDoc(ref(alice,'alice',E('d')),event('alice',E('d'),'word_upsert',wordId,{
