@@ -197,3 +197,14 @@
 - TASK-20261104-005 / NEW-002; TEST branch feat/admin-control-center-package-spec-20261104, remote HEAD 91fa4f79ff2b8564c1a3671153e55ab0057e346d.
 - Действие: выполнить доступную независимую проверку сохранённого тестового набора (native Node/CI по возможности), записать ограничения, создать audit/handoff исключительно в TEST, обновить мастер-план и Issue #10 и оставить точный следующий шаг.
 - Запреты: не изменять production/Firebase/данные/тарифы; PR не объединять.
+
+### RUN-20261104-012.1 / ЗАВЕРШИЛ / DONE (TEST GitHub Actions CI)
+- Дата: 2026-11-04, Europe/Helsinki.
+- Коммит CI-файла только в TEST: [5f4ae30](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/5f4ae30af80736f582c7c6eb01b4c731a609ea63).
+- GitHub Actions [run #41915536733](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41915536733), HEAD 5f4ae30, conclusion=success, job admin-access success. Логи: нативный Node 20 `node --test admin/tests/admin-access.test.cjs`: 29 tests, 29 PASS, 0 FAIL; четыре node --check PASS; release-manifest.test.cjs PASS. Нет deploy/секретов/записи Firebase.
+- Это подтверждает только deterministic fake-Firebase client regression, не серверные Security Rules, не реальную роль admin, не браузер/iOS12 и не рабочий мониторинг. NEW-002 тестовое исправление опубликовано, stage C/E в целом остаются открытыми.
+
+### RUN-20261104-012.2 / НАЧАЛ / IN_PROGRESS
+- Дата: 2026-11-04, Europe/Helsinki.
+- План: сохранить подтверждённый technical audit и handoff в TEST, обновить в master roadmap TASK-005 и Issue #10 статус NEW-002 с коммитами/CI, затем закрыть RUN-012 с указанием следующего шага. PRODUCTION и Firebase не трогать.
+- Исходный TEST HEAD: 5f4ae30af80736f582c7c6eb01b4c731a609ea63.
