@@ -101,3 +101,16 @@
 - Время (Europe/Helsinki): 2026-11-04 23:06:00.
 - TASK-20261104-005 / NEW-002; TEST ветка `feat/admin-control-center-package-spec-20261104`, исходный SHA `7b4f851389673050444073763d9cedd03661b189`.
 - Действие: запустить `node --test admin/tests/admin-access.test.cjs` на неизменённых исходных admin скриптах. Ожидаются отказы воспроизводящих тестов; сохранить точное число и причины, затем исправлять.
+
+### RUN-20261104-005 / ЗАВЕРШИЛ / DONE (воспроизведение дефектов)
+- Время (Europe/Helsinki): 2026-11-04 23:06:24.
+- Baseline действительно запущен: `node --test admin/tests/admin-access.test.cjs` на исходном admin-коде [7b4f851](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/7b4f851389673050444073763d9cedd03661b189).
+- Результат: 58 тестов, 31 PASS, 27 FAIL, exit 1. Это ожидаемое подтверждение дефектов NEW-002, НЕ зелёная проверка панели.
+- Подтверждено: несверенный default app, гонки claim/read/смены сессии, отсутствие реакции на token refresh, сохранение старого DOM, необработанные синхронные отказы SDK. Также добавлена защитная проверка анонимного аккаунта с искусственно заданным claim (моделируемый крайний случай).
+- Следующий шаг: исправить эти переходы только в TEST admin скриптах и обновить cache URLs.
+
+### RUN-20261104-006 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:06:24.
+- TASK-20261104-005 / NEW-002; TEST `feat/admin-control-center-package-spec-20261104`, исходный HEAD `7b4f851389673050444073763d9cedd03661b189`.
+- Действие: локально исправить admin-page.js/admin-entry.js: сверка default app с TEST config, onIdTokenChanged с ограниченным force refresh, немедленное скрытие/очистка, поколение сессии для async callbacks, безопасная обработка отказов; обновить HTML/SW версии скриптов. Никаких Firebase writes, Rules, deploy или merge.
+- Проверка после редактирования — отдельный RUN; затем атомарный commit в ту же тестовую ветку.
