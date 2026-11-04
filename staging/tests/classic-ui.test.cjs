@@ -10,7 +10,8 @@ const html=get('index.html'),style=get('style.css');
 const scripts=Array.from(html.matchAll(/<script src="([^"]+)"><\/script>/g)).map(m=>m[1]);
 assert.deepStrictEqual(scripts,['data-public.js','rs-admin-preview.js',
  'rs-mediatri-guide.js','rs-library-model.js','rs-library-demo.js',
- 'rs-demo-offline.js','app.js','mobile-nav.js','i18n.js']);
+ 'rs-demo-offline.js','app.js','mobile-nav.js','i18n.js',
+ 'ipad-selects.js?v=ipad12-readable-1']);
 assert.ok(html.includes("connect-src 'none'"));
 assert.ok(!html.includes('family-locked')&&!html.includes('id="family-gate"'));
 assert.ok(!/firebase|google\.com\/gsi|https:\/\/www\.gstatic\.com/i.test(html));
@@ -31,7 +32,7 @@ const w=dom.window,doc=w.document;
 w.scrollTo=()=>{};
 w.fetch=()=>{throw Error('No network allowed');};
 w.XMLHttpRequest=function(){throw Error('No XHR allowed');};
-const scriptData=scripts.map(name=>get(name));
+const scriptData=scripts.map(name=>get(name.split('?')[0]));
 scriptData.forEach((source,i)=>w.eval(source+'\n//# sourceURL='+scripts[i]));
 doc.dispatchEvent(new w.Event('DOMContentLoaded'));
 function click(selector){const el=doc.querySelector(selector);assert.ok(el,'Missing '+selector);el.click();return el;}
