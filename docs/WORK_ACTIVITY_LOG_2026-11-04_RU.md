@@ -54,3 +54,13 @@
 - Проверено: GitHub commits 3b8ae3853b4656371a969280a3136ce3955081de, b9e60bab24133c32b98f826bae89477907bcd626 и 7b4f851389673050444073763d9cedd03661b189.
 - Не сделано: инженерные этапы A–K, задача NEW-001. Реальный production и Firebase не менялись.
 - Следующий шаг: проверить последние записи RUN и закрыть начальную инвентаризацию этапа A.
+
+### RUN-20261104-002 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:02:52.
+- TASK-20261104-005; этапы B/C/E: технический аудит отдельной admin-панели по текущему заданию владельца.
+- Планирую действие: read-only проверка файлов и CI TEST PR #3: SDK/config, RS_FIREBASE_CONFIG, custom claim, скрытие ссылки ученикам, ошибки запуска; получить локальную копию исходников для дальнейших проверок.
+- Repo / branch / HEAD: `velardream-ctrl/riveria-sanasto-community-test` / `feat/admin-control-center-package-spec-20261104` / `7b4f851389673050444073763d9cedd03661b189`.
+- Журнал: `sanastoyhteiso/sanastoyhteiso.github.io` / `release/v3-safe-integration-20261104`, исходный HEAD `d83195d58ff6dedce96d6ba97ab58c7b1917a407`.
+- Перед стартом прочитаны Issue #10, журнал (RUN-001 закрыт), master roadmap и handoff. Открытых RUN не найдено. PR #3 open/draft, не merged.
+- Ожидаемый результат: перечень подтверждённых дефектов и доступных тестов; реальные Auth/Firestore, production, тарифы и merge не изменять.
+- Ссылки: [TEST PR #3](https://github.com/velardream-ctrl/riveria-sanasto-community-test/pull/3), [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10).
