@@ -64,3 +64,18 @@
 - Перед стартом прочитаны Issue #10, журнал (RUN-001 закрыт), master roadmap и handoff. Открытых RUN не найдено. PR #3 open/draft, не merged.
 - Ожидаемый результат: перечень подтверждённых дефектов и доступных тестов; реальные Auth/Firestore, production, тарифы и merge не изменять.
 - Ссылки: [TEST PR #3](https://github.com/velardream-ctrl/riveria-sanasto-community-test/pull/3), [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10).
+
+### RUN-20261104-002 / ЗАВЕРШИЛ / DONE
+- Время (Europe/Helsinki): 2026-11-04 23:03:53.
+- Завершён именно read-only аудит, не приёмка работающей панели. Исходники получены на SHA [7b4f851](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/7b4f851389673050444073763d9cedd03661b189); незавершённых предыдущих RUN нет.
+- SDK: admin/index.html подключает config.js, затем одинаковую Firebase v8.10.1 app/auth/firestore, затем admin-page.js. RS_FIREBASE_CONFIG указывает на sanastoyhteiso-v3-development. Относительные пути согласованы с /v3-unified-preview/admin/. В обычном index.html ссылка hidden по умолчанию; прежние admin-live/admin-preview не подключены.
+- Дефекты NEW-002: панель не сбрасывает разрешение/DOM сразу при смене аккаунта; ответы старых claim/Firestore запросов могут изменить состояние новой сессии; onAuthStateChanged не отслеживает обновление claims в ID token; существующее default Firebase app не сверяется с TEST config. Нужны воспроизводящие тесты и исправления fail-closed.
+- GitHub check-runs на исходном SHA: 0. В дереве нет workflow/Rules тестов. Есть release-manifest.test.cjs. Локально доступны Node и Playwright package, но браузерные binaries отсутствуют. Тесты ещё не запускались.
+- Настоящие вход администратора/защищённое чтение/Rules/iOS12 не проверены. Firebase, main, тарифы и merge не менялись.
+- Следующий шаг: зарегистрировать NEW-002 в master и Issue #10, затем воспроизвести ошибки локальными тестами без сетевого Firebase.
+
+### RUN-20261104-003 / НАЧАЛ / IN_PROGRESS
+- Время (Europe/Helsinki): 2026-11-04 23:03:53.
+- TASK-20261104-005 / NEW-002; этапы B/C/E.
+- Действие: добавить результаты аудита и NEW-002 в реестр/журнал master roadmap и Issue #10. Это только документация, галочки A–K не закрывать.
+- Repo / branch / HEAD: TEST PR #3 `feat/admin-control-center-package-spec-20261104` = `7b4f851389673050444073763d9cedd03661b189`; документация `release/v3-safe-integration-20261104` = `d271b86e6a7c24fa964db7b8e816a3af980e85d1`.
