@@ -1124,3 +1124,9 @@
 - FINAL exact-HEAD PR #3 TEST DRAFT commit `2fb8873430d383c25a313fe2d5b6111eae1c87a7`, [GitHub Actions #42107509030](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/42107509030) job 127526107808 SUCCESS; новый offline gate **6/6 PASS** и существующие admin/i18n/My Finds tests successful. NEW-009 остаётся отдельным **3/3 KNOWN RED** диагностическим тестом, общий зелёный CI не означает sync source fix.
 - TEST default main, production site/main, Firebase, UID, приватные данные, тариф, ZIP и Cloud Rules не трогали. Реальный iPad iOS12/беспроводное обновление на устройстве пока НЕ протестированы. F ZIP PAUSED.
 - NEXT: RUN-066.2 написать технический отчёт, зарегистрировать NEW-010 только как TEST-only READY/PENDING LIVE ACCEPTANCE, обновить Master TASK-054 и Issue #10; затем RUN-066 END.
+
+
+### RUN-20261105-066.2 / НАЧАЛ / IN_PROGRESS — закрепить cache safety in master/Issue NEW-010
+- Время Europe/Helsinki: 2026-11-05 22:54:40. RUN-066.1 DONE — TEST DRAFT exact SHA 2fb8873430d383c25a313fe2d5b6111eae1c87a7; offline Node tests 6/6 + Actions run #42107509030 successful.
+- Документальное действие: короткий readback-отчёт с доказательством изменений и границами тестирования; append NEW-010 в мастер реестр и Issue #10 body, TASK-20261105-054, прямая ссылка на code/tests/CI. OPEN for real iOS12 acceptance and TEST branch merge; DO NOT mark live complete.
+- Нельзя менять production и аккаунты/сервисы. История append-only; F ZIP остаётся PAUSED, NEW-009 sync остаётся OPEN/BLOCKED.
