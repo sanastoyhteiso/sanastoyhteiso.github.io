@@ -503,3 +503,9 @@
 - Read-back GitHub подтверждает [MASTER TASK-20261105-016, commit d325110](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/d32511032d69afa4688407e6f37f1ff06562127e) и checkpoint [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10). Никакие UID/email/claims не были перенесены в публичные документы.
 - **Статус только WAITING_OWNER_EXECUTION:** настоящий `--apply` в Cloud Shell и серверный результат не получены; привилегированные Auth writes не выполнялись инструментами ChatGPT. Не считать роль установленной. TEST PR #3 остаётся draft, production/Rules/tariff/пользователей не трогали.
 - NEXT: обезличенный вывод владельца об успешном завершении либо ошибке `--apply`. Новый RUN для read-back TEST custom claim и ограниченного live allow/deny после обновления токена. Этап C и A–K не закрыты.
+
+
+### RUN-20261105-027 / НАЧАЛ / IN_PROGRESS (владелец сообщил о выполнении TEST --apply; read-back ещё нужен)
+- Дата: 2026-11-05, Europe/Helsinki. Этап C; продолжение RUN-026 после отдельного согласия.
+- Владелец сообщил «Сделал» после инструкции выполнить `node assign-test-admin.cjs --apply` в приватной Cloud Shell. **Не получено терминальное сообщение SUCCESS или ошибки**, поэтому факт назначения claim и сохранение прочих claims независимо не подтверждены; не помечать DONE.
+- Цель: сохранить обезличенный checkpoint GitHub, запросить только финальный статус `SUCCESS: admin=true assigned to exactly this TEST UID` или текст ошибки без UID/email, а затем отдельно подтвердить токен и доступ. Ограничения: никаких Cloud Firebase/Auth/Rules/production/billing/PR merge изменений инструментами ChatGPT, не публиковать личные идентификаторы.
