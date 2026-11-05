@@ -10,6 +10,18 @@ const when=1793000000000;
 const id=(digit)=>'E_'+String(digit).repeat(32);
 const wordId='W_'+'c'.repeat(32);
 const findData={list:'finds',added:true,topic:'study',note:''};
+const finds=require('../v3-sync-finds.js');
+const examples=[
+  {id:'H00001',fi:'hoito',ru:'уход'},
+  {id:'M00001',fi:'hoito',ru:'уход'},
+  {id:'P00055',fi:'hoito',ru:'уход'},
+  {id:'T00001',fi:'hoito',ru:'уход'},
+  {id:'L00001',fi:'hoito',ru:'invalid'},
+  {id:'T/../../admin',fi:'hoito',ru:'invalid'}
+];
+// finds matching hides unpersistable source IDs while retaining all valid classes.
+assert.deepEqual(finds.matching(examples,'hoito').exact.map(x=>x.id).sort(),
+  ['H00001','M00001','P00055','T00001']);
 const pilot=engine.create({
   stagingOnly:true,uid,core,shadow:{},device,
   remote:{list:()=>Promise.resolve([]),put:()=>Promise.resolve()},
