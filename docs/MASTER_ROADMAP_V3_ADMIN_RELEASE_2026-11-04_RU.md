@@ -660,3 +660,11 @@
 - **Проверено:** exact HEAD 839d6de [Actions #42103610894](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/42103610894) SUCCESS по прежним обязательным тестам, но новый синтетический gate **3/3 RED**: upload error и pending ошибочно дают true; очередь препятствует одному UI apply (0 вместо 1). Ожидаемая красная регрессия доказана, в релизную готовность НЕ засчитывать. [RUN-063 report](./TEST_V3_REFRESH_FAILCLOSED_KNOWN_RED_RUN-20261105-063_RU.md).
 - **Осталось:** в разрешённом редакторе TEST DRAFT исправить source fail-closed, очистку queue, UID/epoch guard; получить 3/3 PASS, включить обязательный CI, затем отдельные TEST Cloud Rules/два аккаунта/iOS12/backup checks. RUN-045 cloud read BLOCKED; Stage A-K и NEW-001/009 остаются OPEN/NO-GO.
 - **Далее:** новый RUN после подтверждения доступного разрешённого способа изменения TEST source; не обходить прежний tool block, не менять production/Firebase/Sheets/аккаунты/тариф. Не предлагать несовместимую установку Firebase plugin владельцу (RUN-057).
+
+
+### TASK-20261105-052 / RUN-20261105-064 — регистрация NEW-009 в главном Issue #10 (DONE DOCUMENTATION ONLY)
+- **Дата/время:** 2026-11-05 22:31:27 Europe/Helsinki; **статус:** DONE only for tracking correction; NEW-009 code failure remains OPEN/BLOCKED.
+- **Причина:** read-only reconciliation revealed NEW-009 was present only in Issue #10 comments and master notes, not directly in the main Issue body under additional tasks.
+- **Сделано и проверено:** append-only entry `### NEW-009` added to original Issue #10 body with high priority, TEST DRAFT PR #3 link, 3/3 KNOWN RED and explicit next safety gate. Readback confirms primary body contains NEW-009. All other task body and checkboxes preserved.
+- **Источники:** [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10), [RUN-063 confirmed red evidence](./TEST_V3_REFRESH_FAILCLOSED_KNOWN_RED_RUN-20261105-063_RU.md), [test CI #42103610894](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/42103610894).
+- **Дальше:** authorised TEST-only source editor and three PASS regressions; published TEST Rules readback still blocked, all A–K remain NO-GO. No site, Firebase, other users, Sheets, or billing changes.
