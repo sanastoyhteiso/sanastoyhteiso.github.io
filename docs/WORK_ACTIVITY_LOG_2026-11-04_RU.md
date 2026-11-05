@@ -560,3 +560,10 @@
 - [Технический отчёт](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/blob/release/v3-safe-integration-20261104/docs/ADMIN_TOKEN_ROUTE_AUDIT_RUN-20261105-031_RU.md), [commit 4d2dd5b](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/4d2dd5b50cf649b0b69c9951bfcf5f7bd93e6456). Тестовый default main не содержит нового admin/index.html, несмотря на TEST PR #3; client auth/mocks и emulator CI прошли, но live token + allow/deny ещё не испытаны.
 - GitHub read-back подтверждает [MASTER TASK-20261105-020 commit 261f8b0](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/261f8b01135c33c0a3d7124c3ca99fb6276272ae) и [Issue #10 checkpoint](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10). NEW-005: просроченные/неактивные данные показываются как счётчики рядом со статусом «Нет данных».
 - NEXT: RUN-032 TEST PR #3 atomic regression — корректное скрытие stale counts, deterministic tests, CI. Аудит без Cloud changes; B/C/E/H OPEN.
+
+
+### RUN-20261105-032 / НАЧАЛ / IN_PROGRESS (NEW-005: reject stale/inactive aggregate display)
+- Дата: 2026-11-05, Europe/Helsinki. Scope TEST PR #3 `velardream-ctrl/riveria-sanasto-community-test`, branch `feat/admin-control-center-package-spec-20261104`, starting HEAD `d5ede8385945f7ca1175d234ae87e282758e41b5`, draft/unmerged.
+- Цель: исправить показ устаревших `errors24h`, `active7d`, `releaseVersion`, `syncFailures24h`, `errorGroups` в `admin-page.js`, если отсутствует свежая активная сводка мониторинга. Сохранить отдельно последний event backup timestamp, который сам по себе исторический факт. Добавить deterministic mock regression tests stale/inactive/future/fresh; проверить node syntax/тестовый GitHub CI на точном HEAD и read-back файлов. Никакой новой телеметрии/сервера не утверждать.
+- Разрешены только изменения TEST feature branch и тесты + GitHub documentation. LIVE Firebase/PROD TEST default `main`, текущие rules, Auth/user data, тариф и PR merge не трогать.
+- Ожидаемый результат: status «Нет данных» согласуется с показателями, без ложного green; если CI красный, исправить только TEST код или зафиксировать BLOCKED с конкретным FAIL.
