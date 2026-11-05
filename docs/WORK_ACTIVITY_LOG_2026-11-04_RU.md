@@ -587,3 +587,10 @@
 - [Сравнение PR #8 ↔ PR #9](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/blob/release/v3-safe-integration-20261104/docs/INTEGRATION_SEAM_AUDIT_RUN-20261105-033_RU.md), [commit 417d0c8](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/417d0c806e0046182d66096fb956507bcd8d0743). В PR #8 чистые staging-only модули, в PR #9 подготовлен единый UI/opt-in bridge; sync-core совпадает после комментария, SHA helper identical, IndexedDB DB_NAME различен, два самостоятельных controller/transport подхода не стоит соединять одновременно.
 - Read-back GitHub: [MASTER TASK-20261105-022 commit 288b533](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/288b5333f1017904ab5b1613bad4298b896d3a36) и [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10). Release offline CI [#42000162724](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42000162724) SUCCESS на HEAD 8992e8da. Это не live data/permission acceptance.
 - Только документация, без Firebase/production/merge, Stage G/H OPEN. NEXT: RUN-034 TEST offline migration/backup contract regressions, без привлечения владельца.
+
+
+### RUN-20261105-034 / НАЧАЛ / IN_PROGRESS (isolated V3 event contract + backup safety regression)
+- Дата: 2026-11-05, Europe/Helsinki. Stage G/H и NEW-001; после RUN-033.
+- Repo `sanastoyhteiso/sanastoyhteiso.github.io`, DRAFT PR #9 branch `release/v3-safe-integration-20261104`, starting current HEAD определяется перед тестовым commit. Production `main` остаётся неизменным.
+- План: прочесть существующие `release-checks` тесты/код; добавить детерминированные OFFLINE assertions для V3 event idempotency/invalid payload/переключения владельца и сохранности локальной копии при ошибках, исключить cloud/Firebase calls; подключить к Release V3 preflight workflow и проверить exact HEAD GitHub Actions. Если существующие тесты уже покрывают сценарий — расширить реальный пробел, не плодить дубликаты.
+- Это подготовка критериев приемки, **не доказательство реального Google Sheets backup/restore**. Никаких cloud data writes, Firebase Rule deploy, production merge, тарифов и пользовательских аккаунтов.
