@@ -80,4 +80,25 @@ const manifest=core.snapshotManifest(uid,'snapshot-dated-001',when,baseline,[ans
 assert.equal(manifest.complete,false,'backup planned does not equal uploaded');
 assert.equal(manifest.restoreTested,false,'preview does not equal verified live restore');
 assert.equal(manifest.eventCount,1);
+// Rules candidates MUST stay in lockstep. The emulator alone is insufficient
+// if the owner-facing UNDEPLOYED production fragment diverges or is malformed.
+const fs=require('node:fs');
+const prepared=fs.readFileSync('release-checks/firestore-v3-production-additive.rules.txt','utf8');
+const emulated=fs.readFileSync('release-checks/firestore-v3-prod-emulator.rules','utf8');
+function ownerFindsClause(s){
+  assert.equal(s.split('function v3ReleasePayload').length-1,1,
+    'Duplicate or missing payload function');
+  assert.equal(s.split('function v3ReleaseEvent').length-1,1,
+    'Duplicate or missing event function');
+  const start=s.indexOf("(k == 'collection_set'");
+  assert.ok(start>=0,'collection_set Rules missing');
+  const end=s.indexOf("d.note.size() <= 350)",start);
+  assert.ok(end>start,'collection_set clause truncated');
+  return s.slice(start,end+("d.note.size() <= 350)").length).replace(/\\s+/g,'');
+}
+const ownerFragment=ownerFindsClause(prepared),ownerFixture=ownerFindsClause(emulated);
+assert.equal(ownerFragment,ownerFixture,'Prepared Rules differ from emulator fixture');
+assert.ok(ownerFragment.includes("^[TMPH][0-9]{5,7}$"),'All public term classes must match');
+assert.ok(ownerFragment.includes("^W_[a-f0-9]{32}$"),'Private word IDs must match');
+
 console.log('PASS RUN-034 synthetic sync/UID/dedup/word-conflict/restore preview contract; NO live backup');
