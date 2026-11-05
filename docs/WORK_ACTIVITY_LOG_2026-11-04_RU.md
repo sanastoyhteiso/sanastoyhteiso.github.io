@@ -1022,3 +1022,9 @@
 - Read-only проверка обнаружила: NEW-009 уже упоминается в комментариях Issue #10 и MASTER ROADMAP, но **не присутствует в основной body списка задач Issue #10** (48218 символов). Это дефект документации и угрозa передачи контекста.
 - План: только в теле существующего Issue #10 добавить NEW-009 в раздел «Дополнительные обнаруженные задачи», со статусом OPEN/BLOCKED, свидетельством 3 RED, шагом исправления и прямыми ссылками на PR/CI; сохранить остальной Issue без изменений. Сверить read-back; append MASTER TASK-052 и терминальный END.
 - Ожидаемый результат: задача видна при открытии главной доски, даже без чтения комментариев. Никаких TEST/production code, Firebase, Google Drive, тарифов, данных пользователей.
+
+
+### RUN-20261105-064 / ЗАВЕРШИЛ / DONE ISSUE #10 BODY REGISTRATION — SOURCE BUG STILL OPEN
+- Время (Europe/Helsinki): 2026-11-05 22:31:40. В главном [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10) раздел «Дополнительные обнаруженные задачи» дополнен явной записью `### NEW-009` HIGH / OPEN / SOURCE WRITE BLOCKED, 3/3 KNOWN RED и ссылкой на TEST PR/CI; прежние пункты и чекбоксы сохранены.
+- Read-back Issue #10 body подтвердил прямую запись NEW-009 (не только комментарий). [MASTER TASK-052 commit 6fd9992](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/6fd999211f2fb8454b6c95d239a2ab4db023baa2) сохраняет отдельный checkpoint; предшествующие RUN-063/063.1 START/END и TASK-051 сохранены.
+- Это только закрытие документального пробела. Actual NEW-009 code fix всё ещё BLOCKED (RUN-062), V3 sync readback и real Cloud Rules/backup/ZIP release всё ещё NO-GO; следующим действием остаётся разрешённый TEST source patch и 3/3 PASS. Production/main, TEST main, Firebase TEST/LIVE, Cloud roles, Sheets, students, pricing не менялись.
