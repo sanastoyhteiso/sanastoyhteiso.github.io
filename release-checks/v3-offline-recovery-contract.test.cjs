@@ -15,10 +15,12 @@ const pilot=engine.create({
   remote:{list:()=>Promise.resolve([]),put:()=>Promise.resolve()},
   activeUid:()=>uid,random:()=> 'a'.repeat(32)
 });
-// Allow only targets that current additive Firestore policy accepts.
-assert.equal(core.valid(pilot.makeEvent('collection_set','T00001',findData,when)),true);
-assert.equal(core.valid(pilot.makeEvent('collection_set',wordId,findData,when)),true);
-for(const term of ['M00001','P00055','H00001','L00001','T/../../admin']){
+// All published-term classes and private W IDs are valid in the
+// UNDEPLOYED additive Rules candidate. Deployed TEST Rules need separate audit.
+for(const term of ['T00001','M00001','P00055','H00001',wordId])
+  assert.equal(core.valid(pilot.makeEvent('collection_set',term,findData,when)),true,
+    'valid owner-only find '+term);
+for(const term of ['L00001','T/../../admin','M001','S00001']){
   assert.throws(()=>pilot.makeEvent('collection_set',term,findData,when),
     /Invalid real term target\/date/,'invalid cloud find target '+term);
 }
