@@ -380,3 +380,16 @@
 ### RUN-20261105-018.2 / НАЧАЛ
 - Пользователь запросил полный текст правил с минимальным доступом администратора для самостоятельной вставки в тестовую Firebase.
 - План: сохранить полный кандидат в TEST PR №3, проверить на эмуляторе и дать ссылку для копирования. Не публиковать и не менять Firebase автоматически.
+
+### RUN-20261105-018.1 / ЗАВЕРШИЛ / DONE (тестирование копии правил владельца)
+- Владелец предоставил текст правил TEST Firebase `sanastoyhteiso-v3-development` из Console. Он соответствует исторической редакции с `collection_set` и `sync_demo_v3` (PR #8 blob `86ba7d0b`) по содержимому; cloud revision/date всё ещё неизвестны. Подтверждено отсутствие `admin_metrics/current`.
+- TEST commit [f8a60b6](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/f8a60b65fd3e0940052c5df3a40d039d72d06623): отдельные baseline/additive fixtures, 39 новых cases; [Actions #41944285697](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41944285697) SUCCESS **85/85 PASS** в локальном Firestore Emulator. Пользовательские правила не менялись.
+
+### RUN-20261105-018.2 / ЗАВЕРШИЛ / DONE (полный готовый файл правил TEST с админ-доступом; Firebase не менялась)
+- [TEST commit bb3b39d](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/bb3b39dea3cfc5cf5a8c0eca1ad95510ad9f98b3) создал [полный кандидат из 284 строк](https://github.com/velardream-ctrl/riveria-sanasto-community-test/blob/bb3b39dea3cfc5cf5a8c0eca1ad95510ad9f98b3/admin/security-tests/candidates/FIRESTORE_V3_DEVELOPMENT_FULL_FOR_MANUAL_REVIEW.rules). Сохранены **все** исторические student rules и новые `collection_set`/`sync_demo_v3`; вставлен один узкий `match /admin_metrics/{metricId}`: get `current` только verified boolean admin + Google provider, client list/write запрещены.
+- `security.user-supplied.test.cjs` теперь проверяет **именно готовый файл**, в том числе identity-invariant: исходный полный текст неизменён после удаления единственного добавленного блока. [GitHub Actions #41944955117](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41944955117) SUCCESS **86/86 PASS, 0 FAIL** в локальном Firestore Emulator (Node 22 / Firebase SDK 13); client CI на новом HEAD проверить отдельно.
+- Владелец получил ссылку на полный код, чтобы самостоятельно скопировать через GitHub Raw. **Это не cloud Publish.** Сначала резерв текущих Rules, сверка TEST project/base, затем только сознательное ручное изменение в TEST. Важное ограничение: Firebase Rules не назначает custom admin claim и не создаёт/обновляет `admin_metrics/current`; для реального доступа потребуется доверенный Admin SDK и агрегация. Production/другой Firebase project/тарифы/данные/merge не менялись.
+- RUN-018 документация/master/Issue/handoff ещё синхронизируются отдельным закрывающим подэтапом.
+
+### RUN-20261105-018.3 / НАЧАЛ / IN_PROGRESS
+- Проверить TEST PR #3 exact HEAD/client CI и read-back готового файла, обновить TEST audit/handoff, MASTER и Issue #10, затем закрыть RUN-018 без заявления о real Firebase admin access.
