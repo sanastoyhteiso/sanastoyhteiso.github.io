@@ -998,3 +998,11 @@
 - После START RUN-063 создан только новый изолированный opt-in тест на DRAFT TEST PR #3 commit e5e0974bc75716eb1efef4c0924c503e971bb1ef, проверен read-back. Исходник v3-sync-release.js не менялся.
 - План: в TEST branch обновить только .github/workflows/admin-regression.yml отдельным явно маркированным не блокирующим диагностическим шагом: запуск V3_SYNC_ASSERT_FIXED=1 node --test admin/tests/v3-sync-refresh-failclosed-gate.test.cjs с проверкой реального exit status, выводом теста и статусом KNOWN RED. Это не PASS дефекта, а доказательство воспроизводимости; остальные обязательные тесты продолжают работать.
 - Ожидается GitHub Actions run на exact HEAD с тремя явными FAIL до фикса, при этом общий release остаётся NO-GO. Никакой Cloud Firebase/API/deploy/TEST default main/production/секретов/данных пользователей.
+
+
+### RUN-20261105-063.1 / ЗАВЕРШИЛ / DONE — воспроизведены 3 KNOWN RED сценария, FIX ещё не сделан
+- Время (Europe/Helsinki): 2026-11-05 22:28:37.
+- В DRAFT TEST PR #3 добавлен не блокирующий диагностический шаг (CI commit 839d6de6d47b24250d28828e8f790187ccf9db37); точный HEAD 839d6de, GitHub Actions admin regression #42103610894 и #42103620692 SUCCESS. Эта зелёная сводка относится к существующим тестам и диагностической ОБРАБОТКЕ известного красного результата, **НЕ** означает успешной проверки NEW-009.
+- Подтверждение по логам #42103610894 job 127512544400: тест с реальным V3 исходником показал 3/3 ожидаемых FAIL: (1) upload rejected, refresh вернул true вместо false; (2) pending events, refresh вернул true вместо false; (3) применений snapshot 0 вместо ожидаемого 1. Лог содержит предупреждение NEW-009 KNOWN RED; реальных Firebase API/IDB/учеников/сети нет.
+- Файл нового теста: commit e5e0974bc75716eb1efef4c0924c503e971bb1ef, admin/tests/v3-sync-refresh-failclosed-gate.test.cjs. Без V3_SYNC_ASSERT_FIXED=1 assertions SKIPPED; явный опциональный запуск с флагом специально должен быть красным до исправления, не используется как release pass.
+- Исходник v3-unified-preview/v3-sync-release.js и блокировка RUN-062 остаются без изменений, NEW-009 OPEN. NEXT: оформить RUN-063 отчёт/MASTER TASK-051/Issue #10; затем новый исполнитель с разрешённым редактором исправляет исходник и переводит тесты в обязательный зелёный CI. Продакшн/облачные данные не затронуты.
