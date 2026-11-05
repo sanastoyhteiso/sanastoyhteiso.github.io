@@ -1097,3 +1097,12 @@
 - Проверено реальным GitHub readback: MASTER Stage F DEFERRED, mandatory A–E/G–I и manual release gate, Issue #10 and TEST handoff в той же версии. Production main SHA d29813cf409af9dc60804105ca3141f98ec12fcd неизменён, PR #3/#9 по-прежнему DRAFT/open; исходный TEST код V3/ZIP не менялся, CI после документационного изменения не доказывает новых функций.
 - Открытые барьеры: NEW-009 3/3 KNOWN RED, RUN-045 опубликованные TEST Firestore Rules не подтверждены, NEW-001 реальное приватное независимое backup→restore ещё не доказано, 2 устройства/2 аккаунта и iOS12 acceptance не закрыты, admin/monitoring не считать готовыми по mock тестам. Другие обязательные этапы не закрыты, F нельзя отмечать DONE.
 - NEXT: отдельный RUN для исправления NEW-009 в разрешённой тестовой среде и 3/3 PASS, затем real TEST Cloud Rules/backup/двухустройственное QA без ZIP. Stage F возобновить отдельно после стабильного учебного запуска по согласованию владельца. Нет изменений Firebase TEST/LIVE, main/sandbox website, личных данных, приватных Sheets или тарифа.
+
+
+### RUN-20261105-066 / НАЧАЛ / IN_PROGRESS — регрессии доступности учебных страниц на старом iOS Safari (без ZIP)
+- Время Europe/Helsinki: 2026-11-05 22:44:40.
+- Предшествующий RUN-065 закрыт DONE; TEST PR #3 DRAFT HEAD 413d2f6c301541c019b12b6e6a43f8a5f4d33045; release PR #9 DRAFT; main не менялся. NEW-009 sync source fix заблокирован ранее RUN-062 и не будет обходиться альтернативными правками.
+- Новый приоритет владельца — максимально быстрый безопасный учебный запуск на телефоне, старом iPad и компьютере, без F/ZIP.
+- План: read-only аудит фактического V3 loader/index/critical iOS12 JS/CSS and tests на TEST DRAFT, выявить подтверждённый по коду независимый compatibility blocker, внести отдельный минимальный TEST-only исправляющий патч (либо только новый изолированный regression guard), проверить exact-head GitHub CI и сообщить уровень доказательства. **Никаких правок заблокированного v3-sync-release.js, обходных патчей или вмешательства в sync fail-closed**. Если нет достоверного дефекта — не выдумывать исправление; зафиксировать аудиторские выводы и следующий шаг.
+- Scope: только TEST DRAFT код, тесты и CI при разрешённых средствах, затем master TASK-054 / Issue #10 и END; production main, TEST default main, Firebase TEST/LIVE, реальные пользователи/UID/Rules, приватные backup, тариф, ZIP backend не менять.
+- Важное ограничение: mock/emulator CI не заменяет ручного испытания на iPad iOS12 / 2 devices и реальной Firebase. Релиз остаётся NO-GO.
