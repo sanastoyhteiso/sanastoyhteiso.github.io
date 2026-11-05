@@ -77,6 +77,7 @@
 | ID | Дата | Задача / причина | Приоритет | Этап | Статус | Следующий шаг / ссылка |
 | --- | --- | --- | --- | --- | --- | --- |
 | — | — | Пока новых задач по отдельным ID нет | — | — | — | Новые записи добавлять снизу, не затирая старые |
+| NEW-010 | 2026-11-05 | Устаревшая offline учебная версия на iPad/Safari при изменении JS без смены service worker | HIGH | G/H | TEST DRAFT CODE+CI PASS / DEVICE QA OPEN | [RUN-066 report](./STUDY_OFFLINE_CACHE_GUARD_RUN-20261105-066_RU.md); iOS12 live, 2 devices, PR review ещё нужны |
 
 ## Журнал выполнения задач (append-only)
 
@@ -685,3 +686,11 @@
 - Перед выпуском проверяем реальные Firebase Rules/UID, устойчивую cross-device синхронизацию (особенно NEW-009), offline queue и двух пользователей, iOS12, восстановимые независимые backup, защищённый доступ и корректный ручной GitHub PR/CI/test/rollback с owner GO. Надо также завершить другие необходимые этапы, не заявляя их DONE без испытаний.
 - Старое упоминание ZIP в H/жёстких gates перенесено в post-launch; этап F по-прежнему не закрыт. Раздел admin «Обновления» не должен включать кнопку отправки ZIP/показывать «готово» без доверенного сервера. Не изменялись main, Firebase TEST/LIVE, приватные данные, Google Sheets, тариф, PR #3 source.
 - Следующее действие: выполнить приоритетные NEW-009 и RUN-045 TEST Rules/backup/2 devices gates без возвращения к ZIP до первого релиза; после проверки стабильности возобновить F отдельным RUN и согласованием технического бюджета.
+
+
+### TASK-20261105-054 / RUN-20261105-066 — TEST V3 учебный offline cache контролируется хэшами 31 файлов | TEST CODE+CI VERIFIED / DEVICE QA OPEN
+- **Время:** 2026-11-05 Europe/Helsinki; **этапы:** G/H; **NEW-010** (риск старого JavaScript на iPad). **Статус:** готова только CODE/TEST защита на DRAFT PR #3; до публикации и реальной приёмки не закрывать этапы G/H.
+- В старом TEST service worker скрипты загружались cache-first и неизменное имя cache могло сохранять старую учебную логику после смены JS/CSS. Добавлен новый version namespace на основе FNV64 fingerprint сортированных имён + Git blob SHA всех 31 precached assets, включая иконки/HTML, [code commit 0dedb87](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/0dedb8741054267b9f0621a6f015c7b542ab744f).
+- Созданы 6 изолированных offline shell tests; обязательный exact-asset checksum gate интегрирован в TEST-only admin regression workflow. Старые tests локализации и My Finds согласованы с новой схемой. [TEST PR #3 final code head 2fb8873](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/2fb8873430d383c25a313fe2d5b6111eae1c87a7), [GitHub Actions #42107509030](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/42107509030) SUCCESS; **6/6** new gate PASS. Промежуточные CI failures до финального исправления тестового regex описаны в отчёте, не скрыты.
+- [Технический отчёт RUN-066](./STUDY_OFFLINE_CACHE_GUARD_RUN-20261105-066_RU.md) поясняет, что FNV64 — только обновление имени кэша, не подпись/ZIP. Изменения исключительно в TEST DRAFT, опубликованный TEST Pages и production неизменны. **NEW-009 продолжает 3/3 KNOWN RED**; published TEST Rules, 2 аккаунта, реальное офлайн-восстановление iOS12 и backup→restore ещё НЕ проверены.
+- **NEXT:** NEW-009 permitted code fix → 3 PASS; Work-authorized Cloud TEST Rules readback, реальные iOS12/2 device tests и backup/restore; до фактического GO не merge. При последующих изменениях любого precache файла обновлять fingerprint и ждать точный зелёный CI. ZIP Stage F PAUSED.
