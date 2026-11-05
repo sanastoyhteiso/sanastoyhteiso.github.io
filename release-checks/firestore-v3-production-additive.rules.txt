@@ -47,43 +47,7 @@ function v3ReleasePayload() {
       d.updatedAt is int && d.updatedAt > 0)
     ||
     (k == 'collection_set' &&
-      (e.target.matches('^[TMPH][0-9]{5,7}
-       e.target.matches('^W_[a-f0-9]{32}$')) &&
-      d.keys().hasOnly(['list','added','topic','note']) &&
-      d.keys().hasAll(['list','added','topic','note']) &&
-      d.list == 'finds' &&
-      d.added is bool &&
-      d.topic in ['practice','study','other'] &&
-      d.note is string && d.note.size() <= 350)
-  );
-}
-function v3ReleaseEvent(uid,eventId) {
-  let e = request.resource.data;
-  return e.keys().hasAll(['v','uid','id','device','kind','target','time','data']) &&
-    e.keys().hasOnly(['v','uid','id','device','kind','target','time','data']) &&
-    e.v == 3 && e.uid == uid && e.id == eventId &&
-    eventId.matches('^E_[a-f0-9]{32}$') &&
-    e.device is string && e.device.matches('^D_[a-f0-9]{32}$') &&
-    e.target is string && e.target.size() >= 1 && e.target.size() <= 180 &&
-    e.time is int && e.time > 0 && e.data is map &&
-    e.kind in ['answer','learned_set','favorite_set','word_upsert','collection_set'] &&
-    v3ReleasePayload();
-}
-match /sync_v3/{uid}/events/{eventId} {
-  allow get, list: if v3ReleaseOwner(uid);
-  allow create: if v3ReleaseOwner(uid) && v3ReleaseEvent(uid,eventId);
-  allow update, delete: if false;
-}
-match /sync_v3/{uid}/state/baseline {
-  allow get: if v3ReleaseOwner(uid);
-  allow list: if false;
-  allow create, update, delete: if false;
-}
-match /sync_v3/{uid}/words/{wordId} {
-  allow get, list: if v3ReleaseOwner(uid);
-  allow create, update, delete: if false;
-}
-) ||
+      (e.target.matches('^[TMPH][0-9]{5,7}$') ||
        e.target.matches('^W_[a-f0-9]{32}$')) &&
       d.keys().hasOnly(['list','added','topic','note']) &&
       d.keys().hasAll(['list','added','topic','note']) &&
