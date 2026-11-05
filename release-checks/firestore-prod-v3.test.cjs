@@ -32,6 +32,24 @@ async function run(){
    await assertSucceeds(setDoc(ref(alice,'alice',E('e')),event('alice',E('e'),'collection_set','T00001',{
      list:'finds',added:true,topic:'practice',note:'safe test note'
    })));
+   await assertSucceeds(setDoc(ref(alice,'alice',E('3')),event('alice',E('3'),'collection_set','M00012',{
+     list:'finds',added:true,topic:'study',note:''
+   })));
+   await assertSucceeds(setDoc(ref(alice,'alice',E('4')),event('alice',E('4'),'collection_set','P00055',{
+     list:'finds',added:true,topic:'practice',note:''
+   })));
+   await assertSucceeds(setDoc(ref(alice,'alice',E('5')),event('alice',E('5'),'collection_set','H00001',{
+     list:'finds',added:false,topic:'other',note:''
+   })));
+   await assertSucceeds(setDoc(ref(alice,'alice',E('6')),event('alice',E('6'),'collection_set',wordId,{
+     list:'finds',added:true,topic:'other',note:''
+   })));
+   await assertFails(setDoc(ref(bob,'alice',E('7')),event('alice',E('7'),'collection_set','M00012',{
+     list:'finds',added:true,topic:'study',note:''
+   })));
+   await assertFails(setDoc(ref(alice,'alice',E('8')),event('alice',E('8'),'collection_set','L00012',{
+     list:'finds',added:true,topic:'study',note:''
+   })));
    await assertSucceeds(getDoc(ref(alice,'alice',E('a'))));
    await assertSucceeds(getDocs(query(collection(alice.firestore(),'sync_v3','alice','events'),
      orderBy('__name__'),limit(100))));
