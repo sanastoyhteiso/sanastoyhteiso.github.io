@@ -13,7 +13,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const source=fs.readFileSync(
-  path.resolve(__dirname,'../../v3-sync-release.js'),'utf8');
+  path.resolve(__dirname,'../v3-sync-release.js'),'utf8');
 const marker='w.RS_V3_RELEASE={';
 const verify=test; // Mandatory on every release PR; never skip known unsafe cloud acknowledgements.
 function fixture(params){
