@@ -35,6 +35,8 @@ jobs:
         run: node release-checks/v3-private-sheets-flow.test.cjs
       - name: Check TEST-only Apps Script owner approval, lock, trigger and Google API mocks
         run: node --test release-checks/v3-apps-script-test-backup.test.cjs
+      - name: Check fail-closed TEST private backup health and failure alerts (offline only)
+        run: node --test release-checks/v3-backup-health.test.cjs
       - name: Verify full Firestore events/baseline/words backup source integrity (offline)
         run: node release-checks/v3-firestore-source-backup.test.cjs
       - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
