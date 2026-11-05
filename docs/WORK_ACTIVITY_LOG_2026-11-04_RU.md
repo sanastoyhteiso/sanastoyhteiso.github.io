@@ -1130,3 +1130,12 @@
 - Время Europe/Helsinki: 2026-11-05 22:54:40. RUN-066.1 DONE — TEST DRAFT exact SHA 2fb8873430d383c25a313fe2d5b6111eae1c87a7; offline Node tests 6/6 + Actions run #42107509030 successful.
 - Документальное действие: короткий readback-отчёт с доказательством изменений и границами тестирования; append NEW-010 в мастер реестр и Issue #10 body, TASK-20261105-054, прямая ссылка на code/tests/CI. OPEN for real iOS12 acceptance and TEST branch merge; DO NOT mark live complete.
 - Нельзя менять production и аккаунты/сервисы. История append-only; F ZIP остаётся PAUSED, NEW-009 sync остаётся OPEN/BLOCKED.
+
+
+### RUN-20261105-066.2 / ЗАВЕРШИЛ / DONE — report, TASK-054, NEW-010 и Issue #10 обновлены
+- Время Europe/Helsinki: 2026-11-05 22:56:40. Завершена документальная передача уже протестированного TEST DRAFT кода.
+- [RUN-066 detailed report](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/blob/release/v3-safe-integration-20261104/docs/STUDY_OFFLINE_CACHE_GUARD_RUN-20261105-066_RU.md) создан commit `de81a723b162ba830b3c0de33be52699250d1fd8`, readback подтверждён.
+- MASTER [TASK-20261105-054](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/18fb66b50381b2f8f852eb86857e358a4cb6a950) + row NEW-010 сохранены и readback проверен.
+- [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10) body updated; прямое `### NEW-010` содержит кодовый TEST PASS 6/6, LIVE device acceptance OPEN, и явно сохраняет NEW-009 3/3 RED. Readback Issue confirmed.
+- Что НЕ сделано: физический iOS12/двухустройственный TEST, исправление NEW-009, Cloud Rules, реальное backup→restore и production release. Этапы G/H остаются OPEN.
+- NEXT: завершить RUN-066 контрольной сверкой HEAD + production main и начать отдельный безопасный следующий RUN, не обходя blocked source.
