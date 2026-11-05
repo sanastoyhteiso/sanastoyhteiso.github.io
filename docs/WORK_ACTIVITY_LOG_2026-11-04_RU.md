@@ -483,3 +483,9 @@
 - Владелец показал результат в **приватном Cloud Shell** после ввода собственного UID: правильный TARGET TEST PROJECT `sanastoyhteiso-v3-development`, активная подтверждённая Google Auth учётная запись, сообщение `Current admin claim is not true. Other claims are preserved.`, а также `DRY RUN COMPLETE: no changes.`. Не публиковать видимые на исходном скриншоте UID или email; в GitHub хранить только обезличенные итоги.
 - Задача только документационная: зафиксировать PASS dry-run в MASTER TASK и Issue #10, сохранить состояние TEST Stage C / WAITING_EXPLICIT_OWNER_APPROVAL; затем дописать END. До отдельного подтверждения **НЕ запускать `node assign-test-admin.cjs --apply`**. Никаких изменений Firebase/Auth/Rules/production/PR/тарифа.
 - Ожидаемый результат: журнал, MASTER и issue сходятся, а следующий чат не ошибётся, будто роль уже назначена.
+
+
+### RUN-20261105-025 / ЗАВЕРШИЛ / PARTIAL — VERIFIED_DRY_RUN_PASS, WAITING_EXPLICIT_OWNER_APPROVAL
+- Прочитаны обратно и подтверждены сохранённые записи: [MASTER TASK-20261105-015, commit 4c9b1e0](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/4c9b1e025f86e13ef659ad329575f06916954e8c), [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10); пользовательские UID/email в GitHub не копировались.
+- Доказано скриншотом владельца: правильный TEST project, активная verified Google-linked учётная запись, текущий admin claim not true, сообщение `DRY RUN COMPLETE: no changes.`. Никакого `--apply`/записи claims и изменения других аккаунтов не было; cloud/billing/prod/PR не тронуты.
+- NEXT: **только после явного отдельного согласия владельца** предложить `node assign-test-admin.cjs --apply` в его приватном Cloud Shell; до выполнения — не считать роль выданной. Новый RUN должен задокументировать результат без идентификаторов и затем отдельно проверить токен/реальный доступ. Stage C и весь выпуск NO-GO.
