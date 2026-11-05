@@ -454,3 +454,9 @@
 - **Реальный dry-run в Cloud Shell не подтверждён:** у этого обычного чата отсутствует доступ к авторизованной интерактивной shell-сессии; фото `ls` — это только проверка наличия файла. Не считаться успешным dry-run, проверкой UID, emailVerified, IAM или текущих claims. Ни `--apply`, ни доступ к Auth API здесь не выполнялись; серверное назначение роли не подтверждено.
 - **Следующее действие владельца в той же приватной Shell:** проверить `gcloud config get-value project`; затем `node assign-test-admin.cjs --dry-run`. UID вводить *только локально* по запросу скрипта; при IAM/ADC error остановиться, не загружать ключи. По результату сообщить только обезличенный статус и наличие/тип ошибки — без UID/email/tokens. **Отдельное подтверждение владельца обязательно до `--apply`.**
 - Результат RUN-022: `PARTIAL / WAITING_OWNER_DRY_RUN`; Stage C и все A–K OPEN. Никаких Firebase/Firestore/Rules/user data/production/тарифов/PR merge действий этим чатом не сделано. После получения успешного dry-run начать новый RUN со сверкой аккаунта и отдельным согласием.
+
+
+### RUN-20261105-023 / НАЧАЛ / IN_PROGRESS (GitHub checkpoint RUN-022 → MASTER + Issue #10)
+- Дата: 2026-11-05, Europe/Helsinki. ТОЛЬКО документация GitHub после восстановления непрерывного журнала. RUN-022 закрыт как PARTIAL/WAITING_OWNER_DRY_RUN в [commit 4f122d6](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/4f122d65628754428105d6e24788e63e5b3cbf63).
+- План: append-only добавить TASK-20261105-013 в `docs/MASTER_ROADMAP_V3_ADMIN_RELEASE_2026-11-04_RU.md`, отметить незавершённый dry-run на Issue #10, перепроверить, что A–K/NEW-003 и production GO не закрыты. После read-back закончить RUN-023 ссылками на GitHub.
+- Scope: release/docs и Issue #10, без изменений TEST PR, Firebase/Auth/Firestore/Rules, сайта, данных, тарифов или публикации. Ожидаемое состояние: следующему исполнителю видна точка продолжения и запрет на `--apply` до отдельного подтверждения.
