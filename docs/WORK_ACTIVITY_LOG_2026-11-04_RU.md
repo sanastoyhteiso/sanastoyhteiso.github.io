@@ -376,3 +376,7 @@
 - Предварительное наблюдение: конфигурация содержит `collection_set` для `sync_v3` и `sync_demo_v3`, также `site_admin/{docId}`, но **не содержит** `match /admin_metrics/{metricId}`; TEST admin JS читает `admin_metrics/current`. Это подтверждает NEW-003 **для присланной конфигурации**. `rules_version='2'` — версия синтаксиса, не версия публикации.
 - План: сопоставить по содержимому с зафиксированным историческим `staging/backend/firestore.v3-development-with-finds.rules` из PR #8; создать отдельные локальные эмуляторные fixtures из *переданного* варианта (original baseline + additive NEW-003) в TEST PR #3, не подменяя существующие fixtures; добавить регрессионные тесты студентов, `collection_set`, `sync_demo_v3`, admin deny/permit; запустить GitHub CI. Затем обновить technical audit, MASTER, Issue #10, журнал START→END и handoff.
 - TEST PR #3 исходный HEAD=e35329534c8d8e7a6300a026bb1a827f98de88b2, Draft/open/not merged. Рабочая Firebase, Auth, пользователи, тарифы, production и merge НЕ МЕНЯЮТСЯ. Никаких Firebase deploy / publish.
+
+### RUN-20261105-018.2 / НАЧАЛ
+- Пользователь запросил полный текст правил с минимальным доступом администратора для самостоятельной вставки в тестовую Firebase.
+- План: сохранить полный кандидат в TEST PR №3, проверить на эмуляторе и дать ссылку для копирования. Не публиковать и не менять Firebase автоматически.
