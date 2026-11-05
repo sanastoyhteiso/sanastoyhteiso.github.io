@@ -1064,3 +1064,10 @@
 - Время Europe/Helsinki: 2026-11-05 22:37:37.
 - Updated Issue #10 with 7 strict replacements and owner note; title changed. https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10. Readback confirmed.
 - Содержание: Stage F PAUSED; all critical safety and first-release manual PR checks retained; next substep TEST handoff. Не объявлять F DONE и не публиковать production.
+
+
+### RUN-20261105-065.3 / НАЧАЛ / IN_PROGRESS — передать отмену ZIP prelaunch gate в TEST handoff
+- Время Europe/Helsinki: 2026-11-05 22:38:33.
+- Scope: test draft PR #3 docs admin/WORK_HANDOFF_START_HERE_RU.md; no app source or deploy.
+- Обновить верхнюю передачу: owner RUN-065 F ZIP PAUSED, правильный порядок A–E→G→H→I→J, после релиза F, затем K; ручные PR/CI/rollback до F; сохранить ограничения безопасности и запрет установки несовместимого приложения.
+- Ожидается readback TEST DRAFT branch, production/main/Firebase не менять.
