@@ -460,3 +460,9 @@
 - Дата: 2026-11-05, Europe/Helsinki. ТОЛЬКО документация GitHub после восстановления непрерывного журнала. RUN-022 закрыт как PARTIAL/WAITING_OWNER_DRY_RUN в [commit 4f122d6](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/4f122d65628754428105d6e24788e63e5b3cbf63).
 - План: append-only добавить TASK-20261105-013 в `docs/MASTER_ROADMAP_V3_ADMIN_RELEASE_2026-11-04_RU.md`, отметить незавершённый dry-run на Issue #10, перепроверить, что A–K/NEW-003 и production GO не закрыты. После read-back закончить RUN-023 ссылками на GitHub.
 - Scope: release/docs и Issue #10, без изменений TEST PR, Firebase/Auth/Firestore/Rules, сайта, данных, тарифов или публикации. Ожидаемое состояние: следующему исполнителю видна точка продолжения и запрет на `--apply` до отдельного подтверждения.
+
+
+### RUN-20261105-023 / ЗАВЕРШИЛ / DONE (GitHub handoff синхронизирован; Firebase не менялась)
+- Дата: 2026-11-05, Europe/Helsinki. Прочитаны назад обе удалённые записи: MASTER `TASK-20261105-013` есть в [commit 96b41a6](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/96b41a6a83bbae129f41209c2b9574611ade9420); checkpoint `RUN-022 / TASK-20261105-013` есть в [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10). История append-only.
+- RUN-022 `PARTIAL / WAITING_OWNER_DRY_RUN`, не подменяется фиктивным DONE; исторические RUN-017–021 не изменены. TEST PR #3 draft/unmerged; A–K NO-GO. Не проверен private Auth account/UID, dry-run и `admin=true`; cloud shell не управляется текущим чатом. Ни одного Firebase/production write.
+- NEXT: дождаться обезличенного результата локального `node assign-test-admin.cjs --dry-run` от владельца после проверки TEST project; затем новый RUN с read-only анализом и отдельным подтверждением перед единственной возможной командой `--apply`. При ошибке ADC/IAM — STOP, без секретов и обходов.
