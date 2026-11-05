@@ -393,3 +393,14 @@
 
 ### RUN-20261105-018.3 / НАЧАЛ / IN_PROGRESS
 - Проверить TEST PR #3 exact HEAD/client CI и read-back готового файла, обновить TEST audit/handoff, MASTER и Issue #10, затем закрыть RUN-018 без заявления о real Firebase admin access.
+
+### RUN-20261105-018.3 / ЗАВЕРШИЛ / DONE
+- TEST PR #3 HEAD 94d37e5d71d8355845f7a82abd5b91df86d388e7, DRAFT/open/not merged. TEST audit/handoff [commit 94d37e5](https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/94d37e5d71d8355845f7a82abd5b91df86d388e7).
+- На ТОЧНОМ финальном HEAD: [Firestore Emulator Actions #41945223658](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41945223658) **86/86 PASS, 0 FAIL**, [client admin regression #41945223759](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41945223759) SUCCESS.
+- MASTER TASK-20261105-010 обновлён в commit 064765690677fee96f63106c059f3cf7f182b94e, Issue #10 дополнен RUN-018, остаётся OPEN. Полный `*.rules` файл для ручного копирования в TEST сохранён в TEST ветке.
+- Cloud Firebase/данные/права пользователей/тарифы/production/merge НЕ менялись.
+
+### RUN-20261105-018 / ЗАВЕРШИЛ / PARTIAL — полный кандидат готов, живая авторизация ещё не работает
+- Сделано: изучены полные правила, присланные владельцем, обнаружено отсутствие `admin_metrics/current`, создан отдельный полный файл правил и 86 проходящих регрессионных проверок в изолированном Firestore Emulator; запись результата в audit, master и Issue #10.
+- Не завершено: НЕ было Firebase Publish, подтверждения release ID/timestamp, назначения server-issued custom admin claim, создания server-generated `admin_metrics/current`, прямого allow/deny двух реальных пользователей или браузерного теста. **Следовательно, нельзя считать, что админка сейчас открывается или отображает метрики.**
+- NEXT: владелец может скопировать полный файл только в TEST Firebase, предварительно сохранив актуальные опубликованные Rules. Затем отдельно проверить серверную роль/доступ и безопасный backend-агрегат с согласованием. Production, другой проект и merge исключены.
