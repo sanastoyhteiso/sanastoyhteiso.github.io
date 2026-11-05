@@ -1077,3 +1077,9 @@
 - Время Europe/Helsinki: 2026-11-05 22:38:40.
 - Handoff top and instructions updated/readback verified, TEST DRAFT PR #3; commit https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/413d2f6c301541c019b12b6e6a43f8a5f4d33045. No client code changed.
 - NEXT: final project-wide readback / Issue #10 checkpoint, then close RUN-065. No production/Firebase changes.
+
+
+### RUN-20261105-065.4 / НАЧАЛ / IN_PROGRESS — итоговый checkpoint Issue #10 и проверка безопасных границ
+- Время Europe/Helsinki: 2026-11-05 22:39:13.
+- План: read-only сверить master, Issue body и TEST handoff: Stage F PAUSED, mandatory A–E/G–I, нет разрешения публиковать. Сверить production main и PR states. Зафиксировать владельческий decision в комментарии к Issue #10 (без секретов). Затем END RUN-065.4 и RUN-065.
+- Этап F не помечать DONE; запрет production до GO сохраняется.
