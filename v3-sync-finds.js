@@ -16,7 +16,9 @@
    return typeof result.normalize==='function'?result.normalize('NFC'):result;
  }
  function term(x){return !!x&&typeof x==='object'&&
-   typeof x.id==='string'&&typeof x.fi==='string'&&normalize(x.fi)!=='';}
+   typeof x.id==='string'&&
+   (/^[TMPH][0-9]{5,7}$/.test(x.id)||/^W_[a-f0-9]{32}$/.test(x.id))&&
+   typeof x.fi==='string'&&normalize(x.fi)!=='';}
  function rank(x){return /^T[0-9]{5,7}$/.test(x.id)?0:1;}
  function stem(x){
    var s=normalize(x);
