@@ -1149,3 +1149,11 @@
 - Final safety read: production main SHA `d29813cf409af9dc60804105ca3141f98ec12fcd` unchanged; release PR #9 and TEST PR #3 both DRAFT/unmerged. **Живой published TEST site не обновлён**, offline/cache functionality не tested physically, Firebase TEST/LIVE, users/UID, Rules, Drive, billing, ZIP untouched.
 - Open blockers: NEW-009 sync refresh 3/3 known-red/source write blocked (не обходить), RUN-045 TEST Cloud Rules readback unavailable, NEW-001 independent backup restore not proven, two devices/two users/iOS12 acceptance, admin backend/monitoring not live. A–E/G–I OPEN; F ZIP PAUSED until after educational launch; no production GO.
 - NEXT run: при наличии разрешённого средства целевой TEST source patch NEW-009 с 3/3 PASS и exact-head CI; иначе новый read-only actionable Cloud Rules verification through authenticated Work and actual two-device pilot; не запускать release/merge без GO. Не просить владельца устанавливать несовместимый Firebase/CLI на iPhone/старый Mac.
+
+
+### RUN-20261105-067 / НАЧАЛ / IN_PROGRESS — подготовка безопасной проверки опубликованных TEST Firestore Rules при минимальном участии владельца
+- Время Europe/Helsinki: 2026-11-05 22:59:55.
+- Last DONE RUN-066; TEST PR #3 DRAFT HEAD 2fb8873430d383c25a313fe2d5b6111eae1c87a7, release PR #9 draft; owner Stage F ZIP PAUSED.
+- Главный релизный blocker RUN-045: в GitHub есть исторические/предлагаемые Firestore Rules, но НЕТ подтверждения опубликованных правил TEST Firebase `sanastoyhteiso-v3-development` из консоли. GitHub emulators и rules-примеры не подтверждают live permissions.
+- План: прочитать подготовленные инспектор/спецификации (не вмешиваться в заблокированный source NEW-009); собрать надёжную карту TEST/LIVE и точный одношаговый read-only запрос для владельца. Не просить установить Firebase plugin/CLI или Work на устройства. По возможности создать реиспользуемый безопасный чеклист для следующих чатов, чтобы пользователь прислал только опубликованные правила; с ними провести read-only сравнение (без публикации, токенов и PII).
+- Запрет: никакие Firebase Console writes/deploy/admin claims/billing, никаких данных учеников, production MAIN и TEST main/Pages не меняем. Не считать cloud LIVE PASS по локальной информации. Не просить пользователя присылать credentials. Итог RUN-067 закрыть как `PREPARED/WAITING_OWNER`, а не `LIVE VERIFIED`.
