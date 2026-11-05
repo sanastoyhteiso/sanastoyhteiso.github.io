@@ -66,3 +66,19 @@ jobs:
         run: npm install --no-save firebase-tools@14.27.0 @firebase/rules-unit-testing@5.0.2 firebase@12.5.0
       - name: Verify additive owner-only V3 rules without any real Firebase
         run: npx firebase emulators:exec --only firestore --config release-checks/firebase-emulator.json --project demo-sanastoyhteiso-production 'node release-checks/firestore-prod-v3.test.cjs'
+
+  # Mandatory negative release gate: keep the deployment candidate NO-GO
+  # until NEW-009 is fixed. This job is deliberately independent of other
+  # jobs so emulator, iOS12, backups and UI tests still run and report.
+  sync-failclosed-release-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: NEW-009 truthful cloud-sync release acceptance (all 3 MUST PASS)
+        run: |
+          node --check release-checks/v3-refresh-failclosed.test.cjs
+          node --test release-checks/v3-refresh-failclosed.test.cjs
