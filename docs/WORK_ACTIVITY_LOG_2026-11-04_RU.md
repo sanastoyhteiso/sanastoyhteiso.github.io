@@ -509,3 +509,9 @@
 - Дата: 2026-11-05, Europe/Helsinki. Этап C; продолжение RUN-026 после отдельного согласия.
 - Владелец сообщил «Сделал» после инструкции выполнить `node assign-test-admin.cjs --apply` в приватной Cloud Shell. **Не получено терминальное сообщение SUCCESS или ошибки**, поэтому факт назначения claim и сохранение прочих claims независимо не подтверждены; не помечать DONE.
 - Цель: сохранить обезличенный checkpoint GitHub, запросить только финальный статус `SUCCESS: admin=true assigned to exactly this TEST UID` или текст ошибки без UID/email, а затем отдельно подтвердить токен и доступ. Ограничения: никаких Cloud Firebase/Auth/Rules/production/billing/PR merge изменений инструментами ChatGPT, не публиковать личные идентификаторы.
+
+
+### RUN-20261105-027 / ЗАВЕРШИЛ / PARTIAL — WAITING_OWNER_RESULT
+- GitHub read-back подтверждает сохранение MASTER TASK-20261105-017 в [commit de55cf4](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/de55cf4fc31dc7b3b7c903d1c9b5acdaba7cb081) и checkpoint [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10); приватные UID/email не перенесены.
+- Владелец сообщил о выполнении `--apply`, но не показал терминальный SUCCESS/error. Нельзя считать серверный `admin=true` выданным без результата. Никаких облачных изменений сам ChatGPT не выполнял.
+- NEXT: запросить **только финальную строку об успехе или ошибке**, без личных данных. При SUCCESS — отдельная проверка ID token/живого Firebase allow/deny, без production. Статус Stage C OPEN.
