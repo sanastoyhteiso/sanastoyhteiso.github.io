@@ -309,6 +309,13 @@ var V3BackupApp=(function(){
   var SHEETS='https://sheets.googleapis.com/v4/spreadsheets';
   var DRIVE='https://www.googleapis.com/drive/v3/files/';
   var ENABLED='YES_OWNER_APPROVED_TEST_ONLY';
+  // Deliberately conservative owner-only pilot limits; not a general backup.
+  var MAX_TEST_DOCS=300,MAX_TEST_ROWS=1200,MAX_RUN_MS=210000;
+  var runStartedAt=null;
+  function checkBudget(){
+    if(runStartedAt!==null&&Date.now()-runStartedAt>MAX_RUN_MS)
+      throw Error('TEST backup runtime safety limit exceeded');
+  }
   function scriptProperties(){return PropertiesService.getScriptProperties();}
   function approved(){
     return scriptProperties().getProperty('V3_TEST_BACKUP_APPROVED')===ENABLED;
@@ -346,19 +353,34 @@ var V3BackupApp=(function(){
   }
   function enc(s){return encodeURIComponent(s);}
   function source(){
+    var documentsRead=0;
     return {
       listDocuments:function(a){
+        checkBudget();
         if(a.project!==PROJECT||a.kind!=='events'&&a.kind!=='words')
           throw Error('Wrong TEST source request');
         var url=FIRESTORE+a.uid+'/'+a.kind+'?pageSize=100&readTime='+enc(a.readTime);
         if(a.pageToken)url+='&pageToken='+enc(a.pageToken);
         var data=fetchJson('GET',url);
-        return {documents:data.documents||[],nextPageToken:data.nextPageToken||''};
+        if(data.documents!==undefined&&!Array.isArray(data.documents))
+          throw Error('Malformed TEST Firestore document page');
+        var docs=data.documents||[];
+        documentsRead+=docs.length;
+        if(documentsRead>MAX_TEST_DOCS)throw Error('TEST owner document safety limit');
+        checkBudget();
+        return {documents:docs,nextPageToken:data.nextPageToken||''};
       },
       getBaseline:function(a){
         if(a.project!==PROJECT)throw Error('Wrong TEST project');
+        checkBudget();
         var url=FIRESTORE+a.uid+'/state/baseline?readTime='+enc(a.readTime);
-        try{return fetchJson('GET',url);}
+        try{
+          var baseline=fetchJson('GET',url);
+          if(baseline&&++documentsRead>MAX_TEST_DOCS)
+            throw Error('TEST owner document safety limit');
+          checkBudget();
+          return baseline;
+        }
         catch(e){
           if(e.httpStatus===404)return null;
           throw e;
@@ -373,6 +395,9 @@ var V3BackupApp=(function(){
       createNewPrivate:function(a){
         if(a.project!==PROJECT||a.onlyNew!==true||a.publicAccess!==false)
           throw Error('Unsafe private Sheets destination');
+        if(!Number.isInteger(a.rowCount)||a.rowCount<1||
+          a.rowCount>MAX_TEST_ROWS)throw Error('TEST private Sheets row safety limit');
+        checkBudget();
         var created=fetchJson('POST',SHEETS,{
           properties:{title:newTitle(a.snapshotId)},
           sheets:[
@@ -394,24 +419,28 @@ var V3BackupApp=(function(){
         return {id:id,createdNew:true,private:true};
       },
       writeRowsRaw:function(id,start,rows){
+        checkBudget();
         var end=start+rows.length-1;
         var url=SHEETS+'/'+id+'/values/'+range('Records','A'+start+':F'+end)+'?valueInputOption=RAW';
         var result=fetchJson('PUT',url,{majorDimension:'ROWS',values:rows});
         return {updatedRows:result.updatedRows,valueInputOption:'RAW'};
       },
       readRows:function(id,n){
+        checkBudget();
         var url=SHEETS+'/'+id+'/values/'+range('Records','A1:F'+n)+
           '?valueRenderOption=UNFORMATTED_VALUE';
         var result=fetchJson('GET',url);
         return result.values||[];
       },
       writeManifest:function(id,manifest){
+        checkBudget();
         var url=SHEETS+'/'+id+'/values/'+range('Manifest','A1:B1')+'?valueInputOption=RAW';
         var result=fetchJson('PUT',url,{majorDimension:'ROWS',
           values:[['backup_manifest_json',JSON.stringify(manifest)]]});
         return result.updatedRows===1;
       },
       readManifest:function(id){
+        checkBudget();
         var url=SHEETS+'/'+id+'/values/'+range('Manifest','A1:B1')+
           '?valueRenderOption=UNFORMATTED_VALUE';
         var result=fetchJson('GET',url);
@@ -434,6 +463,7 @@ var V3BackupApp=(function(){
     if(!lock.tryLock(1000))throw Error('TEST backup already running');
     try{
       var start=Date.now();
+      runStartedAt=start;
       var meta={project:PROJECT,uid:uid(),
         snapshotId:'snap_'+new Date(start).toISOString().replace(/[-:.TZ]/g,'_')+
           Utilities.getUuid().replace(/-/g,'').slice(0,24),
@@ -446,8 +476,12 @@ var V3BackupApp=(function(){
         Logger.log('PRIVATE TEST backup complete, records='+result.documentCount+
           ' sha256='+result.sha256);
         return {complete:true,recordCount:result.documentCount};
-      }).finally(function(){lock.releaseLock();});
+      }).finally(function(){
+        runStartedAt=null;
+        lock.releaseLock();
+      });
     }catch(e){
+      runStartedAt=null;
       lock.releaseLock();
       throw e;
     }
