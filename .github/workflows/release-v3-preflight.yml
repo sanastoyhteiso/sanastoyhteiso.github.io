@@ -33,7 +33,9 @@ jobs:
       - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
-        run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7
+        run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
+      - name: Check classic Safari 12-compatible script syntax (static, no device)
+        run: node release-checks/ios12-syntax.test.cjs
       - name: Exercise unified UI, Google account stub and offline V3 storage
         run: node release-checks/v3-unified-browser.test.cjs
 
