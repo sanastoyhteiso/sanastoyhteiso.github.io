@@ -1058,3 +1058,9 @@
 - Предшествующий мастер-план обновлён commit cf97c963eaf69ed5cdd6b2bb321c4be63a4ffa1e; до этого Issue #10 всё ещё содержит ZIP как обязательный gate.
 - Действие: изменить ТОЛЬКО основную Issue #10 и заголовок с уведомлением owner RUN-065: F PAUSED AFTER LAUNCH; H проверяет manual PR+rollback (не ZIP), J теперь не зависит от F, K manual PR; сохранить старые ZIP задачи в отдельном разделе и все старые чекбоксы A–E/G–I.
 - Ожидаемый результат: readback Issue #10 и отсутствие противоречивого «все A–I», никакого кода/production/Firebase.
+
+
+### RUN-20261105-065.2 / ЗАВЕРШИЛ / DONE — Issue #10 release gate priority
+- Время Europe/Helsinki: 2026-11-05 22:37:37.
+- Updated Issue #10 with 7 strict replacements and owner note; title changed. https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10. Readback confirmed.
+- Содержание: Stage F PAUSED; all critical safety and first-release manual PR checks retained; next substep TEST handoff. Не объявлять F DONE и не публиковать production.
