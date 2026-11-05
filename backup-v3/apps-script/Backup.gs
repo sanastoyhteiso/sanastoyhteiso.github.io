@@ -436,7 +436,7 @@ var V3BackupApp=(function(){
       var start=Date.now();
       var meta={project:PROJECT,uid:uid(),
         snapshotId:'snap_'+new Date(start).toISOString().replace(/[-:.TZ]/g,'_')+
-          Math.floor(Math.random()*100000),
+          Utilities.getUuid().replace(/-/g,'').slice(0,24),
         readTime:new Date(start-60000).toISOString()};
       var job={meta:meta,reader:source(),writer:sheets(),
         explicitApproval:'CREATE PRIVATE TEST BACKUP',
@@ -446,12 +446,10 @@ var V3BackupApp=(function(){
         Logger.log('PRIVATE TEST backup complete, records='+result.documentCount+
           ' sha256='+result.sha256);
         return {complete:true,recordCount:result.documentCount};
-      });
-    }finally{
-      // Lock in an Apps Script async Promise is not guaranteed across all
-      // runtimes; current release is a REVIEW CANDIDATE until async behavior
-      // is validated in owner Cloud environment.
+      }).finally(function(){lock.releaseLock();});
+    }catch(e){
       lock.releaseLock();
+      throw e;
     }
   }
   return {settings:settings,run:run};
