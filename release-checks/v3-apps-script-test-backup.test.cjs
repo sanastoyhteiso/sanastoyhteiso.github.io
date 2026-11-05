@@ -37,7 +37,7 @@ function sandbox(options={}){
   const state={http:[],tokenCalls:0,created:0,triggerCreates:0,lockHeld:false,
     lockedCount:0,releasedCount:0,records:[],manifest:[],logs:[],
     options:Object.assign({approved:false,uid:true,public:false,firestore403:false,
-      corruptRead:false,write403:false,alreadyTriggered:false},options)};
+      corruptRead:false,write403:false,alreadyTriggered:false,withDocs:false},options)};
   const props={
     V3_TEST_BACKUP_APPROVED:state.options.approved?'YES_OWNER_APPROVED_TEST_ONLY':'',
     V3_TEST_BACKUP_UID:state.options.uid?uid:''
@@ -57,6 +57,26 @@ function sandbox(options={}){
       assert.ok(url.includes('/projects/'+project+'/'));
       assert.ok(url.includes('/sync_v3/'+uid+'/'));
       if(state.options.firestore403)return reply(403,{error:{message:'PRIVATE SHOULD NOT LEAK'}});
+      if(state.options.withDocs){
+        const prefix='projects/'+project+'/databases/(default)/documents/sync_v3/'+uid+'/';
+        if(decoded.includes('/events?')){
+          if(decoded.includes('pageToken=secondpage'))return reply(200,{documents:[{
+            name:prefix+'events/E_'+'b'.repeat(32),
+            fields:{kind:{stringValue:'learned_set'},note:{stringValue:'=IMPORTXML("https://invalid.example","//x")'}}
+          }]});
+          return reply(200,{documents:[{
+            name:prefix+'events/E_'+'a'.repeat(32),
+            fields:{kind:{stringValue:'answer'},note:{stringValue:'кошка / kissa / cat'}}
+          }],nextPageToken:'secondpage'});
+        }
+        if(decoded.includes('/words?'))return reply(200,{documents:[{
+          name:prefix+'words/W_'+'c'.repeat(32),
+          fields:{fi:{stringValue:'hoiva'},ru:{stringValue:'уход'},en:{stringValue:'care'}}
+        }]});
+        if(decoded.includes('/state/baseline?'))return reply(200,{
+          name:prefix+'state/baseline',
+          fields:{v:{integerValue:'3'},mark:{stringValue:'synteettinen'}}});
+      }
       if(decoded.includes('/events?')||decoded.includes('/words?'))return reply(200,{documents:[]});
       if(decoded.includes('/state/baseline?'))return reply(404,{});
       throw Error('Unexpected Firestore path in synthetic Apps Script test');
@@ -174,6 +194,28 @@ test('synthetic owner-only backup validates private RAW Sheets provider read-bac
   assert.equal(x.state.triggerCreates,0,'backup run must not create schedule');
   assert.ok(x.state.logs.every(v=>!v.includes(x.uid)&&!v.includes(x.fileId)&&
     !v.includes('synthetic-no-real-OAuth-token')));
+});
+test('paged synthetic Firestore events, baseline and words survive private RAW round-trip',async()=>{
+  const x=sandbox({approved:true,withDocs:true});
+  const result=await x.context.backupOnceTestOnly();
+  assert.equal(result.complete,true);
+  assert.equal(result.recordCount,4);
+  assert.equal(x.state.created,1);
+  const manifest=JSON.parse(x.state.manifest[0][1]);
+  assert.deepEqual(JSON.parse(JSON.stringify(manifest.sections)),{baseline:1,events:2,words:1});
+  assert.equal(x.state.records.length,5);
+  assert.equal(manifest.rowCount,4);
+  assert.equal(manifest.restoreTested,false);
+  const fire=x.state.http.filter(z=>z.url.includes('firestore.googleapis.com'));
+  assert.equal(fire.length,4,'events two pages, words, baseline');
+  assert.ok(fire.some(z=>z.url.includes('pageToken=secondpage')));
+  const readTimes=fire.map(z=>z.url.match(/[?&]readTime=([^&]+)/)?.[1]);
+  assert.ok(readTimes.every(x=>x===readTimes[0]),'one readTime for all pages and baseline');
+  assert.ok(x.state.records.some(r=>r.join('|').includes('кошка')));
+  assert.ok(x.state.records.some(r=>r.join('|').includes('уход')));
+  assert.ok(x.state.records.some(r=>r.join('|').includes('=IMPORTXML')));
+  assert.equal(x.state.releasedCount,1);
+  assert.equal(x.state.triggerCreates,0);
 });
 test('403 reading Firestore leaves no Sheet and releases lock',async()=>{
   const x=sandbox({approved:true,firestore403:true});
