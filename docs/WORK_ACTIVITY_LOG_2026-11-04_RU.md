@@ -1051,3 +1051,10 @@
 - Время Europe/Helsinki: 2026-11-05 22:36:52.
 - Изменён и повторно прочитан MASTER ROADMAP в release DRAFT branch; Stage F сохранён со статусом PAUSED/DEFERRED, ZIP removed from prelaunch hard gates, manual GitHub PR/CI/rollback remain mandatory, TASK-053 appended. Commit https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/cf97c963eaf69ed5cdd6b2bb321c4be63a4ffa1e.
 - NEXT: проверить изменение основного Issue #10; не трогать production.
+
+
+### RUN-20261105-065.2 / НАЧАЛ / IN_PROGRESS — актуализировать обязательные release gates Issue #10
+- Время Europe/Helsinki: 2026-11-05 22:37:28.
+- Предшествующий мастер-план обновлён commit cf97c963eaf69ed5cdd6b2bb321c4be63a4ffa1e; до этого Issue #10 всё ещё содержит ZIP как обязательный gate.
+- Действие: изменить ТОЛЬКО основную Issue #10 и заголовок с уведомлением owner RUN-065: F PAUSED AFTER LAUNCH; H проверяет manual PR+rollback (не ZIP), J теперь не зависит от F, K manual PR; сохранить старые ZIP задачи в отдельном разделе и все старые чекбоксы A–E/G–I.
+- Ожидаемый результат: readback Issue #10 и отсутствие противоречивого «все A–I», никакого кода/production/Firebase.
