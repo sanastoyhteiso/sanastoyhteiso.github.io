@@ -615,3 +615,10 @@
 - Read-back GitHub подтвердил [MASTER TASK-20261105-024 commit 42cedde](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/42cedde41a675631401ce3ec1f649168aa263c5c) и [Issue #10 checkpoint](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10). Сохранена последовательная история.
 - **Никакой реальной закрытой Google Таблицы не создавали и не проверяли восстановление**; это offline format/checksum для shadow-state, а не полная копия Firestore/legacy. Без trusted scheduler, backup source, readback, RESTORE DRILL задачи NEW-001 и A/G/H/I OPEN. Никаких Firebase/cloud/production/billing/private user data writes.
 - NEXT RUN-036: read-only audit и, если возможно, TEST-only автоматические проверки соответствия UI My Finds IDs с подготовленными Rules; ни облачных deploy, ни повторных запросов владельцу.
+
+
+### RUN-20261105-036 / НАЧАЛ / IN_PROGRESS (My Finds T/M/P/H/W compatibility audit + TEST-only regression)
+- Дата: 2026-11-05, Europe/Helsinki, Stage G/H. После RUN-034 обнаружено потенциальное расхождение: `v3-sync-finds.js` предлагает совпадения из всех публичных терминов `T/M/P/H`, но `v3-sync-engine.js` теперь fail-closed запрещает `collection_set` кроме T/W, поскольку подготовленные production additive Rules ожидают только T/W.
+- До действия: сверить точные файлы в release PR #9 и TEST PR #3, emulator test, реальную семантику UI и сообщения об отказах. Не ослаблять cloud Rules, не запускать облачные операции, не менять production/live Firebase.
+- Цель: принять безопасное решение на уровне подготовленного контракта: либо явно ограничить UI доступные находки до T/W, либо расширить **непубликуемую** подготовительную rules/test реализацию на M/P/H, если это согласуется с личными finds и не нарушает ACL. Проверить CI на PR head; оставить четкий TODO для сравнения с живым TEST ruleset и приватным data restore.
+- Разрешены только изменения в DRAFT staging/release/test branches и документации. Нужно документировать любую оставшуюся разницу с live TEST rules. Владелец не требуется для офлайн-аудита.
