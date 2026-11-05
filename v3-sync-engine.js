@@ -15,10 +15,10 @@
  function isWord(x){return typeof x==='string'&&/^W_[a-f0-9]{32}$/.test(x);}
  function validTarget(kind,id){
    if(kind==='word_upsert')return isWord(id);
-   // Firestore collection_set policy allows only public T terms and private W IDs.
-   // Reject other term categories locally rather than queueing unwriteable events.
-   if(kind==='collection_set')return /^T[0-9]{5,7}$/.test(id)||isWord(id);
-   return ['answer','learned_set','favorite_set'].indexOf(kind)>=0&&
+   // All public T/M/P/H terms and private W terms share the same owner-only
+   // collection_set contract in the reviewed, UNDEPLOYED V3 rules candidate.
+   // The deployed TEST Rules must be separately checked before activation.
+   return ['answer','learned_set','favorite_set','collection_set'].indexOf(kind)>=0&&
      (isTerm(id)||isWord(id));
  }
  function canonical(v){
