@@ -601,3 +601,10 @@
 - Read-back GitHub: [MASTER TASK-20261105-023, commit a082a40](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/a082a4018ae9b7fcb011e841edcf3e51de60154d), [Issue #10 checkpoint](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10). Данные живых пользователей, production, Firebase, тариф, TEST default main не менялись.
 - Важно: тестируется только синтетический preview/дедупликация и соответствие подготовленным Rules; это **не** доказательство private Sheets backup + restore. Stage G/H, A–K и NEW-001 OPEN. My Finds M/P/H отдельно сверить с продуктовой семантикой до релиза; запрет клиентского события сейчас fail-closed.
 - NEXT RUN-035: чистый offline контракт независимой копии/восстановления с hash и отказом при неверном UID / подмене / неполноте; без GDrive/Firebase writes.
+
+
+### RUN-20261105-035 / НАЧАЛ / IN_PROGRESS (offline private Sheets snapshot integrity codec + restore verification)
+- Дата: 2026-11-05, Europe/Helsinki; NEW-001/Stage G/H/I после RUN-034.
+- Scope: только DRAFT release PR #9 branch `release/v3-safe-integration-20261104`. Убедиться, что исходный код/тесты не перезаписываются параллельно. Не менять TEST default main, production `main`, реальный Firebase, Drive/Sheets, правила, другие аккаунты или тариф.
+- Цель: реализовать отдельный переиспользуемый ES5-модуль **offline codec** для `scores/words/favorites/finds` → append-only rows+manifest (owner identity, row count, section counts, SHA-256), проверка read-back на синтетических данных: Unicode, duplicate/missing/mutated rows, wrong UID/snapshot, unsupported keys, неверный хэш, без сетевых вызовов. Проверить digest через WebCrypto, не использовать слабый fallback, не показывать личные данные/содержимое в logs. Сверить с `staging/rs-backup-plan.js`; этот модуль не публиковать в учебный интерфейс до backend acceptance.
+- Добавить standalone test в `.github/workflows/release-v3-preflight.yml`, проверить GitHub Actions exact HEAD. Отличать подготовленную технику от реального Google Sheets backup/restore — NEW-001 остаётся OPEN. Результат строго START→END плюс MASTER/Issue read-back.
