@@ -1106,3 +1106,11 @@
 - План: read-only аудит фактического V3 loader/index/critical iOS12 JS/CSS and tests на TEST DRAFT, выявить подтверждённый по коду независимый compatibility blocker, внести отдельный минимальный TEST-only исправляющий патч (либо только новый изолированный regression guard), проверить exact-head GitHub CI и сообщить уровень доказательства. **Никаких правок заблокированного v3-sync-release.js, обходных патчей или вмешательства в sync fail-closed**. Если нет достоверного дефекта — не выдумывать исправление; зафиксировать аудиторские выводы и следующий шаг.
 - Scope: только TEST DRAFT код, тесты и CI при разрешённых средствах, затем master TASK-054 / Issue #10 и END; production main, TEST default main, Firebase TEST/LIVE, реальные пользователи/UID/Rules, приватные backup, тариф, ZIP backend не менять.
 - Важное ограничение: mock/emulator CI не заменяет ручного испытания на iPad iOS12 / 2 devices и реальной Firebase. Релиз остаётся NO-GO.
+
+
+### RUN-20261105-066.1 / НАЧАЛ / IN_PROGRESS — code-hash offline shell version guard iOS12
+- Время Europe/Helsinki: 2026-11-05 22:48:40.
+- Подтверждено read-only: TEST `sw.js` содержит cache-first для локальных JS/CSS и CACHE_NAME `...-20261105-v11`; при изменении учебного asset без изменения самого SW старые браузеры могут пользоваться прежним кодом; только ручное переименование cache без валидатора эту ошибку не предотвращает. Список из 31 различных физ. файлов в FILES согласован с корневым индексом, 20 внутренних JS.
+- Задача: в **TEST DRAFT PR #3** повысить CACHE_NAME до content-addressed fingerprint FNV64 от сортированного каталога Git blob hashes всех 31 precache файлов; добавить Node-only тест, автоматически проверяющий fingerprint, существование assets, все локальные JS/CSS из HTML и совместимость оболочки с ES5. FNV64 — только ключ обновления кэша, НЕ криптографическое удостоверение пакета/не ZIP-проверка.
+- Ожидается: если разработчик меняет учебный JS/HTML/CSS, забыв обновить CACHE_NAME, обязательный TEST CI должен загореться красным; при изменении имени в SW новый worker создаст новый cache и старый удалит при activate. Test без Firebase/сети/учётных записей. Данный шаг не исправляет NEW-009.
+- Включить тест в текущий TEST-only `admin-regression.yml`, проверить exact-head GitHub Actions. Production, TEST default main, Firebase и живые данные не менять.
