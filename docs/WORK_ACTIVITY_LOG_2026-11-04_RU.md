@@ -1202,3 +1202,10 @@
 - MASTER TASK-20261105-056 append-only updated commit `447adaa9a7738ee2d5304c2d9a3a173083913367`, readback OK; [Issue #10 comment](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10#issuecomment-6669748838) saved. All links to TEST archived policy / 108/108 PASS / exact HEAD there.
 - Cloud-test limits explicit: owner-supplied selected Rules text and screenshots, not independent Google Rules release API read; 108 PASS only isolated emulator; admin claim and live two-user allow/deny remain unverified. NEW-006 M/P/H not enabled by this current T/W-only snapshot; NEW-009 sync 3/3 known red; F ZIP paused.
 - NEXT: final safety read PR/main, END RUN-068 with no dangling START.
+
+
+### RUN-20261105-068.2 / ЗАВЕРШИЛ / DONE — owner snapshot report, TASK-056, Issue #10
+- Время: 2026-11-05 23:17:05. Создан подробный [`docs/OWNER_TEST_FIRESTORE_RULES_SNAPSHOT_RUN-20261105-068_RU.md`](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/blob/release/v3-safe-integration-20261104/docs/OWNER_TEST_FIRESTORE_RULES_SNAPSHOT_RUN-20261105-068_RU.md), commit `8f2ae81c71d4ff0c8b9e4b2c7c87089545ba9cdf`, readback checked.
+- MASTER TASK-20261105-056 обновлён [commit 447adaa](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/447adaa9a7738ee2d5304c2d9a3a173083913367), readback успешен.
+- Issue #10 body appended RUN-068 with evidence URL, immutable snapshot, exact CI 108/108, outstanding NEW-006 and NEW-009; readback verified.
+- Не созданы новые Cloud Rules/role changes; продолжение переносится в новый RUN. A–E/G–I OPEN, F ZIP PAUSED, no production GO.
