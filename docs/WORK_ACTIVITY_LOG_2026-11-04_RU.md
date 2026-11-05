@@ -1071,3 +1071,9 @@
 - Scope: test draft PR #3 docs admin/WORK_HANDOFF_START_HERE_RU.md; no app source or deploy.
 - Обновить верхнюю передачу: owner RUN-065 F ZIP PAUSED, правильный порядок A–E→G→H→I→J, после релиза F, затем K; ручные PR/CI/rollback до F; сохранить ограничения безопасности и запрет установки несовместимого приложения.
 - Ожидается readback TEST DRAFT branch, production/main/Firebase не менять.
+
+
+### RUN-20261105-065.3 / ЗАВЕРШИЛ / DONE — TEST handoff owner priority
+- Время Europe/Helsinki: 2026-11-05 22:38:40.
+- Handoff top and instructions updated/readback verified, TEST DRAFT PR #3; commit https://github.com/velardream-ctrl/riveria-sanasto-community-test/commit/413d2f6c301541c019b12b6e6a43f8a5f4d33045. No client code changed.
+- NEXT: final project-wide readback / Issue #10 checkpoint, then close RUN-065. No production/Firebase changes.
