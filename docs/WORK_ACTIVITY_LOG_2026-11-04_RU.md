@@ -1083,3 +1083,9 @@
 - Время Europe/Helsinki: 2026-11-05 22:39:13.
 - План: read-only сверить master, Issue body и TEST handoff: Stage F PAUSED, mandatory A–E/G–I, нет разрешения публиковать. Сверить production main и PR states. Зафиксировать владельческий decision в комментарии к Issue #10 (без секретов). Затем END RUN-065.4 и RUN-065.
 - Этап F не помечать DONE; запрет production до GO сохраняется.
+
+
+### RUN-20261105-065.4 / ЗАВЕРШИЛ / DONE — owner ZIP freeze checkpoint
+- Время Europe/Helsinki: 2026-11-05 22:39:25.
+- All gates re-checked, both PR draft and main untouched; {"masterPaused":true,"masterRelease":true,"issuePaused":true,"issueManual":true,"handoffPaused":true,"productionUnchanged":true,"p9StillDraft":true,"p3StillDraft":true}. Issue #10 checkpoint posted https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10#issuecomment-6668752656
+- Next RUN-065 closure; F remains PAUSED not DONE; no cloud release.
