@@ -476,3 +476,10 @@
 - Скриншот проверен: правильный TEST project, запущена безопасная интерактивная команда с `--dry-run`, ожидается приватный UID. Никаких Auth запросов и изменений роли до пользовательского ввода не подтверждено.
 - Записана задача TASK-20261105-014 в [MASTER ROADMAP](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/blob/release/v3-safe-integration-20261104/docs/MASTER_ROADMAP_V3_ADMIN_RELEASE_2026-11-04_RU.md) ([commit](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/24389d669e2115b1c480b9f513023e810559ea32)) и контрольная точка в [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10).
 - Следующий шаг: дождаться безопасного ввода UID владельцем в собственном Cloud Shell и обезличенного сообщения о результате. При ошибке ADC/IAM остановиться, не публиковать ключи. `--apply` только после успешных проверок и отдельного подтверждения. Нет Firebase/prod/TEST PR writes. Этап C OPEN.
+
+
+### RUN-20261105-025 / НАЧАЛ / IN_PROGRESS (успешный Cloud Shell dry-run; отдельное разрешение на apply)
+- Дата: 2026-11-05, Europe/Helsinki (скриншот владельца 10:26). Этап C, продолжение RUN-024.
+- Владелец показал результат в **приватном Cloud Shell** после ввода собственного UID: правильный TARGET TEST PROJECT `sanastoyhteiso-v3-development`, активная подтверждённая Google Auth учётная запись, сообщение `Current admin claim is not true. Other claims are preserved.`, а также `DRY RUN COMPLETE: no changes.`. Не публиковать видимые на исходном скриншоте UID или email; в GitHub хранить только обезличенные итоги.
+- Задача только документационная: зафиксировать PASS dry-run в MASTER TASK и Issue #10, сохранить состояние TEST Stage C / WAITING_EXPLICIT_OWNER_APPROVAL; затем дописать END. До отдельного подтверждения **НЕ запускать `node assign-test-admin.cjs --apply`**. Никаких изменений Firebase/Auth/Rules/production/PR/тарифа.
+- Ожидаемый результат: журнал, MASTER и issue сходятся, а следующий чат не ошибётся, будто роль уже назначена.
