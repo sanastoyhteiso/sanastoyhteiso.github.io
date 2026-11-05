@@ -94,7 +94,7 @@ function ownerFindsClause(s){
   assert.ok(start>=0,'collection_set Rules missing');
   const end=s.indexOf("d.note.size() <= 350)",start);
   assert.ok(end>start,'collection_set clause truncated');
-  return s.slice(start,end+("d.note.size() <= 350)").length).replace(/\\s+/g,'');
+  return s.slice(start,end+("d.note.size() <= 350)").length).replace(/\s+/g,'');
 }
 const ownerFragment=ownerFindsClause(prepared),ownerFixture=ownerFindsClause(emulated);
 assert.equal(ownerFragment,ownerFixture,'Prepared Rules differ from emulator fixture');
