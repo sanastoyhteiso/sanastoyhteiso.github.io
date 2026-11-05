@@ -574,3 +574,10 @@
 - На **точном HEAD 9b4204d** [GitHub Actions #41999768160](https://github.com/velardream-ctrl/riveria-sanasto-community-test/actions/runs/41999768160) **SUCCESS**, job admin-access syntax + offline regression + manifest SUCCESS. TEST PR #3 остаётся draft/open/unmerged. Сохранены [MASTER TASK-20261105-021 commit e611f89](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/e611f89eae7d0f2c153d534d6a2364f893a1b618) и [Issue #10 checkpoint](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10), read-back успешен.
 - NEW-005 исправлен на уровне TEST-кода/CI, **не** настоящий telemetry backend. Реальные TEST auth token / Firestore ACL/Pages/iOS12 не проверены. PROD/LIVE/Firebase/tariff/user data не менялись. Stage D/E/H и A–K OPEN.
 - NEXT: RUN-033 независимая оценка интеграции PR #8/#9 и тестовый integration seam, не ожидая владельца; при отсутствии нужного доступа перейти к отдельной offline дорожке NEW-001.
+
+
+### RUN-20261105-033 / НАЧАЛ / IN_PROGRESS (read-only integration seam PR #8 ↔ PR #9)
+- Дата: 2026-11-05, Europe/Helsinki. Stage G/H, автономное продолжение RUN-032, owner-light протокол NEW-004.
+- Исходные: production repo `sanastoyhteiso/sanastoyhteiso.github.io`, PR #8 `staging/rs-offline-sync-admin-backup-20261102` HEAD `828d702430037aeca271786bbcf067e202f10c0c`, release PR #9 `release/v3-safe-integration-20261104` HEAD на последней сверке `26cd06116eea0669e3171a40d63330eecfae017e` (документационные коммиты), оба draft/open/unmerged.
+- План: сравнить точные списки изменённых файлов PR #8/#9, API/сценарии синхронизации и подготовительные release документы; установить независимую точку подключения в TEST без слепого объединения PR и риска для старых UID/данных. Сохранить конкретный handoff и следующую инженерную задачу в GitHub.
+- Не менять production main/LIVE Firebase `riveria-sanasto-community-test`/TEST cloud/тариф/пользовательские данные. Этот RUN только GitHub read-only + documentation.
