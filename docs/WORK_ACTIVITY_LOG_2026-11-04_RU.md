@@ -1174,3 +1174,9 @@
 - Требование владельца: СОХРАНИТЬ полученную редакцию, чтобы в следующих чатах её можно было тестировать без повторного входа на Firebase site. Приоритет: отдельный snapshot политики и изолированный emulator на synthetic users, коммит + точный CI/дата/URL, журнал и TASK/Issue.
 - ПЛАН: новая защищённая документацией snapshot .rules копия на TEST PR #3 DRAFT, только из прочитанного GitHub candidate соответствующего присланному коду, с прозрачной provenance owner-supplied/not independent API, не переписывая старые fixtures/candidates; тесты на owner-only/admin, T allowed vs M/P/H denied; CI exact-HEAD, отчёт, MASTER TASK-056/Issue #10 и терминальное RUN-068 END. Не менять live Firebase TEST/LIVE, Rules deploy, admin claim, users, PROD main/TEST main, ZIP.
 - Соответствие текста snapshot опубликованному облачному ресурсу подтверждается владельцем+визуальным контекстом; API release name/timestamp, аппаратные tests и runtime allow/deny по-прежнему не доказаны. Не выдавать emulated green за live cloud PASS.
+
+
+### RUN-20261105-068.1 / НАЧАЛ / IN_PROGRESS — подключить заархивированные OWNER TEST Rules к emulator
+- Время Europe/Helsinki: 2026-11-05 23:08:06.
+- TEST PR #3 snapshot `admin/security-tests/snapshots/owner-console-rules-20261105.rules` записан, проверено: blob SHA a903ec37fb2c80e65bac71bd24ca15b11b782bc2 совпадает с existing FULL_FOR_MANUAL_REVIEW candidate, 284 строки и тот же текст.
+- План: заменить emulator `afterEnv` источник с кандидата на сохранённый snapshot (без его изменения), добавить byte-identical assertion к candidate и отдельные разрешения T/запрет M,P,H в synthetic emulator; Actions на точном HEAD. Это не реальный live request и не deploy; production/Firebase не менять.
