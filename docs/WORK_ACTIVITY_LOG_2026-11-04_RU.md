@@ -991,3 +991,10 @@
 - План: построить независимый offline Node vm/regression для реального TEST script v3-unified-preview/v3-sync-release.js, воспроизводящий ошибочное success при неудачной загрузке и отсутствие UI apply до очистки очереди. Разрешено записать только новый безопасный тестовый файл в DRAFT TEST PR #3, если GitHub это допускает; не переписывать заблокированный RUN-062 исходник и не обходить прежнюю техническую блокировку. Если runtime fixture нежизнеспособен, сохранить только точный тестовый план и BLOCKED, не фиктивный PASS.
 - Ожидаемый результат: GitHub commit с изолированным регрессионным тестом/воспроизведением, чётким статусом KNOWN FAIL (не CI PASS исправления); отчёт и обновление MASTER TASK-051/Issue #10. Тест не должен выполнять Firebase/Google API, использовать реальные UID/email, личные данные, сеть, IndexedDB или авторизацию.
 - Запрет: не добавлять неустранённый дефект в зелёный обязательный CI; не объявлять NEW-009 исправленным. Никаких TEST/live Firebase, Cloud Rules/Auth, Google Sheets, ZIP/backend, платёжного плана, работы с аккаунтами или production/site.
+
+
+### RUN-20261105-063.1 / НАЧАЛ / IN_PROGRESS — CI воспроизведение KNOWN RED без изменения заблокированного V3 кода
+- Время (Europe/Helsinki): 2026-11-05 22:27:28.
+- После START RUN-063 создан только новый изолированный opt-in тест на DRAFT TEST PR #3 commit e5e0974bc75716eb1efef4c0924c503e971bb1ef, проверен read-back. Исходник v3-sync-release.js не менялся.
+- План: в TEST branch обновить только .github/workflows/admin-regression.yml отдельным явно маркированным не блокирующим диагностическим шагом: запуск V3_SYNC_ASSERT_FIXED=1 node --test admin/tests/v3-sync-refresh-failclosed-gate.test.cjs с проверкой реального exit status, выводом теста и статусом KNOWN RED. Это не PASS дефекта, а доказательство воспроизводимости; остальные обязательные тесты продолжают работать.
+- Ожидается GitHub Actions run на exact HEAD с тремя явными FAIL до фикса, при этом общий release остаётся NO-GO. Никакой Cloud Firebase/API/deploy/TEST default main/production/секретов/данных пользователей.
