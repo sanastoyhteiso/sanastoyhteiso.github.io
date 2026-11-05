@@ -30,6 +30,8 @@ jobs:
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
         run: node release-checks/v3-offline-recovery-contract.test.cjs
+      - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
+        run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7
       - name: Exercise unified UI, Google account stub and offline V3 storage
