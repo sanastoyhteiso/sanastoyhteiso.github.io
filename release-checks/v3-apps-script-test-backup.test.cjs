@@ -22,6 +22,8 @@ test('Apps Script bundled SHA codec and flow exactly match audited source files'
     'Apps Script flow must never drift from independently tested source');
   const manifest=JSON.parse(fs.readFileSync('backup-v3/apps-script/appsscript.json','utf8'));
   assert.equal(manifest.runtimeVersion,'V8');
+  assert.match(code,/MAX_TEST_DOCS=300,MAX_TEST_ROWS=1200,MAX_RUN_MS=210000/,
+    'Conservative owner-only pilot limits must be explicitly reviewed before widening');
   assert.deepEqual(manifest.oauthScopes.sort(),[
     'https://www.googleapis.com/auth/script.external_request',
     'https://www.googleapis.com/auth/script.scriptapp',
@@ -30,14 +32,16 @@ test('Apps Script bundled SHA codec and flow exactly match audited source files'
     'https://www.googleapis.com/auth/drive.file'
   ].sort());
 });
+const MAX_TEST_ELAPSED=220000;
 function sandbox(options={}){
   const project='sanastoyhteiso-v3-development';
   const uid='synthetic_test_owner_only';
   const fileId='SyntheticPrivateSheet01abcdef';
-  const state={http:[],tokenCalls:0,created:0,triggerCreates:0,lockHeld:false,
+  const state={http:[],tokenCalls:0,created:0,triggerCreates:0,lockHeld:false,expired:false,
     lockedCount:0,releasedCount:0,records:[],manifest:[],logs:[],
     options:Object.assign({approved:false,uid:true,public:false,firestore403:false,
-      corruptRead:false,write403:false,alreadyTriggered:false,withDocs:false},options)};
+      corruptRead:false,write403:false,alreadyTriggered:false,withDocs:false,
+      withExcessDocs:false,expireAfterFirstRead:false,mockRowLimit:null},options)};
   const props={
     V3_TEST_BACKUP_APPROVED:state.options.approved?'YES_OWNER_APPROVED_TEST_ONLY':'',
     V3_TEST_BACKUP_UID:state.options.uid?uid:''
@@ -57,6 +61,13 @@ function sandbox(options={}){
       assert.ok(url.includes('/projects/'+project+'/'));
       assert.ok(url.includes('/sync_v3/'+uid+'/'));
       if(state.options.firestore403)return reply(403,{error:{message:'PRIVATE SHOULD NOT LEAK'}});
+      if(state.options.expireAfterFirstRead)state.expired=true;
+      if(state.options.withExcessDocs&&decoded.includes('/events?')){
+        const prefix='projects/'+project+'/databases/(default)/documents/sync_v3/'+uid+'/events/E_';
+        return reply(200,{documents:Array.from({length:301},(_,i)=>({
+          name:prefix+i.toString(16).padStart(32,'0'),fields:{n:{integerValue:String(i)}}
+        }))});
+      }
       if(state.options.withDocs){
         const prefix='projects/'+project+'/databases/(default)/documents/sync_v3/'+uid+'/';
         if(decoded.includes('/events?')){
@@ -118,7 +129,11 @@ function sandbox(options={}){
     }
     throw Error('Unexpected Google API operation in offline Apps Script test');
   }
+  const FakeDate=class extends Date{
+    static now(){return Date.now()+(state.expired?MAX_TEST_ELAPSED:0)}
+  };
   const context={
+    Date:FakeDate,
     Utilities:{DigestAlgorithm:{SHA_256:'SHA256'},Charset:{UTF_8:'UTF8'},
       computeDigest(_algo,value,_charset){return [...crypto.createHash('sha256')
         .update(String(value),'utf8').digest()].map(x=>x>=128?x-256:x)},
@@ -141,7 +156,9 @@ function sandbox(options={}){
     UrlFetchApp:{fetch},
     Logger:{log(s){state.logs.push(s)}}
   };
-  vm.runInNewContext(code,context,{filename:'Backup.gs',timeout:1000});
+  const script=state.options.mockRowLimit===null?code:
+    code.replace('MAX_TEST_ROWS=1200','MAX_TEST_ROWS='+state.options.mockRowLimit);
+  vm.runInNewContext(script,context,{filename:'Backup.gs',timeout:1000});
   return{state,context,props,uid,fileId};
 }
 test('without owner approval: no API call, OAuth, new Sheet, trigger or locked job',()=>{
@@ -238,6 +255,28 @@ test('write failure/corrupt read-back cannot commit verified manifest',async()=>
     assert.equal(x.state.manifest.length,0,'failed Sheets read-back must not commit verified manifest');
     assert.equal(x.state.releasedCount,1);
   }
+});
+test('overlarge TEST account fails before creating a private Sheet',async()=>{
+  const x=sandbox({approved:true,withExcessDocs:true});
+  await assert.rejects(x.context.backupOnceTestOnly(),/document safety limit/);
+  assert.equal(x.state.created,0);
+  assert.equal(x.state.releasedCount,1);
+  assert.equal(x.state.manifest.length,0);
+});
+test('row quota check happens before any Sheet creation',async()=>{
+  // Simulate a tiny pilot limit to exercise the same hardcoded guard on 4 docs.
+  const x=sandbox({approved:true,withDocs:true,mockRowLimit:4});
+  await assert.rejects(x.context.backupOnceTestOnly(),/row safety limit/);
+  assert.equal(x.state.created,0);
+  assert.equal(x.state.manifest.length,0);
+  assert.equal(x.state.releasedCount,1);
+});
+test('read exceeded time budget aborts safely and releases lock',async()=>{
+  const x=sandbox({approved:true,expireAfterFirstRead:true});
+  await assert.rejects(x.context.backupOnceTestOnly(),/runtime safety limit/);
+  assert.equal(x.state.created,0);
+  assert.equal(x.state.manifest.length,0);
+  assert.equal(x.state.releasedCount,1);
 });
 test('daily trigger creation is separate, never duplicated, and requires owner gate',()=>{
   const x=sandbox({approved:true});
