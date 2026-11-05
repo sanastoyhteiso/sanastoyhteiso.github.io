@@ -30,6 +30,8 @@ jobs:
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
         run: node release-checks/v3-offline-recovery-contract.test.cjs
+      - name: Test private RAW Sheets runner with fake Firestore and Sheets (no cloud)
+        run: node release-checks/v3-private-sheets-flow.test.cjs
       - name: Verify full Firestore events/baseline/words backup source integrity (offline)
         run: node release-checks/v3-firestore-source-backup.test.cjs
       - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
