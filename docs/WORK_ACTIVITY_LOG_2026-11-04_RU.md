@@ -1568,3 +1568,11 @@
 - Distinction: new private tab shows V3 as 'available on request', with 'Connect synchronization' button; therefore NEW-009 cloud sync and read/write cannot be claimed verified from this session. '0 learned' in private tab is consistent with isolated local browser storage; it does NOT prove actual lost legacy progress or verified cloud restore.
 - Owner instructed not to enable V3, import/restore legacy data, or reset storage until mandatory NEW-009 actual source fix and live QA; ordinary tab and downloaded private JSON backup should be preserved.
 - No private screenshots, account address, UID, credentials or backup file copied into GitHub. Scope observational and documentation-only; production, TEST/RELEASE source, Firebase and user data untouched. Next: authorized patch of NEW-009, exact-source CI, then opt-in real account cross-device verification and separate backup/restore.
+
+
+### RUN-20261106-088 / НАЧАЛ / verify source edit boundary after direct owner NEW-009 fix instruction
+- Owner explicitly requests «Исправь!»; scope is NEW-009, TEST draft first, RELEASE draft second. No separate owner GO for production launch was granted.
+- Exact source preflight: TEST source blob 39ef392d1c45f2c36a9ec2a9528fd34affdb5b9a; RELEASE source blob f897a82a8e6bc87e329db317d7265526a13d4a4d; both STILL have upload failure swallow. Historical safety/editor gate rejected modifying these protected source files; do not attempt circumventing it via alternative GitHub write path.
+### RUN-20261106-088 / ЗАВЕРШИЛ / NO SOURCE WRITE; authorized editor needed
+- No protected JS source was edited, no TEST/main or production/main updates, no Firebase, students, backups, data, permissions, billing or ZIP touched. RUN-075 exact patch and RUN-085 10/10 real-full-source in-memory validation are available. Mandatory real checked-out code gate remains red.
+- Recorded owner request and unblocking procedure in Issue #10: https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10#issuecomment-6688550466 . Do not interpret owner instruction to fix as production GO or an override of editor safety; when an authorized editor is available, follow TEST draft source fix -> TEST failclosed 3/3+CI -> RELEASE draft source fix -> real mandatory 5/5+CI -> real pilot/backup -> separate owner GO.
