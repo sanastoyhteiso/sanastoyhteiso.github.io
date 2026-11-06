@@ -80,13 +80,13 @@ test('release home uses FI EN RU header buttons rather than old language dropdow
     assert.match(index,pattern);
   }
   assert.match(index,/id="rs-admin-entry"[^>]*hidden/);
-  assert.match(index,/href="\\.\\/admin\\/"/);
+  assert.ok(index.includes('href="./admin/"'));
   const config=fs.readFileSync(path.join(root,'config.js'),'utf8');
   assert.match(config,/projectId: "riveria-sanasto-community-test"/);
   assert.doesNotMatch(config,/sanastoyhteiso-v3-development/);
 });
 test('release retains private existing default for student sharing',()=>{
   const family=fs.readFileSync(path.join(root,'family.js'),'utf8');
-  assert.match(family,/rs_family_scope_v1',\\{value:'mine'/);
-  assert.doesNotMatch(family,/rs_family_scope_v1',\\{value:'all'/);
+  assert.ok(family.includes("rs_family_scope_v1\',{value:\'mine\'"));
+  assert.ok(!family.includes("rs_family_scope_v1\',{value:\'all\'"));
 });
