@@ -69,3 +69,24 @@ test('localized preview version is synchronized in HTML and offline cache',()=>{
   // The separate offline regression recomputes the digest from every cached asset.
   // This assertion keeps localization checks compatible with that stronger gate.
 });
+
+
+test('release home uses FI EN RU header buttons rather than old language dropdown',()=>{
+  const index=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  assert.doesNotMatch(index,/id="rs-ui-language"/);
+  assert.match(index,/<nav class="rs-lang-switch"[^>]*>/);
+  for(const lang of ['fi','en','ru']){
+    const pattern=new RegExp('data-login-lang="'+lang+'"[^>]*>'+lang.toUpperCase()+'<\\/button>');
+    assert.match(index,pattern);
+  }
+  assert.match(index,/id="rs-admin-entry"[^>]*hidden/);
+  assert.match(index,/href="\\.\\/admin\\/"/);
+  const config=fs.readFileSync(path.join(root,'config.js'),'utf8');
+  assert.match(config,/projectId: "riveria-sanasto-community-test"/);
+  assert.doesNotMatch(config,/sanastoyhteiso-v3-development/);
+});
+test('release retains private existing default for student sharing',()=>{
+  const family=fs.readFileSync(path.join(root,'family.js'),'utf8');
+  assert.match(family,/rs_family_scope_v1',\\{value:'mine'/);
+  assert.doesNotMatch(family,/rs_family_scope_v1',\\{value:'all'/);
+});
