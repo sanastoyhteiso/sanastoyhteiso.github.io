@@ -224,7 +224,9 @@ async function pages(adapter,kind,meta){
       out.push(d);
       if(out.length>MAX_DOCS)throw Error('Firestore documents safety limit');
     }
-    const next=page.nextPageToken||'';
+    // A missing cursor means EOF; an explicit null/false/0 is malformed,
+    // NOT EOF. Never certify an incomplete Firestore backup as complete.
+    const next=page.nextPageToken===undefined?'':page.nextPageToken;
     if(typeof next!=='string'||(next&&!validToken(next)))
       throw Error('Invalid Firestore page cursor');
     if(!next)break;
