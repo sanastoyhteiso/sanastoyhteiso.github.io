@@ -87,6 +87,6 @@ test('release home uses FI EN RU header buttons rather than old language dropdow
 });
 test('release retains private existing default for student sharing',()=>{
   const family=fs.readFileSync(path.join(root,'family.js'),'utf8');
-  assert.ok(family.includes("rs_family_scope_v1\',{value:\'mine\'"));
-  assert.ok(!family.includes("rs_family_scope_v1\',{value:\'all\'"));
+  assert.ok(family.includes("rs_family_scope_v1',{value:'mine'"));
+  assert.ok(!family.includes("rs_family_scope_v1',{value:'all'"));
 });
