@@ -40,4 +40,27 @@ recovery=diff.recover(s1,s2);
 a.equal(recovery.events.length,1,'Recover a locally completed answer missing from cloud shadow');
 a.equal(recovery.events[0].value.correct,false);
 
+
+// RUN-073 / NEW-011: previously persisted local entities must never
+// silently vanish from a V3 sync snapshot (not an authorized tombstone).
+const oldWordId='W_'+'d'.repeat(32);
+const full={scores:{T00001:{seen:1,correct:1,wrong:0,learned:true}},
+ favorites:{M00012:true},words:{[oldWordId]:{id:oldWordId,fi:'hoito',ru:'уход'}}};
+const clone=v=>JSON.parse(JSON.stringify(v));
+const noScore=clone(full);delete noScore.scores.T00001;
+a.ok(diff.changes(full,noScore).unsafe.includes('missing-score:T00001'));
+const noWord=clone(full);delete noWord.words[oldWordId];
+a.ok(diff.changes(full,noWord).unsafe.includes('missing-word:'+oldWordId));
+const removedWord=clone(full);removedWord.words[oldWordId]={id:oldWordId,deleted:true};
+a.ok(diff.changes(full,removedWord).unsafe.includes('missing-word:'+oldWordId));
+const noFavorite=clone(full);delete noFavorite.favorites.M00012;
+a.ok(diff.changes(full,noFavorite).unsafe.includes('missing-favorite:M00012'));
+const unstar=clone(full);unstar.favorites.M00012=false;
+a.deepEqual(diff.changes(full,unstar).unsafe,[]);
+a.deepEqual(diff.changes(full,unstar).events,
+ [{kind:'favorite_set',target:'M00012',value:false}]);
+a.deepEqual(diff.changes(full,clone(full)),{events:[],unsafe:[]});
+const newCard=clone(full);newCard.scores.P00055={seen:1,correct:1,wrong:0,learned:true};
+a.equal(diff.changes(full,newCard).unsafe.length,0);
+
 console.log('PASS: UI→V3 answer, review, favorites, personal words and Mediatri diff, fail-closed');
