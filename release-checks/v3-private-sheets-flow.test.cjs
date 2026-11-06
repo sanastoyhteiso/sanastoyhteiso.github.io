@@ -26,6 +26,8 @@ function mock(options={}){
       if(options.rejectFirestore)throw Error('403 PERMISSION_DENIED');
       if(args.kind==='words')return {documents:[word],nextPageToken:''};
       if(args.kind!=='events')throw Error('Unknown kind');
+      if(!args.pageToken&&Object.prototype.hasOwnProperty.call(options,'invalidCursor'))
+        return {documents:[sourceEvents[0]],nextPageToken:options.invalidCursor};
       if(!args.pageToken)return {documents:[sourceEvents[0]],nextPageToken:'cursor1'};
       if(options.loopCursor)return {documents:[sourceEvents[1]],nextPageToken:'cursor1'};
       return {documents:[options.foreignUid?
@@ -111,6 +113,15 @@ async function run(){
   const looping=mock({loopCursor:true});
   await assert.rejects(runBackup(input(looping)),/repeating page cursor/);
   assert.equal(looping.counts.create,0);
+  // The response must not silently treat an explicit malformed pagination
+  // cursor as end-of-list; doing so could certify a truncated backup.
+  for(const invalidCursor of [null,0,false,{},[]]){
+    const bad=mock({invalidCursor});
+    await assert.rejects(runBackup(input(bad)),/Invalid Firestore page cursor/,
+      'Malformed explicit nextPageToken must fail closed: '+String(invalidCursor));
+    assert.equal(bad.counts.create,0,'Cannot create a private backup from an incomplete listing');
+    assert.equal(bad.counts.finalize,0,'Cannot mark a truncated backup complete');
+  }
   const crossUid=mock({foreignUid:true});
   await assert.rejects(runBackup(input(crossUid)),/Unexpected Firestore source path/);
   assert.equal(crossUid.counts.create,0);
