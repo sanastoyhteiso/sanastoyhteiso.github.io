@@ -25,7 +25,7 @@ function fixture(params){
     RS_FAMILY:{
       uid:owner,
       getState(){return state;},
-      putState(){writes++;return true;}
+      putState(){writes++;return !params.storageFull;}
     },
     RS_V3_DIFF:{project(value){return value;}}
   };
@@ -51,7 +51,7 @@ function fixture(params){
     refresh(){
       return Promise.resolve({
         pending:params.pending||[],
-        state:{scores:{syntheticCard:1},words:{},favorites:{}}
+        state:params.malformedRemote?null:{scores:{syntheticCard:1},words:{},favorites:{}}
       });
     }
   };
@@ -78,4 +78,18 @@ verify('successful refresh MUST apply new state after orderly queue cleanup',asy
   assert.equal(await f.release.refresh(),true);
   assert.equal(f.writes(),1,
     'The cloud snapshot was not applied while queued counter was nonzero');
+});
+
+
+verify('storage write refusal MUST NOT be reported as successful cloud reconciliation',async()=>{
+  const f=fixture({storageFull:true});
+  assert.equal(await f.release.refresh(),false,
+    'Local storage full: cloud history may exist, but student UI was not updated');
+  assert.doesNotMatch(f.tip(),/Данные V3 сверены с облаком/);
+});
+verify('malformed cloud state MUST fail closed without acknowledging sync',async()=>{
+  const f=fixture({malformedRemote:true});
+  assert.equal(await f.release.refresh(),false,
+    'Malformed server snapshot must not be represented as synchronized');
+  assert.doesNotMatch(f.tip(),/Данные V3 сверены с облаком/);
 });
