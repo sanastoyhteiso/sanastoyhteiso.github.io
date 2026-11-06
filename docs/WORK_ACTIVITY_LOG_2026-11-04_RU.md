@@ -1797,3 +1797,7 @@
 - 2026-11-06 22:11:38 Europe/Helsinki. Выполнена минимальная правка только текста RUN-105: три непрозрачных identifier закрытой Drive папки/таблиц заменены на `[идентификатор закрытого файла скрыт]`. Названия, даты, факт `shared:false`, ограничение `без реального Firestore restore`, стадия ZIP POST-LAUNCH и история других действий сохранены. [Redaction commit 93d9d583](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/93d9d5835ad5de9105d9fe6b5d897c8f3cb74f9f).
 - Текущий файл readback проверен: эти три ID в RUN-105 отсутствуют. Git history не переписывалась, поэтому прежний публичный commit в технической истории остаётся; на будущее вообще не записывать Google Drive IDs/URL закрытых копий в открытый GitHub. Никаких изменений прав доступа Drive и данных.
 - Следующий шаг: кратко обновить Issue #10 без приватных ID метаданным checkpoint RUN-105, затем вернуться к безопасным проверкам реального доступа Firestore/admin.
+
+
+### RUN-20261106-107 / НАЧАЛ / backup evidence checkpoint in master Issue #10, no private identifiers
+- 2026-11-06 22:11:53 Europe/Helsinki. Сохранить фактическое открытое состояние RUN-105/106 в Issue #10: приватные исторические Drive Sheets от 01–02.11 найдены, но настоящая автоматическая Firestore backup, private checksum/readback/isolated restore и реальная админ метрика не подтверждены. В Issue только обобщённые данные без Drive IDs/UID и личного содержания; Release/TEST/main/Cloud не менять. Ожидается readback после write.
