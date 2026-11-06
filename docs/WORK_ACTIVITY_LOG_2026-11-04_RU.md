@@ -1801,3 +1801,8 @@
 
 ### RUN-20261106-107 / НАЧАЛ / backup evidence checkpoint in master Issue #10, no private identifiers
 - 2026-11-06 22:11:53 Europe/Helsinki. Сохранить фактическое открытое состояние RUN-105/106 в Issue #10: приватные исторические Drive Sheets от 01–02.11 найдены, но настоящая автоматическая Firestore backup, private checksum/readback/isolated restore и реальная админ метрика не подтверждены. В Issue только обобщённые данные без Drive IDs/UID и личного содержания; Release/TEST/main/Cloud не менять. Ожидается readback после write.
+
+
+### RUN-20261106-107 / ЗАВЕРШИЛ / Issue #10 backup evidence updated and read back
+- 2026-11-06 22:12:29 Europe/Helsinki. В [Issue #10](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10) добавлен новый append-only checkpoint `RUN-20261106-105/106/107 — PRIVATE BACKUP EVIDENCE METADATA`; независимое чтение issue подтвердило, что запись существует. Запись содержит только названия/даты и признаки закрытого доступа, **без приватных Drive IDs/UID/содержимого**. Реальный Firestore snapshot, регулярность backup и isolated restore по-прежнему NOT VERIFIED. Новых доступов, секретов, Firebase/Sheets/документов, production main, ZIP или прав пользователей не изменяли.
+- Следующий конкретный блокер к запуску: реальная read-only проверка опубликованных production Firestore Rules и server admin claim/aggregate; на этой основе проверить TEST accounts/2 devices и приватное восстановление без риска для ученических записей. Архивные таблицы не заменяют real cloud acceptance. Работа с ZIP откладывается до после запуска.
