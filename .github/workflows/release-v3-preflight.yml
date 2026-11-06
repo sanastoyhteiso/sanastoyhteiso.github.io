@@ -34,6 +34,11 @@ jobs:
           node --check admin/admin-page.js
           node --check study-diagnostics.js
           node --test release-checks/v3-i18n-ui-quality.test.cjs release-checks/v3-admin-access.test.cjs release-checks/v3-local-diagnostics.test.cjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify ZIP archive bytes, manifest and SHA-256 fail closed (offline, no deployment)
+        run: python3 -m unittest discover -s release-checks -p 'test_zip_package_verify.py' -v
       - name: Verify UI changes map to idempotent V3 event intents
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
