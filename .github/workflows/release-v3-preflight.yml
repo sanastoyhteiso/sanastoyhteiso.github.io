@@ -31,6 +31,8 @@ jobs:
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
         run: node release-checks/v3-offline-recovery-contract.test.cjs
+      - name: Check release shadow preserves T/M/P/H My Finds (NEW-012)
+        run: node --test release-checks/v3-shadow-finds-id-contract.test.cjs
       - name: Test private RAW Sheets runner with fake Firestore and Sheets (no cloud)
         run: node release-checks/v3-private-sheets-flow.test.cjs
       - name: Check TEST-only Apps Script owner approval, lock, trigger and Google API mocks
