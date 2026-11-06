@@ -47,6 +47,8 @@ jobs:
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
+      - name: PREVIEW ONLY real full-source NEW-009 candidate in VM (does NOT fix checked-out source)
+        run: node --test release-checks/v3-refresh-candidate-fullsource.test.cjs
       - name: Exercise two V3 IndexedDB devices, offline 13-event replay and account isolation (synthetic)
         run: node --test release-checks/v3-two-device-offline-contract.test.cjs
       - name: Check classic Safari 12-compatible script syntax (static, no device)
