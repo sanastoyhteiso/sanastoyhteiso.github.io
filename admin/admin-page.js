@@ -8,7 +8,7 @@
  var config=w.RS_FIREBASE_CONFIG||{},auth=null,db=null,authorized=false,report=null,tab='overview',locale='ru',busy=false,session=0,activeUser=null,forcedUser=null;
  var tabs=['overview','errors','browsers','sync','backups','updates','audit'];
  var labels={
- ru:{title:'Администрирование',sub:'Закрытый кабинет • тестовый сайт',checking:'Проверяю права администратора…',
+ ru:{title:'Администрирование',sub:'Закрытый кабинет • проверка прав',checking:'Проверяю права администратора…',
   notReady:'Система авторизации недоступна. Вернись на учебную страницу и проверь подключение Firebase.',
   signIn:'Войди сначала на учебной странице через Google. Затем открой административный кабинет.',
   denied:'В этом аккаунте нет подтверждённой роли администратора. Доступ закрыт.',
@@ -23,7 +23,7 @@
   refresh:'Обновить сводку',missing:'Серверные метрики пока не подключены. Журнал ошибок остальных учеников недоступен.',
   noPersonal:'Личные ответы и приватные словари учеников здесь не показываются.',
   localErrors:'Ошибки этой вкладки',localScope:'Только технические коды и время. Журнал не отправляется на сервер, другие устройства здесь не видны.',localEmpty:'В этой вкладке ошибок не записано. Это не доказывает, что сайт работает без ошибок.',remoteOff:'Общий серверный журнал пока не подключён.'},
- fi:{title:'Ylläpito',sub:'Yksityinen hallintanäkymä • testisivusto',checking:'Ylläpito-oikeuksia tarkistetaan…',
+ fi:{title:'Ylläpito',sub:'Yksityinen hallintanäkymä • käyttöoikeuksien tarkistus',checking:'Ylläpito-oikeuksia tarkistetaan…',
   notReady:'Kirjautumispalvelu ei ole käytettävissä.',signIn:'Kirjaudu ensin opiskelusivulla Google-tilillä.',
   denied:'Tällä tilillä ei ole ylläpito-oikeuksia.',authError:'Oikeuksien tarkistus epäonnistui.',
   note:'Virheilmoitusten puuttuminen ei todista toimivuutta. OK vaatii toimivan seurannan ja tuoreet tiedot.',
