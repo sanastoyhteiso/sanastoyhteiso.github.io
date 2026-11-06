@@ -20,7 +20,9 @@ assert.ok(!html.includes('TEST 3.0 / Тестовая копия'));
 for(const file of ['app.js','ipad-selects.js'])new vm.Script(fs.readFileSync(file,'utf8'));
 const sw=fs.readFileSync('sw.js','utf8');
 assert.ok(sw.includes('v3-mediatri-guide.js'));
-assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc1'));
+assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc2'));
+assert.ok(html.includes('v3-sync-diff.js?v=release-preview-2'));
+assert.ok(sw.includes('v3-sync-diff.js?v=release-preview-2'));
 for(const name of ['v3-sync-core.js','v3-sync-shadow.js','v3-sync-engine.js',
  'v3-sync-pages.js','v3-sync-finds.js','v3-sync-sha256.js',
  'v3-sync-diff.js','v3-sync-release.js']){
