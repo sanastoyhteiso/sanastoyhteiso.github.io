@@ -49,6 +49,8 @@ jobs:
         run: node release-checks/ios12-syntax.test.cjs
       - name: Exercise unified UI, Google account stub and offline V3 storage
         run: node release-checks/v3-unified-browser.test.cjs
+      - name: Exercise real release family.js Google login and recovery (synthetic no-cloud)
+        run: node --test release-checks/v3-login-availability.test.cjs
 
   firestore-v3-rules-emulator:
     runs-on: ubuntu-latest
