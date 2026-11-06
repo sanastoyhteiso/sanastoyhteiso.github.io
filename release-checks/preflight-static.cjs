@@ -20,7 +20,7 @@ assert.ok(!html.includes('TEST 3.0 / Тестовая копия'));
 for(const file of ['app.js','ipad-selects.js'])new vm.Script(fs.readFileSync(file,'utf8'));
 const sw=fs.readFileSync('sw.js','utf8');
 assert.ok(sw.includes('v3-mediatri-guide.js'));
-assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc7'));
+assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc8'));
 assert.ok(html.includes('v3-sync-diff.js?v=release-preview-2'));
 assert.ok(sw.includes('v3-sync-diff.js?v=release-preview-2'));
 assert.ok(html.includes('v3-sync-shadow.js?v=release-preview-3'));
