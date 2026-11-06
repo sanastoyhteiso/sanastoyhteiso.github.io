@@ -1576,3 +1576,9 @@
 ### RUN-20261106-088 / ЗАВЕРШИЛ / NO SOURCE WRITE; authorized editor needed
 - No protected JS source was edited, no TEST/main or production/main updates, no Firebase, students, backups, data, permissions, billing or ZIP touched. RUN-075 exact patch and RUN-085 10/10 real-full-source in-memory validation are available. Mandatory real checked-out code gate remains red.
 - Recorded owner request and unblocking procedure in Issue #10: https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/issues/10#issuecomment-6688550466 . Do not interpret owner instruction to fix as production GO or an override of editor safety; when an authorized editor is available, follow TEST draft source fix -> TEST failclosed 3/3+CI -> RELEASE draft source fix -> real mandatory 5/5+CI -> real pilot/backup -> separate owner GO.
+
+
+### RUN-20261106-089 / НАЧАЛ / NEW-014 backup pagination cursor false-success bug
+- 06.11.2026 Europe/Helsinki. User explicitly instructs continue autonomously toward first V3 publication; protected NEW-009 source remains blocked by previous safety editor, do not bypass. Identify other independent release-critical issue.
+- Read-only audit of `backup-v3/private-sheets-flow.cjs` found `const next=page.nextPageToken||''` converts invalid explicit nextPageToken null/0/false into an apparent EOF, so backup could incorrectly complete from a truncated Firestore listing. Must fail closed on explicit invalid non-string cursor. Genuine absent cursor (`undefined`) and empty string remain accepted. Reject dangerous values before creating any private Google Sheet.
+- Scope: only RELEASE DRAFT PR #9 backup flow + exact embedded copy in backup-v3/apps-script/Backup.gs plus independent offline regression. No TEST/PROD Firebase, user data, secrets, main, protected v3-sync-release.js, ZIP or billing; unmodified NEW-009 mandatory gate remains intentionally RED. Use real GitHub CI exact HEAD and log failures/success.
