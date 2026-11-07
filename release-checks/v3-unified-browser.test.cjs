@@ -124,6 +124,9 @@ async function run(){
  d.getElementById('v3-find-note').dispatchEvent(new w.Event('input',{bubbles:true}));
  const draftKey=w.RS_FAMILY.storageKey('rs_v3_find_draft_v1');
  assert.equal(JSON.parse(w.localStorage.getItem(draftKey)).fi,'tarkistamaton sana');
+ const otherDraftKey='owner-mock-second-owner__rs_v3_find_draft_v1';
+ assert.equal(w.localStorage.getItem(otherDraftKey),null,
+   'other accounts must not be able to read this owner's draft under their key');
  w.RS_FAMILY_REFRESH(false); // V3 cloud readback rebuilds the #add-form
  assert.equal(d.querySelector('#add-form [name="fi"]').value,'tarkistamaton sana');
  assert.equal(d.querySelector('#add-form [name="ru"]').value,'черновик перевода');
@@ -164,6 +167,14 @@ async function run(){
  const primary=d.getElementById('v3-find-add');
  assert.ok(primary&&primary.textContent.includes('Сохранить новое'),
    'new words need a visible explicit add action');
+ // No translation -> actionable error, no shadow/cloud write or fake success.
+ newRu.value='';newRu.dispatchEvent(new w.Event('input',{bubbles:true}));
+ const eventsBeforeMissingRu=Object.keys(events).length;
+ primary.click();await sleep(20);
+ assert.match(d.getElementById('v3-find-feedback').textContent,/русский перевод/i);
+ assert.equal(Object.keys(events).length,eventsBeforeMissingRu,
+   'new word with missing RU must not create any cloud event');
+ newRu.value='проверочное слово';newRu.dispatchEvent(new w.Event('input',{bubbles:true}));
  primary.click();
  for(let i=0;i<40&&!Object.values(events).some(e=>e.kind==='collection_set'&&/^W_/.test(e.target));i++)
    await sleep(50);
