@@ -67,7 +67,11 @@
    if(latest&&latest.code===code&&latest.minute===minute)return false;
    entries.push({code:code,minute:minute});
    entries=entries.slice(-LIMIT);
-   try{s.setItem(KEY,JSON.stringify({v:1,items:entries}));return true;}
+   try{s.setItem(KEY,JSON.stringify({v:1,items:entries}));
+     // Optional authenticated opt-in sender. Never send raw exception details.
+     if(w.RS_MONITOR_CLIENT&&typeof w.RS_MONITOR_CLIENT.queueCode==='function')
+       w.RS_MONITOR_CLIENT.queueCode(code);
+     return true;}
    catch(ignore){return false;}
  }
  function entries(){
