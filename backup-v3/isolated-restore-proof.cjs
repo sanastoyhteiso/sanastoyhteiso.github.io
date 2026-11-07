@@ -24,9 +24,11 @@ function preflight(opts){
 }
 function kindOf(name,uid){
   const prefix='projects/'+codec.PROJECT+'/databases/(default)/documents/sync_v3/'+uid+'/';
-  if(name===prefix+'state/baseline')return 'baseline';
-  if(new RegExp('^'+prefix+'events/E_[a-f0-9]{32}$').test(name))return 'event';
-  if(new RegExp('^'+prefix+'words/W_[a-f0-9]{32}$').test(name))return 'word';
+  if(!name.startsWith(prefix))throw Error('SYNTHETIC_RESTORE_PATH_INVALID');
+  const suffix=name.slice(prefix.length);
+  if(suffix==='state/baseline')return 'baseline';
+  if(/^events\/E_[a-f0-9]{32}$/.test(suffix))return 'event';
+  if(/^words\/W_[a-f0-9]{32}$/.test(suffix))return 'word';
   throw Error('SYNTHETIC_RESTORE_PATH_INVALID');
 }
 function prove(opts){
