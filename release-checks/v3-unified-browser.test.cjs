@@ -75,6 +75,17 @@ async function run(){
  const enabled=await w.RS_V3_RELEASE.begin(true);
  assert.equal(enabled,true,'verified account can opt-in after server read and backup');
  assert.equal(w.RS_V3_RELEASE.isActive(),true);
+ // Tests should be immediately interactive even during periodic V3 cloud activity:
+ // never leave the user in a permanent spinner/loading state.
+ d.querySelector('[data-view="practice"]').click();
+ assert.ok(d.getElementById('quiz-cat'),'tests topic selector rendered');
+ assert.ok(d.querySelectorAll('[data-action="quiz-choose"]').length>=4,
+   'V3 tests show at least 4 clickable answers without awaiting a cloud response');
+ d.dispatchEvent(new w.Event('visibilitychange'));
+ await sleep(80);
+ assert.ok(d.querySelectorAll('[data-action="quiz-choose"]').length>=4,
+   'returning from another browser tab must not indefinitely block quiz choices');
+ d.querySelector('[data-view="cards"]').click();
  assert.ok(Object.keys(w.localStorage).some(k=>k.indexOf('rs_unified_v3_prior_backup_')===0));
  let flip=d.querySelector('[data-action="flip"]');
  assert.ok(flip,'full classic UI must render a study card');
@@ -101,8 +112,37 @@ async function run(){
  assert.ok(add);
  add.click();
  assert.ok(d.getElementById('v3-finds-panel'),'full UI contains live My Finds');
- const fi=d.querySelector('#add-form [name="fi"]');
+ // Draft is stored per account immediately and restored after a cloud refresh
+ // or returning from a different browser tab.
+ let fi=d.querySelector('#add-form [name="fi"]');
+ fi.value='tarkistamaton sana';fi.dispatchEvent(new w.Event('input',{bubbles:true}));
+ let ru=d.querySelector('#add-form [name="ru"]');
+ ru.value='черновик перевода';ru.dispatchEvent(new w.Event('input',{bubbles:true}));
+ d.getElementById('v3-find-topic').value='study';
+ d.getElementById('v3-find-topic').dispatchEvent(new w.Event('change',{bubbles:true}));
+ d.getElementById('v3-find-note').value='не опубликовано';
+ d.getElementById('v3-find-note').dispatchEvent(new w.Event('input',{bubbles:true}));
+ const draftKey=w.RS_FAMILY.storageKey('rs_v3_find_draft_v1');
+ assert.equal(JSON.parse(w.localStorage.getItem(draftKey)).fi,'tarkistamaton sana');
+ const otherDraftKey='owner-mock-second-owner__rs_v3_find_draft_v1';
+ assert.equal(w.localStorage.getItem(otherDraftKey),null,
+   "other accounts must not be able to read this owner\u0027s draft under their key");
+ w.RS_FAMILY_REFRESH(false); // V3 cloud readback rebuilds the #add-form
+ assert.equal(d.querySelector('#add-form [name="fi"]').value,'tarkistamaton sana');
+ assert.equal(d.querySelector('#add-form [name="ru"]').value,'черновик перевода');
+ assert.equal(d.getElementById('v3-find-topic').value,'study');
+ assert.equal(d.getElementById('v3-find-note').value,'не опубликовано');
+ d.dispatchEvent(new w.Event('visibilitychange'));
+ await sleep(80);
+ assert.equal(d.querySelector('#add-form [name="fi"]').value,'tarkistamaton sana');
+ assert.equal(d.querySelector('#add-form [name="ru"]').value,'черновик перевода');
+ assert.equal(JSON.parse(w.localStorage.getItem(draftKey)).fi,'tarkistamaton sana');
+ assert.equal(Object.values(events).filter(x=>x.kind==='word_upsert').length,0,
+   'autosaved draft must not be uploaded to Firebase before explicit Add');
+ fi=d.querySelector('#add-form [name="fi"]');
  fi.value='peseytyminen';fi.dispatchEvent(new w.Event('input',{bubbles:true}));
+ ru=d.querySelector('#add-form [name="ru"]');
+ ru.value='';ru.dispatchEvent(new w.Event('input',{bubbles:true}));
  await sleep(10);
  const buttons=[...d.querySelectorAll('#v3-find-matches button')];
  assert.ok(buttons.some(x=>x.textContent.includes('peseytyminen')),'existing term is suggested');
@@ -112,6 +152,39 @@ async function run(){
  'existing term must be saved as a find, without creating private duplicate');
  assert.equal(Object.values(events).filter(x=>x.kind==='word_upsert').length,0);
  assert.ok(Object.keys(w.RS_V3_RELEASE.getState().finds).length>=1);
+ assert.equal(w.localStorage.getItem(draftKey),null,
+   'draft clears only after successfully adding an existing word');
+ // The new primary button must create a private W_ word and its finding together,
+ // and must retain the selected category and optional personal note.
+ let newFi=d.querySelector('#add-form [name="fi"]');
+ assert.ok(newFi,'form restored after adding an existing find');
+ newFi.value='koesanasto-147';newFi.dispatchEvent(new w.Event('input',{bubbles:true}));
+ let newRu=d.querySelector('#add-form [name="ru"]');
+ newRu.value='проверочное слово';newRu.dispatchEvent(new w.Event('input',{bubbles:true}));
+ d.getElementById('v3-find-topic').value='practice';
+ d.getElementById('v3-find-note').value='с моего занятия';
+ d.getElementById('v3-find-note').dispatchEvent(new w.Event('input',{bubbles:true}));
+ const primary=d.getElementById('v3-find-add');
+ assert.ok(primary&&primary.textContent.includes('Сохранить новое'),
+   'new words need a visible explicit add action');
+ // No translation -> actionable error, no shadow/cloud write or fake success.
+ newRu.value='';newRu.dispatchEvent(new w.Event('input',{bubbles:true}));
+ const eventsBeforeMissingRu=Object.keys(events).length;
+ primary.click();await sleep(20);
+ assert.match(d.getElementById('v3-find-feedback').textContent,/русский перевод/i);
+ assert.equal(Object.keys(events).length,eventsBeforeMissingRu,
+   'new word with missing RU must not create any cloud event');
+ newRu.value='проверочное слово';newRu.dispatchEvent(new w.Event('input',{bubbles:true}));
+ primary.click();
+ for(let i=0;i<40&&!Object.values(events).some(e=>e.kind==='collection_set'&&/^W_/.test(e.target));i++)
+   await sleep(50);
+ const personalWord=Object.values(events).find(e=>e.kind==='word_upsert'&&/^W_/.test(e.target));
+ const personalFind=Object.values(events).find(e=>e.kind==='collection_set'&&e.target===(personalWord&&personalWord.target));
+ assert.ok(personalWord,'new word created with private identity');
+ assert.ok(personalFind,'new personal word added to My Finds');
+ assert.equal(personalFind.data.topic,'practice');
+ assert.equal(personalFind.data.note,'с моего занятия');
+ assert.equal(w.localStorage.getItem(draftKey),null,'draft clears only after successful double write');
  // Switching Google accounts without an intermediate signed-out event must
  // invalidate the old owner. A queued old answer cannot become new-owner data.
  const beforeSwitch=Object.keys(events).length;
