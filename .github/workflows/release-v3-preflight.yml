@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'riveria-anatomy-exam.js'
       - 'app.js'
       - 'family.js'
       - 'community.js'
@@ -93,6 +94,8 @@ jobs:
         run: node --test release-checks/v3-telemetry-production-config.test.cjs
       - name: Verify opt-in telemetry browser client and admin adapter (NO network)
         run: node --test release-checks/v3-telemetry-client-admin.test.cjs
+      - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)
+        run: node --test release-checks/riveria-anatomy-exam.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)
