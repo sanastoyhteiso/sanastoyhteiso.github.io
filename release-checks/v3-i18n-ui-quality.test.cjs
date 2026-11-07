@@ -92,8 +92,8 @@ test('release admin page uses neutral FI/RU subtitles and current admin cache ve
   assert.doesNotMatch(js,/тестовый сайт|testisivusto/);
   assert.match(js,/Закрытый кабинет • проверка прав/);
   assert.match(js,/Yksityinen hallintanäkymä • käyttöoikeuksien tarkistus/);
-  assert.ok(html.includes('admin-page.js?v=admin-health-prod-2'));
-  assert.ok(sw.includes('admin-page.js?v=admin-health-prod-2'));
+  assert.ok(html.includes('admin-page.js?v=admin-health-prod-3'));
+  assert.ok(sw.includes('admin-page.js?v=admin-health-prod-3'));
 });
 test('release retains private existing default for student sharing',()=>{
   const family=fs.readFileSync(path.join(root,'family.js'),'utf8');
