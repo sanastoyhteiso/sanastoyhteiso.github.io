@@ -126,7 +126,7 @@ async function run(){
  assert.equal(JSON.parse(w.localStorage.getItem(draftKey)).fi,'tarkistamaton sana');
  const otherDraftKey='owner-mock-second-owner__rs_v3_find_draft_v1';
  assert.equal(w.localStorage.getItem(otherDraftKey),null,
-   'other accounts must not be able to read this owner's draft under their key');
+   "other accounts must not be able to read this owner\u0027s draft under their key");
  w.RS_FAMILY_REFRESH(false); // V3 cloud readback rebuilds the #add-form
  assert.equal(d.querySelector('#add-form [name="fi"]').value,'tarkistamaton sana');
  assert.equal(d.querySelector('#add-form [name="ru"]').value,'черновик перевода');
