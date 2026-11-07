@@ -14,6 +14,58 @@
   function value(k,f){try{var key=window.RS_FAMILY&&window.RS_FAMILY.storageKey(k);if(!key)return f;var x=window.localStorage.getItem(key);return x?JSON.parse(x):f;}catch(e){state.persisted=false;return f;}}
   function save(k,v){try{var key=window.RS_FAMILY&&window.RS_FAMILY.storageKey(k);if(!key)return false;window.localStorage.setItem(key,JSON.stringify(v));state.persisted=true;try{window.dispatchEvent(new Event('rs:datachange'));}catch(ignored){}return true;}catch(e){state.persisted=false;toast('Сохранение на устройстве недоступно. Сделайте резервную копию.');return false;}}
   function load(){state.userWords=value('rs_user_words_v1',[]);state.scores=value('rs_scores_v1',{});state.favorites=value('rs_favorites_v1',{});if(!Array.isArray(state.userWords))state.userWords=[];if(!state.scores||typeof state.scores!=='object')state.scores={};if(!state.favorites||typeof state.favorites!=='object')state.favorites={};}
+  /* A draft is NEVER a saved find. Keep it local and scoped to the signed-in account.
+     Cloud readbacks may rebuild #add-form when the tab becomes visible. */
+  var addDraftMemory={key:null,value:null};
+  function addDraftKey(){
+    return window.RS_FAMILY&&typeof window.RS_FAMILY.storageKey==='function'?
+      window.RS_FAMILY.storageKey('rs_v3_find_draft_v1'):null;
+  }
+  function readAddDraft(){
+    var key=addDraftKey(),v=null;
+    if(!key)return null;
+    if(addDraftMemory.key===key&&addDraftMemory.value)return addDraftMemory.value;
+    try{v=JSON.parse(window.localStorage.getItem(key)||'null');}catch(e){}
+    if(!v||typeof v!=='object'||typeof v.fi!=='string'||typeof v.ru!=='string')return null;
+    addDraftMemory={key:key,value:v};return v;
+  }
+  function isAddDraftField(el){
+    return !!(el&&((el.form&&el.form.id==='add-form')||
+      el.id==='v3-find-topic'||el.id==='v3-find-note'));
+  }
+  function saveAddDraft(){
+    var key=addDraftKey(),form=byId('add-form');
+    if(!key||!form)return;
+    var topic=byId('v3-find-topic'),note=byId('v3-find-note');
+    var v={fi:form.elements.fi.value.slice(0,180),ru:form.elements.ru.value.slice(0,400),
+      cat:form.elements.cat.value,customCat:form.elements.customCat.value.slice(0,90),
+      example:form.elements.example.value.slice(0,500),
+      topic:topic?topic.value:'practice',note:note?note.value.slice(0,350):''};
+    addDraftMemory={key:key,value:v};
+    try{window.localStorage.setItem(key,JSON.stringify(v));}catch(e){}
+  }
+  function restoreAddDraft(){
+    var v=readAddDraft(),form=byId('add-form');if(!v||!form)return;
+    ['fi','ru','cat','customCat','example'].forEach(function(k){
+      if(form.elements[k]&&typeof v[k]==='string')form.elements[k].value=v[k];
+    });
+    var topic=byId('v3-find-topic'),note=byId('v3-find-note');
+    if(topic&&/^(practice|study|other)$/.test(v.topic||''))topic.value=v.topic;
+    if(note&&typeof v.note==='string')note.value=v.note;
+  }
+  function clearAddDraft(savedFi,savedRu){
+    var key=addDraftKey(),v=readAddDraft();
+    if(!key||!v)return;
+    // A late ACK must not destroy a newer, different draft.
+    if(typeof savedFi==='string'&&
+      (v.fi.trim()!==savedFi.trim()||v.ru.trim()!==(savedRu||'').trim()))return;
+    try{window.localStorage.removeItem(key);}catch(e){}
+    addDraftMemory={key:null,value:null};
+  }
+  window.RS_APP_FINDS_SAVED=function(fi,ru){
+    clearAddDraft(fi,ru);
+    if(state.view==='add')renderAdd();
+  };
   function toast(t){var e=byId('toast');e.textContent=t;e.className='toast show';window.setTimeout(function(){e.className='toast';},3400);}
   function setStatus(){var online=byId('online-status'),store=byId('storage-status');if(online){online.textContent=navigator.onLine?'● Интернет доступен':'● Без интернета';online.className='status'+(navigator.onLine?'':' offline');}if(store){store.textContent=state.persisted?'✓ Локальное сохранение':'! Сохранение недоступно';store.className='status muted';}}
   function sharedEnabled(){return !!(window.RS_FAMILY&&window.RS_FAMILY.sharedEnabled());}
@@ -123,8 +175,10 @@
     var keys=[],dict=D.keyterms.concat(D.terms);for(i=0;i<dict.length;i++){var row=dict[i],sco=Math.max(scoreText(tk,row.ru),scoreText(tk,row.en||''));if(sco>0)keys.push({score:sco,item:row});}keys.sort(function(a,b){return b.score-a.score;});var seenw={};t+='<h3>Слова-подсказки</h3>';n=0;for(i=0;i<keys.length&&n<18;i++){var k=keys[i].item;if(seenw[k.fi])continue;seenw[k.fi]=1;t+='<span class="word-chip" title="'+safe(k.ru)+'">'+safe(k.fi)+' — '+safe(language()==='en'&&k.en?k.en:k.ru)+'</span>';n++;}el.innerHTML=t+'<p class="notice">Сопоставление по словам, без ИИ и без сети. Проверяй, подходит ли выражение к реальному действию.</p>';
   }
   function renderAdd(){basePage('Добавить слово','Новые слова сохраняются только в твоём личном словаре.');root.innerHTML='<div class="banner warning"><b>Сохранение и облако</b><p>Новое слово доступно офлайн и синхронизируется только с твоим аккаунтом после восстановления интернета. Регулярно делай резервную копию. Не вводи данные настоящих пациентов.</p></div><div class="panel"><form id="add-form"><div class="two-col"><label class="field"><span>Финское слово *</span><input required maxlength="180" name="fi" class="control" placeholder="esim. inkohousut"></label><label class="field"><span>Русский перевод *</span><input required maxlength="400" name="ru" class="control" placeholder="впитывающие трусики"></label></div><div class="two-col"><label class="field"><span>Тема</span><select class="control" name="cat"><option value="Omat sanat">Мои слова</option><option value="Lääkitys">Лекарства</option><option value="Hoito">Уход</option><option value="Vointi">Состояние</option><option value="Pukeutuminen">Переодевание</option><option value="Aamutoimet">Утренний уход</option><option value="Iltatoimet">Вечерний уход</option><option value="custom">Своя тематика</option></select><input name="customCat" maxlength="90" class="control" placeholder="Например: Архитектура, Работа, Музыка" style="margin-top:8px"></label><label class="field"><span>Фраза по-фински (необязательно)</span><input maxlength="500" name="example" class="control" placeholder="Asukas oli rauhallinen."></label></div><p><button class="btn good" type="submit">＋ Сохранить слово</button></p></form></div><div class="section-title"><h2>Мои слова ('+state.userWords.length+')</h2></div><div class="dictionary-list" id="my-words">'+myWordsHtml()+'</div>';
+    restoreAddDraft();
     if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())
       window.RS_V3_RELEASE.renderFinds(root);
+    restoreAddDraft();
   }
   function myWordsHtml(){if(!state.userWords.length)return '<div class="empty">Пока нет добавленных слов.</div>';var t='';for(var i=state.userWords.length-1;i>=0;i--){var x=state.userWords[i];t+='<div class="dict-row"><div><b>'+safe(x.fi)+'</b><p>'+safe(x.ru)+'</p><small>'+safe(x.cat)+'</small></div><button class="tiny-btn" data-action="delete-word" data-value="'+safe(x.id)+'">Удалить</button></div>';}return t;}
   function renderBackup(){
@@ -150,12 +204,13 @@
   function nav(v){if(v==='cards'&&state.view!=='cards'){state.reviewLearned=false;state.sessionSeen={};state.deck=[];}state.view=v==='more'?'more':v;render();window.scrollTo(0,0);}
   function saveCustom(form){
     if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()){
-      window.RS_V3_RELEASE.formWord(form).then(function(){
+      window.RS_V3_RELEASE.formWord(form,byId('v3-find-topic')?byId('v3-find-topic').value:'other',byId('v3-find-note')?byId('v3-find-note').value:'').then(function(){
+        clearAddDraft(form.elements.fi.value,form.elements.ru.value);
         renderAdd();toast('Слово добавлено в «Мои находки» без дубля.');
       },function(e){toast('V3: '+String(e.message||e));});
       return;
     }
-    var fi=form.elements.fi.value.replace(/^\s+|\s+$/g,''),ru=form.elements.ru.value.replace(/^\s+|\s+$/g,'');if(!fi||!ru){toast('Нужно заполнить оба языка.');return;}var cat=form.elements.cat.value;if(cat==='custom')cat=form.elements.customCat.value.replace(/^\s+|\s+$/g,'')||'Мои слова';var p={id:'L'+Date.now()+Math.floor(Math.random()*1000),fi:fi,ru:ru,cat:cat,catRu:'Мои слова',example:form.elements.example.value,exampleRu:'',level:'B1',priority:1};p.updatedAt=Date.now();state.userWords.push(p);save('rs_user_words_v1',state.userWords);renderAdd();toast('Слово сохранено в личном словаре.');}
+    var fi=form.elements.fi.value.replace(/^\s+|\s+$/g,''),ru=form.elements.ru.value.replace(/^\s+|\s+$/g,'');if(!fi||!ru){toast('Нужно заполнить оба языка.');return;}var cat=form.elements.cat.value;if(cat==='custom')cat=form.elements.customCat.value.replace(/^\s+|\s+$/g,'')||'Мои слова';var p={id:'L'+Date.now()+Math.floor(Math.random()*1000),fi:fi,ru:ru,cat:cat,catRu:'Мои слова',example:form.elements.example.value,exampleRu:'',level:'B1',priority:1};p.updatedAt=Date.now();state.userWords.push(p);save('rs_user_words_v1',state.userWords);clearAddDraft(fi,ru);renderAdd();toast('Слово сохранено в личном словаре.');}
   function triggerDownload(text,name,mime){try{var blob=new Blob([text],{type:mime||'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);window.setTimeout(function(){URL.revokeObjectURL(url);},10000);toast('Файл подготовлен. Проверь загрузки браузера.');}catch(e){toast('Не удалось сохранить файл. Попробуй другой браузер.');}}
   function exportJson(){var data={app:'Riveria Sanasto',version:1,created:new Date().toISOString(),userWords:state.userWords,scores:state.scores,favorites:state.favorites,favoriteMeta:value('rs_favorite_meta_v1',{}),deletedWords:value('rs_deleted_words_v1',{})};triggerDownload(JSON.stringify(data,null,2),'riveria-sanasto-backup.json','application/json;charset=utf-8');}
   function exportTsv(){var rows=[['ID','Suomi','Русский','Aihe / Тема FI','Тема RU','Тип','Esimerkki FI','Пример RU','Latin','Уровень*','Источник / происхождение','Приоритет','Статус','Повторений','Верных','Последнее повторение','Следующее повторение','Заметки']];state.userWords.forEach(function(x){rows.push([x.id,x.fi,x.ru,x.cat,x.catRu,'termi',x.example||'','','','B1','Riveria Sanasto офлайн',1,'Новый',0,0,'','','Добавлено в приложении. Сверить дубликаты перед импортом.']);});var txt=rows.map(function(row){return row.map(function(x){return String(x===undefined?'':x).replace(/[\t\r\n]+/g,' ');}).join('\t');}).join('\r\n');triggerDownload('\ufeff'+txt,'riveria-sanasto-my-words.tsv','text/tab-separated-values;charset=utf-8');}
@@ -196,8 +251,8 @@
     else if(action==='export-json'){exportJson();}
     else if(action==='export-tsv'){exportTsv();}
   });
-  document.addEventListener('change',function(e){var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;quizNew();renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
-  document.addEventListener('input',function(e){var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
+  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;quizNew();renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
+  document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
   document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
   window.addEventListener('online',setStatus);window.addEventListener('offline',setStatus);
   window.addEventListener('error',function(e){var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';});
