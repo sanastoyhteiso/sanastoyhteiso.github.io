@@ -10,7 +10,15 @@
  'use strict';
  var PROJECT='riveria-sanasto-community-test',QUEUE='rs_mon_queue_v1',
    PREFIX='rs_mon_consent_v1_',RELEASE='v3.0.0-rc10';
- var busy=false,nextAttempt=0;
+ var busy=false,nextAttempt=0,testId=null,testSent=false;
+ function testMessage(message){
+   var node=d.getElementById('rs-monitor-test-status');
+   if(node)node.textContent=message;
+ }
+ function testControls(){
+   var button=d.getElementById('rs-monitor-test-send');
+   if(button)button.disabled=!enabled()||testSent;
+ }
  function config(){
    var c=w.RS_TELEMETRY_CONFIG||{},fc=w.RS_FIREBASE_CONFIG||{};
    return fc.projectId===PROJECT&&c.enabled===true&&typeof c.endpoint==='string'&&
@@ -49,9 +57,9 @@
    var bytes=new Uint8Array(16);w.crypto.getRandomValues(bytes);
    return 'E_'+Array.prototype.map.call(bytes,function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
  }
- function queueCode(code){
+ function queueCode(code,isTest){
    // No event leaves the device unless this user explicitly enabled it.
-   if(!enabled())return false; // queue offline; flush only when connectivity resumes
+   if(!enabled()||(isTest===true&&testSent))return false; // explicit consent; one test per page
    var allow={APP_RENDER_FAILED:1,SYNC_UPLOAD_FAILED:1,SYNC_DOWNLOAD_FAILED:1,
      SYNC_QUEUE_STUCK:1,INDEXEDDB_UNAVAILABLE:1,CACHE_MISMATCH:1,
      OFFLINE_REPLAY_FAILED:1,FIRESTORE_PERMISSION_DENIED:1,
@@ -61,6 +69,7 @@
    var id=newId();if(!id)return false;
    var items=read();items.push({v:1,id:id,code:code,at:Date.now()});
    if(!write(items))return false;
+   if(isTest===true){testSent=true;testId=id;}
    flush();return true;
  }
  function flush(){
@@ -83,13 +92,23 @@
      if(!enabled()||uid()!==who){done();return;}
      if(response.status===200||response.status===201){
        var current=read().filter(function(x){return x.id!==event.id;});
-       write(current);done();if(current.length)flush();
+       write(current);
+       if(event.id===testId){
+         testMessage('Тестовый сигнал ПОДТВЕРЖДЁН сервером (HTTP '+response.status+
+           '). Это проверочное событие, а не настоящая ошибка. Обновите сводку в админке.');
+         testId=null;
+       }
+       done();if(current.length)flush();
      }else{
        // No false ACK; quota errors are retried at the next network/focus cycle.
+       if(event.id===testId)testMessage('Тестовый сигнал пока НЕ принят (HTTP '+response.status+
+         '). Проверьте подключение и права, не повторяйте нажатие.');
        nextAttempt=Date.now()+60000;done();
      }
    }).catch(function(){
      // Never re-throw diagnostics failures or interrupt studying.
+     if(event.id===testId)testMessage('Нет подтверждения получения тестового сигнала. '+
+       'Он остался в локальной очереди для повторной попытки.');
      nextAttempt=Date.now()+60000;done();
    });
  }
@@ -100,6 +119,12 @@
      '<p><label><input type="checkbox" id="rs-monitor-consent" '+
        (yes?'checked ':'')+(available?'':'disabled ')+
        '> Разрешить отправку технических сбоев с этого устройства</label></p>'+
+     '<p><button type="button" id="rs-monitor-test-send" '+
+        (!yes||testSent?'disabled ':'')+
+        '>Отправить один тестовый сигнал</button></p>'+
+     '<p class="hint" id="rs-monitor-test-status">Только по вашему нажатию: '+
+       'проверочный код CACHE_MISMATCH будет учтён как 1 техническое событие за 24 часа, '+
+       'но не означает настоящую неисправность.</p>'+
      '<p class="hint">'+(available?
        (yes?'Диагностика включена для этого аккаунта и устройства.':'Диагностика отключена до моего согласия.'):
        'Серверный мониторинг пока не подключён.')+'</p></div>';
@@ -109,13 +134,23 @@
    if(!who||!cfg)return false;
    try{
      if(next)w.localStorage.setItem(PREFIX+who,'yes');
-     else{w.localStorage.removeItem(PREFIX+who);write([]);}
+     else{w.localStorage.removeItem(PREFIX+who);write([]);testId=null;testSent=false;}
    }catch(ignore){return false;}
-   if(next)flush();return true;
+   if(next)flush();testControls();return true;
  }
  d.addEventListener('change',function(e){
    if(!e.target||e.target.id!=='rs-monitor-consent')return;
    if(!consent(e.target.checked))e.target.checked=false;
+   testControls();
+ });
+ d.addEventListener('click',function(e){
+   if(!e.target||e.target.id!=='rs-monitor-test-send')return;
+   if(!enabled()||testSent)return;
+   if(queueCode('CACHE_MISMATCH',true)){
+     testMessage('Тестовый сигнал поставлен в очередь. Ожидается подтверждение сервера. '+
+       'Не отправляйте повторный тест.');
+     testControls();
+   }else testMessage('Не удалось поставить тест в очередь; данные не отправлены.');
  });
  w.addEventListener('online',flush);
  w.addEventListener('focus',flush);
