@@ -85,3 +85,25 @@ test('diagnostics code is ES5 compatible and never collects or sends telemetry',
   assert.ok(source.includes('sessionStorage'));
   assert.ok(!source.includes('event.message')||source.includes('Do not read or store'));
 });
+
+
+// RUN-120: learners may answer incorrectly; that is not a website malfunction.
+test('learning mistakes and quiz scoring are not technical site failures',()=>{
+  const h=harness();
+  for(const code of ['ANSWER_INCORRECT','QUIZ_WRONG_ANSWER','STUDENT_ERROR','SCORE_LOW','STUDY_PROGRESS','LEARNED_SET']){
+    assert.equal(h.api.record(code),false,'learning result must not enter fault log: '+code);
+  }
+  assert.equal(h.api.entries().length,0);
+  assert.equal(h.writes,0);
+  assert.equal(h.api.record('SYNC_DOWNLOAD_FAILED'),true,'real site malfunction is tracked');
+  assert.deepEqual(Array.from(h.api.entries()).map(x=>x.code),['SYNC_DOWNLOAD_FAILED']);
+});
+
+test('admin FI/RU/EN text explicitly labels technical site failures',()=>{
+  const admin=fs.readFileSync(path.resolve(__dirname,'../admin/admin-page.js'),'utf8');
+  assert.ok(admin.includes("errors:'Сбои сайта'"));
+  assert.ok(admin.includes("errors:'Sivuston häiriöt'"));
+  assert.ok(admin.includes("errors:'Site failures'"));
+  assert.ok(admin.includes('без учебных ответов'));
+  assert.ok(!admin.includes('Журнал ошибок остальных учеников'));
+});
