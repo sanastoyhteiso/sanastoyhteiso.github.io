@@ -86,6 +86,8 @@ jobs:
         run: node --test release-checks/v3-refresh-candidate-fullsource.test.cjs
       - name: Exercise two V3 IndexedDB devices, offline 13-event replay and account isolation (synthetic)
         run: node --test release-checks/v3-two-device-offline-contract.test.cjs
+      - name: Check two-device V3 cloud event backup, RAW Sheets integrity and isolated restore (synthetic only)
+        run: node --test release-checks/v3-sync-backup-e2e.test.cjs
       - name: Check classic Safari 12-compatible script syntax (static, no device)
         run: node release-checks/ios12-syntax.test.cjs
       - name: Exercise unified UI, Google account stub and offline V3 storage
