@@ -116,7 +116,9 @@
  Object.keys(x.favorites||{}).forEach(function(id){var v=x.favorites[id];if(v){fav[id]=!!v.starred;fm[id]={starred:!!v.starred,updatedAt:Number(v.updatedAt)||1};}});
  var ok=putLocal('rs_scores_v1',x.scores||{})&&putLocal('rs_user_words_v1',words)&&putLocal('rs_favorites_v1',fav)&&putLocal('rs_favorite_meta_v1',fm)&&putLocal('rs_deleted_words_v1',deleted)&&putLocal('rs_family_scope_v1',x.scope||{value:'mine',updatedAt:0});
  if(ok&&window.RS_FAMILY_REFRESH)window.RS_FAMILY_REFRESH(false);return ok; }
- function sync(){if(!uid)return Promise.resolve(false); if(window.RS_COMM){return window.RS_COMM.sync();}status('Подключи собственный Google Drive в разделе «Данные»',false);return Promise.resolve(false);}
+ function sync(){if(!uid)return Promise.resolve(false);
+  if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())return window.RS_V3_RELEASE.refresh();
+  if(window.RS_COMM){return window.RS_COMM.sync();}status('Подключи собственный Google Drive в разделе «Данные»',false);return Promise.resolve(false);}
  function schedule(){if(!uid)return;if(window.RS_COMM)window.RS_COMM.onLocalChange();}
  function logout(){
   if(!window.confirm('Выйти из этого устройства? Локальные учебные данные останутся сохранены, но для повторного входа понадобится интернет.'))return;
@@ -129,7 +131,10 @@
  }
  function sharedEnabled(){var s=getLocal('rs_family_scope_v1',{value:'mine'});return !!(uid&&s&&s.value==='all');}
  function setScope(v){if(!uid)return;putLocal('rs_family_scope_v1',{value:v==='all'?'all':'mine',updatedAt:now()});if(window.RS_FAMILY_REFRESH)window.RS_FAMILY_REFRESH(false);schedule();}
- function migrate(){if(!uid)return;var imported=false,existing=getState(),legacy=empty();
+ function migrate(){if(!uid)return;
+  if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()){
+    status('V3 уже активна; прежняя копия сохранена.',true);return;
+  }var imported=false,existing=getState(),legacy=empty();
  var scores=readJson('rs_scores_v1',null),words=readJson('rs_user_words_v1',null),fav=readJson('rs_favorites_v1',null),meta=readJson('rs_favorite_meta_v1',{}),deleted=readJson('rs_deleted_words_v1',{});
  if(scores&&Object.keys(scores).length){legacy.scores=scores;imported=true;}
  if(Array.isArray(words)&&words.length){words.forEach(function(x){if(x&&x.id)legacy.words[x.id]=x;});imported=true;}
@@ -146,6 +151,6 @@
   window.addEventListener('online',function(){if(uid&&auth&&auth.currentUser)sync();});
   window.addEventListener('rs:datachange',schedule);
  }
- window.RS_FAMILY={storageKey:storageKey,get uid(){return uid;},get email(){return email;},getToken:getToken,getEmailVerificationStatus:getEmailVerificationStatus,sendVerify:sendVerify,sharedEnabled:sharedEnabled,setScope:setScope,statusText:function(){return lastStatus;},sync:sync,schedule:schedule,logout:logout,migrate:migrate};
+ window.RS_FAMILY={storageKey:storageKey,getState:getState,putState:putState,get uid(){return uid;},get email(){return email;},getToken:getToken,getEmailVerificationStatus:getEmailVerificationStatus,sendVerify:sendVerify,sharedEnabled:sharedEnabled,setScope:setScope,statusText:function(){return lastStatus;},sync:sync,schedule:schedule,logout:logout,migrate:migrate};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
