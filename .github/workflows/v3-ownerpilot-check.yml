@@ -16,6 +16,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install isolated mock browser runtime
+        run: npm install --no-save jsdom@24.1.1
+      - name: Verify owner gate rejects non-admin and revoked claims in browser simulation
+        run: node --test pilot-checks/owner-preview-runtime.test.cjs
       - name: Verify gated owner-only pilot, assets and isolated service worker
         run: |
           node --test pilot-checks/owner-preview.test.cjs
