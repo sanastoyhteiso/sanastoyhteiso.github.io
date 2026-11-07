@@ -104,3 +104,51 @@ test('opted-in technical failures queue offline and transmit after connectivity 
   assert.equal(JSON.parse(a.records[0].opts.body).code,'CACHE_MISMATCH');
  }finally{a.dom.window.close();}
 });
+
+test('one-shot opt-in test button sends only a harmless allowlisted synthetic code and confirms real HTTP ACK',async()=>{
+ const a=app(true);try{
+  a.w.RS_MONITOR_CLIENT.setConsent(true);
+  a.w.document.getElementById('placeholder').innerHTML=a.w.RS_MONITOR_CLIENT.panelHtml();
+  const button=a.w.document.getElementById('rs-monitor-test-send');
+  assert.ok(button);assert.equal(button.disabled,false);
+  button.click();button.click();
+  await drain();
+  assert.equal(a.records.length,1,'double click may not send duplicate test events');
+  const body=JSON.parse(a.records[0].opts.body);
+  assert.deepEqual(Object.keys(body).sort(),['browser','code','id','release','v']);
+  assert.equal(body.code,'CACHE_MISMATCH');
+  assert.equal(a.w.RS_MONITOR_CLIENT.isEnabled(),true);
+  assert.equal(button.disabled,true);
+  assert.match(a.w.document.getElementById('rs-monitor-test-status').textContent,/ПОДТВЕРЖДЁН сервером/);
+  assert.match(a.w.document.getElementById('rs-monitor-test-status').textContent,/не настоящая ошибка/);
+  assert.equal(JSON.parse(a.w.sessionStorage.getItem('rs_mon_queue_v1')||'[]').length,0);
+ }finally{a.dom.window.close();}
+});
+test('test button cannot send before consent or after opt-out',async()=>{
+ const a=app(true);try{
+  a.w.document.getElementById('placeholder').innerHTML=a.w.RS_MONITOR_CLIENT.panelHtml();
+  const button=a.w.document.getElementById('rs-monitor-test-send');
+  assert.equal(button.disabled,true);button.click();
+  await drain();assert.equal(a.records.length,0);
+  assert.equal(a.w.RS_MONITOR_CLIENT.setConsent(true),true);
+  assert.equal(button.disabled,false);
+  assert.match(a.w.document.getElementById('rs-monitor-consent-status').textContent,/Диагностика включена/);
+  assert.equal(a.w.RS_MONITOR_CLIENT.setConsent(false),true);
+  assert.equal(button.disabled,true);
+  assert.match(a.w.document.getElementById('rs-monitor-consent-status').textContent,/Диагностика отключена/);button.click();
+  await drain();assert.equal(a.records.length,0);
+ }finally{a.dom.window.close();}
+});
+test('denied test request is NOT presented as successfully received by the server',async()=>{
+ const a=app(true);try{
+  a.w.RS_MONITOR_CLIENT.setConsent(true);
+  a.w.document.getElementById('placeholder').innerHTML=a.w.RS_MONITOR_CLIENT.panelHtml();
+  a.w.fetch=async(url,opts)=>{a.records.push({url,opts});return {status:403,ok:false};};
+  a.w.document.getElementById('rs-monitor-test-send').click();
+  await drain();
+  const status=a.w.document.getElementById('rs-monitor-test-status').textContent;
+  assert.match(status,/НЕ принят/);
+  assert.doesNotMatch(status,/ПОДТВЕРЖДЁН сервером/);
+  assert.equal(JSON.parse(a.w.sessionStorage.getItem('rs_mon_queue_v1')).length,1);
+ }finally{a.dom.window.close();}
+});
