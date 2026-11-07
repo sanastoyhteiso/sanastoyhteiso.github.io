@@ -34,6 +34,10 @@ jobs:
           node --check admin/admin-page.js
           node --check study-diagnostics.js
           node --test release-checks/v3-i18n-ui-quality.test.cjs release-checks/v3-admin-access.test.cjs release-checks/v3-local-diagnostics.test.cjs
+      - name: Verify PROD one-owner admin claim grant is dry-run by default (offline only)
+        run: |
+          node --check admin/ops/grant-prod-admin-owner.cjs
+          node --test release-checks/prod-admin-claim-guard.test.cjs
       - name: Verify UI changes map to idempotent V3 event intents
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
