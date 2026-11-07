@@ -1850,3 +1850,7 @@
 ### RUN-20261107-111 / ЗАВЕРШИЛ / экран подтверждает публикацию новой редакции, не содержимое
 - 07.11.2026. Доказательство на скриншоте: в Firebase Console Firestore Rules базы `(default)` новая активная starred версия `Today • 6:08 AM`, предшествующая `Yesterday • 9:06 PM`. Это визуальное подтверждение публикации после действий владельца. **НЕ** подтверждает проект по скрытой на кадре шапке, точный исходный код применённых правил, серверное custom claim `admin=true`, документ `admin_metrics/current` или реальные allow/deny. Отдельный read-only Cloud readback обязателен, но новый Publish не нужен.
 - Главный Issue #10 дополнен текущим checkpoint. Никаких Cloud/Auth/Firestore/Pages/production main, private ID или персональных данных не меняли, действие только GitHub docs RELEASE DRAFT. Следующая безопасная проверка: открыть Authentication → Users в этом же Firebase-проекте и локально проверить наличие собственного Google-аккаунта (не присылать email/UID), затем trusted backend admin claim.
+
+
+### RUN-20261107-112 / НАЧАЛ / проверка наличия пользователей Firebase Authentication по скриншоту
+- 07.11.2026 Europe/Helsinki. Владелец прислал скриншот Firebase Console → Authentication → Users. Только визуальная проверка наличия существующих пользователей; **не копировать адреса, UID или данные чужих аккаунтов в публичный GitHub**. На кадре не показаны project ID и custom claims; не заключать, что админская роль назначена. Cloud/Auth/Rules не менять.
