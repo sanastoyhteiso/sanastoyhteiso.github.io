@@ -356,8 +356,9 @@
    var panel=d.createElement('div');panel.className='panel';panel.id='v3-finds-panel';
    var h=d.createElement('h2');h.textContent='Мои находки · V3';panel.appendChild(h);
    var intro=d.createElement('p');intro.className='hint';
-   intro.textContent='Введи услышанное слово в поле «Финское слово» выше. '+
-     'Если оно уже есть в общем словаре, добавь существующую карточку без дубля.';
+   intro.textContent='Введи финское слово в форме выше. Если оно уже есть в библиотеке, '+
+     'можно добавить его без повторного перевода. Для нового слова впиши русский перевод. '+
+     'Затем нажми кнопку добавления ниже.';
    panel.appendChild(intro);
    var topic=d.createElement('select');topic.className='control';topic.id='v3-find-topic';
    [['practice','Практика'],['study','Учёба'],['other','Другое']].forEach(function(p){
