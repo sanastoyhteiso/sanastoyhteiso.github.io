@@ -56,8 +56,8 @@ test('reject non-synthetic IDs, scopes, unknown keys, malformed and duplicate ev
   assert.throws(()=>preview(b),/INVALID_SYNTHETIC_SCORE/);
   const c=input([row(1,r)]);c.rows[0].kind='scope';
   assert.throws(()=>preview(c),/INVALID_SYNTHETIC_SCORE/);
-  const d=input([row(1,r)]);d.rows[0].counters.__proto__={x:1};
-  // "__proto__" setter mutates the object prototype and must be rejected.
+  const d=input([row(1,r)]);d.rows[0].counters=Object.assign(Object.create({x:1}),r);
+  // Malicious prototype is confined to this fixture; do not mutate shared test counters.
   assert.throws(()=>preview(d),/INVALID_SYNTHETIC_SCORE/);
   const e=input([row(1,r),row(1,r)]);
   assert.throws(()=>preview(e),/DUPLICATE_SYNTHETIC_EVENT/);
