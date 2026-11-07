@@ -1,0 +1,32 @@
+name: Isolated V3 pilot safety (no deployment)
+on:
+  pull_request:
+    paths:
+      - 'v3-preview/**'
+      - '.github/workflows/v3-pilot-safety.yml'
+  push:
+    branches: ['pilot/v3-readonly-live-domain-20261107']
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enforce changes under pilot path only
+        run: |
+          git fetch origin main
+          unexpected=$(git diff --name-only origin/main...HEAD | grep -Ev '^(v3-preview/|\.github/workflows/v3-pilot-safety\.yml$)' || true)
+          test -z "$unexpected" || { echo "Unexpected production-root modification:"; echo "$unexpected"; exit 1; }
+      - name: Check browser modules and local read-only safety
+        run: |
+          node --check v3-preview/family.js
+          node --check v3-preview/community.js
+          node --check v3-preview/pilot-access.js
+          node --check v3-preview/app.js
+          node --test v3-preview/pilot-safety.test.cjs
