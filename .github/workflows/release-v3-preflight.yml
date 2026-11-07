@@ -38,6 +38,10 @@ jobs:
         run: |
           node --check admin/ops/grant-prod-admin-owner.cjs
           node --test release-checks/prod-admin-claim-guard.test.cjs
+      - name: Verify PROD admin metrics owner probe is read-only and fail-closed (offline only)
+        run: |
+          node --check admin/ops/check-prod-admin-metrics-readonly.cjs
+          node --test release-checks/prod-admin-metrics-readonly-guard.test.cjs
       - name: Verify UI changes map to idempotent V3 event intents
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
