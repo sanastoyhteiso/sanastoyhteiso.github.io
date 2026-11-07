@@ -95,7 +95,28 @@ function sync(){if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())return 
  // The local account was live while HTTP requests ran; capture any new changes after apply.
  apply(events.concat(still));lastOk=Date.now();put(key('last_sync'),lastOk);setMessage(still.length?'Синхронизация частичная: изменения ожидают':'✓ Синхронизировано с личной Google-таблицей',still.length?'warning':'success');if(get(key('stats'),false)&&ownName())updatePublicStats();updateSubscriptionsSilent();return true;
  }).catch(function(e){setMessage('Ошибка синхронизации: '+e.message,'error');return false;}).then(function(ok){busy=false;setSyncBusy(false);return ok;});}
-function updatePublicStats(){var ss=own('rs_scores_v1',{}),learned=Object.keys(ss).filter(function(id){return (+ss[id].correct||0)>0;}).length;
+// Only a V3 owner's verified learning snapshot may be represented as V3.
+function currentLearnedCount(){
+ var v=window.RS_V3_RELEASE;
+ if(v&&v.isActive()){
+   var cloud=v.getState();if(!cloud||!cloud.scores)return null;
+   var valid={},all=(window.RS_DATA&&window.RS_DATA.terms||[]).concat(
+     window.RS_FAMILY&&window.RS_FAMILY.sharedEnabled()&&window.RS_DATA?
+       window.RS_DATA.phrases||[]:[],own('rs_user_words_v1',[]),subscribedTerms());
+   all.forEach(function(term){if(term&&term.id)valid[term.id]=true;});
+   return Object.keys(cloud.scores).filter(function(id){
+     return !!(valid[id]&&cloud.scores[id]&&cloud.scores[id].learned===true);
+   }).length;
+ }
+ var ss=own('rs_scores_v1',{});
+ return Object.keys(ss).filter(function(id){
+   var x=ss[id]||{};
+   return typeof x.learned==='boolean'?x.learned:(+x.correct||0)>0;
+ }).length;
+}
+function updatePublicStats(){
+ if(!uid()||!get(key('stats'),false)||!ownName())return;
+ var learned=currentLearnedCount();if(learned===null)return;
  if(learned===get(key('last_stats_count'),-1))return;
  var data={fields:{alias:{stringValue:ownName()},publicStats:{booleanValue:true},learned:{integerValue:String(learned)},updatedAt:{integerValue:String(Date.now())}}};
  firebase('PATCH','users/'+kv(uid()),data).then(function(){put(key('last_stats_count'),learned);}).catch(function(){});
@@ -107,13 +128,14 @@ function updateSubscriptionsSilent(){if(!conf.sheetsApiKey||conf.sheetsApiKey.in
 function ownName(){return get(key('name'),'');}
 function profile(){var display=(document.getElementById('community-name')||{}).value||ownName()||'';display=String(display).trim().slice(0,40);if(display.length<2){setMessage('Введи имя не короче 2 символов');return;}
  var show=!!(document.getElementById('community-public-stats')||{}).checked;
- var ss=own('rs_scores_v1',{}),learned=Object.keys(ss).filter(function(id){return (+ss[id].correct||0)>0;}).length;
+ var learned=currentLearnedCount();
+ if(learned===null){setMessage('Статистика V3 ещё не загружена; профиль не изменён','warning');return;}
  var data={fields:{alias:{stringValue:display},publicStats:{booleanValue:show},learned:{integerValue:String(learned)},updatedAt:{integerValue:String(Date.now())}}};
  firebase('PATCH','users/'+kv(uid()),data).then(function(){put(key('name'),display);put(key('stats'),show);if(window.RS_ACCOUNT)window.RS_ACCOUNT.profileSaved(display,show);setMessage('Профиль сохранён в облаке. Имя обновится на других устройствах после проверки аккаунта.','success');}).catch(function(e){setMessage('Профиль не сохранён: '+e.message,'error');});}
 function field(d,key,f){var v=d&&d.fields&&d.fields[key];return v?(v.stringValue!==undefined?v.stringValue:v.integerValue!==undefined?Number(v.integerValue):v.booleanValue!==undefined?v.booleanValue:f):f;}
 function refreshUsers(){if(!uid())return Promise.resolve([]);
  var url='https://firestore.googleapis.com/v1/projects/'+kv(fcfg.projectId)+'/databases/(default)/documents:runQuery';
- return window.RS_FAMILY.getToken().then(function(t){return call('POST',url,{structuredQuery:{from:[{collectionId:'users'}],where:{fieldFilter:{field:{fieldPath:'publicStats'},op:'EQUAL',value:{booleanValue:true}}},limit:100}},t);}).then(function(r){users=(r||[]).filter(function(x){return x.document;}).map(function(x){return {alias:field(x.document,'alias','Пользователь'),learned:field(x.document,'learned',0)};});return users;});}
+ return window.RS_FAMILY.getToken().then(function(t){return call('POST',url,{structuredQuery:{from:[{collectionId:'users'}],where:{fieldFilter:{field:{fieldPath:'publicStats'},op:'EQUAL',value:{booleanValue:true}}},limit:100}},t);}).then(function(r){users=(r||[]).filter(function(x){return x.document;}).map(function(x){return {alias:field(x.document,'alias','Пользователь'),learned:field(x.document,'learned',0),own:x.document.name.split('/').pop()===uid()};});return users;});}
 function refreshLibraries(){if(!uid())return Promise.resolve([]);
  var url='https://firestore.googleapis.com/v1/projects/'+kv(fcfg.projectId)+'/databases/(default)/documents:runQuery';
  return window.RS_FAMILY.getToken().then(function(t){return call('POST',url,{structuredQuery:{from:[{collectionId:'libraries'}],where:{fieldFilter:{field:{fieldPath:'visibility'},op:'EQUAL',value:{stringValue:'public'}}},limit:100}},t);}).then(function(r){feed=(r||[]).filter(function(x){return x.document;}).map(function(x){var d=x.document;return {id:d.name.split('/').pop(),title:field(d,'title','Без названия'),category:field(d,'category',''),ownerName:field(d,'ownerName',''),count:field(d,'count',0),sheetId:field(d,'sheetId',''),ownerUid:field(d,'ownerUid','')};});return feed;});}
@@ -147,7 +169,7 @@ function dataPanel(){return '<div class="panel"><h2>☁ Личный Google Driv
  '<div class="panel"><h2>Поделиться своим словарём</h2><p class="hint">Создаётся ОТДЕЛЬНАЯ общедоступная Google-таблица только со словами выбранной темы. Личный прогресс остаётся закрытым.</p><label class="field"><span>Название публикуемой коллекции</span><input class="control" id="comm-publish-title" placeholder="Например, Финский для работы"></label><label class="field"><span>Тема из моих слов</span><select id="comm-publish-cat" class="control">'+categories()+'</select></label><p><button class="btn good" data-community="publish">Опубликовать отдельную копию</button></p></div>';
 }
 function categories(){var a={},t='';own('rs_user_words_v1',[]).forEach(function(w){if(w&&w.cat)a[w.cat]=true;});Object.keys(a).forEach(function(k){t+='<option value="'+escape(k)+'">'+escape(k)+'</option>';});return t||'<option value="">Нет личных слов</option>';}
-function renderUsersView(root){root.innerHTML='<div class="panel"><h2>Участники сообщества</h2><p>Показываем только тех, кто добровольно открыл статистику. Никаких адресов почты или чужих личных слов.</p><button class="btn white" data-community="users">↻ Обновить список</button><p id="community-status" class="hint">'+escape(message)+'</p></div><div class="dictionary-list">'+(users.length?users.map(function(p){return '<div class="dict-row"><div><b>'+escape(p.alias)+'</b><p>'+Number(p.learned)+' выученных слов</p></div></div>';}).join(''):'<div class="empty">Пока нет публичных профилей</div>')+'</div>';}
+function renderUsersView(root){root.innerHTML='<div class="panel"><h2>Участники сообщества</h2><p>Показываем только тех, кто добровольно открыл статистику. Никаких адресов почты или чужих личных слов.</p><button class="btn white" data-community="users">↻ Обновить список</button><p id="community-status" class="hint">'+escape(message)+'</p></div><div class="dictionary-list">'+(users.length?users.map(function(p){return '<div class="dict-row"><div><b>'+escape(p.alias)+'</b><p>'+(p.own&&window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()&&currentLearnedCount()!==null?currentLearnedCount()+' выучено в V3 (текущий аккаунт)':'Публичный счётчик: '+Number(p.learned)+' (версия не указана)')+'</p></div></div>';}).join(''):'<div class="empty">Пока нет публичных профилей</div>')+'</div>';}
 function renderLibraryView(){var root=document.getElementById('main-content');if(!root||!root.querySelector('#community-library-list'))return;var s=get(key('subs'),{});
  root.querySelector('#community-library-list').innerHTML=feed.length?feed.map(function(b){var yes=s[b.id]&&s[b.id].active;return '<div class="dict-row"><div><b>'+escape(b.title)+'</b><p>'+escape(b.category)+' · '+Number(b.count)+' слов · '+escape(b.ownerName)+'</p><small>Опубликованная тематическая коллекция</small></div><button class="tiny-btn" data-community="'+(yes?'unsub':'sub')+'" data-id="'+escape(b.id)+'">'+(yes?'Отключить':'Подключить')+'</button>'+(b.ownerUid===uid()?'<button class="tiny-btn" data-community="unpublish" data-id="'+escape(b.id)+'">Отозвать доступ</button>':'')+'</div>';}).join(''):'<div class="empty">Публичные словари пока не найдены</div>';}
 function renderLibrary(root){root.innerHTML='<div class="panel"><h2>Общая библиотека</h2><p>Любой владелец может опубликовать отдельную копию своих слов. Чужие словари подключаются для изучения, но не меняют прогресс автора.</p><div class="btn-row"><button class="btn white" data-community="libraries">↻ Найти словари</button><button class="btn white" data-community="refresh-subs">Обновить подписки</button></div><p id="community-status" class="hint">'+escape(message)+'</p></div><div class="dictionary-list" id="community-library-list"></div>';renderLibraryView();}
@@ -156,6 +178,10 @@ function onAuth(){googleToken='';sheetId='';lastOk=Number(get(key('last_sync'),0
 function onLogout(){googleToken='';googleEmail='';sheetId='';lastOk=0;feed=[];users=[];emailState='checking';emailNote='Войди для проверки email';emailBusy=false;emailChecking=false;setMessage('Выход из аккаунта');if(window.RS_ACCOUNT)window.RS_ACCOUNT.onLogout();}
 function init(){document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('[data-community]'):null;if(!b)return;var act=b.getAttribute('data-community'),id=b.getAttribute('data-id');if(act==='drive')connectDrive();else if(act==='sync')sync();else if(act==='verify')requestEmail();else if(act==='check-email')checkEmail();else if(act==='profile')profile();else if(act==='publish')publish();else if(act==='users'){refreshUsers().then(function(){renderUsersView(document.getElementById('main-content'));}).catch(function(e){setMessage(e.message);});}else if(act==='libraries'){refreshLibraries().then(renderLibraryView).catch(function(e){setMessage(e.message);});}else if(act==='sub')subscribe(id);else if(act==='unsub')unsubscribe(id);else if(act==='unpublish')unpublish(id);else if(act==='refresh-subs')updateSubscriptions();});
  document.addEventListener('visibilitychange',function(){if(!document.hidden&&uid()){if(googleToken&&Date.now()-lastOk>120000)sync();if(emailState!=='verified'&&!emailChecking&&Date.now()-lastEmailCheck>5000)checkEmail();}});window.addEventListener('focus',function(){if(uid()&&emailState!=='verified'&&!emailChecking&&Date.now()-lastEmailCheck>5000)checkEmail();});window.addEventListener('online',function(){if(googleToken)sync();});}
-window.RS_COMM={sync:sync,onLocalChange:onLocalChange,onAuth:onAuth,onLogout:onLogout,dataPanel:dataPanel,renderUsers:renderUsersView,renderLibrary:renderLibrary,subscribedTerms:subscribedTerms,refreshLibraries:refreshLibraries,refreshUsers:refreshUsers,connectDrive:connectDrive,updateSubscriptions:updateSubscriptions,materialize:materialize,unpack:unpack};
+window.RS_COMM={sync:sync,onLocalChange:onLocalChange,onAuth:onAuth,onLogout:onLogout,dataPanel:dataPanel,renderUsers:renderUsersView,renderLibrary:renderLibrary,subscribedTerms:subscribedTerms,refreshLibraries:refreshLibraries,refreshUsers:refreshUsers,connectDrive:connectDrive,updateSubscriptions:updateSubscriptions,materialize:materialize,unpack:unpack,
+ onV3Confirmed:function(){
+   // Only after acknowledged V3 cloud sync and a prior opt-in to public stats.
+   if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())updatePublicStats();
+ }};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

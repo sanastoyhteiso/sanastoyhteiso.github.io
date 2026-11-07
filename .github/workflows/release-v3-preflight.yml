@@ -88,6 +88,8 @@ jobs:
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
+      - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)
+        run: node --test release-checks/v3-public-profile-stats.test.cjs
       - name: PREVIEW ONLY real full-source NEW-009 candidate in VM (does NOT fix checked-out source)
         run: node --test release-checks/v3-refresh-candidate-fullsource.test.cjs
       - name: Exercise two V3 IndexedDB devices, offline 13-event replay and account isolation (synthetic)
