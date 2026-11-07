@@ -2305,3 +2305,9 @@
 - Проверены инструкция docs/TELEMETRY_RUN143_BACKEND_DEPLOY_RU.md, PR15 DRAFT head 43c874206e37ddf72a1f9401b854380aee69a9c5, текущий журнал/мастер-план/Issue10: RUN143 CLOSED OFFLINE, более поздних RUN нет. Старый release PR9 уже опубликован в RUN140; эта работа продолжается в feat/trusted-telemetry-worker-run143, а не в старой release ветке.
 - План: авторизация владельца через dash.cloudflare.com, ревью Worker/D1/клиента и фактических Free лимитов, отдельная D1/Worker, DB binding, защищённый HASH_KEY без вывода, cron; synthetic live allow/deny + admin readback без утечки JWT/UID; затем real endpoint/config/cache PR→CI→Pages и авторизованная админ-проверка. Все результаты по фактам; до успешного live readback NEW-021 OPEN.
 - Файлы: monitoring/worker/**, monitoring-client.js, admin/monitoring-admin.js, config.js, index.html/sw.js и связанные тесты при необходимости; этот журнал/мастер-план/Issue10. Не трогать реальные старые backup payload, Sheets, Firebase billing/Auth/Rules, чужие данные или ZIP.
+
+
+### RUN-20261107-144 / ДЕЙСТВИЕ / ЖДЁМ ВХОДА ВЛАДЕЛЬЦА В CLOUDFLARE
+- Открыт реальный Work Cloud Browser: https://dash.cloudflare.com/login, видна штатная форма Sign in to Cloudflare. Поддерживается ручная передача этой вкладки владельцу; пароль/OTP не запрашиваются в чате и не записываются в GitHub.
+- На текущем checkpoint Worker/D1/секрет/cron НЕ созданы, сайт/endpoint НЕ включён, live security/admin acceptance НЕ выполнена. RUN144 продолжается после входа; это не DONE.
+- Следующее действие после сообщения владельца о входе: проверить видимый авторизованный dashboard в той же вкладке, прочитать monitoring/worker/index.mjs + schema.sql + клиент/тесты, подтвердить Free план и продолжить развёртывание/проверку/PR. Тариф Firebase и секреты не затрагивать/не публиковать.
