@@ -91,3 +91,16 @@ test('admin adapter accepts only current verified aggregate data, no stale or gu
   await assert.rejects(a.w.RS_MONITOR_ADMIN.read(a.user),/Invalid telemetry response/);
  }finally{a.dom.window.close();}
 });
+
+test('opted-in technical failures queue offline and transmit after connectivity returns',async()=>{
+ const a=app(true);try{
+  a.w.RS_MONITOR_CLIENT.setConsent(true);
+  Object.defineProperty(a.w.navigator,'onLine',{configurable:true,value:false});
+  assert.equal(a.w.RS_V3_LOCAL_DIAGNOSTICS.record('CACHE_MISMATCH'),true);
+  await drain();assert.equal(a.records.length,0);
+  Object.defineProperty(a.w.navigator,'onLine',{configurable:true,value:true});
+  a.w.dispatchEvent(new a.w.Event('online'));await drain();
+  assert.equal(a.records.length,1);
+  assert.equal(JSON.parse(a.records[0].opts.body).code,'CACHE_MISMATCH');
+ }finally{a.dom.window.close();}
+});
