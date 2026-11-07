@@ -105,9 +105,9 @@ test('admin scripts stay read-only and service worker scripts match HTML',()=>{
  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
  const a=fs.readFileSync(path.join(root,'admin/index.html'),'utf8');
  const i=fs.readFileSync(path.join(root,'index.html'),'utf8');
- assert.match(a,/admin-page\.js\?v=admin-health-prod-2/);
+ assert.match(a,/admin-page\.js\?v=admin-health-prod-3/);
  assert.match(i,/admin-entry\.js\?v=admin-auth-prod-1/);
- assert.match(sw,/admin-page\.js\?v=admin-health-prod-2/);
+ assert.match(sw,/admin-page\.js\?v=admin-health-prod-3/);
  assert.match(sw,/admin-entry\.js\?v=admin-auth-prod-1/);
  assert.doesNotMatch(page,/\.set\(|\.update\(|\.delete\(/);
 });

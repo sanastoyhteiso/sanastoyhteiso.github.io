@@ -64,7 +64,7 @@ test('localized preview version is synchronized in HTML and offline cache',()=>{
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
   assert.match(index,/i18n\.js\?v=v3-approved-ui-4/);
   assert.match(sw,/i18n\.js\?v=v3-approved-ui-4/);
-  const cache=sw.match(/CACHE_NAME='(riveria-sanasto-community-v3.0.0-rc10)'/);
+  const cache=sw.match(/CACHE_NAME='(riveria-sanasto-community-v3.0.0-rc13)'/);
   assert.ok(cache,'TEST cache namespace must be content-addressed for old Safari; see study-offline-cache-version.test.cjs');
   // The separate offline regression recomputes the digest from every cached asset.
   // This assertion keeps localization checks compatible with that stronger gate.
@@ -92,8 +92,8 @@ test('release admin page uses neutral FI/RU subtitles and current admin cache ve
   assert.doesNotMatch(js,/тестовый сайт|testisivusto/);
   assert.match(js,/Закрытый кабинет • проверка прав/);
   assert.match(js,/Yksityinen hallintanäkymä • käyttöoikeuksien tarkistus/);
-  assert.ok(html.includes('admin-page.js?v=admin-health-prod-2'));
-  assert.ok(sw.includes('admin-page.js?v=admin-health-prod-2'));
+  assert.ok(html.includes('admin-page.js?v=admin-health-prod-3'));
+  assert.ok(sw.includes('admin-page.js?v=admin-health-prod-3'));
 });
 test('release retains private existing default for student sharing',()=>{
   const family=fs.readFileSync(path.join(root,'family.js'),'utf8');

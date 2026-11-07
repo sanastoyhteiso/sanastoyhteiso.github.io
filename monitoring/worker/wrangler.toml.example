@@ -1,0 +1,24 @@
+# Copy to wrangler.toml within monitoring/worker ONLY after owner chooses
+# a Cloudflare Free plan and creates a NEW D1 database. No paid plan assumed.
+name = "sanastoyhteiso-v3-telemetry"
+main = "index.mjs"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[vars]
+FIREBASE_PROJECT_ID = "riveria-sanasto-community-test"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sanastoyhteiso-v3-telemetry"
+database_id = "REPLACE_WITH_OWNER_D1_DATABASE_ID"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Required secret (NEVER commit): HASH_KEY (random >=32 chars).
+# Commands for owner-controlled Work only:
+#   npx wrangler d1 create sanastoyhteiso-v3-telemetry
+#   npx wrangler d1 execute sanastoyhteiso-v3-telemetry --remote --file schema.sql
+#   npx wrangler secret put HASH_KEY
+#   npx wrangler deploy

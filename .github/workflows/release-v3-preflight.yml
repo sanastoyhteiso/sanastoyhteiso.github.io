@@ -13,6 +13,7 @@ on:
       - 'config.js'
       - 'release-checks/**'
       - 'backup-v3/**'
+      - 'monitoring/**'
       - '.github/workflows/release-v3-preflight.yml'
   workflow_dispatch:
 permissions:
@@ -52,6 +53,8 @@ jobs:
         run: node release-checks/v3-offline-recovery-contract.test.cjs
       - name: Check release shadow preserves T/M/P/H My Finds (NEW-012)
         run: node --test release-checks/v3-shadow-finds-id-contract.test.cjs
+      - name: Verify trusted Firebase JWT/D1 monitoring Worker (offline only)
+        run: node --test release-checks/v3-telemetry-worker-d1.test.mjs
       - name: Test private RAW Sheets runner with fake Firestore and Sheets (no cloud)
         run: node release-checks/v3-private-sheets-flow.test.cjs
       - name: Check TEST-only Apps Script owner approval, lock, trigger and Google API mocks
@@ -86,6 +89,10 @@ jobs:
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
+      - name: Verify owner-confirmed telemetry production URL and consent gate (NO network)
+        run: node --test release-checks/v3-telemetry-production-config.test.cjs
+      - name: Verify opt-in telemetry browser client and admin adapter (NO network)
+        run: node --test release-checks/v3-telemetry-client-admin.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)

@@ -59,6 +59,12 @@
  function at(v){if(v&&typeof v.toMillis==='function')return v.toMillis();if(typeof v==='string'){var n=Date.parse(v);return isFinite(n)?n:0;}return 0;}
  function fresh(x,minutes){var ms=at(x);return ms>0&&Date.now()>=ms&&Date.now()-ms<minutes*60*1000;}
  function newest(){return !!(report&&fresh(report.updatedAt,15));}
+ // Valid backend summaries provide real error counts, but site health may
+ // remain unverified until two-device/coverage checks are completed.
+ function liveCounts(){return !!(report&&report.backendConnected===true&&
+   report.serverDataOnly===true&&newest()&&
+   typeof report.errors24h==='number'&&
+   Array.isArray(report.errorGroups));}
  // Do not convert a mere lastUpdated timestamp or self-asserted active flag into OK.
  // Future trusted server aggregators must attest freshness of BOTH pipeline stages.
  function usableReport(){return !!(report&&newest()&&report.monitoringActive===true&&
@@ -86,14 +92,14 @@
      b.addEventListener('click',function(){tab=key;render();});
    });
    var p=el('admin-view');wipe(p);
-   var current=usableReport();
+   var current=usableReport(),live=liveCounts();
    if(tab==='overview'){
       var g=add(p,'div','grid','');
       card(g,k('site'),statusDisplay());
       card(g,k('seen'),newest()?new Date(at(report.updatedAt)).toLocaleString():t().noData);
-      card(g,k('count24'),value(current&&report?validNum(report.errors24h):null));
+      card(g,k('count24'),value((current||live)&&report?validNum(report.errors24h):null));
       card(g,k('active7'),value(current&&report?validNum(report.active7d):null));
-      card(g,k('version'),value(current&&report?safeLabel(report.releaseVersion):null));
+      card(g,k('version'),value((current||live)&&report?safeLabel(report.releaseVersion):null));
    } else if(tab==='updates'){
       var x=add(p,'div','panel','');
       add(x,'h2','',k('updateTitle'));add(x,'p','notice',k('blocked'));
@@ -104,10 +110,21 @@
       add(z,'h2','',k(heading));
       if(tab==='backups'){
         add(z,'p','',verifiedBackupDate()||t().noData);
+      }else if(tab==='browsers'&&live&&Array.isArray(report.browserGroups)){
+        if(!report.browserGroups.length)add(z,'p','',t().noData);
+        else report.browserGroups.forEach(function(x){
+          if(x&&typeof x.browser==='string'&&/^[a-z-]{3,20}$/.test(x.browser)&&
+             validNum(x.count)!==null)add(z,'p','',x.browser+' — '+x.count);
+        });
       }else if(tab==='sync'){
         var sc=current&&report?validNum(report.syncFailures24h):null;
+        if(sc===null&&live){
+          sc=0;report.errorGroups.forEach(function(x){
+            if(x&&/^SYNC_[A-Z_]{3,40}$/.test(x.code)&&validNum(x.count)!==null)sc+=x.count;
+          });
+        }
         add(z,'p','',sc===null?t().noData:String(sc));
-      }else if(tab==='errors'&&current&&report&&Array.isArray(report.errorGroups)){
+      }else if(tab==='errors'&&(current||live)&&report&&Array.isArray(report.errorGroups)){
         // SERVER MUST aggregate and sanitize. Only known code identifiers and counts; NEVER raw messages.
         var count=0;
         report.errorGroups.slice(0,30).forEach(function(x){
@@ -136,6 +153,9 @@
    var action=add(p,'button','','');
    action.textContent=t().refresh;action.type='button';action.disabled=busy;
    action.addEventListener('click',read);
+   if(live&&!current){
+     add(p,'p','muted','Серверный журнал подключён: показаны реальные полученные технические коды. Проверка охвата всех устройств ещё не завершена; отсутствие ошибок не доказывает исправность.');
+   }
    add(p,'p','muted',report?t().noPersonal:t().missing);
  }
  function clearAccess(message){
@@ -156,6 +176,16 @@
      report=null;busy=false;text('auth-status',t().failed);render();
    }
    try{
+     // Production uses a dedicated authenticated backend only when owner
+     // configured it. Never issue direct browser writes to telemetry_reports.
+     var telemetry=w.RS_MONITOR_ADMIN;
+     if(telemetry&&telemetry.configured()){
+       telemetry.read(user).then(function(result){
+         if(!sameSession(n,user))return;
+         report=result;busy=false;text('auth-status','');render();
+       },failed);
+       return;
+     }
      db.collection('admin_metrics').doc('current').get({source:'server'}).then(function(snapshot){
        if(!sameSession(n,user))return;
        try{
