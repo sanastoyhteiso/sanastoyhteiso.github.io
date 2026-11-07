@@ -36,7 +36,7 @@ test('exactly ten official owner exam topic filters with FI/RU notes, no EI incl
  const {d}=source();
  assert.equal(d.examTopics.length,10);
  assert.deepEqual(Array.from(d.examTopics,x=>x.id),Array.from({length:10},(_,i)=>'EXAM'+String(i+1).padStart(2,'0')));
- assert.deepEqual(Array.from(d.examTopics,x=>x.pages),['7–17','25–30','31–52','53–66','67–80','81–89','91–106','107–114','131–146','161–190']);
+ assert.deepEqual(Array.from(d.examTopics,x=>x.pages),['7–12, 17','25–30','31–52','53–66','67–80','81–89','91–106','107–114','131–146','161–190']);
  for(const topic of d.examTopics){
   const items=d.terms.filter(x=>Array.isArray(x.examTopics)&&x.examTopics.includes(topic.id));
   assert.ok(items.length>=4,topic.id+' must offer multiple meaningful cards for practice');
