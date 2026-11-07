@@ -42,6 +42,10 @@ jobs:
         run: |
           node --check admin/ops/check-prod-admin-metrics-readonly.cjs
           node --test release-checks/prod-admin-metrics-readonly-guard.test.cjs
+      - name: Verify deployed PROD Firestore Rules GET-only checkpoint (offline only)
+        run: |
+          node --check admin/ops/check-prod-published-rules-readonly.cjs
+          node --test release-checks/prod-published-rules-readonly-guard.test.cjs
       - name: Verify UI changes map to idempotent V3 event intents
         run: node release-checks/v3-diff.test.cjs
       - name: Check offline owner safety, event deduplication and dry-run restore
