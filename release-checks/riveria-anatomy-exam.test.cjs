@@ -24,6 +24,8 @@ test('61 user Latin terms integrated without replacing 1,296 base term IDs',()=>
  assert.equal(n,1296);
  assert.equal(d.terms.find(x=>x.id==='T00574'),originalCor,'in-place enrichment preserves ID and stored progress');
  assert.equal(originalCor.la,'cor');
+ assert.ok(d.terms.find(x=>x.fi==='haima').examTopics.includes('EXAM09'),
+   'pancreas belongs to both digestive and hormonal systems, same existing ID');
  assert.ok(originalCor.examNoteFi.includes('Rintaontelossa'));
  assert.ok(originalCor.examNoteRu.includes('грудной'));
  assert.equal(d.terms.filter(x=>x.la&&x.examTopics).length,61);
