@@ -13,6 +13,7 @@ on:
       - 'config.js'
       - 'release-checks/**'
       - 'backup-v3/**'
+      - 'monitoring/**'
       - '.github/workflows/release-v3-preflight.yml'
   workflow_dispatch:
 permissions:
@@ -52,6 +53,8 @@ jobs:
         run: node release-checks/v3-offline-recovery-contract.test.cjs
       - name: Check release shadow preserves T/M/P/H My Finds (NEW-012)
         run: node --test release-checks/v3-shadow-finds-id-contract.test.cjs
+      - name: Verify trusted Firebase JWT/D1 monitoring Worker (offline only)
+        run: node --test release-checks/v3-telemetry-worker-d1.test.mjs
       - name: Test private RAW Sheets runner with fake Firestore and Sheets (no cloud)
         run: node release-checks/v3-private-sheets-flow.test.cjs
       - name: Check TEST-only Apps Script owner approval, lock, trigger and Google API mocks
