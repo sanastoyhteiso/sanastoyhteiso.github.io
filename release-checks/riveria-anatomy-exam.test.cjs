@@ -80,7 +80,7 @@ test('10 exam entries appear in Cards / Quiz / Dictionary dropdown, no Latin lea
    assert.equal(opts.length,10,'missing topic dropdown in '+view);
    assert.ok(opts[0].textContent.includes('Ihmiselimistö ja solut'));
    assert.ok(opts[9].textContent.includes('Hermosto ja aistit'));
-   assert.ok(opts[0].textContent.includes('7–17'));
+   assert.ok(opts[0].textContent.includes('7–12, 17'));
    const direction=b.d.querySelectorAll('select[id$="-dir"] option');
    for(const x of direction)assert.ok(!/\bla\b|latin/i.test(x.value),'Latin must not appear as learning direction');
   }
