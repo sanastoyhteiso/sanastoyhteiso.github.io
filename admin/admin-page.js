@@ -1,4 +1,4 @@
-/* RELEASE DRAFT admin page; access requires existing verified production Firebase claim. No global metrics exist until a protected backend is live.
+/* RELEASE DRAFT admin page; site technical failures only, never wrong quiz answers or grades. Access requires existing verified production Firebase claim. No global metrics exist until a protected backend is live.
  * All queries are read-only, disabled without verified Firebase admin claim, and restricted to
  * a fixed aggregate path. No private study collections, user lists, raw errors, tokens or secrets.
  * Safari iOS12 / ES5 compatible.
@@ -14,23 +14,23 @@
   denied:'В этом аккаунте нет подтверждённой роли администратора. Доступ закрыт.',
   authError:'Не удалось проверить права. Обнови страницу или повторно войди.',
   note:'Отсутствие сообщений не доказывает, что ошибок нет. Для статуса «ОК» нужны работающий мониторинг и свежие агрегированные данные.',
-  overview:'Обзор',errors:'Ошибки',browsers:'Браузеры',sync:'Синхронизация',backups:'Резервные копии',updates:'Обновления',audit:'Аудит',
+  overview:'Обзор',errors:'Сбои сайта',browsers:'Браузеры',sync:'Синхронизация',backups:'Резервные копии',updates:'Обновления',audit:'Аудит',
   noData:'Нет данных',failed:'Сбой подключения агрегатов',ok:'ОК',problem:'Проблема',loading:'Загрузка сводки…',
-  site:'Состояние сайта',seen:'Последняя сводка',count24:'Ошибки за 24 часа',active7:'Активность за 7 дней',
-  errorGroups:'Группы ошибок',version:'Версия сайта',browserTitle:'Ошибки по браузерам',syncTitle:'Ошибки синхронизации',
+  site:'Состояние сайта',seen:'Последняя сводка',count24:'Технические сбои за 24 часа',active7:'Активность за 7 дней',
+  errorGroups:'Виды сбоев сайта',version:'Версия сайта',browserTitle:'Ошибки по браузерам',syncTitle:'Ошибки синхронизации',
   backupTitle:'Последняя проверенная копия',auditTitle:'Последние действия администратора',
   updateTitle:'Загрузка одного пакета обновления',blocked:'Функция публикации заблокирована до подключения защищённого сервера, проверки подписи/хэшей, тестов и возможности отката. Текущая страница не обновляет GitHub.',
-  refresh:'Обновить сводку',missing:'Серверные метрики пока не подключены. Журнал ошибок остальных учеников недоступен.',
+  refresh:'Обновить сводку',missing:'Общий мониторинг сбоев сайта пока не подключён. Сбои с других устройств здесь не видны.',
   noPersonal:'Личные ответы и приватные словари учеников здесь не показываются.',
-  localErrors:'Ошибки этой вкладки',localScope:'Только технические коды и время. Журнал не отправляется на сервер, другие устройства здесь не видны.',localEmpty:'В этой вкладке ошибок не записано. Это не доказывает, что сайт работает без ошибок.',remoteOff:'Общий серверный журнал пока не подключён.'},
+  localErrors:'Технические сбои этой вкладки',localScope:'Только коды сбоев сайта и время, без учебных ответов. Журнал не отправляется на сервер; другие устройства здесь не видны.',localEmpty:'В этой вкладке ошибок не записано. Это не доказывает, что сайт работает без ошибок.',remoteOff:'Общий серверный журнал пока не подключён.'},
  fi:{title:'Ylläpito',sub:'Yksityinen hallintanäkymä • käyttöoikeuksien tarkistus',checking:'Ylläpito-oikeuksia tarkistetaan…',
   notReady:'Kirjautumispalvelu ei ole käytettävissä.',signIn:'Kirjaudu ensin opiskelusivulla Google-tilillä.',
   denied:'Tällä tilillä ei ole ylläpito-oikeuksia.',authError:'Oikeuksien tarkistus epäonnistui.',
   note:'Virheilmoitusten puuttuminen ei todista toimivuutta. OK vaatii toimivan seurannan ja tuoreet tiedot.',
-  overview:'Yhteenveto',errors:'Virheet',browsers:'Selaimet',sync:'Synkronointi',backups:'Varmuuskopiot',updates:'Päivitykset',audit:'Toimintaloki',
+  overview:'Yhteenveto',errors:'Sivuston häiriöt',browsers:'Selaimet',sync:'Synkronointi',backups:'Varmuuskopiot',updates:'Päivitykset',audit:'Toimintaloki',
   noData:'Ei tietoja',failed:'Koontitietoja ei voitu lukea',ok:'OK',problem:'Ongelma',loading:'Ladataan tietoja…',
-  site:'Sivuston tila',seen:'Viimeisin päivitys',count24:'Virheet 24 tunnissa',active7:'Aktiivisuus 7 päivässä',
-  errorGroups:'Virheryhmät',version:'Sivuston versio',browserTitle:'Virheet selaimittain',syncTitle:'Synkronointivirheet',
+  site:'Sivuston tila',seen:'Viimeisin päivitys',count24:'Tekniset häiriöt 24 tunnissa',active7:'Aktiivisuus 7 päivässä',
+  errorGroups:'Sivuston häiriötyypit',version:'Sivuston versio',browserTitle:'Virheet selaimittain',syncTitle:'Synkronointivirheet',
   backupTitle:'Viimeisin tarkistettu varmuuskopio',auditTitle:'Ylläpidon viimeisimmät toimet',
   updateTitle:'Yhden päivityspaketin lataus',blocked:'Julkaisu on estetty, kunnes suojattu palvelin, tiedostotarkastukset, testit ja palautus ovat käytettävissä.',
   refresh:'Päivitä tiedot',missing:'Palvelimen koontitietoja ei ole yhdistetty.',noPersonal:'Oppilaiden yksityisiä vastauksia ei näytetä.',
@@ -39,14 +39,14 @@
   notReady:'Firebase Authentication is unavailable.',signIn:'First sign in to the study site with Google.',
   denied:'This account has no verified administrator role.',authError:'Could not verify permissions.',
   note:'No error reports does not prove the site is healthy. OK requires live monitoring and fresh aggregate data.',
-  overview:'Overview',errors:'Errors',browsers:'Browsers',sync:'Sync',backups:'Backups',updates:'Updates',audit:'Audit',
+  overview:'Overview',errors:'Site failures',browsers:'Browsers',sync:'Sync',backups:'Backups',updates:'Updates',audit:'Audit',
   noData:'No data',failed:'Aggregate data unavailable',ok:'OK',problem:'Problem',loading:'Loading metrics…',
-  site:'Site health',seen:'Last report',count24:'Errors in 24h',active7:'Active in 7 days',
-  errorGroups:'Error groups',version:'Site version',browserTitle:'Errors by browser',syncTitle:'Sync failures',
+  site:'Site health',seen:'Last report',count24:'Technical failures in 24h',active7:'Active in 7 days',
+  errorGroups:'Site failure groups',version:'Site version',browserTitle:'Errors by browser',syncTitle:'Sync failures',
   backupTitle:'Last verified backup',auditTitle:'Recent admin actions',
   updateTitle:'One-file update package',blocked:'Publishing is disabled until a protected backend, file verification, tests and rollback are ready.',
-  refresh:'Refresh metrics',missing:'Server-wide metrics are not connected.',noPersonal:'Private study answers are never displayed.',
-  localErrors:'Errors in this browser tab',localScope:'Only technical codes and timestamps. Not uploaded; events from other devices are unavailable.',localEmpty:'No errors recorded in this tab. This is not evidence of a healthy site.',remoteOff:'Shared server-side error logging is not connected yet.'}
+  refresh:'Refresh metrics',missing:'Site-wide technical failure monitoring is not connected.',noPersonal:'Private study answers are never displayed.',
+  localErrors:'Technical failures in this tab',localScope:'Only site failure codes and times; no learning answers. Not uploaded; other devices are unavailable.',localEmpty:'No errors recorded in this tab. This is not evidence of a healthy site.',remoteOff:'Shared server-side error logging is not connected yet.'}
  };
  function t(){return labels[locale]||labels.ru;}
  function el(id){return d.getElementById(id);}
