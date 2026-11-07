@@ -321,15 +321,19 @@
    Object.keys(words).forEach(function(id){all.push(words[id]);});
    return finds.matching(all,query);
  }
- function formWord(form){
+ function formWord(form,topicName,noteText){
    if(!active())return Promise.reject(Error('V3 inactive'));
+   if(!form||!form.elements||!form.elements.fi||!form.elements.ru)return Promise.reject(Error('Форма слова недоступна'));
    var fi=form.elements.fi.value.trim(),ru=form.elements.ru.value.trim();
-   if(!fi||!ru||fi.length>120||ru.length>180)
-     return Promise.reject(Error('Введите FI и RU; длина не более 120/180 символов'));
+   if(!fi||fi.length>120||ru.length>180)return Promise.reject(Error('Финское слово: до 120 символов; перевод: до 180'));
+   var topic=/^(practice|study|other)$/.test(topicName||'')?topicName:'other';
+   var note=typeof noteText==='string'?noteText.trim():'';
+   if(note.length>350)return Promise.reject(Error('Заметка не длиннее 350 символов'));
+   var meta={list:'finds',added:true,topic:topic,note:note};
    var matched=wordChoices(fi);
-   if(matched.exact.length)
-     return direct('collection_set',matched.exact[0].id,
-       {list:'finds',added:true,topic:'other',note:''});
+   if(matched.exact.length)return direct('collection_set',matched.exact[0].id,meta);
+   // Never silently combine related inflected forms.
+   if(!ru)return Promise.reject(Error('Для нового слова заполни русский перевод выше.'));
    var owner=uid;
    return finds.personalId(owner,fi,sha,w.crypto).then(function(id){
      if(!active()||uid!==owner)throw Error('Auth changed');
@@ -341,10 +345,10 @@
      }
      return direct('word_upsert',id,{fi:fi,ru:ru,en:''});
    }).then(function(){
+     if(!active()||uid!==owner)throw Error('Auth changed');
      var x=wordChoices(fi).exact[0];
      if(!x)throw Error('New personal word not yet materialized');
-     return direct('collection_set',x.id,
-       {list:'finds',added:true,topic:'other',note:''});
+     return direct('collection_set',x.id,meta);
    });
  }
  function renderFinds(parent){
@@ -363,13 +367,49 @@
    var note=d.createElement('input');note.type='text';note.id='v3-find-note';
    note.className='control';note.maxLength=350;note.placeholder='Личная заметка (необязательно)';
    panel.appendChild(note);
+   var addBtn=d.createElement('button');addBtn.type='button';addBtn.className='btn good';
+   addBtn.id='v3-find-add';addBtn.textContent='＋ Добавить в мои находки · V3';panel.appendChild(addBtn);
+   var feedback=d.createElement('p');feedback.className='hint';
+   feedback.id='v3-find-feedback';feedback.setAttribute('role','status');panel.appendChild(feedback);
    var matches=d.createElement('div');matches.id='v3-find-matches';panel.appendChild(matches);
    var chosen=d.createElement('div');chosen.id='v3-find-saved';panel.appendChild(chosen);
    parent.appendChild(panel);
    var input=parent.querySelector('#add-form [name="fi"]');
+   var form=parent.querySelector('#add-form');
+   if(form){form.elements.fi.maxLength=120;form.elements.ru.maxLength=180;}
+   function message(msg,bad){feedback.textContent=msg;feedback.className=bad?'notice':'hint';}
+   addBtn.addEventListener('click',function(){
+     if(!form||!input){message('Форма недоступна: открой «Новое слово» снова.',true);return;}
+     var fi=form.elements.fi.value.trim(),ru=form.elements.ru.value.trim();
+     if(!fi){message('Сначала введи финское слово выше.',true);return;}
+     addBtn.disabled=true;message('Сохраняем находку V3…',false);
+     formWord(form,topic.value,note.value).then(function(){
+       if(typeof w.RS_APP_FINDS_SAVED==='function')w.RS_APP_FINDS_SAVED(fi,ru);
+       if(byId('v3-finds-panel')===panel){
+         addBtn.disabled=false;drawSaved();update();message('Добавлено в «Мои находки» V3.',false);
+       }
+     },function(err){
+       if(byId('v3-finds-panel')===panel){
+         addBtn.disabled=false;message('Не удалось добавить: '+String(err.message||err),true);
+       }
+     });
+   });
    function update(){
      while(matches.firstChild)matches.removeChild(matches.firstChild);
-     var v=input&&input.value||'';if(v.trim()){
+     var v=input&&input.value||'';
+     if(!v.trim()){
+       addBtn.textContent='＋ Добавить в мои находки · V3';
+       message('Введи финское слово выше. Для нового слова понадобится русский перевод.',false);
+     }else{
+       var exact=wordChoices(v).exact.length>0;
+       addBtn.textContent=exact?'✓ Добавить существующее слово в находки':
+         '＋ Сохранить новое слово и добавить в находки';
+       if(!exact&&form&&!form.elements.ru.value.trim())
+         message('Добавь русский перевод выше, затем нажми кнопку.',false);
+       else message(exact?'Слово уже есть: можно добавить без дубля.':
+         'Новое слово будет сохранено лично для твоего аккаунта.',false);
+     }
+     if(v.trim()){
        var results=wordChoices(v),list=results.exact.length?results.exact:results.similar;
        if(results.exact.length){
          var msg=d.createElement('p');msg.textContent='Слово уже есть — не нужно создавать вторую карточку.';
@@ -385,7 +425,9 @@
            direct('collection_set',word.id,{list:'finds',added:true,
              topic:topic.value,note:note.value.trim()}).then(function(){
                text('Карточка добавлена в «Мои находки» без дубля.',false);
-               drawSaved();update();
+               if(typeof w.RS_APP_FINDS_SAVED==='function')
+                 w.RS_APP_FINDS_SAVED(input&&input.value||'',form&&form.elements.ru.value||'');
+               if(byId('v3-finds-panel')===panel){drawSaved();update();}
              },function(e){text('Не удалось сохранить находку: '+e.message,true);});
          });matches.appendChild(b);
        });
