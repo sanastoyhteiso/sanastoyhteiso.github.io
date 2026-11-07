@@ -1951,3 +1951,7 @@
 - Проверки: source readback в GitHub, `Release V3 preflight` workflow [#42358842578](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42358842578) на текущем checkpoint **IN_PROGRESS**, так что CI не объявлен зелёным без отдельного readback. Реальный end-to-end сбор технических ошибок с двух устройств, бэкенд и публикация НЕ выполнялись.
 - Ограничения: только DRAFT PR #9, не тронуты production main/Pages, Cloud/Firebase/Rules/Auth, другие аккаунты, Firestore data, billing, резервные копии или ZIP. Параллельный RUN-119 по read-only Rules API имел свою запись НАЧАЛ и не закрывался/не присваивался этому действию.
 - Следующий шаг: проверить итог CI, затем реализовать и подтвердить живой закрытый telemetry pipeline Stage D/E с частотой/версией/типом браузера, без учебных данных и PII, тесты 2 устройств и отказа мониторинга. Не ставить Stage D/E DONE преждевременно; ZIP после первого запуска.
+
+
+### RUN-20261107-120 / ПОСЛЕДУЮЩАЯ ПРОВЕРКА CI
+- 07.11.2026 Europe/Helsinki. После закрытия RUN-120 повторно прочитан GitHub Actions exact workflow run [#42358842578](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42358842578) для PR #9 source head `ba180f20bd44ebb59c5bfcfb438cf5875120c3a0`: `status=completed`, `conclusion=success` (offline/preflight checks only). Это заменяет лишь прежний отметочный `IN_PROGRESS`; не доказывает live Firebase telemetry/браузерное поведение или deployed release.
