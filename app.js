@@ -48,7 +48,7 @@
   function ensureDeck(reset){if(reset||!state.deck.length){var items=cardPool(state.reviewLearned?'review':'study').filter(function(x){return !state.sessionSeen[x.id];});shuffle(items);state.deck=items.slice(0,Math.min(state.cardsCount,items.length));state.cardIndex=0;state.flipped=false;}}
   function numberLearned(){var n=0,valid={};allTerms().concat(sharedEnabled()?D.phrases:[]).forEach(function(x){valid[x.id]=1;});Object.keys(state.scores).forEach(function(k){if(valid[k]&&isLearned(k))n++;});return n;}
   function tabsHtml(active,opts,attr){var s='<div class="tabs">';for(var i=0;i<opts.length;i++){s+='<button class="btn '+(opts[i][0]===active?'primary':'white')+'" data-action="'+safe(attr)+'" data-value="'+safe(opts[i][0])+'">'+safe(opts[i][1])+'</button>';}return s+'</div>';}
-  function optionsForCat(){var map={},list=[],i,x,all=allTerms();for(i=0;i<all.length;i++){x=all[i];if(!map[x.cat]){map[x.cat]=1;list.push([x.cat,x.catRu||x.cat]);}}list.sort(function(a,b){return a[1].localeCompare(b[1]);});return list;}
+  function optionsForCat(){var map={},list=[],i,x,all=allTerms();for(i=0;i<all.length;i++){x=all[i];if(x.cat==='Anatomia: Riveria koe')continue;if(!map[x.cat]){map[x.cat]=1;list.push([x.cat,x.catRu||x.cat]);}}list.sort(function(a,b){return a[1].localeCompare(b[1]);});return list;}
   function selectCats(current,id){
     var cats=optionsForCat(),s='<select id="'+id+'" class="control"><option value="all">Все темы</option>',exam=sharedEnabled()&&D.examTopics||[];
     if(exam.length){s+='<optgroup label="Riveria · Päästä varpaisiin (2014)">';
