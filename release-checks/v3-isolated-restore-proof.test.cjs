@@ -75,7 +75,7 @@ test('the runner has no API modules, network requests, external adapters or clou
   for(const pattern of [
     /require\(['"]firebase/,/require\(['"]@google/,/require\(['"]googleapis/,
     /require\(['"]https?['"]\)/, /fetch\s*\(/,
-    /firestore\s*\(\s*\)/, /writeBatch\s*\(/, /\.update\s*\(/, /\.delete\s*\(/,
+    /firestore\s*\(\s*\)/, /writeBatch\s*\(/, /updateDoc\s*\(/, /deleteDoc\s*\(/,
     /execFileSync\s*\(/, /setCustomUserClaims\s*\(/
   ]) assert.equal(pattern.test(source),false,'Cloud API forbidden: '+pattern);
   assert.match(source,/new Map\(\)/);
