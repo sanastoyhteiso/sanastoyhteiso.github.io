@@ -144,7 +144,7 @@ test('stale monitoring never presents historical aggregate counters or error gro
   const texts=await serverAggregate(h,sampleAggregate({updatedAt:new Date(Date.now()-3600000).toISOString()}));
   assert.ok(texts.includes('Нет данных'));
   for(const old of ['17','31','test-v3'])assert.ok(!texts.includes(old),'Stale value: '+old);
-  openTab(h,'Ошибки');
+  openTab(h,'Сбои сайта');
   assert.ok(!allText(h.elems['admin-view']).includes('SYNC_OFFLINE — 7'));
   openTab(h,'Синхронизация');
   assert.ok(!allText(h.elems['admin-view']).includes('23'));
@@ -154,7 +154,7 @@ test('inactive monitoring hides counters even with a recent timestamp',async()=>
   const texts=await serverAggregate(h,sampleAggregate({monitoringActive:false}));
   assert.ok(texts.includes('Нет данных'));
   for(const old of ['17','31','test-v3'])assert.ok(!texts.includes(old),'Inactive value: '+old);
-  openTab(h,'Ошибки');
+  openTab(h,'Сбои сайта');
   assert.ok(!allText(h.elems['admin-view']).includes('SYNC_OFFLINE — 7'));
   openTab(h,'Синхронизация');
   assert.ok(!allText(h.elems['admin-view']).includes('23'));
@@ -169,7 +169,7 @@ test('fresh active server aggregate displays counters while retaining read-only 
   const h=harness(page);
   const texts=await serverAggregate(h,sampleAggregate());
   for(const expected of ['ОК','17','31','test-v3'])assert.ok(texts.includes(expected),'Missing value: '+expected);
-  openTab(h,'Ошибки');
+  openTab(h,'Сбои сайта');
   assert.ok(allText(h.elems['admin-view']).includes('SYNC_OFFLINE — 7'));
   openTab(h,'Синхронизация');
   assert.ok(allText(h.elems['admin-view']).includes('23'));
@@ -181,7 +181,7 @@ test('fresh site report without collector proof cannot display OK or counters',a
   const texts=await serverAggregate(h,sampleAggregate({monitoringCoverageVerified:false}));
   assert.ok(texts.includes('Нет данных'));
   for(const text of ['ОК','17','31'])assert.ok(!texts.includes(text));
-  openTab(h,'Ошибки');
+  openTab(h,'Сбои сайта');
   assert.ok(!allText(h.elems['admin-view']).includes('SYNC_OFFLINE — 7'));
 });
 test('stale or missing ingestion/aggregation heartbeat stops falsely healthy reports',async()=>{
