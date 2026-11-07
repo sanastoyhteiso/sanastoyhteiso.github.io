@@ -2188,3 +2188,10 @@
 - Initial CI `https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42371802684` caught a TEST-FIXTURE error: mutating a shared object's prototype affected later test assertion. Isolated the malicious test object without changing product code in commit `15296c1ccf1311367c8b3874d2b54c0271c5b2b5`. Rerun `https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42371859429` completed **SUCCESS 3/3 jobs** and new baseline step **6/6 PASS**.
 - Roadmap TASK137 + NEW-018 commit `1b36a5a60765081fe267f5f7769695f6df214e89`; Issue#10 comment `6706857336`. No Google Sheets/Drive, Firebase/Auth/Firestore/Rules, actual user data/other UID, main/Pages, tariff or ZIP changes. Legacy `score/scope` remain quarantined; full release PR9 DRAFT/NO-GO.
 - Next: separate owner/privacy-approved narrow real payload **key names and scalar types ONLY**, without values/UID/answers, then authenticated versioned snapshot integrity/real TEST restore with rollback and explicit GO. Until then leave backup originals untouched and cloud writes disabled.
+
+
+### RUN-20261107-138 / НАЧАЛ / offline end-to-end sync→backup→isolated restore release gate
+- 07.11.2026, 14:24 Europe/Helsinki. Owner priority: cloud sync, independent private backup, verified restore, only then publishing and monitoring. No pending START in canonical log after RUN137.
+- Plan: inspect existing V3 sync, TEST Firestore/Sheets backup validation/restore scripts and release preflight; strengthen a measurable fail-closed gate with synthetic offline regression tests if missing. Do not read private Sheets rows, use real IDs, enable live Cloud sync, or access credentials.
+- Working scope: DRAFT PR9 branch `release/v3-safe-integration-20261104`, `backup-v3/**`, `release-checks/**`, optional `.github/workflows/release-v3-preflight.yml`, roadmap/Issue#10. Expected: reproducible test/checklist evidence; NOT actual Cloud PASS. Production site/Firebase, users, auth, rules, data, billing and ZIP remain untouched. Real TEST restore and production GO remain separately gated.
+- Finish with ЗАВЕРШИЛ or BLOCKED with links, tests and next action.
