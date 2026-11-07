@@ -78,6 +78,10 @@ jobs:
         run: |
           node --check backup-v3/legacy-score-baseline-preview.cjs
           node --test release-checks/v3-legacy-score-baseline-preview.test.cjs
+      - name: Verify privacy-safe legacy JSON structure on synthetic data (NO migration)
+        run: |
+          node --check backup-v3/legacy-json-structure.cjs
+          node --test release-checks/v3-legacy-json-structure.test.cjs
       - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies

@@ -947,3 +947,14 @@
 - **Доказательство:** [GitHub Actions #42372804753](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42372804753), completed SUCCESS **3/3 jobs**, новый end-to-end step PASS. Полный протокол [SYNC_BACKUP_E2E_RUN138_RU.md](./SYNC_BACKUP_E2E_RUN138_RU.md).
 - **НЕ подтверждено:** настоящие Firebase Rules/UID allow-deny, Google Sheets private provider readback и восстановление в реальном изолированном TEST Firestore, физические устройства и iOS12, production admin телеметрия. **НЕ означает разрешение GO**. Stage G/H/I и NEW-001 пока открыты, PR9 DRAFT/NO-GO, Stage F ZIP PAUSED.
 - **Следующее RUN139:** read-only проверить exact TEST Firebase project/rules и scope owner pilot; после отдельного разрешения — единичная private Sheets backup→readback→isolated TEST restore + 2 устройства/deny, затем только согласованный production cutover и мониторинг. Не устанавливать CLI на устройства владельца.
+
+
+### TASK-20261107-138 — дополнение маршрутизации задания владельца
+- Номер RUN/TASK138 уже занят E2E работой выше. Новое задание владельца с заголовком RUN-138 (JSON structure score/scope) выполнено отдельно как RUN/TASK139 ниже, без перезаписи исторических записей.
+
+### TASK-20261107-139 — безопасная структура legacy score/scope JSON | E/H, NEW-018 | ЛОКАЛЬНО 10/10 PASS / CI PENDING
+- 07.11.2026 Europe/Helsinki. DRAFT PR9, release/v3-safe-integration-20261104. Начало: commit 055f457014d8a828169c8d6e94ecc76b923e71aa.
+- Созданы backup-v3/legacy-json-structure.cjs, release-checks/v3-legacy-json-structure.test.cjs и [описание контракта](./LEGACY_JSON_STRUCTURE_RUN139_RU.md); .github/workflows/release-v3-preflight.yml дополнен обязательным тестом. 10 искусственных тестов фактически прошли локально (exit 0); GitHub CI нового изменения ещё не завершён/не проверен.
+- Только whitelisted names/types и количество полей; ноль значений ответов/ID/адресов/пользовательских слов/raw JSON. Лимиты 4096 bytes, depth=1, members<=6, strings<=64. Unknown/duplicate/prototype keys, вложенность, malformed JSON/типы/числа блокируются. learned и learnedUpdatedAt распознаются, значения не выводятся и не вычисляются.
+- NEW-018 остаётся OPEN — риск потери ручного флага не устранён этим анализатором. Новых дефектов пользовательских данных не обнаружено. Реальные Sheets/Events!F, main/Pages, Firebase/Auth/Rules/Firestore/accounts/billing неизменны; PR9 не merge, ZIP отложен.
+- Следующий шаг: проверить GitHub CI нового коммита; при PASS только отдельное owner-approved получение обезличенных структурных отчётов реальных payload, затем отдельный isolated TEST restore. Текущее задание НЕ даёт разрешения на чтение реальных payload или миграцию.
