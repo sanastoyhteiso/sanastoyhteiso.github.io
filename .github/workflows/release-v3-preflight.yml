@@ -62,6 +62,10 @@ jobs:
         run: node --test release-checks/v3-backup-evidence-alerts.test.cjs
       - name: Verify full Firestore events/baseline/words backup source integrity (offline)
         run: node release-checks/v3-firestore-source-backup.test.cjs
+      - name: Prove synthetic backup reconstruction into an isolated in-memory store (NO Cloud)
+        run: |
+          node --check backup-v3/isolated-restore-proof.cjs
+          node --test release-checks/v3-isolated-restore-proof.test.cjs
       - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
