@@ -132,8 +132,10 @@ test('test button cannot send before consent or after opt-out',async()=>{
   await drain();assert.equal(a.records.length,0);
   assert.equal(a.w.RS_MONITOR_CLIENT.setConsent(true),true);
   assert.equal(button.disabled,false);
+  assert.match(a.w.document.getElementById('rs-monitor-consent-status').textContent,/Диагностика включена/);
   assert.equal(a.w.RS_MONITOR_CLIENT.setConsent(false),true);
-  assert.equal(button.disabled,true);button.click();
+  assert.equal(button.disabled,true);
+  assert.match(a.w.document.getElementById('rs-monitor-consent-status').textContent,/Диагностика отключена/);button.click();
   await drain();assert.equal(a.records.length,0);
  }finally{a.dom.window.close();}
 });
