@@ -1,0 +1,24 @@
+name: Owner V3 pilot static checks (no deployment)
+on:
+  pull_request:
+    paths:
+      - 'v3-preview/**'
+      - 'pilot-checks/**'
+      - '.github/workflows/v3-ownerpilot-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  owner-pilot-static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify gated owner-only pilot, assets and isolated service worker
+        run: |
+          node --test pilot-checks/owner-preview.test.cjs
+          node --check v3-preview/app.js
+          node --check v3-preview/v3-sync-release.js
+          node --check v3-preview/sw.js
