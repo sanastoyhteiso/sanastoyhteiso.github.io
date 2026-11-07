@@ -230,10 +230,16 @@
      return Promise.resolve(false);
    return attach(user,manual);
  }
+ function publicCountOnConfirmed(){
+   // V3 public counters are opt-in and must never claim an unsent event.
+   if(!active()||!row||!Array.isArray(row.pending)||row.pending.length)return;
+   if(w.RS_COMM&&typeof w.RS_COMM.onV3Confirmed==='function')
+     w.RS_COMM.onV3Confirmed();
+ }
  function upload(){
    if(!active())return Promise.resolve(false);
    return orderly(function(){
-     return engine.upload().then(function(r){row=r;status();return true;},
+     return engine.upload().then(function(r){row=r;status();publicCountOnConfirmed();return true;},
        function(e){text('Без интернета изменения останутся в IndexedDB: '+e.message,true);return false;});
    });
  }
@@ -261,6 +267,7 @@
          throw Error('V3 account changed during refresh');
        if(queued!==0)throw Error('New changes queued during refresh');
        if(!apply(r))throw Error('V3 cloud state not applied locally');
+       publicCountOnConfirmed();
        text('Данные V3 сверены с облаком.',false);
        return true;
      });
@@ -289,7 +296,7 @@
    queue.then(function(){
      if(token!==epoch||uid!==owner||!active())return;
      which.upload().then(function(r){
-       if(token===epoch&&uid===owner){row=r;status();}
+       if(token===epoch&&uid===owner){row=r;status();publicCountOnConfirmed();}
      },function(){
        if(token===epoch)text('Ответы сохранены в IndexedDB; ожидается интернет.',false);
      });
@@ -305,7 +312,7 @@
      return which.upload().then(function(){return which.view();},function(){return r;});
    }).then(function(r){
      if(!same())throw Error('V3 account changed after write');
-     row=r;if(queued===0)apply(r);return r;
+     row=r;if(queued===0)apply(r);publicCountOnConfirmed();return r;
    });
  }
  function wordChoices(query){
