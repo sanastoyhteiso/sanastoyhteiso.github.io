@@ -18,6 +18,10 @@
  function testControls(){
    var button=d.getElementById('rs-monitor-test-send');
    if(button)button.disabled=!enabled()||testSent;
+   var note=d.getElementById('rs-monitor-consent-status');
+   if(note&&config())note.textContent=enabled()?
+      'Диагностика включена для этого аккаунта и устройства.':
+      'Диагностика отключена до моего согласия.';
  }
  function config(){
    var c=w.RS_TELEMETRY_CONFIG||{},fc=w.RS_FIREBASE_CONFIG||{};
@@ -125,7 +129,7 @@
      '<p class="hint" id="rs-monitor-test-status">Только по вашему нажатию: '+
        'проверочный код CACHE_MISMATCH будет учтён как 1 техническое событие за 24 часа, '+
        'но не означает настоящую неисправность.</p>'+
-     '<p class="hint">'+(available?
+     '<p class="hint" id="rs-monitor-consent-status">'+(available?
        (yes?'Диагностика включена для этого аккаунта и устройства.':'Диагностика отключена до моего согласия.'):
        'Серверный мониторинг пока не подключён.')+'</p></div>';
  }
