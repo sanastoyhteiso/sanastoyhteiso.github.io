@@ -39,5 +39,8 @@
    target.examNoteRu=r[6];
    target.examSource='Riveria exam scope (user plan), independent explanatory notes';
  }
+ // Haima belongs to both digestion and endocrine regulation, with the same stable ID.
+ var pancreas=byFi['haima'];
+ if(pancreas&&pancreas.examTopics&&pancreas.examTopics.indexOf('EXAM09')<0)pancreas.examTopics.push('EXAM09');
  d.examTopics=topics;
 })(window);
