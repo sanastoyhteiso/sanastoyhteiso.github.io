@@ -74,3 +74,10 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .rs-med-fold{background:#f5fbfd;border:1px solid #b6d8e3;padding:10px 13px;border-radius:12px;margin:9px 0}
 .rs-med-fold summary{cursor:pointer;font-weight:700;font-size:16px;min-height:32px}
 .rs-med-reference .dict-row{margin:7px 0}
+
+/* Riveria exam concept notes: simple FI + RU; Latin is only a small in-card hint. */
+.exam-explain{font-size:15px;line-height:1.5;border-left:3px solid #91c7d7;background:#f4fafc;border-radius:5px;padding:9px 12px;margin:12px 0;overflow-wrap:anywhere}
+.exam-explain p{margin:5px 0;color:#244858}
+.exam-explain b{color:#245f74}
+.exam-explain i{font-weight:600}
+@media(max-width:500px){.exam-explain{font-size:14px;padding:8px 10px}.form-row select.control{max-width:100%}}
