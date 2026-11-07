@@ -1859,3 +1859,8 @@
 ### RUN-20261107-112 / ЗАВЕРШИЛ / Auth users visible; custom claim not proven
 - 07.11.2026 Europe/Helsinki. Owner screenshot shows Firebase Console Authentication → Users with multiple registered accounts, search and per-user actions. No private email addresses/UID were reproduced or written to public log. Screenshot alone does not ground which account is the owner's, whether it is email verified, or whether a secure custom claim `admin=true` exists; project ID hidden in screenshot. Therefore no user/role claim confirmed, admin acceptance OPEN.
 - Next task: owner confirms locally their Google account is present in the correct project (no PII shared). Role can then be checked via trusted Firebase Admin SDK using read-only `getUser(uid).customClaims` in authorized Work/Cloud Shell; first dry-run only, never set claims blindly, never replace existing claims. No Firebase/Auth/Rules/Pages/main/billing/student data changes; ZIP Stage F POST-LAUNCH.
+
+
+### RUN-20261107-113 / НАЧАЛ / подтверждение владельцем собственной Firebase Auth записи
+- 07.11.2026 Europe/Helsinki. Владелец подтвердил: в списке Firebase Authentication → Users есть его собственный аккаунт Google (публичное указание alias `velardream`; **не фиксировать email, UID**). Требуется отделить наличие учётной записи от наличия privileged Firebase Auth custom claim `admin===true` и `emailVerified`/Google provider.
+- Проверить подготовленный код и ограничения Cloud Shell owner-operated TEST-only claim script; НИКОГДА не запускать его против PROD и не использовать `--apply` без отдельного точного контроля проекта/пользователя. Работать только GitHub docs/checkpoint, не изменять Firebase/Auth/данные/Pages/тариф.
