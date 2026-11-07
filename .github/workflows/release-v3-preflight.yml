@@ -89,6 +89,8 @@ jobs:
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
+      - name: Verify opt-in telemetry browser client and admin adapter (NO network)
+        run: node --test release-checks/v3-telemetry-client-admin.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)
