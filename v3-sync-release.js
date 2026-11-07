@@ -456,6 +456,7 @@
      });
    }
    if(input)input.addEventListener('input',update);
+   if(form&&form.elements.ru)form.elements.ru.addEventListener('input',update);
    drawSaved();update();
  }
  function boot(){
