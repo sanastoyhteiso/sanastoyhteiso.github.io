@@ -51,7 +51,7 @@
  }
  function queueCode(code){
    // No event leaves the device unless this user explicitly enabled it.
-   if(!enabled()||!w.navigator.onLine)return false;
+   if(!enabled())return false; // queue offline; flush only when connectivity resumes
    var allow={APP_RENDER_FAILED:1,SYNC_UPLOAD_FAILED:1,SYNC_DOWNLOAD_FAILED:1,
      SYNC_QUEUE_STUCK:1,INDEXEDDB_UNAVAILABLE:1,CACHE_MISMATCH:1,
      OFFLINE_REPLAY_FAILED:1,FIRESTORE_PERMISSION_DENIED:1,
