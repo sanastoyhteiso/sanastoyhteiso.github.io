@@ -30,13 +30,15 @@ class D1Mock{
  }
  prepare(sql){
   const d=this.sqlite;
-  return {bind(...args){
+  function statement(args){
    return {
+    bind(...next){return statement(next);},
     async first(){return d.prepare(sql).get(...args)||null;},
     async all(){return {results:d.prepare(sql).all(...args)};},
     async run(){const r=d.prepare(sql).run(...args);return {success:true,meta:{changes:r.changes}};}
    };
-  }};
+  }
+  return statement([]);
  }
  close(){this.sqlite.close();}
 }
