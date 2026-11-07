@@ -49,7 +49,8 @@ async function keys(now=Date.now(),httpFetch=fetch){
  if(!obj||!Array.isArray(obj.keys)||obj.keys.length<1||obj.keys.length>20)throw Error('BAD_JWKS');
  const pairs=new Map();
  for(const k of obj.keys){
-   if(k.kty==='RSA'&&k.use==='sig'&&k.alg==='RS256'&&
+   if(k.kty==='RSA'&&(k.use===undefined||k.use==='sig')&&
+      (k.alg===undefined||k.alg==='RS256')&&
       typeof k.kid==='string'&&/^[A-Za-z0-9_-]{4,128}$/.test(k.kid)&&
       typeof k.n==='string'&&typeof k.e==='string')pairs.set(k.kid,k);
  }
