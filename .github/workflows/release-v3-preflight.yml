@@ -1,0 +1,133 @@
+name: Release V3 preflight (no deployment)
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'family.js'
+      - 'community.js'
+      - 'sw.js'
+      - 'v3-sync-*.js'
+      - 'ipad-selects.js'
+      - 'ipad-selects.css'
+      - 'config.js'
+      - 'release-checks/**'
+      - 'backup-v3/**'
+      - '.github/workflows/release-v3-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Ensure existing Auth/Drive remain and iPad/Mediatri scripts are safe
+        run: node release-checks/preflight-static.cjs
+      - name: Verify FI EN RU header, strict admin claims and privacy-safe diagnostics (offline)
+        run: |
+          node --check i18n.js
+          node --check admin-entry.js
+          node --check admin/admin-page.js
+          node --check study-diagnostics.js
+          node --test release-checks/v3-i18n-ui-quality.test.cjs release-checks/v3-admin-access.test.cjs release-checks/v3-local-diagnostics.test.cjs
+      - name: Verify PROD one-owner admin claim grant is dry-run by default (offline only)
+        run: |
+          node --check admin/ops/grant-prod-admin-owner.cjs
+          node --test release-checks/prod-admin-claim-guard.test.cjs
+      - name: Verify PROD admin metrics owner probe is read-only and fail-closed (offline only)
+        run: |
+          node --check admin/ops/check-prod-admin-metrics-readonly.cjs
+          node --test release-checks/prod-admin-metrics-readonly-guard.test.cjs
+      - name: Verify deployed PROD Firestore Rules GET-only checkpoint (offline only)
+        run: |
+          node --check admin/ops/check-prod-published-rules-readonly.cjs
+          node --test release-checks/prod-published-rules-readonly-guard.test.cjs
+      - name: Verify UI changes map to idempotent V3 event intents
+        run: node release-checks/v3-diff.test.cjs
+      - name: Check offline owner safety, event deduplication and dry-run restore
+        run: node release-checks/v3-offline-recovery-contract.test.cjs
+      - name: Check release shadow preserves T/M/P/H My Finds (NEW-012)
+        run: node --test release-checks/v3-shadow-finds-id-contract.test.cjs
+      - name: Test private RAW Sheets runner with fake Firestore and Sheets (no cloud)
+        run: node release-checks/v3-private-sheets-flow.test.cjs
+      - name: Check TEST-only Apps Script owner approval, lock, trigger and Google API mocks
+        run: node --test release-checks/v3-apps-script-test-backup.test.cjs
+      - name: Check fail-closed TEST private backup health and failure alerts (offline only)
+        run: node --test release-checks/v3-backup-health.test.cjs
+      - name: Verify private backup provider evidence and dedup alerts (offline only)
+        run: node --test release-checks/v3-backup-evidence-alerts.test.cjs
+      - name: Verify full Firestore events/baseline/words backup source integrity (offline)
+        run: node release-checks/v3-firestore-source-backup.test.cjs
+      - name: Prove synthetic backup reconstruction into an isolated in-memory store (NO Cloud)
+        run: |
+          node --check backup-v3/isolated-restore-proof.cjs
+          node --test release-checks/v3-isolated-restore-proof.test.cjs
+      - name: Classify legacy private Sheets schemas on synthetic rows (NO migration)
+        run: |
+          node --check backup-v3/legacy-schema-adapter.cjs
+          node --test release-checks/v3-legacy-schema-adapter.test.cjs
+      - name: Prove legacy score/scope synthetic events remain quarantined (NO migration)
+        run: |
+          node --check backup-v3/legacy-event-quarantine.cjs
+          node --test release-checks/v3-legacy-event-quarantine.test.cjs
+      - name: Verify synthetic legacy counter baseline rejects learned-state loss (NO migration)
+        run: |
+          node --check backup-v3/legacy-score-baseline-preview.cjs
+          node --test release-checks/v3-legacy-score-baseline-preview.test.cjs
+      - name: Verify privacy-safe legacy JSON structure on synthetic data (NO migration)
+        run: |
+          node --check backup-v3/legacy-json-structure.cjs
+          node --test release-checks/v3-legacy-json-structure.test.cjs
+      - name: Verify private Sheets backup row integrity with offline fixtures (no cloud)
+        run: node release-checks/v3-backup-codec.test.cjs
+      - name: Install isolated browser simulation dependencies
+        run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
+      - name: PREVIEW ONLY real full-source NEW-009 candidate in VM (does NOT fix checked-out source)
+        run: node --test release-checks/v3-refresh-candidate-fullsource.test.cjs
+      - name: Exercise two V3 IndexedDB devices, offline 13-event replay and account isolation (synthetic)
+        run: node --test release-checks/v3-two-device-offline-contract.test.cjs
+      - name: Check two-device V3 cloud event backup, RAW Sheets integrity and isolated restore (synthetic only)
+        run: node --test release-checks/v3-sync-backup-e2e.test.cjs
+      - name: Check classic Safari 12-compatible script syntax (static, no device)
+        run: node release-checks/ios12-syntax.test.cjs
+      - name: Exercise unified UI, Google account stub and offline V3 storage
+        run: node release-checks/v3-unified-browser.test.cjs
+      - name: Exercise real release family.js Google login and recovery (synthetic no-cloud)
+        run: node --test release-checks/v3-login-availability.test.cjs
+
+  firestore-v3-rules-emulator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install isolated test-only Firebase emulator dependencies
+        run: npm install --no-save firebase-tools@14.27.0 @firebase/rules-unit-testing@5.0.2 firebase@12.5.0
+      - name: Verify additive owner-only V3 rules without any real Firebase
+        run: npx firebase emulators:exec --only firestore --config release-checks/firebase-emulator.json --project demo-sanastoyhteiso-production 'node release-checks/firestore-prod-v3.test.cjs'
+
+  # Mandatory negative release gate: keep the deployment candidate NO-GO
+  # until NEW-009 is fixed. This job is deliberately independent of other
+  # jobs so emulator, iOS12, backups and UI tests still run and report.
+  sync-failclosed-release-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: NEW-009 truthful cloud-sync release acceptance (all 3 MUST PASS)
+        run: |
+          node --check release-checks/v3-refresh-failclosed.test.cjs
+          node --test release-checks/v3-refresh-failclosed.test.cjs
