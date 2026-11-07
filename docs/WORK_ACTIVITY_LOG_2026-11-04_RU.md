@@ -2218,3 +2218,10 @@
 - node --test завершён exit 0, 10/10 PASS; обязательный шаг preflight подготовлен. Отчёт docs/LEGACY_JSON_STRUCTURE_RUN139_RU.md. CI нового коммита ещё НЕ подтверждён; NEW-018 OPEN; любые real restore/migration/cloud writes запрещены.
 
 - При сохранении обнаружено параллельное закрытие RUN138 commit dd7e5d07c797cf5b1cb83e5a7b62ccb7f2adbf3f. Первый update_ref не выполнен; изменения перенесены поверх нового HEAD без force и без удаления чужой записи. Предварительный commit 26257cf988d0feecca46cf8c89b8541aa1c36341 не был HEAD PR9; использовать новый commit ниже.
+
+
+### RUN-20261107-139 / ЗАВЕРШИЛ / код сохранён, локальные тесты 10/10 PASS; CI PENDING (задача ЧАСТИЧНО)
+- 07.11.2026 Europe/Helsinki. [Код/тесты/CI/документация commit 5e574d1ee2b80fdc4383760759b6722336660e68](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/5e574d1ee2b80fdc4383760759b6722336660e68) действительно установлен в release/v3-safe-integration-20261104: readback Git ref и файла модуля подтверждены. PR9 DRAFT, main d29813cf409af9dc60804105ca3141f98ec12fcd не изменён. Параллельная запись RUN138 END сохранена без потерь.
+- Созданы backup-v3/legacy-json-structure.cjs, release-checks/v3-legacy-json-structure.test.cjs, docs/LEGACY_JSON_STRUCTURE_RUN139_RU.md; изменены обязательный preflight, этот журнал и master roadmap TASK138 cross-reference/TASK139.
+- Фактически выполнено: node --test, 10/10 PASS, exit 0, исключительно искусственные данные. Новый GitHub CI на момент checkpoint ещё не появился в API; CI SUCCESS НЕ заявляется. [Actions](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions). Нет новых подтверждённых дефектов; NEW-018 OPEN, реальная сохранность learned неизвестна.
+- Следующий чат: первым действием получить workflow_runs для exact commit 5e574d1ee2b80fdc4383760759b6722336660e68, проверить все jobs и новый шаг privacy-safe legacy JSON; при сбое исправить и прогнать. После фактического завершения обновить TASK139 и Issue#10. Events!F и реальные backup payload НЕ читать без отдельного разрешения; никакой миграции/облачных записей. Все ограничения владельца сохранены, ZIP PAUSED.
