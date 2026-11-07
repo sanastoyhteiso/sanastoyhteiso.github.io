@@ -1,0 +1,46 @@
+/* Staging only: the demo may reuse PUBLIC dictionary data, not private answers.
+ * Test pinned data-public.js against the published data.js in this repo.
+ */
+'use strict';
+const assert=require('assert'),fs=require('fs'),path=require('path'),vm=require('vm');
+const Catalog=require('../rs-v3-public-catalog.js');
+const root=path.resolve(__dirname,'../..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const live=read('data.js'),copy=read('staging/data-public.js');
+assert.equal(copy,live,'Pinned demo catalog must be byte-identical to the public catalog');
+const context={window:{}};
+vm.runInNewContext(copy,context,{timeout:20000});
+const data=JSON.parse(JSON.stringify(context.window.RS_DATA));
+const before=JSON.stringify(data);
+const c=Catalog.create(data);
+assert.equal(c.count,1296);
+assert.equal(c.version,data.version);
+assert.equal(c.terms().length,1296);
+assert.equal(c.phrases().length,84);
+assert.equal(c.mediatri().length,183);
+assert.equal(c.keyterms().length,212);
+assert.equal(c.scenarios().length,40);
+assert.equal(c.headings().length,21);
+assert.equal(c.find('T00001').fi,'hoiva-avustaja');
+assert.equal(c.find('M00001'),null);
+let result=c.search('hoiva-avustaja',10);
+assert.equal(result.count,1);
+assert.equal(result.items[0].id,'T00001');
+result=c.search('помощник по уходу',10);
+assert.equal(result.items[0].id,'T00001');
+result=c.search('care assistant',10);
+assert.ok(result.items.some(w=>w.id==='T00001'));
+result=c.search('',60);
+assert.equal(result.count,1296);
+assert.equal(result.items.length,60);
+assert.equal(result.truncated,true);
+c.terms()[0].fi='altered';
+assert.equal(data.terms[0].fi,'hoiva-avustaja','Adapter must not mutate public source');
+assert.equal(JSON.stringify(data),before);
+const dup=JSON.parse(before);dup.terms[1].id=dup.terms[0].id;
+assert.throws(()=>Catalog.create(dup),/duplicate terms ID/);
+const missing=JSON.parse(before);missing.terms[0].en='';
+assert.throws(()=>Catalog.create(missing),/Invalid three-language vocabulary term/);
+const short=JSON.parse(before);short.mediatri=[];
+assert.throws(()=>Catalog.create(short),/incomplete/);
+console.log('PASS: pinned public data identical, 1296 terms, Mediatri, FI/RU/EN search, no private progress');
