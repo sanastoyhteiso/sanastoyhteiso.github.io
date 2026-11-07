@@ -28,7 +28,7 @@
    if(existing&&(!target||String(target.fi).toLocaleLowerCase().trim()!==String(fi).toLocaleLowerCase().trim()))continue;
    if(!target){
      if(byId[id])continue;
-     target={id:id,fi:fi,ru:r[2],en:r[3],cat:'Riveria koe: '+r[7],
+     target={id:id,fi:fi,ru:r[2],en:r[3],cat:'Anatomia: Riveria koe',
        catRu:'Экзамен Riveria',level:'A2–B1',priority:1,example:'',exampleRu:''};
      d.terms.push(target);byId[id]=target;byFi[String(fi).toLocaleLowerCase().trim()]=target;
    }
