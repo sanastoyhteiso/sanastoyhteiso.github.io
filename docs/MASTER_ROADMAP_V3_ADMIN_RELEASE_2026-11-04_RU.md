@@ -963,3 +963,8 @@
 ### TASK-20261107-139 — checkpoint / ЧАСТИЧНО: CODE SAVED + LOCAL PASS, CI PENDING
 - [Рабочий commit 5e574d1ee2b80fdc4383760759b6722336660e68](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/commit/5e574d1ee2b80fdc4383760759b6722336660e68); remote ref/file readback подтверждены. Локально 10/10 tests PASS, CI ещё не подтверждён. История TASK138 и чужой RUN138 END сохранены; initial orphan commit 26257cf не использовать как HEAD.
 - Продолжать с проверки workflow_runs для 5e574d1ee2b80fdc4383760759b6722336660e68; без PASS всех jobs не закрывать CI gate. Реальные payload только после отдельного разрешения. NEW-018 OPEN, main/Firebase/Sheets untouched.
+
+
+### TASK-20261107-139 — ГОТОВО OFFLINE / CI 3/3 SUCCESS
+- Финальная проверка 07.11.2026: [CI #42373270811](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42373270811) на code commit 5e574d1ee2b80fdc4383760759b6722336660e68 — все три jobs completed SUCCESS; новый structural/privacy test step SUCCESS. Прежний CI PENDING checkpoint выше заменён этой append-only записью. 10 синтетических тестов также прошли локально.
+- Задание владельца RUN138 выполнено как TASK139, история прежней TASK138 сохранена. Модуль, тесты, обязательный workflow и описание контракта сохранены. Реальные данные не читались и не изменялись. NEW-018 OPEN; без отдельного разрешения не читать Events!F. Следующий шаг: отдельно согласованный ограниченный privacy-safe structural read, затем integrity/isolated TEST restore. PR9 DRAFT/NO-GO, миграция/облачные записи выключены, ZIP PAUSED.
