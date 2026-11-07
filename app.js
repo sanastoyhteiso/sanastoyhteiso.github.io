@@ -65,6 +65,7 @@
   window.RS_APP_FINDS_SAVED=function(fi,ru){
     clearAddDraft(fi,ru);
     if(state.view==='add')renderAdd();
+    toast('Находка сохранена в V3.');
   };
   function toast(t){var e=byId('toast');e.textContent=t;e.className='toast show';window.setTimeout(function(){e.className='toast';},3400);}
   function setStatus(){var online=byId('online-status'),store=byId('storage-status');if(online){online.textContent=navigator.onLine?'● Интернет доступен':'● Без интернета';online.className='status'+(navigator.onLine?'':' offline');}if(store){store.textContent=state.persisted?'✓ Локальное сохранение':'! Сохранение недоступно';store.className='status muted';}}
