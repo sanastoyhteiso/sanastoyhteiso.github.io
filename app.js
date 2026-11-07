@@ -179,7 +179,17 @@
   window.addEventListener('error',function(e){var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';});
   if(!D||!D.terms||!D.scenarios){root.innerHTML='<div class="panel"><h2>Не удалось открыть базу</h2><p>Проверь, что файл data.js загружен рядом с приложением. Если интернет отключён, открой сайт онлайн один раз для установки офлайн-кэша.</p></div>';return;}
   window.RS_APP_LOCALE=function(){if(state.direction==='auto'){state.sessionSeen={};ensureDeck(true);}if(state.quizDirection==='auto')quizNew();render();};
-  window.RS_FAMILY_REFRESH=function(reset){load();state.deck=[];state.sessionSeen={};state.quiz=null;state.cardIndex=0;state.flipped=false;if(reset){state.view='cards';state.filter='all';state.extraSearch=false;}render();};
+  window.RS_FAMILY_REFRESH=function(reset){
+    load();
+    // Background cloud readback updates progress, NOT the current learning session.
+    // Resetting a shuffled deck here skips a visible card after Know/Repeat.
+    // A real account switch still explicitly requests the full reset.
+    if(reset){
+      state.deck=[];state.sessionSeen={};state.quiz=null;state.cardIndex=0;state.flipped=false;
+      state.view='cards';state.filter='all';state.extraSearch=false;
+    }
+    render();
+  };
   load();setStatus();render();
   if(('serviceWorker' in navigator)&&(location.protocol==='https:'||location.hostname==='localhost')){
     window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').then(function(reg){reg.update();},function(err){toast('Офлайн-кэш не установлен: '+err.message);});});
