@@ -1,0 +1,20 @@
+name: Validate Anatomy Exam Vocabulary (read-only, no deployment)
+on:
+  pull_request:
+    paths:
+      - 'content-imports/anatomia-exam-2026/**'
+      - 'content-imports/anatomia-latina/**'
+      - '.github/workflows/validate-anatomia-exam-vocab.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-exam-vocabulary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate 10 topic FI/RU explanations, Latin, EI exclusions, old IDs
+        run: node --test content-imports/anatomia-exam-2026/test-content.cjs

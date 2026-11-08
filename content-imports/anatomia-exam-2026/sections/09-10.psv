@@ -1,0 +1,48 @@
+verensokeri|glycaemia|Verensokeri kuvaa veren glukoosipitoisuutta, jota erityisesti insuliini ja glukagoni säätelevät.|Уровень сахара крови — концентрация глюкозы, регулируемая в том числе инсулином и глюкагоном.
+kilpirauhanen|glandula thyroidea|Kilpirauhanen tuottaa hormoneja, jotka vaikuttavat aineenvaihdunnan nopeuteen.|Щитовидная железа вырабатывает гормоны, влияющие на скорость обмена веществ.
+lisämunuainen|glandula suprarenalis|Lisämunuainen tuottaa muun muassa kortisolia, aldosteronia ja adrenaliinia.|Надпочечник вырабатывает, в частности, кортизол, альдостерон и адреналин.
+aivolisäke|hypophysis|Aivolisäke erittää hormoneja, jotka vaikuttavat muiden umpirauhasten toimintaan.|Гипофиз выделяет гормоны, влияющие на деятельность других эндокринных желёз.
+ADH (antidiureettinen hormoni)|vasopressinum|ADH eli vasopressiini vähentää veden poistumista virtsaan; tämä on hormonin yleistoiminta, ei EI-munuaisjakson opetus.|АДГ, или вазопрессин, уменьшает выведение воды с мочой; здесь дана общая функция гормона, не исключённый подраздел регуляции почек.
+aldosteroni|aldosteronum|Aldosteroni on lisämunuaiskuoren hormoni, joka edistää natriumin säilymistä elimistössä.|Альдостерон — гормон коры надпочечников, способствующий удержанию натрия в организме.
+umpieritysjärjestelmä|systema endocrinum|Umpieritysjärjestelmä muodostuu hormoneja vereen erittävistä rauhasista ja kudoksista.|Эндокринная система состоит из желёз и тканей, выделяющих гормоны в кровь.
+hypotalamus|hypothalamus|Hypotalamus yhdistää hermoston ja hormonitoiminnan säätelyä.|Гипоталамус связывает нервную и гормональную регуляцию организма.
+lisäkilpirauhanen|glandula parathyroidea|Lisäkilpirauhaset säätelevät veren kalsiumpitoisuutta parathormonin avulla.|Паращитовидные железы регулируют кальций крови с помощью паратгормона.
+lisämunuaiskuori|cortex glandulae suprarenalis|Lisämunuaiskuori tuottaa steroidhormoneja, esimerkiksi kortisolia ja aldosteronia.|Кора надпочечников вырабатывает стероидные гормоны, например кортизол и альдостерон.
+lisämunuaisydin|medulla glandulae suprarenalis|Lisämunuaisydin tuottaa katekolamiineja, kuten adrenaliinia.|Мозговое вещество надпочечников вырабатывает катехоламины, например адреналин.
+haiman saarekkeet|insulae pancreaticae|Haiman saarekkeet tuottavat verensokeria sääteleviä hormoneja.|Островки поджелудочной железы вырабатывают гормоны, регулирующие глюкозу крови.
+insuliini|insulinum|Insuliini helpottaa glukoosin siirtymistä moniin soluihin ja alentaa verensokeria.|Инсулин облегчает поступление глюкозы во многие клетки и снижает уровень сахара в крови.
+glukagoni|glucagonum|Glukagoni nostaa verensokeria edistämällä glukoosin vapautumista maksasta.|Глюкагон повышает глюкозу крови, стимулируя её высвобождение печенью.
+kilpirauhashormoni|—|Kilpirauhashormonit T3 ja T4 säätelevät aineenvaihduntaa ja vaikuttavat kasvuun.|Гормоны щитовидной железы Т3 и Т4 регулируют обмен веществ и влияют на рост.
+verensokerin säätely|—|Insuliini laskee ja glukagoni nostaa verensokeria palautteen avulla.|Инсулин снижает, а глюкагон повышает концентрацию глюкозы, помогая поддерживать её баланс.
+selkäydin|medulla spinalis|Selkäydin kuljettaa hermoviestejä aivojen ja kehon välillä sekä osallistuu heijasteisiin.|Спинной мозг проводит сигналы между головным мозгом и телом и участвует в рефлексах.
+hermosto|systema nervosum|Hermosto vastaanottaa tietoa, käsittelee sitä ja ohjaa elimistön toimintaa.|Нервная система получает и обрабатывает информацию и управляет работой организма.
+keskushermosto|systema nervosum centrale|Keskushermostoon kuuluvat aivot ja selkäydin.|Центральная нервная система включает головной и спинной мозг.
+ääreishermosto|systema nervosum periphericum|Ääreishermosto muodostuu keskushermoston ulkopuolisista hermoista ja hermosolmukkeista.|Периферическая нервная система включает нервы и нервные узлы за пределами ЦНС.
+isoaivot|cerebrum|Isoaivot osallistuvat muun muassa ajatteluun, muistiin, aistihavaintoihin ja tahdonalaisiin liikkeisiin.|Большой мозг участвует в мышлении, памяти, восприятии и произвольных движениях.
+aivokuori|cortex cerebri|Aivokuori on isoaivojen pinnan harmaata ainetta, jossa käsitellään tietoa.|Кора большого мозга — слой серого вещества на поверхности полушарий, обрабатывающий информацию.
+pikkuaivot|cerebellum|Pikkuaivot hienosäätävät liikkeitä ja auttavat ylläpitämään tasapainoa.|Мозжечок координирует движения и помогает сохранять равновесие.
+aivorunko|truncus encephali|Aivorunko yhdistää aivot selkäytimeen ja osallistuu tärkeiden elintoimintojen säätelyyn.|Ствол мозга соединяет головной и спинной мозг и регулирует жизненно важные функции.
+ydinjatke|medulla oblongata|Ydinjatkeessa on muun muassa hengityksen ja verenkierron säätelyyn osallistuvia keskuksia.|В продолговатом мозге находятся центры, участвующие в регуляции дыхания и кровообращения.
+hermosolu|neuron|Hermosolu vastaanottaa ja välittää sähköisiä ja kemiallisia viestejä.|Нейрон получает и передаёт электрические и химические сигналы.
+aksoni|axon|Aksoni vie hermoimpulssin yleensä poispäin hermosolun soomasta.|Аксон обычно проводит импульс от тела нервной клетки.
+dendriitti|dendritum|Dendriitit vastaanottavat viestejä muilta hermosoluilta.|Дендриты принимают сигналы от других нейронов.
+hermoimpulssi|impulsus nervosus|Hermoimpulssi on hermosolun kalvolla etenevä sähköinen tapahtuma.|Нервный импульс — электрический сигнал, распространяющийся по мембране нейрона.
+synapsi|synapsis|Synapsi on hermosolujen tai hermosolun ja kohdesolun välinen viestintäkohta.|Синапс — место передачи сигнала между нейронами или нейроном и клеткой-мишенью.
+aivokalvo|meninx|Aivokalvot ympäröivät ja suojaavat aivoja sekä selkäydintä.|Мозговые оболочки окружают и защищают головной и спинной мозг.
+autonominen hermosto|systema nervosum autonomicum|Autonominen hermosto säätelee tahdosta riippumattomia toimintoja, kuten sykettä ja ruoansulatusta.|Вегетативная нервная система регулирует непроизвольные функции, например пульс и пищеварение.
+sarveiskalvo|cornea|Sarveiskalvo on silmän etuosan läpinäkyvä pinta, joka taittaa valoa.|Роговица — прозрачная передняя поверхность глаза, преломляющая свет.
+värikalvo|iris|Värikalvo säätelee mustuaisen kokoa ja silmään tulevan valon määrää.|Радужка изменяет размер зрачка и количество света, поступающего в глаз.
+mustuainen|pupilla|Mustuainen on värikalvon keskellä oleva aukko, josta valo pääsee silmään.|Зрачок — отверстие в центре радужки, через которое свет входит в глаз.
+mykiö|lens|Mykiö tarkentaa valoa verkkokalvolle muuttamalla muotoaan.|Хрусталик фокусирует свет на сетчатке, изменяя свою форму.
+verkkokalvo|retina|Verkkokalvon aistinsolut muuttavat valon hermosignaaleiksi.|Фоторецепторы сетчатки превращают свет в нервные сигналы.
+näköhermo|nervus opticus|Näköhermo vie näköinformaatiota silmästä aivoihin.|Зрительный нерв проводит зрительную информацию от глаза к мозгу.
+silmänpaine|pressio intraocularis|Silmänpaine on silmän sisäisen nesteen tuottama paine.|Внутриглазное давление создаётся жидкостью внутри глаза.
+kyynelrauhanen|glandula lacrimalis|Kyynelrauhanen tuottaa kyynelnestettä, joka kosteuttaa silmän pintaa.|Слёзная железа вырабатывает слезу, увлажняющую поверхность глаза.
+ulkokorva|auris externa|Ulkokorva kerää ääntä ja johtaa sen korvakäytävään.|Наружное ухо собирает звук и направляет его в слуховой проход.
+välikorva|auris media|Välikorvan kuuloluut välittävät tärykalvon värähtelyn sisäkorvaan.|Слуховые косточки среднего уха передают колебания барабанной перепонки во внутреннее ухо.
+sisäkorva|auris interna|Sisäkorvassa ovat kuulon ja tasapainon aistinelimet.|Во внутреннем ухе находятся органы слуха и равновесия.
+tärykalvo|membrana tympani|Tärykalvo värähtelee ääniaaltojen vaikutuksesta.|Барабанная перепонка колеблется под действием звуковых волн.
+kuuloluut|ossicula auditus|Vasara, alasin ja jalustin välittävät äänivärähtelyn sisäkorvaan.|Молоточек, наковальня и стремечко передают звуковые колебания внутреннему уху.
+simpukka (korva)|cochlea|Simpukka muuntaa äänen aiheuttamat mekaaniset värähtelyt hermoviesteiksi.|Улитка внутреннего уха преобразует механические колебания звука в нервные сигналы.
+kuulohermo|nervus cochlearis|Kuulohermo kuljettaa simpukasta syntyvät viestit aivoihin.|Слуховой нерв передаёт сигналы от улитки в головной мозг.
+tasapainoelin|apparatus vestibularis|Tasapainoelin aistii pään asentoa ja liikkeiden kiihtyvyyttä.|Вестибулярный аппарат воспринимает положение головы и ускорение движений.

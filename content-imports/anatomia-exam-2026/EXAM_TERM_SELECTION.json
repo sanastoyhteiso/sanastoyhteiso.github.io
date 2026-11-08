@@ -1,0 +1,2115 @@
+{
+  "status": "SELECTION_ONLY_NOT_DEPLOYED",
+  "source_sha": "fa65cf3ba0683309050a7dc729d6898699a63bbc",
+  "source_version": "2.2.1",
+  "topic_boundaries": [
+    {
+      "id": "01",
+      "fi": "Ihmiselimistö ja solut",
+      "ru": "Организм и клетки",
+      "pages": "s.7–12, 17"
+    },
+    {
+      "id": "02",
+      "fi": "Iho",
+      "ru": "Кожа",
+      "pages": "s.25–30"
+    },
+    {
+      "id": "03",
+      "fi": "Luut ja lihakset",
+      "ru": "Кости и мышцы",
+      "pages": "s.31–52"
+    },
+    {
+      "id": "04",
+      "fi": "Veri ja puolustusjärjestelmä",
+      "ru": "Кровь и иммунная защита",
+      "pages": "s.53–66"
+    },
+    {
+      "id": "05",
+      "fi": "Verenkierto",
+      "ru": "Кровообращение",
+      "pages": "s.67–80"
+    },
+    {
+      "id": "06",
+      "fi": "Hengitys",
+      "ru": "Дыхание",
+      "pages": "s.81–89"
+    },
+    {
+      "id": "07",
+      "fi": "Ruuansulatus",
+      "ru": "Пищеварение",
+      "pages": "s.91–106"
+    },
+    {
+      "id": "08",
+      "fi": "Virtsaneritys",
+      "ru": "Мочевыделение",
+      "pages": "s.107–114"
+    },
+    {
+      "id": "09",
+      "fi": "Hormonaalinen säätely",
+      "ru": "Гормональная регуляция",
+      "pages": "s.131–146"
+    },
+    {
+      "id": "10",
+      "fi": "Hermosto ja aistit",
+      "ru": "Нервная система и органы чувств",
+      "pages": "s.161–190"
+    }
+  ],
+  "exclusions": [
+    "EI Ihon aistinelimet",
+    "EI Veriryhmät",
+    "EI Munuaisten toiminnan säätely",
+    "EI Virtsaamisheijaste"
+  ],
+  "explicitly_excluded": [
+    {
+      "id": "T01059",
+      "fi": "munuaisten toiminnan säätely",
+      "reason": "EI Munuaisten toiminnan säätely"
+    },
+    {
+      "id": "T01066",
+      "fi": "virtsaamisheijaste",
+      "reason": "EI Virtsaamisheijaste"
+    },
+    {
+      "id": "T01070",
+      "fi": "virtsaamisen tarve",
+      "reason": "EI Virtsaamisheijaste (rajatapaus: virtsaamisen tarve)"
+    },
+    {
+      "id": "T01096",
+      "fi": "ADH:n vaikutus",
+      "reason": "EI Munuaisten toiminnan säätely (ADH:n vaikutus)"
+    }
+  ],
+  "excluded_categories": [
+    "Anatomia: Lisääntymiselimistö",
+    "Sairaudet:*"
+  ],
+  "existing": [
+    {
+      "id": "T00096",
+      "fi": "virtsa",
+      "ru": "моча",
+      "cat": "Vaipat ja erittäminen",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T00104",
+      "fi": "virtsarakko",
+      "ru": "мочевой пузырь",
+      "cat": "Vaipat ja erittäminen",
+      "topic": "08",
+      "existing_example": false
+    },
+    {
+      "id": "T00105",
+      "fi": "virtsaputki",
+      "ru": "мочеиспускательный канал",
+      "cat": "Vaipat ja erittäminen",
+      "topic": "08",
+      "existing_example": false
+    },
+    {
+      "id": "T00179",
+      "fi": "iho",
+      "ru": "кожа",
+      "cat": "Iho, haavat ja turvotus",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T00271",
+      "fi": "verenpaine",
+      "ru": "артериальное давление",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": true
+    },
+    {
+      "id": "T00272",
+      "fi": "systolinen verenpaine",
+      "ru": "систолическое давление",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00273",
+      "fi": "diastolinen verenpaine",
+      "ru": "диастолическое давление",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00275",
+      "fi": "pulssi",
+      "ru": "пульс",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": true
+    },
+    {
+      "id": "T00276",
+      "fi": "syke",
+      "ru": "частота сердечных сокращений",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00277",
+      "fi": "syketaajuus",
+      "ru": "частота сердцебиения",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00278",
+      "fi": "hengitystaajuus",
+      "ru": "частота дыхания",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": true
+    },
+    {
+      "id": "T00279",
+      "fi": "hengitys",
+      "ru": "дыхание",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00280",
+      "fi": "hapen saturaatio",
+      "ru": "насыщение крови кислородом",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00281",
+      "fi": "happisaturaatio",
+      "ru": "сатурация кислорода",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": true
+    },
+    {
+      "id": "T00282",
+      "fi": "SpO2",
+      "ru": "сатурация кислорода по пульсоксиметру",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00284",
+      "fi": "lämpötila",
+      "ru": "температура",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00285",
+      "fi": "ruumiinlämpö",
+      "ru": "температура тела",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00287",
+      "fi": "verensokeri",
+      "ru": "сахар крови",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "09",
+      "existing_example": true
+    },
+    {
+      "id": "T00304",
+      "fi": "verenkierto",
+      "ru": "кровообращение",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00305",
+      "fi": "hapenpuute",
+      "ru": "недостаток кислорода",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00306",
+      "fi": "hapetus",
+      "ru": "обеспечение кислородом",
+      "cat": "Elintoiminnot ja mittaukset",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00464",
+      "fi": "ravintoaine",
+      "ru": "питательное вещество",
+      "cat": "Ravitsemus ja ruokailu",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00467",
+      "fi": "proteiini",
+      "ru": "белок",
+      "cat": "Ravitsemus ja ruokailu",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00473",
+      "fi": "neste",
+      "ru": "жидкость",
+      "cat": "Ravitsemus ja ruokailu",
+      "topic": "08",
+      "existing_example": false
+    },
+    {
+      "id": "T00475",
+      "fi": "nestetasapaino",
+      "ru": "водный баланс",
+      "cat": "Ravitsemus ja ruokailu",
+      "topic": "08",
+      "existing_example": false
+    },
+    {
+      "id": "T00532",
+      "fi": "keho",
+      "ru": "тело",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00533",
+      "fi": "pää",
+      "ru": "голова",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00534",
+      "fi": "aivot",
+      "ru": "головной мозг",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00535",
+      "fi": "kasvot",
+      "ru": "лицо",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00536",
+      "fi": "otsa",
+      "ru": "лоб",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00537",
+      "fi": "silmä",
+      "ru": "глаз",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00538",
+      "fi": "korva",
+      "ru": "ухо",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00539",
+      "fi": "nenä",
+      "ru": "нос",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00540",
+      "fi": "kaula",
+      "ru": "шея",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00541",
+      "fi": "niska",
+      "ru": "задняя поверхность шеи, затылок",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00542",
+      "fi": "kurkku",
+      "ru": "горло",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00543",
+      "fi": "olkapää",
+      "ru": "плечо",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00544",
+      "fi": "olkavarsi",
+      "ru": "плечо (между локтем и плечевым суставом)",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00545",
+      "fi": "kyynärpää",
+      "ru": "локоть",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00546",
+      "fi": "kyynärvarsi",
+      "ru": "предплечье",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00547",
+      "fi": "ranne",
+      "ru": "запястье",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00548",
+      "fi": "käsi",
+      "ru": "рука, кисть (по контексту)",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00549",
+      "fi": "kämmen",
+      "ru": "ладонь",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00550",
+      "fi": "sormi",
+      "ru": "палец руки",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00551",
+      "fi": "peukalo",
+      "ru": "большой палец руки",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00552",
+      "fi": "rinta",
+      "ru": "грудь",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00553",
+      "fi": "rintakehä",
+      "ru": "грудная клетка",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00554",
+      "fi": "selkä",
+      "ru": "спина",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00555",
+      "fi": "alaselkä",
+      "ru": "поясница",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00556",
+      "fi": "vatsa",
+      "ru": "живот",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00557",
+      "fi": "navan seutu",
+      "ru": "область пупка",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00558",
+      "fi": "lantio",
+      "ru": "таз",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00559",
+      "fi": "lonkka",
+      "ru": "тазобедренная область",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00560",
+      "fi": "pakara",
+      "ru": "ягодица",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00561",
+      "fi": "reisi",
+      "ru": "бедро",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00562",
+      "fi": "polvi",
+      "ru": "колено",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00563",
+      "fi": "pohje",
+      "ru": "икра",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00564",
+      "fi": "jalkapohja",
+      "ru": "подошва",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00565",
+      "fi": "sisäelin",
+      "ru": "внутренний орган",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00566",
+      "fi": "luu",
+      "ru": "кость",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00567",
+      "fi": "lihas",
+      "ru": "мышца",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00568",
+      "fi": "nivel",
+      "ru": "сустав",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00569",
+      "fi": "jänne",
+      "ru": "сухожилие",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00570",
+      "fi": "nivelside",
+      "ru": "связка",
+      "cat": "Anatomia: keho",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00571",
+      "fi": "hermo",
+      "ru": "нерв",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00572",
+      "fi": "verisuoni",
+      "ru": "кровеносный сосуд",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00573",
+      "fi": "imusolmuke",
+      "ru": "лимфатический узел",
+      "cat": "Anatomia: keho",
+      "topic": "01",
+      "existing_example": false
+    },
+    {
+      "id": "T00574",
+      "fi": "sydän",
+      "ru": "сердце",
+      "cat": "Anatomia: elimet",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00575",
+      "fi": "keuhko",
+      "ru": "лёгкое",
+      "cat": "Anatomia: elimet",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00576",
+      "fi": "hengitystiet",
+      "ru": "дыхательные пути",
+      "cat": "Anatomia: elimet",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00577",
+      "fi": "henkitorvi",
+      "ru": "трахея",
+      "cat": "Anatomia: elimet",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00578",
+      "fi": "keuhkoputki",
+      "ru": "бронх",
+      "cat": "Anatomia: elimet",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00579",
+      "fi": "pallea",
+      "ru": "диафрагма",
+      "cat": "Anatomia: elimet",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T00580",
+      "fi": "verenkiertoelimistö",
+      "ru": "кровеносная система",
+      "cat": "Anatomia: elimet",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00581",
+      "fi": "valtimo",
+      "ru": "артерия",
+      "cat": "Anatomia: elimet",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00582",
+      "fi": "laskimo",
+      "ru": "вена",
+      "cat": "Anatomia: elimet",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00583",
+      "fi": "hiussuoni",
+      "ru": "капилляр",
+      "cat": "Anatomia: elimet",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T00584",
+      "fi": "veri",
+      "ru": "кровь",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00585",
+      "fi": "veriplasma",
+      "ru": "плазма крови",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00586",
+      "fi": "punasolu",
+      "ru": "эритроцит",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00587",
+      "fi": "valkosolu",
+      "ru": "лейкоцит",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00588",
+      "fi": "verihiutale",
+      "ru": "тромбоцит",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00589",
+      "fi": "mahalaukku",
+      "ru": "желудок",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00590",
+      "fi": "ruokatorvi",
+      "ru": "пищевод",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00591",
+      "fi": "ohutsuoli",
+      "ru": "тонкая кишка",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00592",
+      "fi": "paksusuoli",
+      "ru": "толстая кишка",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00593",
+      "fi": "peräsuoli",
+      "ru": "прямая кишка",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00594",
+      "fi": "maksa",
+      "ru": "печень",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00595",
+      "fi": "sappirakko",
+      "ru": "желчный пузырь",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00596",
+      "fi": "haima",
+      "ru": "поджелудочная железа",
+      "cat": "Anatomia: elimet",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T00597",
+      "fi": "munuainen",
+      "ru": "почка",
+      "cat": "Anatomia: elimet",
+      "topic": "08",
+      "existing_example": false
+    },
+    {
+      "id": "T00598",
+      "fi": "virtsanjohdin",
+      "ru": "мочеточник",
+      "cat": "Anatomia: elimet",
+      "topic": "08",
+      "existing_example": false
+    },
+    {
+      "id": "T00599",
+      "fi": "selkäydin",
+      "ru": "спинной мозг",
+      "cat": "Anatomia: elimet",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T00600",
+      "fi": "hermosto",
+      "ru": "нервная система",
+      "cat": "Anatomia: elimet",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T00601",
+      "fi": "keskushermosto",
+      "ru": "центральная нервная система",
+      "cat": "Anatomia: elimet",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T00602",
+      "fi": "ääreishermosto",
+      "ru": "периферическая нервная система",
+      "cat": "Anatomia: elimet",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T00603",
+      "fi": "imusuonisto",
+      "ru": "лимфатическая система",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00604",
+      "fi": "perna",
+      "ru": "селезёнка",
+      "cat": "Anatomia: elimet",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T00605",
+      "fi": "kilpirauhanen",
+      "ru": "щитовидная железа",
+      "cat": "Anatomia: elimet",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T00606",
+      "fi": "lisämunuainen",
+      "ru": "надпочечник",
+      "cat": "Anatomia: elimet",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T00607",
+      "fi": "aivolisäke",
+      "ru": "гипофиз",
+      "cat": "Anatomia: elimet",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T00608",
+      "fi": "luusto",
+      "ru": "скелет",
+      "cat": "Anatomia: elimet",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T00609",
+      "fi": "lihaksisto",
+      "ru": "мышечная система",
+      "cat": "Anatomia: elimet",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01054",
+      "fi": "virtsaelimistö",
+      "ru": "мочевыделительная система",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01055",
+      "fi": "virtsatiet",
+      "ru": "мочевыводящие пути",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01056",
+      "fi": "munuaiset",
+      "ru": "почки (мн. ч.)",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01057",
+      "fi": "munuaisallas",
+      "ru": "почечная лоханка",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01058",
+      "fi": "nefroni",
+      "ru": "нефрон",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01060",
+      "fi": "ADH (antidiureettinen hormoni)",
+      "ru": "антидиуретический гормон (АДГ)",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "09",
+      "existing_example": true
+    },
+    {
+      "id": "T01061",
+      "fi": "aldosteroni",
+      "ru": "альдостерон",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "09",
+      "existing_example": true
+    },
+    {
+      "id": "T01062",
+      "fi": "virtsan muodostuminen",
+      "ru": "образование мочи",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01063",
+      "fi": "suodatus",
+      "ru": "фильтрация",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01064",
+      "fi": "takaisinimeytyminen",
+      "ru": "обратное всасывание (реабсорбция)",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01065",
+      "fi": "eritys (tubulaarinen eritys)",
+      "ru": "канальцевая секреция",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01067",
+      "fi": "urea (virtsa-aine)",
+      "ru": "мочевина",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01068",
+      "fi": "kuona-aine",
+      "ru": "продукт обмена, подлежащий выведению",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01069",
+      "fi": "neste- ja suolatasapaino",
+      "ru": "водно-солевой баланс",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01071",
+      "fi": "virtsaneritys",
+      "ru": "диурез, выделение мочи",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01072",
+      "fi": "virtsan kulkureitti",
+      "ru": "путь прохождения мочи",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01073",
+      "fi": "glomerulussuodatus",
+      "ru": "клубочковая фильтрация",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01074",
+      "fi": "tubuluseritys",
+      "ru": "канальцевая секреция",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01075",
+      "fi": "munuaisvaltimo",
+      "ru": "почечная артерия",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01076",
+      "fi": "munuaislaskimo",
+      "ru": "почечная вена",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01077",
+      "fi": "alaonttolaskimo",
+      "ru": "нижняя полая вена",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01078",
+      "fi": "vatsa-aortta",
+      "ru": "брюшная аорта",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01079",
+      "fi": "munuaiskuori",
+      "ru": "корковое вещество почки",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01080",
+      "fi": "munuaisydin",
+      "ru": "мозговое вещество почки",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01081",
+      "fi": "munuaispyramidi",
+      "ru": "почечная пирамида",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01082",
+      "fi": "munuaiskeränen (glomerulus)",
+      "ru": "почечный клубочек",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01083",
+      "fi": "Bowmanin kotelo",
+      "ru": "капсула Боумена",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01084",
+      "fi": "Bowmanin ontelo",
+      "ru": "пространство капсулы Боумена",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01085",
+      "fi": "tuojasuoni",
+      "ru": "приносящая артериола",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01086",
+      "fi": "viejäsuoni",
+      "ru": "выносящая артериола",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01087",
+      "fi": "proksimaalinen kiemuratiehyt",
+      "ru": "проксимальный извитой каналец",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01088",
+      "fi": "Henlen linko",
+      "ru": "петля Генле",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01089",
+      "fi": "distaalinen kiemuratiehyt",
+      "ru": "дистальный извитой каналец",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01090",
+      "fi": "kokoojaputki",
+      "ru": "собирательная трубочка",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01091",
+      "fi": "peritubulaariset hiussuonet",
+      "ru": "перитубулярные капилляры",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01092",
+      "fi": "munuaistiehyt",
+      "ru": "почечный каналец",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01093",
+      "fi": "alkuvirtsa",
+      "ru": "первичная моча",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01094",
+      "fi": "Bowmanin kotelon sisempi lehti",
+      "ru": "внутренний листок капсулы Боумена",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01095",
+      "fi": "Bowmanin kotelon ulompi lehti",
+      "ru": "наружный листок капсулы Боумена",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01097",
+      "fi": "munuaisten tehtävät",
+      "ru": "функции почек",
+      "cat": "Anatomia: Virtsaelimistö",
+      "topic": "08",
+      "existing_example": true
+    },
+    {
+      "id": "T01114",
+      "fi": "sydämen oikea eteinen",
+      "ru": "правое предсердие",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01115",
+      "fi": "sydämen vasen eteinen",
+      "ru": "левое предсердие",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01116",
+      "fi": "sydämen oikea kammio",
+      "ru": "правый желудочек сердца",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01117",
+      "fi": "sydämen vasen kammio",
+      "ru": "левый желудочек сердца",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01118",
+      "fi": "sydämen väliseinä",
+      "ru": "сердечная перегородка",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01119",
+      "fi": "hiippaläppä",
+      "ru": "митральный клапан",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01120",
+      "fi": "kolmiliuskaläppä",
+      "ru": "трёхстворчатый клапан",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01121",
+      "fi": "aorttaläppä",
+      "ru": "аортальный клапан",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01122",
+      "fi": "keuhkovaltimoläppä",
+      "ru": "клапан лёгочной артерии",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01123",
+      "fi": "sepelvaltimo",
+      "ru": "коронарная артерия",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01124",
+      "fi": "sydänlihas",
+      "ru": "сердечная мышца",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01125",
+      "fi": "sydänpussi",
+      "ru": "перикард, околосердечная сумка",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01126",
+      "fi": "sydämen johtoratajärjestelmä",
+      "ru": "проводящая система сердца",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01127",
+      "fi": "sinussolmuke",
+      "ru": "синусовый узел",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01128",
+      "fi": "pieni verenkierto",
+      "ru": "малый круг кровообращения",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01129",
+      "fi": "suuri verenkierto",
+      "ru": "большой круг кровообращения",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01130",
+      "fi": "hiussuoniverkosto",
+      "ru": "капиллярная сеть",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01131",
+      "fi": "aortta",
+      "ru": "аорта",
+      "cat": "Anatomia: Sydän ja verenkierto",
+      "topic": "05",
+      "existing_example": false
+    },
+    {
+      "id": "T01140",
+      "fi": "hengityselimistö",
+      "ru": "дыхательная система",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01141",
+      "fi": "nenäontelo",
+      "ru": "носовая полость",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01142",
+      "fi": "nielu",
+      "ru": "глотка",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01143",
+      "fi": "kurkunpää",
+      "ru": "гортань",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01144",
+      "fi": "äänihuuli",
+      "ru": "голосовая складка",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01145",
+      "fi": "ilmatiehyt",
+      "ru": "бронхиола",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01146",
+      "fi": "keuhkorakkula",
+      "ru": "альвеола",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01147",
+      "fi": "keuhkorakkulat",
+      "ru": "альвеолы",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01148",
+      "fi": "keuhkopussi",
+      "ru": "плевра",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01149",
+      "fi": "keuhkolohko",
+      "ru": "доля лёгкого",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01150",
+      "fi": "kaasujenvaihto",
+      "ru": "газообмен",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01151",
+      "fi": "palleahengitys",
+      "ru": "диафрагмальное дыхание",
+      "cat": "Anatomia: Hengityselimistö",
+      "topic": "06",
+      "existing_example": false
+    },
+    {
+      "id": "T01159",
+      "fi": "ruoansulatuselimistö",
+      "ru": "пищеварительная система",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01160",
+      "fi": "mahalaukun limakalvo",
+      "ru": "слизистая оболочка желудка",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01161",
+      "fi": "pohjukaissuoli",
+      "ru": "двенадцатиперстная кишка",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01162",
+      "fi": "tyhjäsuoli",
+      "ru": "тощая кишка",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01163",
+      "fi": "sykkyräsuoli",
+      "ru": "подвздошная кишка",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01164",
+      "fi": "umpisuoli",
+      "ru": "слепая кишка",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01165",
+      "fi": "umpilisäke",
+      "ru": "червеобразный отросток",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01166",
+      "fi": "peräaukko",
+      "ru": "анальное отверстие",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01167",
+      "fi": "sappitiehyt",
+      "ru": "желчный проток",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01168",
+      "fi": "haimaneste",
+      "ru": "панкреатический сок",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01169",
+      "fi": "ruoansulatusentsyymi",
+      "ru": "пищеварительный фермент",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01170",
+      "fi": "suolinukka",
+      "ru": "кишечная ворсинка",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01171",
+      "fi": "ravintoaineiden imeytyminen",
+      "ru": "всасывание питательных веществ",
+      "cat": "Anatomia: Ruoansulatuselimistö",
+      "topic": "07",
+      "existing_example": false
+    },
+    {
+      "id": "T01187",
+      "fi": "isoaivot",
+      "ru": "большой мозг",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01188",
+      "fi": "aivokuori",
+      "ru": "кора больших полушарий",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01189",
+      "fi": "pikkuaivot",
+      "ru": "мозжечок",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01190",
+      "fi": "aivorunko",
+      "ru": "ствол головного мозга",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01191",
+      "fi": "ydinjatke",
+      "ru": "продолговатый мозг",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01192",
+      "fi": "hermosolu",
+      "ru": "нервная клетка, нейрон",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01193",
+      "fi": "aksoni",
+      "ru": "аксон",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01194",
+      "fi": "dendriitti",
+      "ru": "дендрит",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01195",
+      "fi": "hermoimpulssi",
+      "ru": "нервный импульс",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01196",
+      "fi": "synapsi",
+      "ru": "синапс",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01197",
+      "fi": "aivokalvo",
+      "ru": "мозговая оболочка",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01198",
+      "fi": "autonominen hermosto",
+      "ru": "вегетативная нервная система",
+      "cat": "Anatomia: Hermosto",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01205",
+      "fi": "sarveiskalvo",
+      "ru": "роговица",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01206",
+      "fi": "värikalvo",
+      "ru": "радужная оболочка",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01207",
+      "fi": "mustuainen",
+      "ru": "зрачок",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01208",
+      "fi": "mykiö",
+      "ru": "хрусталик",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01209",
+      "fi": "verkkokalvo",
+      "ru": "сетчатка",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01210",
+      "fi": "näköhermo",
+      "ru": "зрительный нерв",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01211",
+      "fi": "silmänpaine",
+      "ru": "внутриглазное давление",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01212",
+      "fi": "kyynelrauhanen",
+      "ru": "слёзная железа",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01213",
+      "fi": "ulkokorva",
+      "ru": "наружное ухо",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01214",
+      "fi": "välikorva",
+      "ru": "среднее ухо",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01215",
+      "fi": "sisäkorva",
+      "ru": "внутреннее ухо",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01216",
+      "fi": "tärykalvo",
+      "ru": "барабанная перепонка",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01217",
+      "fi": "kuuloluut",
+      "ru": "слуховые косточки",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01218",
+      "fi": "simpukka (korva)",
+      "ru": "улитка внутреннего уха",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01219",
+      "fi": "kuulohermo",
+      "ru": "слуховой нерв",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01220",
+      "fi": "tasapainoelin",
+      "ru": "вестибулярный орган",
+      "cat": "Anatomia: Näkö ja kuulo",
+      "topic": "10",
+      "existing_example": false
+    },
+    {
+      "id": "T01231",
+      "fi": "tuki- ja liikuntaelimistö",
+      "ru": "опорно-двигательная система",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01232",
+      "fi": "luuydin",
+      "ru": "костный мозг",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01233",
+      "fi": "nivelrusto",
+      "ru": "суставной хрящ",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01234",
+      "fi": "luurankolihas",
+      "ru": "скелетная мышца",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01235",
+      "fi": "selkäranka",
+      "ru": "позвоночник",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01236",
+      "fi": "nikama",
+      "ru": "позвонок",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01237",
+      "fi": "välilevy",
+      "ru": "межпозвоночный диск",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01238",
+      "fi": "lonkkanivel",
+      "ru": "тазобедренный сустав",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01239",
+      "fi": "polvinivel",
+      "ru": "коленный сустав",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01240",
+      "fi": "olkanivel",
+      "ru": "плечевой сустав",
+      "cat": "Anatomia: Tuki ja liikuntaelimistö",
+      "topic": "03",
+      "existing_example": false
+    },
+    {
+      "id": "T01245",
+      "fi": "umpieritysjärjestelmä",
+      "ru": "эндокринная система",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01246",
+      "fi": "hypotalamus",
+      "ru": "гипоталамус",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01247",
+      "fi": "lisäkilpirauhanen",
+      "ru": "паращитовидная железа",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01248",
+      "fi": "lisämunuaiskuori",
+      "ru": "кора надпочечника",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01249",
+      "fi": "lisämunuaisydin",
+      "ru": "мозговое вещество надпочечника",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01250",
+      "fi": "haiman saarekkeet",
+      "ru": "островки поджелудочной железы",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01251",
+      "fi": "insuliini",
+      "ru": "инсулин",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01252",
+      "fi": "glukagoni",
+      "ru": "глюкагон",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01253",
+      "fi": "kilpirauhashormoni",
+      "ru": "гормон щитовидной железы",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01254",
+      "fi": "verensokerin säätely",
+      "ru": "регуляция глюкозы крови",
+      "cat": "Anatomia: Umpieritys",
+      "topic": "09",
+      "existing_example": false
+    },
+    {
+      "id": "T01258",
+      "fi": "hemoglobiini",
+      "ru": "гемоглобин",
+      "cat": "Anatomia: Veri ja immuunipuolustus",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T01259",
+      "fi": "imuneste",
+      "ru": "лимфа",
+      "cat": "Anatomia: Veri ja immuunipuolustus",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T01260",
+      "fi": "imusuoni",
+      "ru": "лимфатический сосуд",
+      "cat": "Anatomia: Veri ja immuunipuolustus",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T01261",
+      "fi": "kateenkorva",
+      "ru": "вилочковая железа (тимус)",
+      "cat": "Anatomia: Veri ja immuunipuolustus",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T01262",
+      "fi": "vasta-aine",
+      "ru": "антитело",
+      "cat": "Anatomia: Veri ja immuunipuolustus",
+      "topic": "04",
+      "existing_example": false
+    },
+    {
+      "id": "T01284",
+      "fi": "orvaskesi",
+      "ru": "эпидермис",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T01285",
+      "fi": "verinahka",
+      "ru": "дерма",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T01286",
+      "fi": "ihonalaiskudos",
+      "ru": "подкожная клетчатка",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T01287",
+      "fi": "hikirauhanen",
+      "ru": "потовая железа",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T01288",
+      "fi": "talirauhanen",
+      "ru": "сальная железа",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T01289",
+      "fi": "karvatuppi",
+      "ru": "волосяной фолликул",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    },
+    {
+      "id": "T01290",
+      "fi": "ihon suojakerros",
+      "ru": "защитный барьер кожи",
+      "cat": "Anatomia: Iho",
+      "topic": "02",
+      "existing_example": false
+    }
+  ],
+  "summary": {
+    "selected_existing": 246,
+    "per_topic": {
+      "10": {
+        "title": "Hermosto ja aistit",
+        "n": 32
+      },
+      "01": {
+        "title": "Ihmiselimistö ja solut",
+        "n": 22
+      },
+      "02": {
+        "title": "Iho",
+        "n": 8
+      },
+      "03": {
+        "title": "Luut ja lihakset",
+        "n": 34
+      },
+      "04": {
+        "title": "Veri ja puolustusjärjestelmä",
+        "n": 12
+      },
+      "05": {
+        "title": "Verenkierto",
+        "n": 30
+      },
+      "06": {
+        "title": "Hengitys",
+        "n": 24
+      },
+      "07": {
+        "title": "Ruuansulatus",
+        "n": 23
+      },
+      "08": {
+        "title": "Virtsaneritys",
+        "n": 45
+      },
+      "09": {
+        "title": "Hormonaalinen säätely",
+        "n": 16
+      }
+    },
+    "excluded_EI": 4
+  }
+}

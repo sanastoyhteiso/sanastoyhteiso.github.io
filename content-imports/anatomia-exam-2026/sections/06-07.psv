@@ -1,0 +1,47 @@
+hengitystaajuus|frequentia respiratoria|Hengitystaajuus kertoo hengitysten määrän minuutissa.|Частота дыхания — число дыхательных движений за минуту.
+hengitys|respiratio|Hengityksessä ilma kulkee keuhkoihin ja pois, jotta happea saadaan ja hiilidioksidia poistuu.|При дыхании воздух входит в лёгкие и выходит из них, обеспечивая поступление кислорода и удаление углекислого газа.
+hapen saturaatio|—|Hapen saturaatio kuvaa, kuinka suuri osa veren hemoglobiinista on sitonut happea.|Сатурация показывает, какой процент гемоглобина в крови связан с кислородом.
+happisaturaatio|—|Happisaturaatio ilmaisee veren hemoglobiinin happikyllästeisyyttä prosentteina.|Кислородная сатурация выражает насыщение гемоглобина кислородом в процентах.
+SpO2|—|SpO2 on pulssioksimetrillä arvioitu veren happisaturaatio; lyhenne ei ole latinalainen elinnimi.|SpO₂ — сатурация, оценённая пульсоксиметром; это обозначение показателя, а не латинское название органа.
+hapenpuute|hypoxia|Hapenpuute tarkoittaa, että kudokset eivät saa riittävästi happea.|Гипоксия — недостаточное поступление кислорода к тканям.
+hapetus|oxygenatio|Hapetus tarkoittaa hapen saantia ja siirtymistä vereen ja kudoksiin.|Оксигенация — поступление кислорода и его доставка в кровь и ткани.
+keuhko|pulmo|Keuhkoissa veri ottaa happea ja luovuttaa hiilidioksidia keuhkorakkuloiden kautta.|В лёгких кровь получает кислород и отдаёт углекислый газ через альвеолы.
+hengitystiet|viae respiratoriae|Hengitystiet johtavat ilman nenästä ja nielusta keuhkoihin.|Дыхательные пути проводят воздух от носа и глотки к лёгким.
+henkitorvi|trachea|Henkitorvi johtaa ilman kurkunpäästä keuhkoputkiin ja pysyy avoinna rustorenkaiden avulla.|Трахея проводит воздух от гортани к бронхам и поддерживается хрящевыми полукольцами.
+keuhkoputki|bronchus|Keuhkoputket haarautuvat henkitorvesta ja johtavat ilman kohti pienempiä ilmateitä.|Бронхи отходят от трахеи и проводят воздух к более мелким дыхательным путям.
+pallea|diaphragma|Pallea supistuu sisäänhengityksessä ja suurentaa rintaontelon tilavuutta.|Диафрагма при вдохе сокращается и увеличивает объём грудной полости.
+hengityselimistö|systema respiratorium|Hengityselimistöön kuuluvat ilmatiet ja keuhkot, joissa kaasujenvaihto tapahtuu.|Дыхательная система включает воздухоносные пути и лёгкие, в которых происходит газообмен.
+nenäontelo|cavitas nasi|Nenäontelo lämmittää, kostuttaa ja puhdistaa hengitysilmaa.|Полость носа согревает, увлажняет и очищает вдыхаемый воздух.
+nielu|pharynx|Nielu on yhteinen reitti ilmalle ja ruoalle.|Глотка — общий участок пути воздуха и пищи.
+kurkunpää|larynx|Kurkunpää osallistuu äänen muodostamiseen ja suojaa alempia hengitysteitä.|Гортань участвует в образовании голоса и защищает нижние дыхательные пути.
+äänihuuli|plica vocalis|Äänihuulet värähtelevät ilmavirran vaikutuksesta puheessa.|Голосовые складки вибрируют под действием воздушного потока при речи.
+ilmatiehyt|bronchiolus|Ilmatiehyet ovat pieniä keuhkoputken haaroja, jotka johtavat kohti keuhkorakkuloita.|Бронхиолы — мелкие разветвления бронхов, ведущие к альвеолам.
+keuhkorakkula|alveolus pulmonis|Keuhkorakkulan seinämän kautta happi ja hiilidioksidi vaihtuvat veren kanssa.|Через стенку альвеолы происходит обмен кислорода и углекислого газа с кровью.
+keuhkorakkulat|alveoli pulmonis|Keuhkorakkulat muodostavat suuren pinta-alan kaasujenvaihdolle.|Альвеолы создают большую поверхность для газообмена.
+keuhkopussi|pleura|Keuhkopussi on kahdesta lehdestä muodostuva kalvo, joka vähentää kitkaa hengityksessä.|Плевра состоит из двух листков и уменьшает трение при дыхательных движениях.
+keuhkolohko|lobus pulmonis|Keuhko jakautuu lohkoihin: oikealla on tavallisesti kolme ja vasemmalla kaksi.|Лёгкие делятся на доли: справа обычно три, слева две.
+kaasujenvaihto|—|Happi siirtyy keuhkorakkuloista vereen ja hiilidioksidi verestä keuhkorakkuloihin.|При газообмене кислород переходит из альвеол в кровь, а углекислый газ — из крови в альвеолы.
+palleahengitys|—|Palleahengityksessä pallean liike on tärkein sisäänhengityksen voima.|При диафрагмальном дыхании движение диафрагмы является главным механизмом вдоха.
+ravintoaine|—|Ravintoaineet antavat energiaa ja rakennusaineita, joita elimistö tarvitsee.|Питательные вещества дают организму энергию и материал для построения тканей.
+proteiini|proteinum|Proteiinit ovat aminohapoista muodostuvia aineita, joita tarvitaan esimerkiksi kudosten rakentamiseen.|Белки состоят из аминокислот и нужны, в частности, для построения и восстановления тканей.
+mahalaukku|gaster|Mahalaukku sekoittaa ruokaa mahanesteeseen ja aloittaa proteiinien pilkkomista.|Желудок перемешивает пищу с желудочным соком и начинает расщепление белков.
+ruokatorvi|oesophagus|Ruokatorvi kuljettaa niellyn ruoan nielusta mahalaukkuun.|Пищевод проводит проглоченную пищу из глотки в желудок.
+ohutsuoli|intestinum tenue|Ohutsuolessa ravintoaineet pilkkoutuvat ja imeytyvät suurelta osin.|В тонкой кишке происходит большая часть расщепления и всасывания питательных веществ.
+paksusuoli|intestinum crassum|Paksusuoli imeyttää vettä ja suoloja sekä muodostaa ulostetta.|Толстая кишка всасывает воду и соли и формирует кал.
+peräsuoli|rectum|Peräsuoli varastoi ulostetta ennen ulostamista.|Прямая кишка накапливает кал перед дефекацией.
+maksa|hepar|Maksa käsittelee ravintoaineita, muokkaa haitallisia aineita ja tuottaa sappea.|Печень перерабатывает питательные вещества, обезвреживает многие вещества и вырабатывает желчь.
+sappirakko|vesica biliaris|Sappirakko varastoi ja väkevöi maksassa muodostunutta sappea.|Жёлчный пузырь запасает и концентрирует желчь, выработанную печенью.
+haima|pancreas|Haima tuottaa ruoansulatusentsyymejä sekä hormoneja, kuten insuliinia.|Поджелудочная железа выделяет пищеварительные ферменты и гормоны, например инсулин.
+ruoansulatuselimistö|systema digestorium|Ruoansulatuselimistö pilkkoo ruokaa, imeyttää ravintoaineet ja poistaa sulamattoman aineksen.|Пищеварительная система расщепляет пищу, всасывает питательные вещества и выводит непереваренные остатки.
+mahalaukun limakalvo|tunica mucosa gastrica|Mahalaukun limakalvo erittää limaa ja mahanestettä sekä suojaa mahalaukun seinämää.|Слизистая желудка вырабатывает слизь и компоненты желудочного сока и защищает его стенку.
+pohjukaissuoli|duodenum|Pohjukaissuoli on ohutsuolen alkuosa, johon saapuvat sappi ja haimaneste.|Двенадцатиперстная кишка — начальный отдел тонкой кишки, куда поступают желчь и сок поджелудочной железы.
+tyhjäsuoli|jejunum|Tyhjäsuoli on ohutsuolen keskiosa, jossa ravintoaineita imeytyy tehokkaasti.|Тощая кишка — средний отдел тонкой кишки, где активно всасываются питательные вещества.
+sykkyräsuoli|ileum|Sykkyräsuoli on ohutsuolen loppuosa ennen umpisuolta.|Подвздошная кишка — последний отдел тонкой кишки перед слепой кишкой.
+umpisuoli|caecum|Umpisuoli on paksusuolen alkuosa, johon ohutsuoli liittyy.|Слепая кишка — начальный отдел толстой кишки, куда впадает тонкая кишка.
+umpilisäke|appendix vermiformis|Umpilisäke on umpisuolesta lähtevä kapea, imukudosta sisältävä uloke.|Червеобразный отросток — узкий придаток слепой кишки, содержащий лимфоидную ткань.
+peräaukko|anus|Peräaukko on ruoansulatuskanavan ulostulo, jota sulkijalihakset säätelevät.|Анальное отверстие — выход пищеварительного тракта, контролируемый сфинктерами.
+sappitiehyt|ductus biliaris|Sappitiehyet kuljettavat maksassa syntyneen sapen kohti suolta.|Жёлчные протоки проводят желчь из печени в кишечник.
+haimaneste|succus pancreaticus|Haimaneste sisältää entsyymejä ja bikarbonaattia, jotka auttavat ruoan sulatuksessa.|Панкреатический сок содержит ферменты и бикарбонат, необходимые для пищеварения.
+ruoansulatusentsyymi|—|Ruoansulatusentsyymi pilkkoo suuria ravintomolekyylejä pienemmiksi.|Пищеварительный фермент расщепляет крупные молекулы пищи на более мелкие.
+suolinukka|villus intestinalis|Suolinukat lisäävät ohutsuolen pinta-alaa ja tehostavat imeytymistä.|Кишечные ворсинки увеличивают поверхность тонкой кишки и улучшают всасывание.
+ravintoaineiden imeytyminen|absorptio|Imeytymisessä pilkotut ravintoaineet siirtyvät suolesta vereen tai imunesteeseen.|При всасывании переваренные вещества переходят из кишечника в кровь или лимфу.
