@@ -605,38 +605,89 @@
     for(var i=0;i<topics.length;i++)if(topics[i].id===id)return topics[i].fi+' — '+topics[i].ru;
     return id;
   }
+  function mockReviewTerm(fi,items){
+    if(!fi)return '—';
+    for(var i=0;i<items.length;i++){
+      if(items[i].fi===fi){
+        return '<b>FI:</b> '+safe(items[i].fi)+' · <b>RU:</b> '+safe(items[i].ru)+
+          (items[i].en?' · <b>EN:</b> '+safe(items[i].en):'');
+      }
+    }
+    return safe(fi);
+  }
   function mockErrorReview(run){
-    var s='',count=0;
+    var s='',count=0,p=pair(run.direction);
     for(var i=0;i<run.answers.length;i++){
       var result=run.answers[i],q=run.questions[i];
-      if(!result||result.score===1)continue;
-      count++;
-      s+='<details class="exam-review"><summary>Задание '+(i+1)+' — '+safe(mockTypeLabel(q.type))+
-        ' · '+Math.round(result.score*100)+'% · '+safe(mockTopicLabel(q.topic))+'</summary>';
+      if(!result||!q)continue;
+      if(result.score<1)count++;
+      var perfect=result.score===1,points=(Math.round(result.score*100)/100).toFixed(2).replace(/0+$/,'').replace(/\.$/,'').replace('.',',');
+      var mark=perfect?'✓ Верно / Oikein':result.score>0?'◐ Частично / Osittain':'✕ Ошибка / Väärin';
+      s+='<details class="exam-review '+(perfect?'exam-review-passed':'exam-review-missed')+'"><summary>Задание '+(i+1)+
+        ' · '+mark+' · '+points+' / 1 балл · '+safe(mockTypeLabel(q.type))+
+        ' · '+safe(mockTopicLabel(q.topic))+'</summary>'+
+        '<div class="exam-review-original"><p class="exam-review-title">Исходное задание / Alkuperäinen tehtävä</p>';
       if(q.type==='translate'){
-        s+='<p><b>Oikea vastaus / Правильный ответ:</b> '+safe(q.answer)+'</p>'+examNote(q.item);
-      }else if(q.type==='truefalse'){
-        s+=truthAnswerFeedback(result.selected,q.question.correct)+bilingualFeedback(q.question);
-      }else if(q.type==='matching'){
-        for(var m=0;m<result.details.length;m++){
-          var d=result.details[m];if(d.selected!==d.correct){
-            s+='<p><b>FI:</b> '+safe(d.term.fi)+' · <b>RU:</b> '+safe(d.term.ru)+
-              (d.term.en?' · <b>EN:</b> '+safe(d.term.en):'')+'</p>';
-          }
+        s+='<p class="hint">Выбери один правильный перевод / Valitse yksi oikea käännös</p>'+
+          '<p class="exam-review-term" lang="'+safe(q.from)+'">'+safe(word(q.item,q.from))+'</p>'+
+          '<ol class="exam-review-options">';
+        for(var t=0;t<q.options.length;t++){
+          var option=q.options[t],picked=result.selected===option,correct=q.answer===option;
+          s+='<li class="'+(picked&&!correct?'exam-review-wrong':correct?'exam-review-right':'')+'">'+
+            safe(option)+(picked?' <b>← Твой выбор / Valitsit</b>':'')+
+            (correct?' <b>✓ Правильный ответ / Oikea vastaus</b>':'')+'</li>';
         }
-      }else{
-        for(var k=0;k<result.details.length;k++){
-          var item=result.details[k];if(item.selected!==item.correct){
-            s+='<div>'+multipleAnswerFeedback(item.selected,item.correct)+
-              bilingualFeedback(item.term)+'</div>';
-          }
+        s+='</ol><p><b>Твой ответ / Valitsit:</b> '+safe(result.selected||'—')+'</p>'+
+          '<p><b>Правильный ответ / Oikea vastaus:</b> '+safe(q.answer)+'</p>'+
+          (perfect?'':examNote(q.item));
+      }else if(q.type==='truefalse'){
+        s+='<p class="hint">Tosi vai epätosi? / Верно или неверно?</p>'+
+          bilingualQuestion(q.question.fi,q.question.ru,q.question.en)+
+          (perfect?
+           '<p class="exam-review-right"><b>✓ Твой ответ / Valitsit: </b>'+truthValueLabel(result.selected)+
+           ' · Верно / Oikein</p>':
+           truthAnswerFeedback(result.selected,q.question.correct)+bilingualFeedback(q.question));
+      }else if(q.type==='matching'){
+        s+='<p class="hint">Yhdistä oikeat parit / Сопоставь все четыре определения</p>';
+        for(var m=0;m<q.question.items.length;m++){
+          var term=q.question.items[m],
+            selected=result.selected&&result.selected[m]||'',
+            match=selected===term.fi;
+          s+='<div class="exam-review-row '+(match?'exam-review-right':'exam-review-wrong')+'">'+
+            '<p class="exam-review-row-heading">'+(match?'✓ Правильно / Oikein':'✕ Ошибка / Väärin')+
+            ' · '+(m+1)+' / '+q.question.items.length+'</p>'+
+            bilingualQuestion(term.examNoteFi,term.examNoteRu,
+              p.from==='en'?'Which Finnish medical term corresponds to the English medical term "'+term.en+'"?':
+              'Choose the English term for the Finnish description.')+
+            '<p><b>Твой выбор / Valitsit:</b> '+mockReviewTerm(selected,q.question.items)+'</p>'+
+            '<p><b>Правильная пара / Oikea pari:</b> '+mockReviewTerm(term.fi,q.question.items)+'</p></div>';
+        }
+      }else if(q.type==='multiselect'){
+        s+='<p class="hint">Valitse kaikki oikeat väitteet / Отметь все верные утверждения</p>';
+        for(var k=0;k<q.question.items.length;k++){
+          var item=q.question.items[k],
+            checked=!!(result.selected&&result.selected[k]),
+            rowCorrect=checked===item.correct;
+          s+='<div class="exam-review-row '+(rowCorrect?'exam-review-right':'exam-review-wrong')+'">'+
+            '<p class="exam-review-row-heading">'+(rowCorrect?'✓ Правильно / Oikein':'✕ Ошибка / Väärin')+
+            ' · '+(k+1)+' / '+q.question.items.length+'</p>'+
+            bilingualQuestion(item.fi,item.ru,item.en)+
+            '<p><b>Твой выбор / Valitsit:</b> '+
+              (checked?'Отметил / Valitsit':'Не отметил / Et valinnut')+'</p>'+
+            '<p><b>Правильное действие / Oikea valinta:</b> '+
+              (item.correct?'Отметить / Valitse':'Не отмечать / Älä valitse')+
+              ' · '+truthValueLabel(item.correct)+'</p>'+
+            (rowCorrect?'':bilingualFeedback(item))+'</div>';
         }
       }
-      s+='</details>';
+      s+='</div></details>';
     }
-    return '<div class="panel"><h2>Разбор ошибок / Virheiden tarkistus ('+count+')</h2>'+
-      (count?s:'<p>Все ответы правильные! / Kaikki oikein!</p>')+'</div>';
+    return '<div class="panel"><h2>Полный лист экзамена / Koko kokeen tarkistus (40)</h2>'+
+      '<p class="hint">Все задания с баллами и ответами. Раскрой строку, чтобы увидеть исходный вопрос и свой выбор. Подробное объяснение — при ошибке.</p>'+
+      '<p><b>Ошибочных и частично правильных / Virheitä:</b> '+count+' / 40</p>'+
+      s+'</div>';
   }
+
   function renderMockExam(){
     basePage('Экзамен / Koe / Exam','40 перемешанных заданий из всех десяти тем. Порог сдачи 80% (32 из 40).');
     var run=mockInit(),n=run.questions.length,p=examDisplayPair();
@@ -658,6 +709,7 @@
         '<p><b>'+report.points+' / 40 баллов</b> · Порог / Raja 32 / 40 (80%)</p>'+
         '<p>Ответов: '+report.count+' / 40 · Заданий с неполным баллом: '+report.wrong+'</p>'+
         '<p class="hint">Баллы за сопоставление начисляются по 0,25 за пару; за множественный выбор — с учётом неверно отмеченных вариантов.</p>'+
+        '<p class="hint">Экзамен можно пройти снова. «Новый экзамен» заменит текущий разбор новой попыткой.</p>'+ 
         '<button class="btn primary" data-action="mock-restart">Новый экзамен / Uusi koe</button></div>'+
         mockErrorReview(run);
       root.innerHTML=s;return;

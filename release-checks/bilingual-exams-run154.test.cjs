@@ -101,10 +101,10 @@ test('multiple choice shows each statement bilingually and one feedback per opti
 test('ES5 new code, versioned cache and Safari 12 readable font fallbacks',()=>{
  const app=read('app.js'),html=read('index.html'),sw=read('sw.js'),css=read('style.css');
  assert.doesNotMatch(app,/=>|\?\./);
- assert.match(html,/app\.js\?v=exam-status-run162-v1/);
+ assert.match(html,/app\.js\?v=exam-review-run163-v1/);
  assert.match(html,/riveria-true-false\.js\?v=run156-en-1/);
- assert.match(html,/style\.css\?v=exam-status-run162-1/);
- assert.match(sw,/v3\.0\.0-rc30/);
+ assert.match(html,/style\.css\?v=exam-review-run163-1/);
+ assert.match(sw,/v3\.0\.0-rc31/);
  assert.match(sw,/riveria-true-false\.js\?v=run156-en-1/);
  assert.ok(css.includes('font-size:25px;font-size:clamp'));
 });
