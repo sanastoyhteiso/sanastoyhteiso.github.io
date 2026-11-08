@@ -702,6 +702,7 @@
         '<p><b>'+report.points+' / 40 баллов</b> · Порог / Raja 32 / 40 (80%)</p>'+
         '<p>Ответов: '+report.count+' / 40 · Заданий с неполным баллом: '+report.wrong+'</p>'+
         '<p class="hint">Баллы за сопоставление начисляются по 0,25 за пару; за множественный выбор — с учётом неверно отмеченных вариантов.</p>'+
+        '<p class="hint">Экзамен можно пройти снова. «Новый экзамен» заменит текущий разбор новой попыткой.</p>'+ 
         '<button class="btn primary" data-action="mock-restart">Новый экзамен / Uusi koe</button></div>'+
         mockErrorReview(run);
       root.innerHTML=s;return;
