@@ -1,0 +1,687 @@
+{
+  "schema": "sanastoyhteiso-heart-blood-pdf-compounds-v1",
+  "source": "Owner-uploaded PDF Sydän, veri ja verenkierto, slides 2–17 only; slide numbers are PDF slides, not Päästä varpaisiin (2014) book pages",
+  "sourceDate": "2026-11-08",
+  "scope": "original FI/RU study definitions; blood groups ABO/Rh slides 18–19 excluded as EI",
+  "status": "DRAFT_CONTENT_PENDING_VALIDATION",
+  "summary": {
+    "total": 65,
+    "topics": {
+      "EXAM04": 17,
+      "EXAM05": 36,
+      "EXAM09": 10,
+      "EXAM10": 2
+    },
+    "sourceSlides": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "latinCount": 49,
+    "noLatin": 16
+  },
+  "records": [
+    {
+      "topic": "EXAM05",
+      "fi": "aineenvaihduntatuotteiden poisto",
+      "ru": "удаление продуктов обмена веществ",
+      "en": "removal of metabolic waste",
+      "latin": "",
+      "explanationFi": "Verenkierto vie kudoksissa syntyneitä kuona-aineita elimiin, jotka poistavat niitä.",
+      "explanationRu": "Кровообращение переносит образующиеся в тканях продукты обмена к органам, которые выводят их.",
+      "slide": 2
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "aineenvaihduntatuote",
+      "ru": "продукт обмена веществ",
+      "en": "metabolic product",
+      "latin": "",
+      "explanationFi": "Aineenvaihduntatuote syntyy solujen toiminnassa, esimerkiksi hiilidioksidi tai urea.",
+      "explanationRu": "Продукт обмена образуется при работе клеток, например углекислый газ или мочевина.",
+      "slide": 2
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "lihaspumppu",
+      "ru": "мышечная помпа",
+      "en": "muscle pump",
+      "latin": "",
+      "explanationFi": "Jalkojen lihasten supistuminen auttaa laskimoverta kulkemaan sydäntä kohti.",
+      "explanationRu": "Сокращения мышц ног помогают венозной крови возвращаться к сердцу.",
+      "slide": 3
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "pikkuvaltimo",
+      "ru": "артериола, мелкая артерия",
+      "en": "small artery / arteriole",
+      "latin": "arteriola",
+      "explanationFi": "Pikkuvaltimo säätelee läpimittaansa ja ohjaa veren määrää kudoksissa.",
+      "explanationRu": "Артериола изменяет свой просвет и регулирует приток крови к тканям.",
+      "slide": 3
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "arterioli",
+      "ru": "артериола",
+      "en": "arteriole",
+      "latin": "arteriola",
+      "explanationFi": "Arterioli on pienikokoinen valtimo, jonka supistuminen muuttaa kudoksen verenvirtausta.",
+      "explanationRu": "Артериола — маленькая артерия, сужение которой изменяет кровоснабжение ткани.",
+      "slide": 3
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "valtimoiden läpimitta",
+      "ru": "диаметр артерий",
+      "en": "arterial diameter",
+      "latin": "",
+      "explanationFi": "Valtimoiden läpimitta vaikuttaa siihen, kuinka helposti veri pääsee virtaamaan.",
+      "explanationRu": "Диаметр артерий влияет на сопротивление и количество протекающей крови.",
+      "slide": 3
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "laskimoläppä",
+      "ru": "венозный клапан",
+      "en": "venous valve",
+      "latin": "valvula venosa",
+      "explanationFi": "Laskimoläppä auttaa estämään veren virtaamisen väärään suuntaan.",
+      "explanationRu": "Венозный клапан помогает препятствовать обратному току крови.",
+      "slide": 3
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "keuhkoverenkierto",
+      "ru": "малый, лёгочный круг кровообращения",
+      "en": "pulmonary circulation",
+      "latin": "circulatio pulmonalis",
+      "explanationFi": "Keuhkoverenkierto vie veren sydämen oikeasta kammiosta keuhkoihin ja vasempaan eteiseen.",
+      "explanationRu": "Малый круг ведёт кровь из правого желудочка в лёгкие и затем в левое предсердие.",
+      "slide": 4
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "iso verenkierto",
+      "ru": "большой круг кровообращения",
+      "en": "systemic circulation",
+      "latin": "circulatio systemica",
+      "explanationFi": "Isossa verenkierrossa veri kulkee vasemmasta kammiosta kudoksiin ja takaisin oikeaan eteiseen.",
+      "explanationRu": "В большом круге кровь идёт из левого желудочка к тканям и возвращается в правое предсердие.",
+      "slide": 4
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "keuhkovaltimo",
+      "ru": "лёгочная артерия",
+      "en": "pulmonary artery",
+      "latin": "arteria pulmonalis",
+      "explanationFi": "Keuhkovaltimo kuljettaa vähähappista verta oikeasta kammiosta kohti keuhkoja.",
+      "explanationRu": "Лёгочная артерия несёт бедную кислородом кровь от правого желудочка к лёгким.",
+      "slide": 4
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "keuhkolaskimo",
+      "ru": "лёгочная вена",
+      "en": "pulmonary vein",
+      "latin": "vena pulmonalis",
+      "explanationFi": "Keuhkolaskimo tuo happirikasta verta keuhkoista sydämen vasempaan eteiseen.",
+      "explanationRu": "Лёгочная вена приносит насыщенную кислородом кровь из лёгких в левое предсердие.",
+      "slide": 4
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "kaulavaltimo",
+      "ru": "сонная артерия",
+      "en": "carotid artery",
+      "latin": "arteria carotis",
+      "explanationFi": "Kaulavaltimot kuljettavat verta pään ja kaulan alueelle.",
+      "explanationRu": "Сонные артерии снабжают кровью голову и шею.",
+      "slide": 5
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "olkavaltimo",
+      "ru": "плечевая артерия",
+      "en": "brachial artery",
+      "latin": "arteria brachialis",
+      "explanationFi": "Olkavaltimo kuljettaa verta olkavarren alueella ja siitä voi mitata verenpainetta.",
+      "explanationRu": "Плечевая артерия проходит в плече; на ней обычно измеряют артериальное давление.",
+      "slide": 5
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "yläonttolaskimo",
+      "ru": "верхняя полая вена",
+      "en": "superior vena cava",
+      "latin": "vena cava superior",
+      "explanationFi": "Yläonttolaskimo palauttaa verta ylävartalosta sydämen oikeaan eteiseen.",
+      "explanationRu": "Верхняя полая вена возвращает кровь от верхней части тела в правое предсердие.",
+      "slide": 5
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "lonkkavaltimo",
+      "ru": "подвздошная артерия",
+      "en": "iliac artery",
+      "latin": "arteria iliaca",
+      "explanationFi": "Lonkkavaltimo vie verta lantion alueelle ja alaraajaan johtaviin valtimoihin.",
+      "explanationRu": "Подвздошная артерия проводит кровь к области таза и сосудам нижней конечности.",
+      "slide": 5
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "alaraajavaltimo",
+      "ru": "артерия нижней конечности",
+      "en": "artery of lower limb",
+      "latin": "",
+      "explanationFi": "Alaraajavaltimot kuljettavat verta jalkojen lihaksille ja muille kudoksille.",
+      "explanationRu": "Артерии нижних конечностей доставляют кровь к мышцам и другим тканям ног.",
+      "slide": 5
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "kaksoispumppu",
+      "ru": "двойной насос сердца",
+      "en": "double pump of the heart",
+      "latin": "",
+      "explanationFi": "Sydämen oikea puoli pumppaa verta keuhkoihin ja vasen puoli muualle kehoon.",
+      "explanationRu": "Правая половина сердца качает кровь в лёгкие, а левая — к остальному телу.",
+      "slide": 6
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "mitraaliläppä",
+      "ru": "митральный клапан",
+      "en": "mitral valve",
+      "latin": "valva mitralis",
+      "explanationFi": "Mitraaliläppä on vasemman eteisen ja kammion välissä ja estää takaisinvirtausta.",
+      "explanationRu": "Митральный клапан между левым предсердием и желудочком препятствует обратному току крови.",
+      "slide": 7
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "trikuspidaaliläppä",
+      "ru": "трёхстворчатый клапан",
+      "en": "tricuspid valve",
+      "latin": "valva tricuspidalis",
+      "explanationFi": "Trikuspidaaliläppä on oikean eteisen ja kammion välissä.",
+      "explanationRu": "Трёхстворчатый клапан расположен между правым предсердием и правым желудочком.",
+      "slide": 7
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "kolmipurjeläppä",
+      "ru": "трёхстворчатый клапан сердца",
+      "en": "tricuspid heart valve",
+      "latin": "valva tricuspidalis",
+      "explanationFi": "Kolmipurjeläppä on toinen nimi oikean eteisen ja kammion väliselle trikuspidaaliläpälle.",
+      "explanationRu": "Kolmipurjeläppä — другое название трёхстворчатого клапана между правым предсердием и желудочком.",
+      "slide": 7
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "sydämen toimintakierto",
+      "ru": "сердечный цикл",
+      "en": "cardiac cycle",
+      "latin": "cyclus cardiacus",
+      "explanationFi": "Sydämen toimintakierto muodostuu supistumis- ja rentoutumisvaiheista.",
+      "explanationRu": "Сердечный цикл состоит из фаз сокращения и расслабления сердца.",
+      "slide": 9
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "systole",
+      "ru": "систола",
+      "en": "systole",
+      "latin": "systole",
+      "explanationFi": "Systole on sydänlihaksen supistumisvaihe, jolloin kammioista pumpataan verta.",
+      "explanationRu": "Систола — фаза сокращения сердца, когда кровь выталкивается из желудочков.",
+      "slide": 9
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "diastole",
+      "ru": "диастола",
+      "en": "diastole",
+      "latin": "diastole",
+      "explanationFi": "Diastole on sydämen rentoutumisvaihe, jolloin kammiot täyttyvät verellä.",
+      "explanationRu": "Диастола — фаза расслабления сердца, когда желудочки наполняются кровью.",
+      "slide": 9
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "supistumisvaihe",
+      "ru": "фаза сокращения сердца",
+      "en": "contraction phase",
+      "latin": "systole",
+      "explanationFi": "Sydämen supistumisvaiheessa kammiot työntävät verta valtimoihin.",
+      "explanationRu": "Во время фазы сокращения желудочки выталкивают кровь в артерии.",
+      "slide": 9
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "lepovaihe",
+      "ru": "фаза расслабления сердца",
+      "en": "relaxation phase",
+      "latin": "diastole",
+      "explanationFi": "Sydämen lepovaiheessa sydänlihas rentoutuu ja veri täyttää kammioita.",
+      "explanationRu": "В фазу расслабления сердечная мышца отдыхает и желудочки наполняются кровью.",
+      "slide": 9
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "systolinen verenpainearvo",
+      "ru": "систолическое значение давления",
+      "en": "systolic blood pressure reading",
+      "latin": "pressio sanguinis systolica",
+      "explanationFi": "Systolinen arvo on verenpaineen ylempi luku, joka kuvaa painetta sydämen supistuessa.",
+      "explanationRu": "Систолическое значение — верхнее число давления при сокращении сердца.",
+      "slide": 10
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "diastolinen verenpainearvo",
+      "ru": "диастолическое значение давления",
+      "en": "diastolic blood pressure reading",
+      "latin": "pressio sanguinis diastolica",
+      "explanationFi": "Diastolinen arvo on verenpaineen alempi luku sydämen rentoutuessa.",
+      "explanationRu": "Диастолическое значение — нижнее число давления при расслаблении сердца.",
+      "slide": 10
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "olkavarsivaltimo",
+      "ru": "плечевая артерия",
+      "en": "brachial artery",
+      "latin": "arteria brachialis",
+      "explanationFi": "Olkavarsivaltimo on olkavarren suuri valtimo, josta verenpaine tavallisesti mitataan.",
+      "explanationRu": "Плечевая артерия — крупная артерия плеча, на которой обычно измеряют давление.",
+      "slide": 10
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "kimmovaltimo",
+      "ru": "эластическая артерия",
+      "en": "elastic artery",
+      "latin": "arteria elastica",
+      "explanationFi": "Kimmovaltimon joustava seinämä tasaa sykkeen aiheuttamaa painevaihtelua.",
+      "explanationRu": "Эластичная стенка такой артерии сглаживает колебания давления от сердечных сокращений.",
+      "slide": 10
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "paineentasaajavaikutus",
+      "ru": "эффект сглаживания давления",
+      "en": "pressure-smoothing effect",
+      "latin": "",
+      "explanationFi": "Suurten valtimoiden joustavuus tasaa verenpaineen vaihtelua sydämen lyöntien välillä.",
+      "explanationRu": "Эластичность крупных артерий сглаживает изменение давления между ударами сердца.",
+      "slide": 10
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "verenpaineen säätely",
+      "ru": "регуляция кровяного давления",
+      "en": "blood pressure regulation",
+      "latin": "",
+      "explanationFi": "Verenpaineeseen vaikuttavat esimerkiksi hermoston toiminta, hormonit ja veren määrä.",
+      "explanationRu": "На кровяное давление влияют нервная система, гормоны и объём крови.",
+      "slide": 12
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "verenpaineen ja verenkierron säätely",
+      "ru": "регуляция давления и кровообращения",
+      "en": "regulation of blood pressure and circulation",
+      "latin": "",
+      "explanationFi": "Elimistö muuttaa sydämen toimintaa ja verisuonten tilaa tilanteen mukaan.",
+      "explanationRu": "Организм регулирует работу сердца и состояние сосудов в зависимости от ситуации.",
+      "slide": 12
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "sepellaskimo",
+      "ru": "венозный сосуд сердца, коронарная вена",
+      "en": "cardiac vein",
+      "latin": "vena cardiaca",
+      "explanationFi": "Sepellaskimo tuo verta sydänlihaksesta kohti sepelpoukamaa ja oikeaa eteistä.",
+      "explanationRu": "Коронарная вена отводит кровь от сердечной мышцы к венечному синусу и правому предсердию.",
+      "slide": 11
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "sepelpoukama",
+      "ru": "венечный синус сердца",
+      "en": "coronary sinus",
+      "latin": "sinus coronarius",
+      "explanationFi": "Sepelpoukama kerää sydämen laskimoverta ja laskee oikeaan eteiseen.",
+      "explanationRu": "Венечный синус собирает венозную кровь сердца и впадает в правое предсердие.",
+      "slide": 11
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "aortan tyvi",
+      "ru": "корень аорты",
+      "en": "aortic root",
+      "latin": "radix aortae",
+      "explanationFi": "Sepelvaltimot lähtevät aortan tyvestä ja tuovat verta sydänlihakseen.",
+      "explanationRu": "Коронарные артерии отходят от корня аорты и снабжают сердце кровью.",
+      "slide": 11
+    },
+    {
+      "topic": "EXAM05",
+      "fi": "suonten vanheneminen",
+      "ru": "возрастные изменения сосудов",
+      "en": "vascular ageing",
+      "latin": "",
+      "explanationFi": "Iän myötä verisuonten seinämät voivat jäykistyä, mikä vaikuttaa verenpaineeseen.",
+      "explanationRu": "С возрастом стенки сосудов могут становиться жёстче, что влияет на давление.",
+      "slide": 12
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "kudosneste",
+      "ru": "тканевая жидкость",
+      "en": "interstitial fluid",
+      "latin": "",
+      "explanationFi": "Kudosneste on solujen välistä nestettä, johon aineita siirtyy hiussuonista.",
+      "explanationRu": "Тканевая жидкость находится между клетками и обменивается веществами с капиллярами.",
+      "slide": 13
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "verisolu",
+      "ru": "клетка крови",
+      "en": "blood cell",
+      "latin": "cellula sanguinis",
+      "explanationFi": "Verisoluihin kuuluvat punasolut, valkosolut ja verihiutaleet.",
+      "explanationRu": "К форменным элементам крови относятся эритроциты, лейкоциты и тромбоциты.",
+      "slide": 13
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "veren aineosat",
+      "ru": "составные части крови",
+      "en": "components of blood",
+      "latin": "",
+      "explanationFi": "Veressä on plasmaa ja verisoluja, joilla on eri tehtäviä.",
+      "explanationRu": "Кровь состоит из плазмы и форменных элементов, выполняющих разные функции.",
+      "slide": 13
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "verenpuna",
+      "ru": "гемоглобин, красный пигмент крови",
+      "en": "haemoglobin",
+      "latin": "haemoglobinum",
+      "explanationFi": "Verenpuna eli hemoglobiini sitoo ja kuljettaa happea punasoluissa.",
+      "explanationRu": "Гемоглобин — красный белок эритроцитов, связывающий и переносящий кислород.",
+      "slide": 14
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "erytrosyytti",
+      "ru": "эритроцит",
+      "en": "erythrocyte",
+      "latin": "erythrocytus",
+      "explanationFi": "Erytrosyytti on punasolu, joka kuljettaa happea hemoglobiinin avulla.",
+      "explanationRu": "Эритроцит — красная клетка крови, переносящая кислород с помощью гемоглобина.",
+      "slide": 14
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "trombosyytti",
+      "ru": "тромбоцит",
+      "en": "platelet / thrombocyte",
+      "latin": "thrombocytus",
+      "explanationFi": "Trombosyytti eli verihiutale auttaa veren hyytymisessä.",
+      "explanationRu": "Тромбоцит участвует в свёртывании крови.",
+      "slide": 14
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "leukosyytti",
+      "ru": "лейкоцит",
+      "en": "leukocyte",
+      "latin": "leucocytus",
+      "explanationFi": "Leukosyytti on valkosolu, joka osallistuu elimistön puolustukseen.",
+      "explanationRu": "Лейкоцит — белая клетка крови, участвующая в иммунной защите.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "monosyytti",
+      "ru": "моноцит",
+      "en": "monocyte",
+      "latin": "monocytus",
+      "explanationFi": "Monosyytti on valkosolu, joka voi muuttua kudoksessa syöjäsoluksi.",
+      "explanationRu": "Моноцит — лейкоцит, который в тканях может превращаться в клетку-фгоцит.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "jyvässolu",
+      "ru": "гранулоцит, зернистый лейкоцит",
+      "en": "granulocyte",
+      "latin": "granulocytus",
+      "explanationFi": "Jyvässolu on valkosolu, jonka sisällä on jyväsiä eli granuloita.",
+      "explanationRu": "Гранулоцит — лейкоцит с гранулами внутри клетки.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "granulosyytti",
+      "ru": "гранулоцит",
+      "en": "granulocyte",
+      "latin": "granulocytus",
+      "explanationFi": "Granulosyytteihin kuuluvat neutrofiilit, basofiilit ja eosinofiilit.",
+      "explanationRu": "К гранулоцитам относятся нейтрофилы, базофилы и эозинофилы.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "neutrofiili",
+      "ru": "нейтрофил",
+      "en": "neutrophil",
+      "latin": "granulocytus neutrophilus",
+      "explanationFi": "Neutrofiili on valkosolu, joka syö ja tuhoaa monia mikrobeja.",
+      "explanationRu": "Нейтрофил — лейкоцит, который поглощает и уничтожает многие микробы.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "basofiili",
+      "ru": "базофил",
+      "en": "basophil",
+      "latin": "granulocytus basophilus",
+      "explanationFi": "Basofiili osallistuu allergisiin reaktioihin ja voi vapauttaa histamiinia.",
+      "explanationRu": "Базофил участвует в аллергических реакциях и может выделять гистамин.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "eosinofiili",
+      "ru": "эозинофил",
+      "en": "eosinophil",
+      "latin": "granulocytus eosinophilus",
+      "explanationFi": "Eosinofiili osallistuu etenkin loisten torjuntaan ja allergisiin reaktioihin.",
+      "explanationRu": "Эозинофил участвует прежде всего в защите от паразитов и аллергических реакциях.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "imusolu",
+      "ru": "лимфоцит",
+      "en": "lymphocyte",
+      "latin": "lymphocytus",
+      "explanationFi": "Imusolu on valkosolu, joka tunnistaa taudinaiheuttajia ja osallistuu immuunivasteeseen.",
+      "explanationRu": "Лимфоцит распознаёт возбудителей и участвует в иммунном ответе.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "lymfosyytti",
+      "ru": "лимфоцит",
+      "en": "lymphocyte",
+      "latin": "lymphocytus",
+      "explanationFi": "Lymfosyytteihin kuuluvat esimerkiksi B- ja T-solut, jotka osallistuvat immuunipuolustukseen.",
+      "explanationRu": "Лимфоциты включают B- и T-клетки, участвующие в иммунной защите.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "veren hyytyminen",
+      "ru": "свёртывание крови",
+      "en": "blood clotting",
+      "latin": "coagulatio sanguinis",
+      "explanationFi": "Veren hyytymisessä verihiutaleet ja hyytymistekijät auttavat tyrehdyttämään vuodon.",
+      "explanationRu": "При свёртывании тромбоциты и факторы свёртывания помогают остановить кровотечение.",
+      "slide": 14
+    },
+    {
+      "topic": "EXAM04",
+      "fi": "immuunireaktio",
+      "ru": "иммунная реакция",
+      "en": "immune response",
+      "latin": "",
+      "explanationFi": "Immuunireaktiossa elimistö tunnistaa vieraita aineita ja puolustautuu niitä vastaan.",
+      "explanationRu": "При иммунной реакции организм распознаёт чужеродные вещества и защищается от них.",
+      "slide": 15
+    },
+    {
+      "topic": "EXAM10",
+      "fi": "sympaattinen hermosto",
+      "ru": "симпатическая нервная система",
+      "en": "sympathetic nervous system",
+      "latin": "systema nervosum sympathicum",
+      "explanationFi": "Sympaattinen hermosto valmistaa kehoa toimintaan, esimerkiksi nopeuttaa sydämen sykettä.",
+      "explanationRu": "Симпатическая нервная система готовит организм к активности, например учащает пульс.",
+      "slide": 12
+    },
+    {
+      "topic": "EXAM10",
+      "fi": "parasympaattinen hermosto",
+      "ru": "парасимпатическая нервная система",
+      "en": "parasympathetic nervous system",
+      "latin": "systema nervosum parasympathicum",
+      "explanationFi": "Parasympaattinen hermosto tukee lepoa ja ruoansulatusta sekä voi hidastaa sydämen sykettä.",
+      "explanationRu": "Парасимпатическая нервная система способствует отдыху и пищеварению и может замедлять пульс.",
+      "slide": 12
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "adrenaliini",
+      "ru": "адреналин",
+      "en": "adrenaline",
+      "latin": "adrenalinum",
+      "explanationFi": "Adrenaliini on stressihormoni, joka voi nopeuttaa sykettä ja valmistaa kehoa toimimaan.",
+      "explanationRu": "Адреналин — гормон стресса, который может учащать сердцебиение и мобилизовать организм.",
+      "slide": 12
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "Langerhansin saarekkeet",
+      "ru": "островки Лангерганса",
+      "en": "islets of Langerhans",
+      "latin": "insulae pancreaticae",
+      "explanationFi": "Langerhansin saarekkeet ovat haiman soluryhmiä, jotka erittävät insuliinia ja glukagonia.",
+      "explanationRu": "Островки Лангерганса — группы клеток поджелудочной железы, выделяющие инсулин и глюкагон.",
+      "slide": 16
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "A-solu",
+      "ru": "альфа-клетка поджелудочной железы",
+      "en": "pancreatic alpha cell",
+      "latin": "cellula alpha",
+      "explanationFi": "Haiman A-solut eli alfasolut erittävät glukagonia, joka nostaa verensokeria.",
+      "explanationRu": "А-клетки поджелудочной железы выделяют глюкагон, повышающий уровень сахара крови.",
+      "slide": 16
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "B-solu",
+      "ru": "бета-клетка поджелудочной железы",
+      "en": "pancreatic beta cell",
+      "latin": "cellula beta",
+      "explanationFi": "Haiman B-solut eli beetasolut erittävät insuliinia, joka laskee verensokeria.",
+      "explanationRu": "В-клетки поджелудочной железы выделяют инсулин, снижающий уровень сахара крови.",
+      "slide": 16
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "verensokeripitoisuus",
+      "ru": "концентрация глюкозы крови",
+      "en": "blood glucose concentration",
+      "latin": "glycaemia",
+      "explanationFi": "Verensokeripitoisuus kuvaa glukoosin määrää veressä ja muuttuu esimerkiksi syömisen jälkeen.",
+      "explanationRu": "Концентрация глюкозы показывает количество сахара в крови и меняется, например, после еды.",
+      "slide": 16
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "glykogeeni",
+      "ru": "гликоген",
+      "en": "glycogen",
+      "latin": "glycogenum",
+      "explanationFi": "Glykogeeni on glukoosin varastomuoto, jota on erityisesti maksassa ja lihaksissa.",
+      "explanationRu": "Гликоген — запасная форма глюкозы, находящаяся главным образом в печени и мышцах.",
+      "slide": 17
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "haiman umpieritteinen osa",
+      "ru": "эндокринная часть поджелудочной железы",
+      "en": "endocrine pancreas",
+      "latin": "pars endocrina pancreatis",
+      "explanationFi": "Haiman umpieritteinen osa tuottaa hormoneja, kuten insuliinia ja glukagonia.",
+      "explanationRu": "Эндокринная часть поджелудочной железы вырабатывает гормоны, например инсулин и глюкагон.",
+      "slide": 16
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "glukoosin siirtyminen kudoksiin",
+      "ru": "поступление глюкозы в ткани",
+      "en": "glucose uptake into tissues",
+      "latin": "",
+      "explanationFi": "Insuliini tehostaa glukoosin siirtymistä moniin kudoksiin etenkin ruokailun jälkeen.",
+      "explanationRu": "Инсулин усиливает поступление глюкозы во многие ткани, особенно после еды.",
+      "slide": 17
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "insuliinin vajaaeritys",
+      "ru": "недостаточная секреция инсулина",
+      "en": "insulin deficiency",
+      "latin": "",
+      "explanationFi": "Insuliinin riittämätön eritys voi nostaa verensokeria ja liittyä diabetekseen.",
+      "explanationRu": "Недостаточное выделение инсулина может повышать сахар крови и быть связано с диабетом.",
+      "slide": 17
+    },
+    {
+      "topic": "EXAM09",
+      "fi": "sokerin varastomuoto",
+      "ru": "запасная форма сахара",
+      "en": "storage form of glucose",
+      "latin": "",
+      "explanationFi": "Glykogeeni on glukoosin varastomuoto, jota elimistö voi käyttää myöhemmin energiaksi.",
+      "explanationRu": "Гликоген — запасная форма глюкозы, из которой организм позже получает энергию.",
+      "slide": 17
+    }
+  ]
+}
