@@ -1,0 +1,43 @@
+05|eteinen|atrium|предсердие|atrium|Sydämen eteinen vastaanottaa verta ennen kuin veri siirtyy kammioon.|Предсердие принимает кровь перед её переходом в желудочек.
+05|läppä|valva|клапан|valve|Sydämen läppä ohjaa verta yhteen suuntaan ja estää takaisinvirtauksen.|Сердечный клапан обеспечивает однонаправленное движение крови.
+05|vasen|sinister|левый|left|Anatomiassa vasen tarkoittaa potilaan omaa vasenta puolta, ei katsojan vasenta.|В анатомии «левый» относится к левой стороне самого человека, а не наблюдателя.
+05|oikea|dexter|правый|right|Anatomiassa oikea tarkoittaa potilaan omaa oikeaa puolta.|В анатомии «правый» обозначает правую сторону самого человека.
+06|kurkunkansi|epiglottis|надгортанник|epiglottis|Kurkunkansi auttaa suojaamaan henkitorven sisäänkäyntiä nielemisen aikana.|Надгортанник помогает защищать вход в трахею при глотании.
+07|ruoansulatus|digestio|пищеварение|digestion|Ruoansulatus pilkkoo ruoan aineiksi, joita suoli voi imeyttää.|Пищеварение расщепляет пищу до веществ, способных всасываться в кишечнике.
+08|virtsa-aine|urea|мочевина|urea|Virtsa-aine syntyy maksassa typen aineenvaihdunnasta ja poistuu pääosin virtsassa.|Мочевина образуется в печени при обмене азотистых веществ и выводится главным образом с мочой.
+03|kallo|cranium|череп|skull|Kallo suojaa aivoja ja muodostaa pään luisen rungon.|Череп защищает мозг и образует костный каркас головы.
+03|lapaluu|scapula|лопатка|scapula|Lapaluu yhdistyy olkaluuhun ja solisluuhun sekä osallistuu olkapään liikkeisiin.|Лопатка сочленяется с плечевой костью и ключицей и участвует в движениях плеча.
+03|solisluu|clavicula|ключица|clavicle|Solisluu yhdistää yläraajan tukirakenteen rintakehään.|Ключица соединяет плечевой пояс с грудной клеткой.
+03|värttinäluu|radius|лучевая кость|radius|Värttinäluu sijaitsee kyynärvarressa peukalon puolella.|Лучевая кость расположена со стороны большого пальца предплечья.
+03|kyynärluu|ulna|локтевая кость|ulna|Kyynärluu sijaitsee kyynärvarressa pikkusormen puolella.|Локтевая кость расположена со стороны мизинца предплечья.
+03|lonkkaluu|os coxae|тазовая кость|hip bone|Lonkkaluu muodostuu suoliluusta, istuinluusta ja häpyluusta, jotka liittyvät yhteen.|Тазовая кость образуется сращением подвздошной, седалищной и лобковой костей.
+03|reisiluu|femur|бедренная кость|femur|Reisiluu on reiden pitkä luu, joka liittyy lonkka- ja polviniveleen.|Бедренная кость — длинная кость бедра, участвующая в тазобедренном и коленном суставах.
+03|reisiluun pää|caput femoris|головка бедренной кости|head of femur|Reisiluun pää on pyöreä nivelpinta, joka sopii lonkkamaljaan.|Головка бедренной кости — округлая суставная поверхность, входящая в вертлужную впадину.
+03|polvilumpio|patella|надколенник|patella|Polvilumpio suojaa polvinivelen etuosaa ja parantaa reisilihaksen vipuvaikutusta.|Надколенник защищает переднюю часть колена и улучшает рычаг действия мышцы бедра.
+03|sääriluu|tibia|большеберцовая кость|tibia|Sääriluu on säären suurempi luu, joka kantaa suurimman osan painosta.|Большеберцовая кость — крупная кость голени, несущая основную нагрузку.
+03|pohjeluu|fibula|малоберцовая кость|fibula|Pohjeluu sijaitsee säären ulkosivulla ja osallistuu nilkan tukemiseen.|Малоберцовая кость расположена снаружи голени и помогает стабилизировать голеностоп.
+03|rintalasta|sternum|грудина|sternum|Rintalasta on rintakehän etuosan luu, johon kylkiluita liittyy.|Грудина — кость передней части грудной клетки, соединённая с рёбрами.
+03|kylkiluut|costae|рёбра|ribs|Kylkiluut muodostavat rintakehän ja suojaavat sydäntä ja keuhkoja.|Рёбра образуют грудную клетку и защищают сердце и лёгкие.
+03|olkaluu|humerus|плечевая кость|humerus|Olkaluu ulottuu olkanivelestä kyynärpäähän.|Плечевая кость идёт от плечевого сустава до локтя.
+03|häpyluu|os pubis|лобковая кость|pubis|Häpyluu on lonkkaluun etu-alaosa ja liittyy toiseen häpyluuhun häpyliitoksessa.|Лобковая кость — передненижняя часть тазовой кости, соединённая с другой стороной лобковым симфизом.
+03|istuinluu|os ischii|седалищная кость|ischium|Istuinluu on lonkkaluun ala-takaosa, jonka päälle paino kohdistuu istuessa.|Седалищная кость — задненижняя часть тазовой кости, на которую приходится нагрузка сидя.
+03|suoliluu|os ilium|подвздошная кость|ilium|Suoliluu muodostaa suuren yläosan lonkkaluusta.|Подвздошная кость образует крупную верхнюю часть тазовой кости.
+01|solu|cellula|клетка|cell|Solu on elävän elimistön pienin rakenteellinen ja toiminnallinen yksikkö.|Клетка — наименьшая структурная и функциональная единица живого организма.
+01|solukalvo|membrana cellularis|клеточная мембрана|cell membrane|Solukalvo rajaa solun ja säätelee aineiden kulkua sisään ja ulos.|Клеточная мембрана отделяет клетку и регулирует поступление и выход веществ.
+01|solulima|cytoplasma|цитоплазма|cytoplasm|Solulima on solun sisäinen aine, jossa monet reaktiot tapahtuvat.|Цитоплазма — внутреннее содержимое клетки, где протекает много реакций.
+01|solutuma|nucleus cellulae|ядро клетки|cell nucleus|Solutuma sisältää suurimman osan solun perintöaineksesta.|Ядро содержит большую часть наследственного материала клетки.
+01|mitokondrio|mitochondrion|митохондрия|mitochondrion|Mitokondrio tuottaa suurimman osan solun ATP-energiasta.|Митохондрия производит основную часть энергии клетки в форме АТФ.
+01|ribosomi|ribosoma|рибосома|ribosome|Ribosomi rakentaa proteiineja lähetti-RNA:n ohjeen mukaan.|Рибосома синтезирует белки по инструкции матричной РНК.
+01|soluelin|organellum|органелла|organelle|Soluelin on solun erikoistunut rakenne, jolla on oma tehtävänsä.|Органелла — специализированная клеточная структура со своей функцией.
+01|kudos|textus|ткань|tissue|Kudos muodostuu samantyyppisistä soluista ja niiden väliaineesta.|Ткань состоит из клеток сходного типа и межклеточного вещества.
+01|elin|organum|орган|organ|Elin koostuu useista kudoksista ja suorittaa tietyn tehtävän.|Орган состоит из нескольких тканей и выполняет определённую функцию.
+01|elimistö|systema organorum|система органов|organ system|Elimistö on elinten muodostama toiminnallinen kokonaisuus.|Система органов — совокупность органов, работающих для общей функции.
+01|solunjakautuminen|divisio cellularis|деление клетки|cell division|Solunjakautumisessa yhdestä solusta syntyy uusia soluja.|При делении из одной клетки образуются новые клетки.
+01|mitoosi|mitosis|митоз|mitosis|Mitoosissa solun tumamateriaali jakautuu niin, että tytärsolut saavat yleensä saman perimän.|При митозе генетический материал распределяется так, что дочерние клетки обычно получают одинаковый набор хромосом.
+01|kromosomi|chromosoma|хромосома|chromosome|Kromosomi sisältää DNA:ta ja proteiineja, jotka järjestävät perintöaineksen.|Хромосома содержит ДНК и белки, организующие наследственный материал.
+01|DNA|acidum deoxyribonucleicum|ДНК|DNA|DNA sisältää geenien perinnöllisen tiedon.|ДНК хранит наследственную информацию генов.
+01|perimäaine|—|Perimäaine eli DNA sisältää ohjeet solun toiminnalle ja periytymiselle.|Наследственный материал — ДНК с инструкциями для работы клеток и передачи признаков.
+01|aineenvaihdunta|metabolismus|обмен веществ|metabolism|Aineenvaihdunta tarkoittaa solujen kemiallisia reaktioita, joissa aineita hajotetaan ja rakennetaan.|Обмен веществ — химические реакции, при которых клетки расщепляют и создают вещества.
+01|homeostaasi|homeostasis|гомеостаз|homeostasis|Homeostaasi on elimistön sisäisten olosuhteiden pitäminen sopivan vakaina.|Гомеостаз — поддержание относительного постоянства внутренней среды организма.
+01|soluhengitys|respiratio cellularis|клеточное дыхание|cellular respiration|Soluhengitys vapauttaa ravintoaineisiin sitoutunutta energiaa ATP:n muodostamiseen.|Клеточное дыхание освобождает энергию питательных веществ для производства АТФ.
+01|solujen erilaistuminen|differentiatio cellularis|дифференцировка клеток|cell differentiation|Erilaistumisessa solu saa tietyn rakenteen ja tehtävän esimerkiksi lihas- tai hermosoluna.|При дифференцировке клетка приобретает специальную структуру и функцию, например мышечной или нервной клетки.
