@@ -103,3 +103,16 @@ test('new exam module remains client-only and uses stable existing study/filter 
   assert.equal(/XMLHttpRequest|firebase\.|fetch\s*\(|localStorage\.setItem|indexedDB\.open/.test(sourceExam),false);
   assert.equal(/\b(let|const|class)\s+[A-Za-z_$]/.test(sourceExam),false,'preserve Safari 12 ES5 script syntax');
 });
+
+
+test('offline cache refers to the updated exam module and invalidates old versions',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
+  const fresh='riveria-anatomy-exam.js?v=riveria-exam-377-20261108';
+  assert.ok(html.includes(fresh),'published root HTML must request updated overlay URL');
+  assert.ok(sw.includes(fresh),'offline cache must prefetch the same updated overlay URL');
+  assert.equal(html.includes('riveria-anatomy-exam.js?v=riveria-exam-1'),false);
+  assert.equal(sw.includes('riveria-anatomy-exam.js?v=riveria-exam-1'),false);
+  assert.ok(sw.includes("CACHE_NAME='riveria-sanasto-community-v3.0.0-rc17-exam377'"),
+    'new service worker cache version required to retire old cached scripts');
+});
