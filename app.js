@@ -5,7 +5,7 @@
   'use strict';
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
-  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{},
+  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{},
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
   function byId(id){return document.getElementById(id);}
@@ -133,7 +133,92 @@
   function setLearned(id,yes){var p=state.scores[id]||{correct:0,wrong:0,seen:0};p.learned=!!yes;p.learnedUpdatedAt=Date.now();state.scores[id]=p;save('rs_scores_v1',state.scores);}
   function grade(id,ok){var p=state.scores[id]||{correct:0,wrong:0,seen:0};p.seen=(p.seen||0)+1;if(ok){p.correct=(p.correct||0)+1;p.learned=true;p.learnedUpdatedAt=Date.now();}else{p.wrong=(p.wrong||0)+1;if(state.reviewLearned){p.learned=false;p.learnedUpdatedAt=Date.now();}}p.last=Date.now();state.scores[id]=p;save('rs_scores_v1',state.scores);}
   function nextCard(){if(!state.deck.length)return;state.sessionSeen[state.deck[state.cardIndex].id]=true;if(state.cardIndex+1<state.deck.length){state.cardIndex++;}else{state.deck=[];ensureDeck(true);}state.flipped=false;renderCards();}
-  function quizNew(){var opts=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){return matchCat(x,state.filter)&&eligible(x,state.quizDirection)&&!isLearned(x.id);});if(opts.length<4){state.quiz=null;return;}shuffle(opts);var p=pair(state.quizDirection),chosen=opts[0],right=word(chosen,p.to),used={};used[right]=true;var wrong=[];for(var i=1;i<opts.length&&wrong.length<3;i++){var txt=word(opts[i],p.to);if(!used[txt]){used[txt]=true;wrong.push(txt);}}if(wrong.length<3){state.quiz=null;return;}state.quiz={item:chosen,from:p.from,to:p.to,answer:right,options:shuffle([right].concat(wrong))};state.quizResult=null;}
+  function buildTranslateSeries(){
+    var all=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){
+      return x&&x.id&&matchCat(x,state.filter)&&eligible(x,state.quizDirection);
+    });
+    if(all.length<4)return [];
+    var seen={},unique=[];
+    for(var i=0;i<all.length;i++){if(!seen[all[i].id]){seen[all[i].id]=true;unique.push(all[i]);}}
+    if(unique.length<4)return [];
+    var newWords=shuffle(unique.filter(function(x){return !isLearned(x.id);}));
+    var learned=shuffle(unique.filter(function(x){return isLearned(x.id);}));
+    var order=newWords.concat(learned),p=pair(state.quizDirection),questions=[];
+    for(i=0;i<order.length&&questions.length<10;i++){
+      var chosen=order[i],right=word(chosen,p.to),used={},wrong=[];
+      used[right]=true;
+      var others=shuffle(unique.filter(function(x){return x.id!==chosen.id;}));
+      for(var j=0;j<others.length&&wrong.length<3;j++){
+        var candidate=word(others[j],p.to);
+        if(candidate&&!used[candidate]){wrong.push(candidate);used[candidate]=true;}
+      }
+      if(wrong.length!==3)continue;
+      questions.push({id:'FOUR-'+chosen.id,item:chosen,from:p.from,to:p.to,
+        answer:right,options:shuffle([right].concat(wrong))});
+    }
+    return questions;
+  }
+  function examRun(mode){
+    var key=state.filter+(mode==='translate'?'|'+state.quizDirection:'');
+    var run=state.examRuns[mode];
+    if(!run||run.key!==key){
+      var plan=mode==='translate'?buildTranslateSeries():
+        (window.RS_EXAM_ROUNDS?window.RS_EXAM_ROUNDS.build(mode,state.filter,D,
+          window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[],10):[]);
+      run={key:key,questions:plan,index:0,answered:0,correct:0,points:0,maxPoints:0,
+        skipped:0,answeredIndex:{}};
+      state.examRuns[mode]=run;
+    }
+    return run;
+  }
+  function examProgress(run){
+    var total=run.questions.length;
+    if(!total)return '';
+    return '<div class="panel exam-run-progress"><b>Задание / Tehtävä: '+
+      Math.min(run.index+1,total)+' / '+total+'</b>'+
+      '<div class="exam-progress-track"><span style="width:'+
+      Math.round(Math.min(run.index,total)*100/total)+'%"></span></div>'+
+      '<span class="hint">Верных / Oikein: '+run.correct+' · Отвечено / Vastattu: '+run.answered+
+      (run.skipped?' · Пропущено / Ohitettu: '+run.skipped:'')+'</span></div>';
+  }
+  function examSummary(run){
+    if(!run.questions.length)return '<div class="panel">Недостаточно учебных данных в выбранной теме. Выбери другую экзаменационную тему.</div>';
+    return '<div class="panel exam-run-done"><h2>Серия завершена / Harjoitus valmis!</h2>'+
+      '<p><b>Результат / Tulos: '+run.correct+' / '+run.questions.length+'</b></p>'+
+      '<p>Всего отвечено / Vastattu: '+run.answered+
+      (run.skipped?' · Пропущено / Ohitettu: '+run.skipped:'')+'</p>'+
+      (run.maxPoints?'<p>Правильных соответствий / Oikeita valintoja: '+run.points+
+        ' / '+run.maxPoints+'</p>':'')+
+      '<p class="hint">Эта серия не повторяла задания. Начни новую для дальнейшей практики.</p>'+
+      '<button class="btn primary" data-action="exam-restart">Новая серия из 10 / Uusi 10 tehtävän sarja</button></div>';
+  }
+  function examMark(mode,passed,points,maxPoints){
+    var run=examRun(mode);
+    if(!run.questions.length||run.index>=run.questions.length||run.answeredIndex[run.index])return;
+    run.answeredIndex[run.index]=true;run.answered++;
+    if(passed)run.correct++;
+    if(maxPoints){run.points+=points||0;run.maxPoints+=maxPoints;}
+  }
+  function examNext(mode){
+    var run=examRun(mode);
+    if(run.index>=run.questions.length)return;
+    if(!run.answeredIndex[run.index])run.skipped++;
+    run.index++;
+    if(mode==='translate'){state.quiz=null;state.quizResult=null;}
+    else if(mode==='truefalse'){state.tfQuestion=null;state.tfResult=null;}
+    else if(mode==='matching'){state.matchQuestion=null;state.matchResult=null;}
+    else if(mode==='multiselect'){state.multiQuestion=null;state.multiResult=null;}
+    renderQuiz();
+  }
+  function examRestart(mode){
+    delete state.examRuns[mode];
+    if(mode==='translate'){state.quiz=null;state.quizResult=null;}
+    else if(mode==='truefalse'){state.tfQuestion=null;state.tfResult=null;}
+    else if(mode==='matching'){state.matchQuestion=null;state.matchResult=null;}
+    else if(mode==='multiselect'){state.multiQuestion=null;state.multiResult=null;}
+    renderQuiz();
+  }
+  function quizNew(){var run=examRun('translate');state.quiz=run.questions[run.index]||null;state.quizResult=null;}
 
   function examDisplayLang(){
     var code=window.RS_I18N&&window.RS_I18N.getLanguage?window.RS_I18N.getLanguage():document.documentElement.lang;
