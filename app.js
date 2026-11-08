@@ -87,9 +87,14 @@
   function categoryName(x){var t=window.RS_I18N;return t?t.category(x.cat,x.catRu||x.cat):x.catRu||x.cat||'';}
   function isExamTopic(id){return /^EXAM(0[1-9]|10)$/.test(String(id||''));}
   function matchCat(x,id){return id==='all'||x.cat===id||(isExamTopic(id)&&Array.isArray(x.examTopics)&&x.examTopics.indexOf(id)>=0);}
-  // Exam cards follow the owner's compact FI / RU-only design.
-  // Latin and historical explanations remain internal metadata, never visible by default.
-  function examNote(x){return '';}
+  function examNote(x){
+    if(!x||!x.examNoteFi&&!x.examNoteRu&&!x.la)return '';
+    var h='<div class="exam-explain">';
+    if(x.la)h+='<p><b>Latina:</b> <i>'+safe(x.la)+'</i></p>';
+    if(x.examNoteFi)h+='<p><b>FI:</b> '+safe(x.examNoteFi)+'</p>';
+    if(x.examNoteRu)h+='<p><b>RU:</b> '+safe(x.examNoteRu)+'</p>';
+    return h+'</div>';
+  }
   function directionNotice(which){if(allTerms().some(function(x){return eligible(x,which);}))return '';return '<div class="notice">Для выбранного направления пока нет переводов. Выбери другое направление.</div>';}
   function cardPool(mode){var base=allTerms().concat(sharedEnabled()?D.phrases:[]);var out=[];for(var i=0;i<base.length;i++){var x=base[i];if(!matchCat(x,state.filter))continue;if(state.extraSearch&&!state.favorites[x.id])continue;if(!eligible(x,state.direction))continue;if(mode==='review'?!isLearned(x.id):isLearned(x.id))continue;out.push(x);}return out;}
   function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
