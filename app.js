@@ -5,7 +5,7 @@
   'use strict';
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
-  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{},
+  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{},
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
   function byId(id){return document.getElementById(id);}
@@ -133,7 +133,92 @@
   function setLearned(id,yes){var p=state.scores[id]||{correct:0,wrong:0,seen:0};p.learned=!!yes;p.learnedUpdatedAt=Date.now();state.scores[id]=p;save('rs_scores_v1',state.scores);}
   function grade(id,ok){var p=state.scores[id]||{correct:0,wrong:0,seen:0};p.seen=(p.seen||0)+1;if(ok){p.correct=(p.correct||0)+1;p.learned=true;p.learnedUpdatedAt=Date.now();}else{p.wrong=(p.wrong||0)+1;if(state.reviewLearned){p.learned=false;p.learnedUpdatedAt=Date.now();}}p.last=Date.now();state.scores[id]=p;save('rs_scores_v1',state.scores);}
   function nextCard(){if(!state.deck.length)return;state.sessionSeen[state.deck[state.cardIndex].id]=true;if(state.cardIndex+1<state.deck.length){state.cardIndex++;}else{state.deck=[];ensureDeck(true);}state.flipped=false;renderCards();}
-  function quizNew(){var opts=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){return matchCat(x,state.filter)&&eligible(x,state.quizDirection)&&!isLearned(x.id);});if(opts.length<4){state.quiz=null;return;}shuffle(opts);var p=pair(state.quizDirection),chosen=opts[0],right=word(chosen,p.to),used={};used[right]=true;var wrong=[];for(var i=1;i<opts.length&&wrong.length<3;i++){var txt=word(opts[i],p.to);if(!used[txt]){used[txt]=true;wrong.push(txt);}}if(wrong.length<3){state.quiz=null;return;}state.quiz={item:chosen,from:p.from,to:p.to,answer:right,options:shuffle([right].concat(wrong))};state.quizResult=null;}
+  function buildTranslateSeries(){
+    var all=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){
+      return x&&x.id&&matchCat(x,state.filter)&&eligible(x,state.quizDirection);
+    });
+    if(all.length<4)return [];
+    var seen={},unique=[];
+    for(var i=0;i<all.length;i++){if(!seen[all[i].id]){seen[all[i].id]=true;unique.push(all[i]);}}
+    if(unique.length<4)return [];
+    var newWords=shuffle(unique.filter(function(x){return !isLearned(x.id);}));
+    var learned=shuffle(unique.filter(function(x){return isLearned(x.id);}));
+    var order=newWords.concat(learned),p=pair(state.quizDirection),questions=[];
+    for(i=0;i<order.length&&questions.length<10;i++){
+      var chosen=order[i],right=word(chosen,p.to),used={},wrong=[];
+      used[right]=true;
+      var others=shuffle(unique.filter(function(x){return x.id!==chosen.id;}));
+      for(var j=0;j<others.length&&wrong.length<3;j++){
+        var candidate=word(others[j],p.to);
+        if(candidate&&!used[candidate]){wrong.push(candidate);used[candidate]=true;}
+      }
+      if(wrong.length!==3)continue;
+      questions.push({id:'FOUR-'+chosen.id,item:chosen,from:p.from,to:p.to,
+        answer:right,options:shuffle([right].concat(wrong))});
+    }
+    return questions;
+  }
+  function examRun(mode){
+    var key=state.filter+(mode==='translate'?'|'+state.quizDirection:'');
+    var run=state.examRuns[mode];
+    if(!run||run.key!==key){
+      var plan=mode==='translate'?buildTranslateSeries():
+        (window.RS_EXAM_ROUNDS?window.RS_EXAM_ROUNDS.build(mode,state.filter,D,
+          window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[],10):[]);
+      run={key:key,questions:plan,index:0,answered:0,correct:0,points:0,maxPoints:0,
+        skipped:0,answeredIndex:{}};
+      state.examRuns[mode]=run;
+    }
+    return run;
+  }
+  function examProgress(run){
+    var total=run.questions.length;
+    if(!total)return '';
+    return '<div class="panel exam-run-progress"><b>Задание / Tehtävä: '+
+      Math.min(run.index+1,total)+' / '+total+'</b>'+
+      '<div class="exam-progress-track"><span style="width:'+
+      Math.round(Math.min(run.index,total)*100/total)+'%"></span></div>'+
+      '<span class="hint">Верных / Oikein: '+run.correct+' · Отвечено / Vastattu: '+run.answered+
+      (run.skipped?' · Пропущено / Ohitettu: '+run.skipped:'')+'</span></div>';
+  }
+  function examSummary(run){
+    if(!run.questions.length)return '<div class="panel">Недостаточно учебных данных в выбранной теме. Выбери другую экзаменационную тему.</div>';
+    return '<div class="panel exam-run-done"><h2>Серия завершена / Harjoitus valmis!</h2>'+
+      '<p><b>Результат / Tulos: '+run.correct+' / '+run.questions.length+'</b></p>'+
+      '<p>Всего отвечено / Vastattu: '+run.answered+
+      (run.skipped?' · Пропущено / Ohitettu: '+run.skipped:'')+'</p>'+
+      (run.maxPoints?'<p>Правильных соответствий / Oikeita valintoja: '+run.points+
+        ' / '+run.maxPoints+'</p>':'')+
+      '<p class="hint">Эта серия не повторяла задания. Начни новую для дальнейшей практики.</p>'+
+      '<button class="btn primary" data-action="exam-restart">Новая серия из 10 / Uusi 10 tehtävän sarja</button></div>';
+  }
+  function examMark(mode,passed,points,maxPoints){
+    var run=examRun(mode);
+    if(!run.questions.length||run.index>=run.questions.length||run.answeredIndex[run.index])return;
+    run.answeredIndex[run.index]=true;run.answered++;
+    if(passed)run.correct++;
+    if(maxPoints){run.points+=points||0;run.maxPoints+=maxPoints;}
+  }
+  function examNext(mode){
+    var run=examRun(mode);
+    if(run.index>=run.questions.length)return;
+    if(!run.answeredIndex[run.index])run.skipped++;
+    run.index++;
+    if(mode==='translate'){state.quiz=null;state.quizResult=null;}
+    else if(mode==='truefalse'){state.tfQuestion=null;state.tfResult=null;}
+    else if(mode==='matching'){state.matchQuestion=null;state.matchResult=null;}
+    else if(mode==='multiselect'){state.multiQuestion=null;state.multiResult=null;}
+    renderQuiz();
+  }
+  function examRestart(mode){
+    delete state.examRuns[mode];
+    if(mode==='translate'){state.quiz=null;state.quizResult=null;}
+    else if(mode==='truefalse'){state.tfQuestion=null;state.tfResult=null;}
+    else if(mode==='matching'){state.matchQuestion=null;state.matchResult=null;}
+    else if(mode==='multiselect'){state.multiQuestion=null;state.multiResult=null;}
+    renderQuiz();
+  }
+  function quizNew(){var run=examRun('translate');state.quiz=run.questions[run.index]||null;state.quizResult=null;}
 
   function examDisplayLang(){
     var code=window.RS_I18N&&window.RS_I18N.getLanguage?window.RS_I18N.getLanguage():document.documentElement.lang;
@@ -161,27 +246,17 @@
       '<button class="btn '+(state.quizMode==='matching'?'primary':'white')+'" data-action="quiz-mode" data-value="matching">Сопоставление · Yhdistä parit</button>'+
       '<button class="btn '+(state.quizMode==='multiselect'?'primary':'white')+'" data-action="quiz-mode" data-value="multiselect">Несколько ответов · Monivalinta</button></div></div>';
   }
-  function tfPool(){
-    var bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
-    return bank.filter(function(q){return q&&q.id&&q.fi&&typeof q.correct==='boolean'&&
-      (state.filter==='all'||q.topic===state.filter);});
-  }
-  function tfNew(){
-    var items=tfPool(),available=items.filter(function(q){return !state.tfSeen[q.id];});
-    if(!available.length){state.tfSeen={};available=items.slice();}
-    if(!available.length){state.tfQuestion=null;state.tfResult=null;return;}
-    shuffle(available);
-    if(state.tfQuestion&&available.length>1&&available[0].id===state.tfQuestion.id){
-      var temp=available[0];available[0]=available[1];available[1]=temp;
-    }
-    state.tfQuestion=available[0];state.tfSeen[state.tfQuestion.id]=true;state.tfResult=null;
-  }
+  function tfNew(){var run=examRun('truefalse');state.tfQuestion=run.questions[run.index]||null;state.tfResult=null;}
   function renderTrueFalse(){
     basePage('Проверь себя','Tosi vai epätosi? Прочитай утверждение по-фински.');
+    var run=examRun('truefalse');
+    if(!run.questions.length||run.index>=run.questions.length){
+      root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
+    }
     if(!state.tfQuestion)tfNew();
     var q=state.tfQuestion;
-    var s=quizModeTabs()+'<div class="panel"><div class="form-row">'+
-      '<label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label>'+
+    var s=quizModeTabs()+examProgress(run)+'<div class="panel"><div class="form-row">'+
+      '<label class="field"><span>Тема теста</span>'+examTopicSelect(state.filter,'quiz-cat')+'</label>'+
       '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
     if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
@@ -193,48 +268,39 @@
         (state.tfResult?'✓ Oikein! · Правильно. ':'✕ Ei aivan. · Не совсем. ')+
         '<b>Oikea vastaus / Правильный ответ: '+(q.correct?'Tosi · Верно':'Epätosi · Неверно')+'</b></div>'+
         bilingualFeedback(q)+
-        '<button class="btn primary" data-action="tf-next">Seuraava / Следующий →</button>';
+        '<button class="btn primary" data-action="tf-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     }
     s+='</div><div class="panel"><span class="hint">Текущая сессия / Nykyinen harjoitus: '+
-      '✓ '+state.tfCorrect+' · ✕ '+state.tfWrong+
+      '✓ '+run.correct+' · ✕ '+(run.answered-run.correct)+
       '. Этот тест не меняет статус «Выучено».</span></div>';
     root.innerHTML=s;
   }
 
 
+  function examTopicSelect(current,id){
+    var data=D.examTopics||[],s='<select class="control" id="'+id+'"><option value="all"'+
+      (current==='all'?' selected':'')+'>Все десять тем / Kaikki 10 aihetta</option>';
+    for(var i=0;i<data.length;i++){
+      var t=data[i];
+      s+='<option value="'+safe(t.id)+'"'+(current===t.id?' selected':'')+'>'+
+        safe(t.fi+' — '+t.ru+' (с. '+t.pages+')')+'</option>';
+    }
+    return s+'</select>';
+  }
   function quizTopicPicker(){
     return '<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+
-      selectCats(state.filter,'quiz-cat')+'</label></div></div>';
+      examTopicSelect(state.filter,'quiz-cat')+'</label></div></div>';
   }
-  function matchNew(){
-    var topics=(D.examTopics||[]).filter(function(t){return state.filter==='all'||t.id===state.filter;});
-    shuffle(topics);
-    var chosen=null,words=[];
-    for(var i=0;i<topics.length;i++){
-      var id=topics[i].id,valid=D.terms.filter(function(x){
-        return x.examTopics&&x.examTopics.indexOf(id)>=0&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu;
-      });
-      if(valid.length>=4&&!state.matchSeen[id]){chosen=id;words=valid;break;}
-    }
-    if(!chosen){state.matchSeen={};for(var j=0;j<topics.length;j++){
-      var topicId=topics[j].id,items=D.terms.filter(function(x){
-        return x.examTopics&&x.examTopics.indexOf(topicId)>=0&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu;
-      });
-      if(items.length>=4){chosen=topicId;words=items;break;}
-    }}
-    if(!chosen){state.matchQuestion=null;state.matchResult=null;return;}
-    shuffle(words);
-    var picked=words.slice(0,4);
-    var options=shuffle(picked.map(function(x){return x.fi;}));
-    state.matchQuestion={topic:chosen,items:picked,options:options};
-    state.matchSeen[chosen]=true;
-    state.matchResult=null;
-  }
+  function matchNew(){var run=examRun('matching');state.matchQuestion=run.questions[run.index]||null;state.matchResult=null;}
   function renderMatching(){
     basePage('Проверь себя','Yhdistä oikeat parit / Соедини правильные пары.');
+    var run=examRun('matching');
+    if(!run.questions.length||run.index>=run.questions.length){
+      root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
+    }
     if(!state.matchQuestion)matchNew();
     var q=state.matchQuestion;
-    var s=quizModeTabs()+quizTopicPicker()+'<div class="panel"><p class="hint">Yhdistä selitys ja termi / Подбери термин к определению.</p>';
+    var s=quizModeTabs()+examProgress(run)+quizTopicPicker()+'<div class="panel"><p class="hint">Yhdistä selitys ja termi / Подбери термин к определению.</p>';
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],chosen=state.matchResult&&state.matchResult.selected[i]||'';
@@ -254,37 +320,19 @@
     if(!state.matchResult)s+='<button class="btn primary" data-action="match-check">Tarkista / Проверить</button>';
     else s+='<div class="answer '+(state.matchResult.count===q.items.length?'correct':'wrong')+'">'+
       'Oikein / Правильно: '+state.matchResult.count+' / '+q.items.length+'</div>'+
-      '<button class="btn primary" data-action="match-next">Seuraava / Следующий →</button>';
+      '<button class="btn primary" data-action="match-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     root.innerHTML=s+'</div>';
   }
-  function multiNew(){
-    var all=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
-    var groups={},topicIds=[];
-    for(var i=0;i<all.length;i++){
-      var x=all[i];
-      if(state.filter!=='all'&&x.topic!==state.filter)continue;
-      if(!groups[x.topic]){groups[x.topic]=[];topicIds.push(x.topic);}
-      groups[x.topic].push(x);
-    }
-    shuffle(topicIds);
-    var topic=null;
-    for(var j=0;j<topicIds.length;j++){
-      var id=topicIds[j],rows=groups[id];
-      if(!state.multiSeen[id]&&rows.length>=3&&rows.filter(function(x){return x.correct;}).length>=2&&rows.some(function(x){return !x.correct;})){topic=id;break;}
-    }
-    if(!topic){state.multiSeen={};for(var k=0;k<topicIds.length;k++){
-      var t=topicIds[k],q=groups[t];
-      if(q.length>=3&&q.filter(function(x){return x.correct;}).length>=2&&q.some(function(x){return !x.correct;})){topic=t;break;}
-    }}
-    state.multiQuestion=topic?{topic:topic,items:shuffle(groups[topic].slice())}:null;
-    if(topic)state.multiSeen[topic]=true;
-    state.multiResult=null;
-  }
+  function multiNew(){var run=examRun('multiselect');state.multiQuestion=run.questions[run.index]||null;state.multiResult=null;}
   function renderMulti(){
     basePage('Проверь себя','Monivalinta / Отметь все верные утверждения.');
+    var run=examRun('multiselect');
+    if(!run.questions.length||run.index>=run.questions.length){
+      root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
+    }
     if(!state.multiQuestion)multiNew();
     var q=state.multiQuestion;
-    var s=quizModeTabs()+quizTopicPicker()+'<div class="panel"><p class="hint">Valitse kaikki oikeat väitteet / Выбери ВСЕ верные утверждения.</p>';
+    var s=quizModeTabs()+examProgress(run)+quizTopicPicker()+'<div class="panel"><p class="hint">Valitse kaikki oikeat väitteet / Выбери ВСЕ верные утверждения.</p>';
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],checked=state.multiResult&&state.multiResult.selected[i];
@@ -299,15 +347,15 @@
     if(!state.multiResult)s+='<button class="btn primary" data-action="multi-check">Tarkista / Проверить</button>';
     else s+='<div class="answer '+(state.multiResult.correct?'correct':'wrong')+'">'+
       (state.multiResult.correct?'✓ Oikein / Все правильно':'✕ Ei aivan / Не все ответы правильные')+
-      '</div><button class="btn primary" data-action="multi-next">Seuraava / Следующий →</button>';
+      '</div><button class="btn primary" data-action="multi-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     root.innerHTML=s+'</div>';
   }
 
-  function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
+  function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');var run=examRun('translate');if(!run.questions.length||run.index>=run.questions.length){root.innerHTML=quizModeTabs()+examSummary(run);return;}if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+examProgress(run)+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
     s+='<div class="panel"><p class="hint">Выбери перевод:</p><div class="flash-term">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
     s+='</div>';
-    if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">Следующий вопрос →</button>';
+    if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Следующий вопрос →')+'</button>';
     s+='</div>';root.innerHTML=s;
   }
   function renderDict(){basePage('Словарь','Поиск по финским и русским словам. Экзаменационные темы — в общем списке.');var s=englishWarning(state.dictDirection)+'<div class="panel"><div class="form-row"><label class="field grow"><span>Поиск слова или перевода</span><input class="control" id="dict-search" type="search" placeholder="Например: turvotus, подгузник, одежда" value="'+safe(state.dictQuery)+'"></label><label class="field"><span>Тема</span>'+selectCats(state.dictFilter,'dict-cat')+'</label><label class="field"><span>Переводы</span>'+directionSelect('dict-dir',state.dictDirection,true)+'</label></div><label class="hint"><input type="checkbox" id="dict-phrases"'+(state.dictIncludePhrases?' checked':'')+'> Также показать фразы</label></div><div class="section-title"><h2>Результаты <span id="dict-count"></span></h2></div><div id="dict-results" class="dictionary-list"></div>';root.innerHTML=s;renderDictItems();}
@@ -401,21 +449,22 @@
     else if(action==='only-favorites'){state.extraSearch=!state.extraSearch;state.sessionSeen={};ensureDeck(true);renderCards();}
     else if(action==='cat-quick'){state.filter=choice;state.sessionSeen={};ensureDeck(true);renderCards();window.scrollTo(0,0);}
     else if(action==='quiz-mode'){if(['translate','truefalse','matching','multiselect'].indexOf(choice)>=0){
-      state.quizMode=choice;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
-    else if(action==='match-next'){matchNew();renderMatching();}
+      state.quizMode=choice;if(choice!=='translate'&&state.filter!=='all'&&!isExamTopic(state.filter))state.filter='all';state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
+    else if(action==='exam-restart'){examRestart(state.quizMode);}
+    else if(action==='match-next'){examNext('matching');}
     else if(action==='match-check'){if(!state.matchQuestion||state.matchResult)return;var mq=state.matchQuestion,chosen=[],correctCount=0;
       for(var mi=0;mi<mq.items.length;mi++){var sel=byId('match-'+mi),value=sel?sel.value:'';chosen.push(value);
         if(value===mq.items[mi].fi)correctCount++;}
-      state.matchResult={selected:chosen,count:correctCount};renderMatching();}
-    else if(action==='multi-next'){multiNew();renderMulti();}
+      state.matchResult={selected:chosen,count:correctCount};examMark('matching',correctCount===mq.items.length,correctCount,mq.items.length);renderMatching();}
+    else if(action==='multi-next'){examNext('multiselect');}
     else if(action==='multi-check'){if(!state.multiQuestion||state.multiResult)return;var rows=state.multiQuestion.items,selected=[],allRight=true;
       for(var si=0;si<rows.length;si++){var el=document.querySelector('[data-multi-index="'+si+'"]'),checked=!!(el&&el.checked);
         selected.push(checked);if(checked!==rows[si].correct)allRight=false;}
-      state.multiResult={selected:selected,correct:allRight};renderMulti();}
-    else if(action==='tf-next'){tfNew();renderTrueFalse();}
-    else if(action==='tf-choose'){if(state.quizMode!=='truefalse'||!state.tfQuestion||state.tfResult!==null)return;state.tfResult=(choice==='true')===state.tfQuestion.correct;if(state.tfResult)state.tfCorrect++;else state.tfWrong++;renderTrueFalse();}
-    else if(action==='quiz-next'){quizNew();renderQuiz();}
-    else if(action==='quiz-choose'){var q=state.quiz;if(state.quizResult!==null)return;var correct=q.options[Number(choice)]===q.answer;state.quizResult=correct;grade(q.item.id,correct);renderQuiz();}
+      state.multiResult={selected:selected,correct:allRight};examMark('multiselect',allRight,selected.filter(function(x,i){return x===rows[i].correct;}).length,rows.length);renderMulti();}
+    else if(action==='tf-next'){examNext('truefalse');}
+    else if(action==='tf-choose'){if(state.quizMode!=='truefalse'||!state.tfQuestion||state.tfResult!==null)return;state.tfResult=(choice==='true')===state.tfQuestion.correct;examMark('truefalse',state.tfResult);renderTrueFalse();}
+    else if(action==='quiz-next'){examNext('translate');}
+    else if(action==='quiz-choose'){var q=state.quiz;if(state.quizResult!==null)return;var correct=q.options[Number(choice)]===q.answer;state.quizResult=correct;grade(q.item.id,correct);examMark('translate',correct);renderQuiz();}
     else if(action==='med-mode'){state.medMode=choice;state.draftFound=false;renderMediatri();if(choice==='phrases')renderPhraseItems();if(choice==='headings')renderHeadingItems();}
     else if(action==='med-next'){state.scenario=(state.scenario+1)%D.scenarios.length;state.scenarioRevealed=false;state.scenarioDraft='';renderMediatri();}
     else if(action==='med-reveal'){state.scenarioDraft=byId('scenario-input').value;state.scenarioRevealed=!state.scenarioRevealed;renderMediatri();}
@@ -448,7 +497,7 @@
     // Resetting a shuffled deck here skips a visible card after Know/Repeat.
     // A real account switch still explicitly requests the full reset.
     if(reset){
-      state.deck=[];state.sessionSeen={};state.quiz=null;state.cardIndex=0;state.flipped=false;
+      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();

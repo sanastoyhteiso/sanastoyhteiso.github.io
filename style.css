@@ -105,3 +105,13 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
  #main-content [id^="match-label-"]{min-width:100%;width:100%}
  #main-content select[data-match-index]{width:100%;min-width:0}
 }
+
+/* RUN155 — ten-question practice series, responsive progress and honest final result. */
+.exam-run-progress{display:flex;flex-direction:column;gap:7px}
+.exam-run-progress>b{font-size:17px;color:#214b5b}
+.exam-progress-track{height:9px;border-radius:30px;background:#e5f2f5;overflow:hidden}
+.exam-progress-track span{display:block;height:100%;background:#63aebf;border-radius:30px;transition:width .15s}
+.exam-run-done{text-align:center;padding:28px 18px}
+.exam-run-done h2{margin-bottom:14px}
+.exam-run-done p{line-height:1.6}
+@media(max-width:600px){.exam-run-progress>b{font-size:16px}.exam-run-done{padding:20px 12px}}

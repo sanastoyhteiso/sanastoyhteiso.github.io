@@ -18,7 +18,7 @@ function browser(){
  const w=dom.window;w.scrollTo=()=>{};
  w.Math.random=()=>0.34;
  w.eval(load('data.js'));w.eval(load('riveria-anatomy-exam.js'));
- w.eval(load('riveria-true-false.js'));
+ w.eval(load('riveria-true-false.js'));w.eval(load('exam-rounds-run155.js'));
  w.RS_FAMILY={uid:'synthetic-run153',storageKey:k=>'run153_'+k,sharedEnabled:()=>true};
  w.RS_COMM={subscribedTerms:()=>[],renderUsers:()=>{},renderLibrary:()=>{}};
  w.eval(load('app.js'));
@@ -83,9 +83,9 @@ test('static ES5 compatible, cache version and mode scripts synchronized',()=>{
  assert.doesNotMatch(data,/\bconst\b|\blet\b|=>|\?\./);
  assert.ok(html.includes('riveria-true-false.js?v=run154-bilingual-1'));
  assert.ok(sw.includes('riveria-true-false.js?v=run154-bilingual-1'));
- assert.ok(html.includes('app.js?v=bilingual-run154-v1'));
- assert.ok(sw.includes('app.js?v=bilingual-run154-v1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc23'));
+ assert.ok(html.includes('app.js?v=exam-rounds-run155-v1'));
+ assert.ok(sw.includes('app.js?v=exam-rounds-run155-v1'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc24'));
 });
 
 
@@ -119,7 +119,7 @@ test('multiple-selection checks every option, reveals corrected FI/RU statements
   for(let i=1;i<=10;i++){
     const topic='EXAM'+String(i).padStart(2,'0'),s=b.d.getElementById('quiz-cat');
     s.value=topic;s.dispatchEvent(new b.w.Event('change',{bubbles:true}));
-    assert.equal(b.d.querySelectorAll('[data-multi-index]').length,3,topic);
+    assert.equal(b.d.querySelectorAll('[data-multi-index]').length,4,topic);
     assert.equal(b.d.querySelectorAll('[data-multi-index]:checked').length,0,'no answers preselected');
     b.d.querySelector('[data-action="multi-check"]').click();
     const text=b.d.getElementById('main-content').textContent;

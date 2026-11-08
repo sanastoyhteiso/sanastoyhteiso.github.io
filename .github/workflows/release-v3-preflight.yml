@@ -106,6 +106,8 @@ jobs:
         run: node --test release-checks/true-false-run153.test.cjs
       - name: RUN154 bilingual quiz RU FI and single explanation regression (offline)
         run: node --test release-checks/bilingual-exams-run154.test.cjs
+      - name: RUN155 ten distinct exercises per topic and quiz mode (offline)
+        run: node --test release-checks/exam-rounds-run155.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)

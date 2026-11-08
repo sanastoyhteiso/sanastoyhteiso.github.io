@@ -86,7 +86,7 @@ test('Latin/FI/RU presentation and historic iOS12 compatible app remain visible'
  assert.ok(latin>=0&&latin<finnish&&finnish<russian,'Latin → FI → RU renderer');
  assert.ok(html.includes('riveria-anatomy-exam.js?v=immune-run152-v1'));
  assert.ok(sw.includes('riveria-anatomy-exam.js?v=immune-run152-v1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc23'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc24'));
  assert.doesNotMatch(adapter,/\blet\s+|\bconst\s+|=>|\?\./,'module must remain ES5 for old Safari');
  assert.doesNotMatch(adapter,/localStorage\.setItem|fetch\s*\(|firestore|firebase\.auth/i);
 });
