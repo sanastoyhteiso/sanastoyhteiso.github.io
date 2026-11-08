@@ -170,3 +170,11 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .exam-review .exam-question-bilingual{margin:8px 0 14px}
 .exam-review .exam-judgement{margin:12px 0}
 @media(max-width:600px){.exam-review-row{padding:11px 12px}.exam-review-term{font-size:17px}.exam-review-options{padding-left:22px}}
+
+/* RUN163 full exam sheet: clear one-line result and point value per completed task. */
+.exam-review.exam-review-passed{border-color:#a9d5b6;background:#f4fbf6}
+.exam-review.exam-review-missed{border-color:#e4c1a4;background:#fffbf5}
+.exam-review summary{overflow-wrap:anywhere}
+.exam-review summary:focus-visible{outline:2px solid #2984a8;outline-offset:4px}
+.exam-review-passed .exam-review-title{color:#286942}
+.exam-review-missed .exam-review-title{color:#8e4d24}
