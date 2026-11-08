@@ -154,27 +154,74 @@
   function grade(id,ok){var p=state.scores[id]||{correct:0,wrong:0,seen:0};p.seen=(p.seen||0)+1;if(ok){p.correct=(p.correct||0)+1;p.learned=true;p.learnedUpdatedAt=Date.now();}else{p.wrong=(p.wrong||0)+1;if(state.reviewLearned){p.learned=false;p.learnedUpdatedAt=Date.now();}}p.last=Date.now();state.scores[id]=p;save('rs_scores_v1',state.scores);}
   function nextCard(){if(!state.deck.length)return;state.sessionSeen[state.deck[state.cardIndex].id]=true;if(state.cardIndex+1<state.deck.length){state.cardIndex++;}else{state.deck=[];ensureDeck(true);}state.flipped=false;renderCards();}
   function buildTranslateSeries(){
+    var p=pair(state.quizDirection),latinDirection=p.from==='la'||p.to==='la';
     var all=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){
       return x&&x.id&&matchCat(x,state.filter)&&eligible(x,state.quizDirection);
     });
     if(all.length<4)return [];
     var seen={},unique=[];
-    for(var i=0;i<all.length;i++){if(!seen[all[i].id]){seen[all[i].id]=true;unique.push(all[i]);}}
+    for(var i=0;i<all.length;i++)if(!seen[all[i].id]){
+      seen[all[i].id]=true;unique.push(all[i]);
+    }
     if(unique.length<4)return [];
-    var newWords=shuffle(unique.filter(function(x){return !isLearned(x.id);}));
-    var learned=shuffle(unique.filter(function(x){return isLearned(x.id);}));
-    var order=newWords.concat(learned),p=pair(state.quizDirection),questions=[];
-    for(i=0;i<order.length&&questions.length<10;i++){
-      var chosen=order[i],right=word(chosen,p.to),used={},wrong=[];
-      used[right]=true;
-      var others=shuffle(unique.filter(function(x){return x.id!==chosen.id;}));
-      for(var j=0;j<others.length&&wrong.length<3;j++){
-        var candidate=word(others[j],p.to);
-        if(candidate&&!used[candidate]){wrong.push(candidate);used[candidate]=true;}
+    var original=shuffle(unique.filter(function(x){return !isLearned(x.id);}))
+      .concat(shuffle(unique.filter(function(x){return isLearned(x.id);})));
+    var usedLatin={},latin=[];
+    shuffle(unique.filter(function(x){return !!word(x,'la');})).forEach(function(x){
+      var key=word(x,'la').toLocaleLowerCase();
+      if(!usedLatin[key]){usedLatin[key]=true;latin.push(x);}
+    });
+    var questions=[],usedIds={},usedPrompt={};
+    for(var n=0;n<10;n++){
+      var needLatin=!latinDirection&&(n%3===0),sources=needLatin?latin:original;
+      if(latinDirection)sources=original;
+      var made=null;
+      for(var k=0;k<sources.length;k++){
+        var chosen=sources[k];if(usedIds[chosen.id])continue;
+        var from=p.from,to=p.to,latinTask=latinDirection||needLatin;
+        if(needLatin){
+          if(n%2===0){from='la';to=p.from;}else{from=p.from;to='la';}
+        }
+        var front=word(chosen,from),right=word(chosen,to);
+        if(!front||!right||usedPrompt[from+'|'+clean(front)])continue;
+        var used={},wrong=[];
+        used[clean(right)]=true;
+        var others=shuffle(unique.filter(function(x){return x.id!==chosen.id&&
+          (!latinTask||!x.la||x.la!==chosen.la);
+        }));
+        for(var j=0;j<others.length&&wrong.length<3;j++){
+          var answer=word(others[j],to),key=clean(answer);
+          if(key&&!used[key]){wrong.push(answer);used[key]=true;}
+        }
+        if(wrong.length!==3)continue;
+        made={id:'FOUR-'+(latinTask?'LATIN-':'')+chosen.id,
+          item:chosen,from:from,to:to,latin:!!latinTask,answer:right,
+          options:shuffle([right].concat(wrong))};
+        usedIds[chosen.id]=true;usedPrompt[from+'|'+clean(front)]=true;
+        break;
       }
-      if(wrong.length!==3)continue;
-      questions.push({id:'FOUR-'+chosen.id,item:chosen,from:p.from,to:p.to,
-        answer:right,options:shuffle([right].concat(wrong))});
+      if(!made&&needLatin){
+        // A tiny topic may lack four distinct Latin distractors; fall back safely.
+        var oldBudget=questions.length;
+        for(var m=0;m<original.length;m++){
+          var fallback=original[m];
+          if(usedIds[fallback.id]||usedPrompt[p.from+'|'+clean(word(fallback,p.from))])continue;
+          var correct=word(fallback,p.to),choices=[],keys={};
+          keys[clean(correct)]=true;
+          var pool=shuffle(unique.filter(function(x){return x.id!==fallback.id;}));
+          for(var v0=0;v0<pool.length&&choices.length<3;v0++){
+            var candidate=word(pool[v0],p.to),ck=clean(candidate);
+            if(ck&&!keys[ck]){keys[ck]=true;choices.push(candidate);}
+          }
+          if(choices.length===3){
+            made={id:'FOUR-'+fallback.id,item:fallback,from:p.from,to:p.to,
+              answer:correct,options:shuffle([correct].concat(choices))};
+            usedIds[fallback.id]=true;usedPrompt[p.from+'|'+clean(word(fallback,p.from))]=true;break;
+          }
+        }
+      }
+      if(made)questions.push(made);
+      if(questions.length===unique.length)break;
     }
     return questions;
   }
