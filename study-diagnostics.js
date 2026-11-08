@@ -83,7 +83,12 @@
    started=true;
    if(w.addEventListener){
      // Do not read or store event.message, reason, filename, target or stack.
-     w.addEventListener('error',function(){record('APP_RENDER_FAILED');},true);
+     w.addEventListener('error',function(e){
+       // Capture-phase resource failures (IMG, LINK, SCRIPT) are not JS crashes.
+       // Do not read the target URL, exception text, stack or any user data.
+       if(e&&e.target&&e.target!==w)return;
+       record('APP_RENDER_FAILED');
+     },true);
      w.addEventListener('unhandledrejection',function(){record('APP_RENDER_FAILED');});
    }
    return true;
