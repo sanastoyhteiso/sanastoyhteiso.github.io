@@ -230,7 +230,7 @@
       "en": "tricuspid heart valve",
       "latin": "valva tricuspidalis",
       "explanationFi": "Kolmipurjeläppä on toinen nimi oikean eteisen ja kammion väliselle trikuspidaaliläpälle.",
-      "explanationRu": "Kolmipurjeläppä — другое название трёхстворчатого клапана между правым предсердием и желудочком.",
+      "explanationRu": "Трёхстворчатый клапан отделяет правое предсердие от правого желудочка и препятствует обратному току крови.",
       "slide": 7
     },
     {
@@ -470,7 +470,7 @@
       "en": "monocyte",
       "latin": "monocytus",
       "explanationFi": "Monosyytti on valkosolu, joka voi muuttua kudoksessa syöjäsoluksi.",
-      "explanationRu": "Моноцит — лейкоцит, который в тканях может превращаться в клетку-фгоцит.",
+      "explanationRu": "Моноцит — лейкоцит, который в тканях может превращаться в клетку-фагоцит.",
       "slide": 15
     },
     {
