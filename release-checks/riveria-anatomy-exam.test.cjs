@@ -28,13 +28,13 @@ test('61 user Latin terms integrated without replacing 1,296 base term IDs',()=>
    'pancreas belongs to both digestive and hormonal systems, same existing ID');
  assert.ok(originalCor.examNoteFi.includes('Rintaontelossa'));
  assert.ok(originalCor.examNoteRu.includes('грудной'));
- assert.equal(d.terms.filter(x=>x.la&&x.examTopics).length,61);
+ assert.ok(d.terms.filter(x=>x.la&&x.examTopics).length>=61);
  assert.equal(d.terms.filter(x=>x.id.startsWith('T900')&&x.la).length,24);
  assert.ok(d.terms.length>n);
  const ids=d.terms.map(x=>x.id);
  assert.equal(new Set(ids).size,ids.length,'new anatomy terms must never collide with existing progress IDs');
 });
-test('exactly ten official owner exam topic filters with FI/RU notes, no EI inclusions',()=>{
+test('exact ten exam topics with the same textbook pages and FI/RU learning pairs',()=>{
  const {d}=source();
  assert.equal(d.examTopics.length,10);
  assert.deepEqual(Array.from(d.examTopics,x=>x.id),Array.from({length:10},(_,i)=>'EXAM'+String(i+1).padStart(2,'0')));
@@ -43,7 +43,7 @@ test('exactly ten official owner exam topic filters with FI/RU notes, no EI incl
   const items=d.terms.filter(x=>Array.isArray(x.examTopics)&&x.examTopics.includes(topic.id));
   assert.ok(items.length>=4,topic.id+' must offer multiple meaningful cards for practice');
   for(const x of items){
-   assert.ok(x.examNoteFi&&x.examNoteRu,'missing bilingual explanatory note: '+x.fi);
+   assert.ok(x.fi&&x.ru,'missing FI/RU learning pair: '+x.fi);
    assert.ok(x.fi&&x.ru&&x.en,'each exam card must work in FI/RU/EN: '+x.fi);
    assert.equal(x.examSource.includes('independent explanatory notes'),true);
   }
@@ -86,7 +86,7 @@ test('10 exam entries appear in Cards / Quiz / Dictionary dropdown, no Latin lea
   }
  }finally{b.dom.window.close();}
 });
-test('dictionary filters relevant topic and searches in Latin and bilingual explanations',()=>{
+test('dictionary uses existing exam topic menu; FI/RU visible and Latin remains searchable but hidden',()=>{
  const b=browser();try{
   b.d.querySelector('[data-view="dictionary"]').click();
   const select=b.d.getElementById('dict-cat');select.value='EXAM03';
@@ -94,26 +94,26 @@ test('dictionary filters relevant topic and searches in Latin and bilingual expl
   const input=b.d.getElementById('dict-search');input.value='femur';
   input.dispatchEvent(new b.w.Event('input',{bubbles:true}));
   assert.match(b.d.getElementById('dict-results').textContent,/reisiluu/);
-  assert.match(b.d.getElementById('dict-results').textContent,/femur/);
+  assert.doesNotMatch(b.d.getElementById('dict-results').textContent,/Latina:|Selitys|Объяснение/);
   assert.match(b.d.getElementById('dict-results').textContent,/FI:/);
   assert.match(b.d.getElementById('dict-results').textContent,/RU:/);
   // The source glossary outside this exam is not dropped.
   assert.equal(b.w.RS_DATA.terms.some(x=>x.id==='T00001'),true);
  }finally{b.dom.window.close();}
 });
-test('cards reveal location/function + optional Latin only after flipping, no premature answer leak',()=>{
+test('cards reveal only FI/RU translation without extra explanatory block',()=>{
  const b=browser();try{
   const select=b.d.getElementById('cards-cat');select.value='EXAM02';
   select.dispatchEvent(new b.w.Event('change',{bubbles:true}));
   assert.equal(b.d.querySelectorAll('.exam-explain').length,0,'do not reveal definitions before flip');
   const flip=b.d.querySelector('[data-action="flip"]');assert.ok(flip);
   flip.click();
-  assert.match(b.d.getElementById('main-content').textContent,/FI:/);
-  assert.match(b.d.getElementById('main-content').textContent,/RU:/);
-  assert.ok(b.d.querySelector('.exam-explain'));
+  assert.ok(b.d.querySelector('.flash-trans'),'show translation after flip');
+  assert.equal(b.d.querySelector('.exam-explain'),null,'explanations and Latin are no longer shown');
+  assert.doesNotMatch(b.d.getElementById('main-content').textContent,/Latina:|Selitys \(FI\)|Объяснение \(RU\)/);
  }finally{b.dom.window.close();}
 });
-test('all ten topics are available in quiz and notes appear only after choosing an answer',()=>{
+test('all ten topics available in quiz, feedback is concise FI/RU only',()=>{
  const b=browser();try{
   b.d.querySelector('[data-view="practice"]').click();
   const select=b.d.getElementById('quiz-cat');select.value='EXAM09';
@@ -122,7 +122,7 @@ test('all ten topics are available in quiz and notes appear only after choosing 
   assert.equal(b.d.querySelectorAll('.exam-explain').length,0);
   b.d.querySelector('[data-action="quiz-choose"]').click();
   assert.ok(b.d.querySelector('.answer'));
-  assert.ok(b.d.querySelector('.exam-explain'),'bilingual explanatory feedback');
+  assert.equal(b.d.querySelector('.exam-explain'),null,'no extra explanatory text in quiz');
  }finally{b.dom.window.close();}
 });
 test('loading public material does not write/reset synthetic V3 study scores',()=>{
@@ -133,4 +133,40 @@ test('loading public material does not write/reset synthetic V3 study scores',()
   b.w.RS_FAMILY_REFRESH(false);
   assert.equal(JSON.parse(b.w.localStorage.getItem(key)).T00574.learned,true);
  }finally{b.dom.window.close();}
+});
+
+test('entire set of 289 FI terms is in the ORIGINAL 10 exam dropdown items (without extra menus)',()=>{
+ const d=source().d;
+ const expected=require('./exam-required-fi-topics-20261108.json');
+ assert.equal(expected.required.length,289);
+ assert.equal(expected.topicPages.length,10);
+ const lookup=new Map(d.terms.map(x=>[x.fi.toLocaleLowerCase('fi-FI').trim(),x]));
+ assert.equal(lookup.size,d.terms.length,'no duplicate Finnish names among public terms');
+ const counts={};
+ for(const row of expected.required){
+  const word=lookup.get(row.fi.toLocaleLowerCase('fi-FI').trim());
+  assert.ok(word,'missing exam term '+row.fi);
+  assert.ok(word.examTopics&&word.examTopics.includes(row.topic),'wrong exam topic '+row.fi+' '+row.topic);
+  assert.ok(word.fi&&word.ru,'FI/RU absent '+row.fi);
+  if(row.sourceId)assert.equal(word.id,row.sourceId,'must preserve old T-ID for '+row.fi);
+  counts[row.topic]=(counts[row.topic]||0)+1;
+ }
+ for(const topic of expected.topicPages){
+  assert.equal(counts[topic.id],topic.required);
+  const original=d.examTopics.find(x=>x.id===topic.id);
+  assert.ok(original);
+  assert.equal('s. '+original.pages,'s. '+topic.pages.replace(/^s\.\s*/,''));
+ }
+ for(let i=0;i<expected.newMissingInPriorMain.length;i++){
+  const word=lookup.get(expected.newMissingInPriorMain[i].toLocaleLowerCase('fi-FI').trim());
+  assert.equal(word.id,'T'+(90200+i),'new words get stable non-conflicting IDs');
+ }
+ assert.equal(d.terms.length,1354,'1296 base + 45 old module novel + 13 new');
+});
+test('original T900xx terms, including old learned-word references, remain intact',()=>{
+ const d=source().d,ids=new Set(d.terms.map(x=>x.id));
+ for(const id of ['T90003','T90006','T90101','T90154']){
+  assert.ok(ids.has(id),'historical exam card ID must not change: '+id);
+ }
+ assert.equal(d.terms.filter(x=>x.id.startsWith('T902')).length,13);
 });
