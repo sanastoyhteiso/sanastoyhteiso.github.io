@@ -376,6 +376,9 @@ export default {
   // Optional RUN169 schema migration: migrations are applied manually before enabling activity.
   if(env.ACTIVITY_ENABLED==='true'){
     await env.DB.prepare('DELETE FROM activity_days WHERE day<?').bind(dayInHelsinki(now-30*86400000)).run();
+  }
+  // Directory access auditing may be enabled without voluntary activity.
+  if(env.ACTIVITY_ENABLED==='true'||typeof env.ADMIN_DIRECTORY_SERVICE_ACCOUNT_JSON==='string'){
     await env.DB.prepare('DELETE FROM admin_audit WHERE at_ms<?').bind(now-90*86400000).run();
   }
  }
