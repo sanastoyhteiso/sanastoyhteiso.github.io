@@ -249,9 +249,13 @@
   function tfNew(){var run=examRun('truefalse');state.tfQuestion=run.questions[run.index]||null;state.tfResult=null;}
   function renderTrueFalse(){
     basePage('Проверь себя','Tosi vai epätosi? Прочитай утверждение по-фински.');
+    var run=examRun('truefalse');
+    if(!run.questions.length||run.index>=run.questions.length){
+      root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
+    }
     if(!state.tfQuestion)tfNew();
     var q=state.tfQuestion;
-    var s=quizModeTabs()+'<div class="panel"><div class="form-row">'+
+    var s=quizModeTabs()+examProgress(run)+'<div class="panel"><div class="form-row">'+
       '<label class="field"><span>Тема теста</span>'+examTopicSelect(state.filter,'quiz-cat')+'</label>'+
       '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
@@ -264,10 +268,10 @@
         (state.tfResult?'✓ Oikein! · Правильно. ':'✕ Ei aivan. · Не совсем. ')+
         '<b>Oikea vastaus / Правильный ответ: '+(q.correct?'Tosi · Верно':'Epätosi · Неверно')+'</b></div>'+
         bilingualFeedback(q)+
-        '<button class="btn primary" data-action="tf-next">Seuraava / Следующий →</button>';
+        '<button class="btn primary" data-action="tf-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     }
     s+='</div><div class="panel"><span class="hint">Текущая сессия / Nykyinen harjoitus: '+
-      '✓ '+state.tfCorrect+' · ✕ '+state.tfWrong+
+      '✓ '+run.correct+' · ✕ '+(run.answered-run.correct)+
       '. Этот тест не меняет статус «Выучено».</span></div>';
     root.innerHTML=s;
   }
@@ -290,9 +294,13 @@
   function matchNew(){var run=examRun('matching');state.matchQuestion=run.questions[run.index]||null;state.matchResult=null;}
   function renderMatching(){
     basePage('Проверь себя','Yhdistä oikeat parit / Соедини правильные пары.');
+    var run=examRun('matching');
+    if(!run.questions.length||run.index>=run.questions.length){
+      root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
+    }
     if(!state.matchQuestion)matchNew();
     var q=state.matchQuestion;
-    var s=quizModeTabs()+quizTopicPicker()+'<div class="panel"><p class="hint">Yhdistä selitys ja termi / Подбери термин к определению.</p>';
+    var s=quizModeTabs()+examProgress(run)+quizTopicPicker()+'<div class="panel"><p class="hint">Yhdistä selitys ja termi / Подбери термин к определению.</p>';
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],chosen=state.matchResult&&state.matchResult.selected[i]||'';
@@ -312,15 +320,19 @@
     if(!state.matchResult)s+='<button class="btn primary" data-action="match-check">Tarkista / Проверить</button>';
     else s+='<div class="answer '+(state.matchResult.count===q.items.length?'correct':'wrong')+'">'+
       'Oikein / Правильно: '+state.matchResult.count+' / '+q.items.length+'</div>'+
-      '<button class="btn primary" data-action="match-next">Seuraava / Следующий →</button>';
+      '<button class="btn primary" data-action="match-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     root.innerHTML=s+'</div>';
   }
   function multiNew(){var run=examRun('multiselect');state.multiQuestion=run.questions[run.index]||null;state.multiResult=null;}
   function renderMulti(){
     basePage('Проверь себя','Monivalinta / Отметь все верные утверждения.');
+    var run=examRun('multiselect');
+    if(!run.questions.length||run.index>=run.questions.length){
+      root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
+    }
     if(!state.multiQuestion)multiNew();
     var q=state.multiQuestion;
-    var s=quizModeTabs()+quizTopicPicker()+'<div class="panel"><p class="hint">Valitse kaikki oikeat väitteet / Выбери ВСЕ верные утверждения.</p>';
+    var s=quizModeTabs()+examProgress(run)+quizTopicPicker()+'<div class="panel"><p class="hint">Valitse kaikki oikeat väitteet / Выбери ВСЕ верные утверждения.</p>';
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],checked=state.multiResult&&state.multiResult.selected[i];
@@ -335,15 +347,15 @@
     if(!state.multiResult)s+='<button class="btn primary" data-action="multi-check">Tarkista / Проверить</button>';
     else s+='<div class="answer '+(state.multiResult.correct?'correct':'wrong')+'">'+
       (state.multiResult.correct?'✓ Oikein / Все правильно':'✕ Ei aivan / Не все ответы правильные')+
-      '</div><button class="btn primary" data-action="multi-next">Seuraava / Следующий →</button>';
+      '</div><button class="btn primary" data-action="multi-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     root.innerHTML=s+'</div>';
   }
 
-  function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
+  function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');var run=examRun('translate');if(!run.questions.length||run.index>=run.questions.length){root.innerHTML=quizModeTabs()+examSummary(run);return;}if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+examProgress(run)+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
     s+='<div class="panel"><p class="hint">Выбери перевод:</p><div class="flash-term">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
     s+='</div>';
-    if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">Следующий вопрос →</button>';
+    if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Следующий вопрос →')+'</button>';
     s+='</div>';root.innerHTML=s;
   }
   function renderDict(){basePage('Словарь','Поиск по финским и русским словам. Экзаменационные темы — в общем списке.');var s=englishWarning(state.dictDirection)+'<div class="panel"><div class="form-row"><label class="field grow"><span>Поиск слова или перевода</span><input class="control" id="dict-search" type="search" placeholder="Например: turvotus, подгузник, одежда" value="'+safe(state.dictQuery)+'"></label><label class="field"><span>Тема</span>'+selectCats(state.dictFilter,'dict-cat')+'</label><label class="field"><span>Переводы</span>'+directionSelect('dict-dir',state.dictDirection,true)+'</label></div><label class="hint"><input type="checkbox" id="dict-phrases"'+(state.dictIncludePhrases?' checked':'')+'> Также показать фразы</label></div><div class="section-title"><h2>Результаты <span id="dict-count"></span></h2></div><div id="dict-results" class="dictionary-list"></div>';root.innerHTML=s;renderDictItems();}
