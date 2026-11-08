@@ -114,6 +114,8 @@ jobs:
         run: node --test release-checks/exam-navigation-run157.test.cjs
       - name: RUN158-159 feedback correctness and exam autosave across reload
         run: node --test release-checks/exam-feedback-autosave-run158159.test.cjs
+      - name: RUN161 private two-device mock exam sync synthetic tests (offline)
+        run: node --test release-checks/exam-cloud-run161.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)
