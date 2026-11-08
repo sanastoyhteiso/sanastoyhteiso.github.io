@@ -134,7 +134,7 @@ test('ES5, cache rc25, exam nav, and all versioned scripts present',()=>{
  assert.match(html,/mock-exam-run156\.js\?v=latin-run164-v1/);
  assert.match(html,/app\.js\?v=exam-preserve-run167-1/);
  assert.match(html,/riveria-true-false\.js\?v=run156-en-1/);
- assert.match(sw,/v3\.0\.0-rc34/);
+ assert.match(sw,/v3\.0\.0-rc35/);
  assert.match(sw,/mock-exam-run156\.js\?v=latin-run164-v1/);
  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\//g,''),/=>|\?\.|\bconst\b|\blet\b|fetch\s*\(|localStorage|firestore|firebase/i);
  assert.doesNotMatch(app,/=>|\?\./);
