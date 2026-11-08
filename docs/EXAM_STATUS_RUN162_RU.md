@@ -8,5 +8,17 @@
 
 Исходный main `67f7cffe56c2784fa73b16e6d31fa8f82a49c8b2`. Backup `backup/pre-exam-status-run162-20261108`. Рабочая ветка `fix/exam-status-run162-20261108`. Обновить версию app/CSS и offline SW, CI 3/3, точное оповещение о выпуске. Публиковать только после проверки неизменности схемы хранения и Firebase API.
 
-## ЗАВЕРШИЛ
-Ожидает проверки и публикации.
+## ЗАВЕРШИЛ — 08.11.2026 Europe/Helsinki
+
+**PUBLISHED / CI_3_OF_3_SUCCESS / PAGES_3_OF_3_SUCCESS / DEVICE_QA_PENDING.**
+
+Исправлен двойной зелёный блок на странице «Экзамен»: когда облачное сохранение подтверждено и локальный черновик доступен, выводится **одна короткая строка** `✓ Экзамен сохраняется автоматически — на всех устройствах.`, стиль `.exam-save-compact`. Второе сообщение о локальном сохранении из `renderMockExam()` полностью убрано. При недоступности облака отображается единственное предупреждение `Экзамен сохранён только на этом устройстве` и кнопка повторной проверки; если localStorage недоступен — не утверждается, что он сохранил черновик. Конфликт двух попыток и ручной выбор сохраняются без изменений.
+
+- [PR №35 MERGED](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/35), feature HEAD `87f526745001f972b366188ebeb5cebf5863da3a`, merge SHA `84d9ccf309beef4f6a5b8af56f72de0370b9b718`. Проверены неизменный `main`, отсутствие конфликтов и точный head до объединения.
+- [CI №42495090987](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42495090987): **3/3 SUCCESS** включая cloud-client regression на единственное зелёное сообщение и единственное предупреждение при ошибке, failclosed sync gate и Firestore rules emulator.
+- [Pages №42495207202](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42495207202): **3/3 SUCCESS** (build / report-build-status / deploy точного merge SHA).
+- Проверены файлы production main `app.js`, `style.css`, `index.html`, `sw.js`: старой двойной фразы нет, компактный текст имеется, `mockCloudSync()` и `mockSaveDraft()` остались, согласованные `app.js?v=exam-status-run162-v1`, `style.css?v=exam-status-run162-1`, service worker cache `rc30`.
+- Backup `backup/pre-exam-status-run162-20261108`. Не менялись личные ответы и 40-вопросная попытка, аккаунты, Firestore/Auth/Rules, тарифы, словарь и результат обучения.
+
+**Ручная проверка пользователя ещё не выполнена:** открыть «Экзамен» на телефоне, увидеть **один** компактный статус, удостовериться, что номер вопроса и 21+ ответов сохранены и что другой телефон продолжает с последнего подтверждённого вопроса. **Не очищать localStorage**, не нажимать «Новый экзамен».
+
