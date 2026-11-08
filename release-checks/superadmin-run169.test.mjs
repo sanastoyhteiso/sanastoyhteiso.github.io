@@ -52,7 +52,7 @@ test('opt-in event rejects extra fields and stores only HMAC actor identifier',a
   assert.equal(view.coverage,'opt_in_only');
   assert.equal(view.rows.length,2);
   assert.equal(view.rows[0].userKey.length,64);
-  assert.deepEqual(e.DB.db.prepare('SELECT kind FROM admin_audit').all(),[{kind:'activity_read'}]);
+  assert.deepEqual(e.DB.db.prepare('SELECT kind FROM admin_audit').all().map(x=>x.kind),['activity_read']);
  }finally{e.DB.close();}
 });
 test('disabled intake fails closed; privileged directory requires owner role',async()=>{
