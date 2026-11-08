@@ -117,7 +117,7 @@
   }
   function metric(){return '<div class="stat-row"><div class="stat"><strong>'+allTerms().length+'</strong><small>терминов</small></div><div class="stat"><strong>'+(sharedEnabled()?D.phrases.length:0)+'</strong><small>общих фраз</small></div><div class="stat"><strong>'+(sharedEnabled()?D.mediatri.length:0)+'</strong><small>записей Mediatri</small></div><div class="stat"><strong>'+numberLearned()+'</strong><small>выучено</small></div></div>';}
   function basePage(title,subtitle){var x=byId('page-title');if(x)x.textContent=title;var y=byId('page-subtitle');if(y)y.textContent=subtitle;}
-  function render(){setStatus();document.querySelectorAll('[data-view]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-view')===state.view || (state.view==='add'||state.view==='backup')&&b.getAttribute('data-view')==='more');});if(state.view==='users'){basePage('Пользователи','Добровольно открытые показатели прогресса.');if(window.RS_COMM)window.RS_COMM.renderUsers(root);}else if(state.view==='libraries'){basePage('Библиотека','Подключай открытые тематические словари.');if(window.RS_COMM)window.RS_COMM.renderLibrary(root);}else if(state.view==='cards')renderCards();else if(state.view==='learned')renderLearned();else if(state.view==='practice')renderQuiz();else if(state.view==='dictionary')renderDict();else if(state.view==='mediatri')renderMediatri();else if(state.view==='add')renderAdd();else if(state.view==='backup')renderBackup();else renderMore();if(window.RS_V3_RELEASE)window.RS_V3_RELEASE.status();}
+  function render(){setStatus();document.querySelectorAll('[data-view]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-view')===state.view || (state.view==='add'||state.view==='backup')&&b.getAttribute('data-view')==='more');});if(state.view==='users'){basePage('Пользователи','Добровольно открытые показатели прогресса.');if(window.RS_COMM)window.RS_COMM.renderUsers(root);}else if(state.view==='libraries'){basePage('Библиотека','Подключай открытые тематические словари.');if(window.RS_COMM)window.RS_COMM.renderLibrary(root);}else if(state.view==='cards')renderCards();else if(state.view==='learned')renderLearned();else if(state.view==='practice')renderQuiz();else if(state.view==='exam')renderMockExam();else if(state.view==='dictionary')renderDict();else if(state.view==='mediatri')renderMediatri();else if(state.view==='add')renderAdd();else if(state.view==='backup')renderBackup();else renderMore();if(window.RS_V3_RELEASE)window.RS_V3_RELEASE.status();}
   function renderCards(){basePage(state.reviewLearned?'Повторение выученного':'Изучаем слова',state.reviewLearned?'Отдельное повторение по твоему выбору.':'Выученные слова не возвращаются в обычную колоду.');ensureDeck(false);var c=state.deck[state.cardIndex],i,catHtml='',cats=optionsForCat().slice(0,7);for(i=0;i<cats.length;i++){catHtml+='<button class="tag '+(state.filter===cats[i][0]?'chosen':'')+'" data-action="cat-quick" data-value="'+safe(cats[i][0])+'">'+safe(cats[i][1])+'</button>';}
   var s=metric()+englishWarning(state.direction)+'<div class="banner"><b>'+(state.reviewLearned?'Повторение выученных':'Новые слова без повторов')+'</b><p>'+(state.reviewLearned?'Здесь можно освежить выученное. Если слово забылось, нажми «Повторить», чтобы вернуть его в обычное обучение.':'После «Знаю» слово уходит в раздел «Выученные» и не повторяется в обычных карточках. Пропущенные слова вернутся в следующем подходе.')+'</p></div>';
   s+='<div class="panel"><div class="form-row"><label class="field"><span>Тема</span>'+selectCats(state.filter,'cards-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('cards-dir',state.direction,false)+'</label><label class="field"><span>Слова за подход</span><select id="cards-count" class="control"><option value="10"'+(state.cardsCount===10?' selected':'')+'>10</option><option value="20"'+(state.cardsCount===20?' selected':'')+'>20</option><option value="50"'+(state.cardsCount===50?' selected':'')+'>50</option></select></label></div><div class="btn-row"><button class="btn white" data-action="reshuffle">↻ Перемешать</button><button class="btn white" data-action="only-favorites">'+(state.extraSearch?'★ Только избранное':'☆ Только избранное')+'</button><button class="btn white" data-view="learned">✓ Выученные ('+numberLearned()+')</button>'+(state.reviewLearned?'<button class="btn primary" data-action="study-mode">К новым словам</button>':'')+'</div></div>';
@@ -368,6 +368,155 @@
     root.innerHTML=s+'</div>';
   }
 
+
+  function mockInit(){
+    if(state.mockRun)return state.mockRun;
+    var dir=direction(state.mockDirection),bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[],
+      items=window.RS_MOCK_EXAM&&window.RS_MOCK_EXAM.build(D,bank,dir)||[];
+    state.mockRun={questions:items,index:0,answers:[],direction:dir};
+    return state.mockRun;
+  }
+  function mockTypeLabel(type){
+    if(type==='translate')return '4 варианта / 4 vaihtoehtoa';
+    if(type==='truefalse')return 'Верно / Неверно · Tosi / Epätosi';
+    if(type==='matching')return 'Сопоставление · Yhdistä parit';
+    return 'Множественный выбор · Monivalinta';
+  }
+  function mockTopicLabel(id){
+    var topics=D.examTopics||[];
+    for(var i=0;i<topics.length;i++)if(topics[i].id===id)return topics[i].fi+' — '+topics[i].ru;
+    return id;
+  }
+  function mockErrorReview(run){
+    var s='',count=0;
+    for(var i=0;i<run.answers.length;i++){
+      var result=run.answers[i],q=run.questions[i];
+      if(!result||result.score===1)continue;
+      count++;
+      s+='<details class="exam-review"><summary>Задание '+(i+1)+' — '+safe(mockTypeLabel(q.type))+
+        ' · '+Math.round(result.score*100)+'% · '+safe(mockTopicLabel(q.topic))+'</summary>';
+      if(q.type==='translate'){
+        s+='<p><b>Oikea vastaus / Правильный ответ:</b> '+safe(q.answer)+'</p>'+examNote(q.item);
+      }else if(q.type==='truefalse'){
+        s+='<p><b>Oikea vastaus / Правильный ответ:</b> '+
+          (q.question.correct?'Tosi / Верно':'Epätosi / Неверно')+'</p>'+bilingualFeedback(q.question);
+      }else if(q.type==='matching'){
+        for(var m=0;m<result.details.length;m++){
+          var d=result.details[m];if(d.selected!==d.correct){
+            s+='<p><b>FI:</b> '+safe(d.term.fi)+' · <b>RU:</b> '+safe(d.term.ru)+
+              (d.term.en?' · <b>EN:</b> '+safe(d.term.en):'')+'</p>';
+          }
+        }
+      }else{
+        for(var k=0;k<result.details.length;k++){
+          var item=result.details[k];if(item.selected!==item.correct){
+            s+='<div><b>'+(item.correct?'Tosi / Верно':'Epätosi / Неверно')+
+              '</b>'+bilingualFeedback(item.term)+'</div>';
+          }
+        }
+      }
+      s+='</details>';
+    }
+    return '<div class="panel"><h2>Разбор ошибок / Virheiden tarkistus ('+count+')</h2>'+
+      (count?s:'<p>Все ответы правильные! / Kaikki oikein!</p>')+'</div>';
+  }
+  function renderMockExam(){
+    basePage('Экзамен / Koe / Exam','40 перемешанных заданий из всех десяти тем. Порог сдачи 80% (32 из 40).');
+    var run=mockInit(),n=run.questions.length,p=examDisplayPair();
+    if(n!==40){root.innerHTML='<div class="panel">Не удалось подготовить 40 проверяемых вопросов. Учебные данные не изменены.</div>';return;}
+    var s='<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+
+      directionSelect('mock-dir',state.mockDirection,false)+'</label></div>'+
+      '<p class="hint">Тренировочный экзамен, не официальная оценка Riveria. Один вопрос — максимум 1 балл. Ответы и правильные варианты показываются только в конце.</p></div>';
+    if(run.index>=n){
+      var report=window.RS_MOCK_EXAM.report(run);
+      s+='<div class="panel exam-run-done"><h2>'+(report.passed?'✓ Сдано / Hyväksytty':'✕ Не сдано / Hylätty')+'</h2>'+
+        '<div class="exam-mock-percent">'+report.percent+'%</div>'+
+        '<p><b>'+report.points+' / 40 баллов</b> · Порог / Raja 32 / 40 (80%)</p>'+
+        '<p>Ответов: '+report.count+' / 40 · Заданий с неполным баллом: '+report.wrong+'</p>'+
+        '<p class="hint">Баллы за сопоставление начисляются по 0,25 за пару; за множественный выбор — с учётом неверно отмеченных вариантов.</p>'+
+        '<button class="btn primary" data-action="mock-restart">Новый экзамен / Uusi koe</button></div>'+
+        mockErrorReview(run);
+      root.innerHTML=s;return;
+    }
+    var q=run.questions[run.index],done=!!run.answers[run.index];
+    s+='<div class="panel exam-run-progress"><b>Экзамен / Koe: '+(run.index+1)+' / 40</b>'+
+      '<div class="exam-progress-track"><span style="width:'+Math.round(run.index*2.5)+'%"></span></div>'+
+      '<span class="hint">'+safe(mockTypeLabel(q.type))+' · '+safe(mockTopicLabel(q.topic))+'</span></div>'+
+      '<div class="panel">';
+    if(q.type==='translate'){
+      s+='<p class="hint">Выбери один правильный перевод / Valitse yksi oikea käännös</p>'+
+        '<div class="flash-term" lang="'+p.from+'">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';
+      for(var t=0;t<q.options.length;t++){
+        s+='<button class="btn white" data-action="mock-answer" data-value="'+t+'"'+(done?' disabled':'')+'>'+safe(q.options[t])+'</button>';
+      }
+      s+='</div>';
+    }else if(q.type==='truefalse'){
+      s+=bilingualQuestion(q.question.fi,q.question.ru,q.question.en)+'<div class="mc-options">'+
+        '<button class="btn white" data-action="mock-answer" data-value="true"'+(done?' disabled':'')+'>Tosi · Верно · True</button>'+
+        '<button class="btn white" data-action="mock-answer" data-value="false"'+(done?' disabled':'')+'>Epätosi · Неверно · False</button></div>';
+    }else if(q.type==='matching'){
+      s+='<p class="hint">Yhdistä oikeat parit / Сопоставь все четыре определения</p>';
+      for(var a=0;a<q.question.items.length;a++){
+        var term=q.question.items[a];
+        s+='<div class="form-row"><div class="field grow" id="mock-match-label-'+a+'">'+
+          bilingualQuestion(term.examNoteFi,term.examNoteRu,
+          p.from==='en'?'Which Finnish term corresponds to the English medical term "'+term.en+'"?':'Choose the English term for the Finnish description.')+
+          '</div><select class="control" id="mock-match-'+a+'" data-mock-match="'+a+'" aria-labelledby="mock-match-label-'+a+'"'+(done?' disabled':'')+'>'+
+          '<option value="">— Valitse / Выбери —</option>';
+        for(var z=0;z<q.question.options.length;z++){
+          var fi=q.question.options[z],label=fi;
+          for(var w0=0;w0<q.question.items.length;w0++){
+            if(q.question.items[w0].fi===fi)label=word(q.question.items[w0],p.to)||fi;
+          }
+          s+='<option value="'+safe(fi)+'"'+(done&&run.answers[run.index].selected[a]===fi?' selected':'')+'>'+safe(label)+'</option>';
+        }
+        s+='</select></div>';
+      }
+    }else if(q.type==='multiselect'){
+      s+='<p class="hint">Valitse kaikki oikeat väitteet / Отметь все верные утверждения</p>';
+      for(var u=0;u<q.question.items.length;u++){
+        var cl=q.question.items[u];
+        s+='<label class="field exam-multi-choice"><input type="checkbox" data-mock-multi="'+u+'"'+
+          (done&&run.answers[run.index].selected[u]?' checked':'')+(done?' disabled':'')+'>'+
+          bilingualQuestion(cl.fi,cl.ru,cl.en)+'</label>';
+      }
+    }
+    if(!done){
+      if(q.type==='matching'||q.type==='multiselect')s+='<button class="btn primary" data-action="mock-check">Подтвердить ответ / Vahvista vastaus</button>';
+      s+='<p class="hint">Без пропуска. Верные ответы откроются после 40-го задания.</p>';
+    }else{
+      s+='<p class="answer correct">Ответ записан / Vastaus tallennettu. Правильность увидишь в итоговом разборе.</p>'+
+        '<button class="btn primary" data-action="mock-next">'+
+        (run.index===39?'Завершить экзамен / Päätä koe →':'Следующий / Seuraava →')+'</button>';
+    }
+    root.innerHTML=s+'</div>';
+  }
+  function mockSubmit(answer){
+    var run=mockInit(),q=run.questions[run.index];
+    if(!q||run.answers[run.index])return;
+    var gradeResult=window.RS_MOCK_EXAM.evaluate(q,answer);
+    if(!gradeResult)return;
+    run.answers[run.index]=gradeResult;
+    renderMockExam();
+  }
+  function mockValidateAndSubmit(){
+    var run=mockInit(),q=run.questions[run.index],chosen=[],i,el;
+    if(!q||run.answers[run.index])return;
+    if(q.type==='matching'){
+      for(i=0;i<q.question.items.length;i++){
+        el=byId('mock-match-'+i);
+        if(!el||!el.value){toast('Выбери соответствие для всех четырёх строк.');return;}
+        chosen.push(el.value);
+      }
+    }else if(q.type==='multiselect'){
+      for(i=0;i<q.question.items.length;i++){
+        el=document.querySelector('[data-mock-multi="'+i+'"]');chosen.push(!!(el&&el.checked));
+      }
+      if(!chosen.some(function(x){return x;})){toast('Отметь хотя бы один ответ.');return;}
+    }else return;
+    mockSubmit(chosen);
+  }
+
   function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');var run=examRun('translate');if(!run.questions.length||run.index>=run.questions.length){root.innerHTML=quizModeTabs()+examSummary(run);return;}if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+examProgress(run)+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
     s+='<div class="panel"><p class="hint">Выбери перевод:</p><div class="flash-term">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
@@ -465,6 +614,15 @@
     else if(action==='return-to-study'){setLearned(choice,false);renderLearnedItems();toast('Слово возвращено на изучение.');}
     else if(action==='only-favorites'){state.extraSearch=!state.extraSearch;state.sessionSeen={};ensureDeck(true);renderCards();}
     else if(action==='cat-quick'){state.filter=choice;state.sessionSeen={};ensureDeck(true);renderCards();window.scrollTo(0,0);}
+    else if(action==='mock-answer'){
+      var run=mockInit(),q=run.questions[run.index];
+      if(!q)return;
+      if(q.type==='translate'){var idx=Number(choice);if(idx>=0&&idx<q.options.length)mockSubmit(q.options[idx]);}
+      else if(q.type==='truefalse'&&(choice==='true'||choice==='false'))mockSubmit(choice==='true');
+    }
+    else if(action==='mock-check'){mockValidateAndSubmit();}
+    else if(action==='mock-next'){var er=mockInit();if(er.answers[er.index]){er.index++;renderMockExam();}}
+    else if(action==='mock-restart'){state.mockRun=null;renderMockExam();}
     else if(action==='quiz-mode'){if(['translate','truefalse','matching','multiselect'].indexOf(choice)>=0){
       state.quizMode=choice;if(choice!=='translate'&&state.filter!=='all'&&!isExamTopic(state.filter))state.filter='all';state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
     else if(action==='exam-restart'){examRestart(state.quizMode);}
@@ -501,7 +659,7 @@
     else if(action==='export-json'){exportJson();}
     else if(action==='export-tsv'){exportTsv();}
   });
-  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
+  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='mock-dir'){var er=mockInit();if(er.answers.length===0){state.mockDirection=e.target.value;state.mockRun=null;}else{toast('Направление фиксируется после первого ответа. Для изменения начни новый экзамен.');}renderMockExam();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
   document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
   document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
   window.addEventListener('online',setStatus);window.addEventListener('offline',setStatus);
@@ -514,7 +672,7 @@
     // Resetting a shuffled deck here skips a visible card after Know/Repeat.
     // A real account switch still explicitly requests the full reset.
     if(reset){
-      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
+      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.mockRun=null;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();
