@@ -137,7 +137,7 @@
 
   function examDisplayLang(){
     var code=window.RS_I18N&&window.RS_I18N.getLanguage?window.RS_I18N.getLanguage():document.documentElement.lang;
-    return code==='fi'?'fi':'ru';
+    return code==='fi'||code==='en'?'fi':'ru';
   }
   function bilingualQuestion(fi,ru){
     var first=examDisplayLang()==='fi',major=first?fi:ru,minor=first?ru:fi;
