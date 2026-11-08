@@ -204,7 +204,7 @@ test('RUN163 ES5 compatible; consistent mobile CSS and cloud schema unchanged',(
  assert.ok(app.includes('function mockErrorReview('));
  assert.ok(css.includes('.exam-review-original'));
  assert.ok(css.includes('.exam-review-row'));
- assert.match(html,/app\.js\?v=latin-run164-v1/);
+ assert.match(html,/app\.js\?v=heart-run166-1/);
  assert.match(html,/style\.css\?v=heart-run166-1/);
  assert.match(sw,/v3\.0\.0-rc33/);
  assert.doesNotMatch(app,/=>|\?\./,'must remain compatible with legacy Safari');
