@@ -23,7 +23,7 @@ function completed(direction,scenario){
   if(scenario==='all-correct'){
    if(item.type==='translate')return w.RS_MOCK_EXAM.evaluate(item,item.answer);
    if(item.type==='truefalse')return w.RS_MOCK_EXAM.evaluate(item,item.question.correct);
-   if(item.type==='matching')return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(x=>x.fi));
+   if(item.type==='matching')return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(x=>x[item.question.answerKey==='la'?'la':'fi']));
    return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(x=>!!x.correct));
   }
   if(scenario==='partial'&&item.type==='matching'){
@@ -37,7 +37,7 @@ function completed(direction,scenario){
   if(item.type==='truefalse')return w.RS_MOCK_EXAM.evaluate(item,!item.question.correct);
   if(item.type==='matching'){
    const terms=item.question.items;
-   return w.RS_MOCK_EXAM.evaluate(item,terms.map((term,i)=>terms[(i+1)%terms.length].fi));
+   return w.RS_MOCK_EXAM.evaluate(item,terms.map((term,i)=>terms[(i+1)%terms.length][item.question.answerKey==='la'?'la':'fi']));
   }
   return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(term=>!term.correct));
  });
@@ -102,7 +102,7 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
       if(direction!=='en-fi')assert.ok(pairs[m].textContent.includes(q.question.items[m].examNoteRu));
       assert.match(pairs[m].textContent,/Твой выбор/);
       assert.match(pairs[m].textContent,/Правильная пара/);
-      assert.ok(pairs[m].textContent.includes(q.question.items[m].fi));
+      assert.ok(pairs[m].textContent.includes(q.question.items[m][q.question.answerKey==='la'?'la':'fi']));
       assert.ok(pairs[m].textContent.includes(grade.selected[m]));
       assert.ok(pairs[m].classList.contains('exam-review-wrong'));
      }
