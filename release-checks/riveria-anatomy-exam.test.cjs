@@ -86,7 +86,7 @@ test('10 exam entries appear in Cards / Quiz / Dictionary dropdown, no Latin lea
   }
  }finally{b.dom.window.close();}
 });
-test('dictionary uses existing exam topic menu; FI/RU visible and Latin remains searchable but hidden',()=>{
+test('dictionary shows Latin first, followed by FI/RU explanations in the existing exam menu',()=>{
  const b=browser();try{
   b.d.querySelector('[data-view="dictionary"]').click();
   const select=b.d.getElementById('dict-cat');select.value='EXAM03';
@@ -94,14 +94,19 @@ test('dictionary uses existing exam topic menu; FI/RU visible and Latin remains 
   const input=b.d.getElementById('dict-search');input.value='femur';
   input.dispatchEvent(new b.w.Event('input',{bubbles:true}));
   assert.match(b.d.getElementById('dict-results').textContent,/reisiluu/);
-  assert.doesNotMatch(b.d.getElementById('dict-results').textContent,/Latina:|Selitys|Объяснение/);
+  const text=b.d.getElementById('dict-results').textContent;
+  assert.match(text,/Latina:/);
+  assert.match(text,/femur/);
+  assert.ok(text.indexOf('Latina:')<text.lastIndexOf('FI:')&&text.lastIndexOf('FI:')<text.lastIndexOf('RU:'),
+    'Latin must be above FI and RU explanations');
+  assert.ok(b.d.querySelector('.exam-explain'));
   assert.match(b.d.getElementById('dict-results').textContent,/FI:/);
   assert.match(b.d.getElementById('dict-results').textContent,/RU:/);
   // The source glossary outside this exam is not dropped.
   assert.equal(b.w.RS_DATA.terms.some(x=>x.id==='T00001'),true);
  }finally{b.dom.window.close();}
 });
-test('cards reveal only FI/RU translation without extra explanatory block',()=>{
+test('cards reveal translation plus Latin/FI/RU study block after flip',()=>{
  const b=browser();try{
   const select=b.d.getElementById('cards-cat');select.value='EXAM02';
   select.dispatchEvent(new b.w.Event('change',{bubbles:true}));
@@ -109,11 +114,13 @@ test('cards reveal only FI/RU translation without extra explanatory block',()=>{
   const flip=b.d.querySelector('[data-action="flip"]');assert.ok(flip);
   flip.click();
   assert.ok(b.d.querySelector('.flash-trans'),'show translation after flip');
-  assert.equal(b.d.querySelector('.exam-explain'),null,'explanations and Latin are no longer shown');
-  assert.doesNotMatch(b.d.getElementById('main-content').textContent,/Latina:|Selitys \(FI\)|Объяснение \(RU\)/);
+  const box=b.d.querySelector('.exam-explain');
+  assert.ok(box,'exam descriptions must appear on card flip');
+  assert.match(box.textContent,/FI:/);
+  assert.match(box.textContent,/RU:/);
  }finally{b.dom.window.close();}
 });
-test('all ten topics available in quiz, feedback is concise FI/RU only',()=>{
+test('all ten topics available in quiz; answer feedback includes FI/RU study notes',()=>{
  const b=browser();try{
   b.d.querySelector('[data-view="practice"]').click();
   const select=b.d.getElementById('quiz-cat');select.value='EXAM09';
@@ -122,7 +129,10 @@ test('all ten topics available in quiz, feedback is concise FI/RU only',()=>{
   assert.equal(b.d.querySelectorAll('.exam-explain').length,0);
   b.d.querySelector('[data-action="quiz-choose"]').click();
   assert.ok(b.d.querySelector('.answer'));
-  assert.equal(b.d.querySelector('.exam-explain'),null,'no extra explanatory text in quiz');
+  const box=b.d.querySelector('.exam-explain');
+  assert.ok(box,'quiz result must explain answer');
+  assert.match(box.textContent,/FI:/);
+  assert.match(box.textContent,/RU:/);
  }finally{b.dom.window.close();}
 });
 test('loading public material does not write/reset synthetic V3 study scores',()=>{
@@ -169,4 +179,27 @@ test('original T900xx terms, including old learned-word references, remain intac
   assert.ok(ids.has(id),'historical exam card ID must not change: '+id);
  }
  assert.equal(d.terms.filter(x=>x.id.startsWith('T902')).length,13);
+});
+
+test('all 289 required exam terms have Finnish/Russian definitions and Latin when available',()=>{
+ const d=source().d;
+ const expected=require('./exam-required-fi-topics-20261108.json');
+ const lookup=new Map(d.terms.map(x=>[x.fi.toLocaleLowerCase('fi-FI').trim(),x]));
+ let latin=0;
+ for(const item of expected.required){
+   const card=lookup.get(item.fi.toLocaleLowerCase('fi-FI').trim());
+   assert.ok(card,'missing '+item.fi);
+   assert.ok(card.examNoteFi&&card.examNoteFi.length>=20,'missing FI note '+item.fi);
+   assert.ok(card.examNoteRu&&card.examNoteRu.length>=20,'missing RU note '+item.fi);
+   if(card.la)latin++;
+ }
+ assert.ok(latin>=210,'Latin study hints should be preserved');
+ const lung=lookup.get('keuhko');
+ assert.equal(lung.la,'pulmo');
+ assert.match(lung.examNoteFi,/Keuhkorakkuloissa/);
+ assert.match(lung.examNoteRu,/Лёгкое/);
+ const mitochondria=lookup.get('mitokondrio');
+ assert.equal(mitochondria.la,'mitochondrion');
+ assert.match(mitochondria.examNoteFi,/ATP/);
+ assert.ok(mitochondria.examNoteRu.length>40);
 });
