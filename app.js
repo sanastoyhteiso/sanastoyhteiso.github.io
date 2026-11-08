@@ -246,27 +246,13 @@
       '<button class="btn '+(state.quizMode==='matching'?'primary':'white')+'" data-action="quiz-mode" data-value="matching">Сопоставление · Yhdistä parit</button>'+
       '<button class="btn '+(state.quizMode==='multiselect'?'primary':'white')+'" data-action="quiz-mode" data-value="multiselect">Несколько ответов · Monivalinta</button></div></div>';
   }
-  function tfPool(){
-    var bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
-    return bank.filter(function(q){return q&&q.id&&q.fi&&typeof q.correct==='boolean'&&
-      (state.filter==='all'||q.topic===state.filter);});
-  }
-  function tfNew(){
-    var items=tfPool(),available=items.filter(function(q){return !state.tfSeen[q.id];});
-    if(!available.length){state.tfSeen={};available=items.slice();}
-    if(!available.length){state.tfQuestion=null;state.tfResult=null;return;}
-    shuffle(available);
-    if(state.tfQuestion&&available.length>1&&available[0].id===state.tfQuestion.id){
-      var temp=available[0];available[0]=available[1];available[1]=temp;
-    }
-    state.tfQuestion=available[0];state.tfSeen[state.tfQuestion.id]=true;state.tfResult=null;
-  }
+  function tfNew(){var run=examRun('truefalse');state.tfQuestion=run.questions[run.index]||null;state.tfResult=null;}
   function renderTrueFalse(){
     basePage('Проверь себя','Tosi vai epätosi? Прочитай утверждение по-фински.');
     if(!state.tfQuestion)tfNew();
     var q=state.tfQuestion;
     var s=quizModeTabs()+'<div class="panel"><div class="form-row">'+
-      '<label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label>'+
+      '<label class="field"><span>Тема теста</span>'+examTopicSelect(state.filter,'quiz-cat')+'</label>'+
       '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
     if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
@@ -287,34 +273,21 @@
   }
 
 
+  function examTopicSelect(current,id){
+    var data=D.examTopics||[],s='<select class="control" id="'+id+'"><option value="all"'+
+      (current==='all'?' selected':'')+'>Все десять тем / Kaikki 10 aihetta</option>';
+    for(var i=0;i<data.length;i++){
+      var t=data[i];
+      s+='<option value="'+safe(t.id)+'"'+(current===t.id?' selected':'')+'>'+
+        safe(t.fi+' — '+t.ru+' (с. '+t.pages+')')+'</option>';
+    }
+    return s+'</select>';
+  }
   function quizTopicPicker(){
     return '<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+
-      selectCats(state.filter,'quiz-cat')+'</label></div></div>';
+      examTopicSelect(state.filter,'quiz-cat')+'</label></div></div>';
   }
-  function matchNew(){
-    var topics=(D.examTopics||[]).filter(function(t){return state.filter==='all'||t.id===state.filter;});
-    shuffle(topics);
-    var chosen=null,words=[];
-    for(var i=0;i<topics.length;i++){
-      var id=topics[i].id,valid=D.terms.filter(function(x){
-        return x.examTopics&&x.examTopics.indexOf(id)>=0&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu;
-      });
-      if(valid.length>=4&&!state.matchSeen[id]){chosen=id;words=valid;break;}
-    }
-    if(!chosen){state.matchSeen={};for(var j=0;j<topics.length;j++){
-      var topicId=topics[j].id,items=D.terms.filter(function(x){
-        return x.examTopics&&x.examTopics.indexOf(topicId)>=0&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu;
-      });
-      if(items.length>=4){chosen=topicId;words=items;break;}
-    }}
-    if(!chosen){state.matchQuestion=null;state.matchResult=null;return;}
-    shuffle(words);
-    var picked=words.slice(0,4);
-    var options=shuffle(picked.map(function(x){return x.fi;}));
-    state.matchQuestion={topic:chosen,items:picked,options:options};
-    state.matchSeen[chosen]=true;
-    state.matchResult=null;
-  }
+  function matchNew(){var run=examRun('matching');state.matchQuestion=run.questions[run.index]||null;state.matchResult=null;}
   function renderMatching(){
     basePage('Проверь себя','Yhdistä oikeat parit / Соедини правильные пары.');
     if(!state.matchQuestion)matchNew();
@@ -342,29 +315,7 @@
       '<button class="btn primary" data-action="match-next">Seuraava / Следующий →</button>';
     root.innerHTML=s+'</div>';
   }
-  function multiNew(){
-    var all=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
-    var groups={},topicIds=[];
-    for(var i=0;i<all.length;i++){
-      var x=all[i];
-      if(state.filter!=='all'&&x.topic!==state.filter)continue;
-      if(!groups[x.topic]){groups[x.topic]=[];topicIds.push(x.topic);}
-      groups[x.topic].push(x);
-    }
-    shuffle(topicIds);
-    var topic=null;
-    for(var j=0;j<topicIds.length;j++){
-      var id=topicIds[j],rows=groups[id];
-      if(!state.multiSeen[id]&&rows.length>=3&&rows.filter(function(x){return x.correct;}).length>=2&&rows.some(function(x){return !x.correct;})){topic=id;break;}
-    }
-    if(!topic){state.multiSeen={};for(var k=0;k<topicIds.length;k++){
-      var t=topicIds[k],q=groups[t];
-      if(q.length>=3&&q.filter(function(x){return x.correct;}).length>=2&&q.some(function(x){return !x.correct;})){topic=t;break;}
-    }}
-    state.multiQuestion=topic?{topic:topic,items:shuffle(groups[topic].slice())}:null;
-    if(topic)state.multiSeen[topic]=true;
-    state.multiResult=null;
-  }
+  function multiNew(){var run=examRun('multiselect');state.multiQuestion=run.questions[run.index]||null;state.multiResult=null;}
   function renderMulti(){
     basePage('Проверь себя','Monivalinta / Отметь все верные утверждения.');
     if(!state.multiQuestion)multiNew();
