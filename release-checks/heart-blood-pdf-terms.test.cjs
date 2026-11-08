@@ -39,9 +39,9 @@ test('production 1296 base words stay byte-stable and 65 new public IDs are coll
  assert.equal(sha,'fa65cf3ba0683309050a7dc729d6898699a63bbc');
  const {d,baseline}=load();
  assert.equal(baseline.length,1296);
- assert.equal(d.terms.length,1419,'1296 original + 58 previous exam words + 65 PDF terms');
- assert.equal(new Set(d.terms.map(x=>x.id)).size,1419);
- assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,1419);
+ assert.equal(d.terms.length,1425,'1296 original + 58 previous exam words + 65 PDF terms + 6 RUN151 arteries');
+ assert.equal(new Set(d.terms.map(x=>x.id)).size,1425);
+ assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,1425);
  for(let i=0;i<1296;i++)for(const f of Object.keys(baseline[i]))assert.deepEqual(d.terms[i][f],baseline[i][f],baseline[i].id+' '+f);
  const added=d.terms.filter(x=>/^T902(?:[1-6]\d|7[0-7])$/.test(x.id));
  assert.equal(added.filter(x=>Number(x.id.slice(1))>=90213).length,65);
@@ -84,9 +84,9 @@ test('Latin/FI/RU presentation and historic iOS12 compatible app remain visible'
  const finnish=app.indexOf("if(x.examNoteFi)h+='<p><b>FI:</b>");
  const russian=app.indexOf("if(x.examNoteRu)h+='<p><b>RU:</b>");
  assert.ok(latin>=0&&latin<finnish&&finnish<russian,'Latin → FI → RU renderer');
- assert.ok(html.includes('riveria-anatomy-exam.js?v=heart-blood-pdf-v4'));
- assert.ok(sw.includes('riveria-anatomy-exam.js?v=heart-blood-pdf-v4'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc19'));
+ assert.ok(html.includes('riveria-anatomy-exam.js?v=arteries-run151-v1'));
+ assert.ok(sw.includes('riveria-anatomy-exam.js?v=arteries-run151-v1'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc20'));
  assert.doesNotMatch(adapter,/\blet\s+|\bconst\s+|=>|\?\./,'module must remain ES5 for old Safari');
  assert.doesNotMatch(adapter,/localStorage\.setItem|fetch\s*\(|firestore|firebase\.auth/i);
 });
