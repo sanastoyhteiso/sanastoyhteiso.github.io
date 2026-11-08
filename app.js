@@ -449,21 +449,22 @@
     else if(action==='only-favorites'){state.extraSearch=!state.extraSearch;state.sessionSeen={};ensureDeck(true);renderCards();}
     else if(action==='cat-quick'){state.filter=choice;state.sessionSeen={};ensureDeck(true);renderCards();window.scrollTo(0,0);}
     else if(action==='quiz-mode'){if(['translate','truefalse','matching','multiselect'].indexOf(choice)>=0){
-      state.quizMode=choice;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
-    else if(action==='match-next'){matchNew();renderMatching();}
+      state.quizMode=choice;if(choice!=='translate'&&state.filter!=='all'&&!isExamTopic(state.filter))state.filter='all';state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
+    else if(action==='exam-restart'){examRestart(state.quizMode);}
+    else if(action==='match-next'){examNext('matching');}
     else if(action==='match-check'){if(!state.matchQuestion||state.matchResult)return;var mq=state.matchQuestion,chosen=[],correctCount=0;
       for(var mi=0;mi<mq.items.length;mi++){var sel=byId('match-'+mi),value=sel?sel.value:'';chosen.push(value);
         if(value===mq.items[mi].fi)correctCount++;}
-      state.matchResult={selected:chosen,count:correctCount};renderMatching();}
-    else if(action==='multi-next'){multiNew();renderMulti();}
+      state.matchResult={selected:chosen,count:correctCount};examMark('matching',correctCount===mq.items.length,correctCount,mq.items.length);renderMatching();}
+    else if(action==='multi-next'){examNext('multiselect');}
     else if(action==='multi-check'){if(!state.multiQuestion||state.multiResult)return;var rows=state.multiQuestion.items,selected=[],allRight=true;
       for(var si=0;si<rows.length;si++){var el=document.querySelector('[data-multi-index="'+si+'"]'),checked=!!(el&&el.checked);
         selected.push(checked);if(checked!==rows[si].correct)allRight=false;}
-      state.multiResult={selected:selected,correct:allRight};renderMulti();}
-    else if(action==='tf-next'){tfNew();renderTrueFalse();}
-    else if(action==='tf-choose'){if(state.quizMode!=='truefalse'||!state.tfQuestion||state.tfResult!==null)return;state.tfResult=(choice==='true')===state.tfQuestion.correct;if(state.tfResult)state.tfCorrect++;else state.tfWrong++;renderTrueFalse();}
-    else if(action==='quiz-next'){quizNew();renderQuiz();}
-    else if(action==='quiz-choose'){var q=state.quiz;if(state.quizResult!==null)return;var correct=q.options[Number(choice)]===q.answer;state.quizResult=correct;grade(q.item.id,correct);renderQuiz();}
+      state.multiResult={selected:selected,correct:allRight};examMark('multiselect',allRight,selected.filter(function(x,i){return x===rows[i].correct;}).length,rows.length);renderMulti();}
+    else if(action==='tf-next'){examNext('truefalse');}
+    else if(action==='tf-choose'){if(state.quizMode!=='truefalse'||!state.tfQuestion||state.tfResult!==null)return;state.tfResult=(choice==='true')===state.tfQuestion.correct;examMark('truefalse',state.tfResult);renderTrueFalse();}
+    else if(action==='quiz-next'){examNext('translate');}
+    else if(action==='quiz-choose'){var q=state.quiz;if(state.quizResult!==null)return;var correct=q.options[Number(choice)]===q.answer;state.quizResult=correct;grade(q.item.id,correct);examMark('translate',correct);renderQuiz();}
     else if(action==='med-mode'){state.medMode=choice;state.draftFound=false;renderMediatri();if(choice==='phrases')renderPhraseItems();if(choice==='headings')renderHeadingItems();}
     else if(action==='med-next'){state.scenario=(state.scenario+1)%D.scenarios.length;state.scenarioRevealed=false;state.scenarioDraft='';renderMediatri();}
     else if(action==='med-reveal'){state.scenarioDraft=byId('scenario-input').value;state.scenarioRevealed=!state.scenarioRevealed;renderMediatri();}
