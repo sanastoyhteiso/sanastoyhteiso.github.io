@@ -36,31 +36,31 @@ function browser(){
  w.document.dispatchEvent(new w.Event('DOMContentLoaded',{bubbles:true}));
  return d;
 }
-test('Tests offers direct Exam entry; exam opens without changing scores, old quiz remains',()=>{
+test('Tests contains only four practice modes; Exam stays reachable through dedicated nav',()=>{
  const d=browser();try{
   const w=d.window,doc=w.document;
   const old=w.localStorage.getItem('run157_rs_scores_v1');
   doc.querySelector('[data-view="practice"]').click();
-  const entry=doc.querySelector('#main-content [data-view="exam"]');
-  assert.ok(entry,'visible exam link in Tests missing');
-  assert.match(entry.textContent,/40 заданий/);
+  assert.equal(doc.querySelectorAll('#main-content [data-view="exam"]').length,0,
+    'dedicated Exam must not be duplicated inside Tests');
+  assert.equal(doc.querySelectorAll('#main-content [data-action="quiz-mode"]').length,4,
+    'preserve all four quiz types');
   assert.ok(doc.querySelector('[data-action="quiz-choose"]'),'four-option quiz preserved');
-  entry.click();
+  doc.querySelector('.mobile-item[data-view="exam"]').click();
   assert.match(doc.getElementById('page-title').textContent,/Экзамен/);
   assert.match(doc.getElementById('main-content').textContent,/\/ 40/);
   assert.ok(doc.getElementById('mock-dir'));
-  assert.equal(w.localStorage.getItem('run157_rs_scores_v1'),old,'navigation must not update study progress');
+  assert.equal(w.localStorage.getItem('run157_rs_scores_v1'),old);
   doc.querySelector('[data-view="practice"]').click();
-  assert.ok(doc.querySelector('#main-content [data-view="exam"]'));
-  doc.querySelector('.mobile-item[data-view="exam"]').click();
-  assert.match(doc.getElementById('page-title').textContent,/Экзамен/);
+  assert.equal(doc.querySelectorAll('#main-content [data-view="exam"]').length,0);
+  assert.ok(doc.querySelector('[data-action="quiz-choose"]'));
  }finally{d.window.close();}
 });
 test('offline worker and script use the same current navigation version',()=>{
  const html=read('index.html'),sw=read('sw.js'),src=read('app.js');
- assert.match(html,/app\.js\?v=answer-feedback-run158-v1/);
- assert.match(sw,/app\.js\?v=answer-feedback-run158-v1/);
- assert.match(sw,/v3\.0\.0-rc27/);
- assert.match(src,/data-view="exam"/);
+ assert.match(html,/app\.js\?v=remove-duplicate-exam-run160-v1/);
+ assert.match(sw,/app\.js\?v=remove-duplicate-exam-run160-v1/);
+ assert.match(sw,/v3\.0\.0-rc28/);
+ assert.doesNotMatch(src,/exam-nav-entry/,'no duplicate shortcut in quiz code');
  assert.doesNotMatch(src,/=>|\?\./,'old Safari parser compatibility');
 });
