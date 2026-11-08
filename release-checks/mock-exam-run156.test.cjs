@@ -132,9 +132,9 @@ test('ES5, cache rc25, exam nav, and all versioned scripts present',()=>{
  const html=read('index.html'),sw=read('sw.js'),app=read('app.js'),src=read('mock-exam-run156.js');
  assert.match(html,/data-view="exam"/);
  assert.match(html,/mock-exam-run156\.js\?v=run156-1/);
- assert.match(html,/app\.js\?v=exam-status-run162-v1/);
+ assert.match(html,/app\.js\?v=exam-review-run163-v1/);
  assert.match(html,/riveria-true-false\.js\?v=run156-en-1/);
- assert.match(sw,/v3\.0\.0-rc30/);
+ assert.match(sw,/v3\.0\.0-rc31/);
  assert.match(sw,/mock-exam-run156\.js\?v=run156-1/);
  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\//g,''),/=>|\?\.|\bconst\b|\blet\b|fetch\s*\(|localStorage|firestore|firebase/i);
  assert.doesNotMatch(app,/=>|\?\./);
