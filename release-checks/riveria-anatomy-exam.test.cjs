@@ -72,7 +72,7 @@ function browser(){
  w.document.dispatchEvent(new w.Event('DOMContentLoaded',{bubbles:true}));
  return {dom,w,d:w.document};
 }
-test('10 exam entries appear in Cards / Quiz / Dictionary dropdown, no Latin learning direction',()=>{
+test('10 exam topics remain, Latin learning directions only in Cards and four-option Quiz',()=>{
  const b=browser();try{
   for(const [view,select] of [['cards','cards-cat'],['practice','quiz-cat'],['dictionary','dict-cat']]){
    b.d.querySelector('[data-view="'+view+'"]').click();
@@ -82,7 +82,8 @@ test('10 exam entries appear in Cards / Quiz / Dictionary dropdown, no Latin lea
    assert.ok(opts[9].textContent.includes('Hermosto ja aistit'));
    assert.ok(opts[0].textContent.includes('7–12, 17'));
    const direction=b.d.querySelectorAll('select[id$="-dir"] option');
-   for(const x of direction)assert.ok(!/\bla\b|latin/i.test(x.value),'Latin must not appear as learning direction');
+   if(view==='dictionary')for(const x of direction)assert.ok(!/\bla\b|latin/i.test(x.value),'Dictionary UI keeps core directions');
+   else assert.ok(Array.from(direction).some(x=>x.value==='la-ru'),'Latin study directions must be available in '+view);
   }
  }finally{b.dom.window.close();}
 });
