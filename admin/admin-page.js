@@ -1,12 +1,13 @@
-/* RELEASE DRAFT admin page; site technical failures only, never wrong quiz answers or grades. Access requires existing verified production Firebase claim. No global metrics exist until a protected backend is live.
- * All queries are read-only, disabled without verified Firebase admin claim, and restricted to
- * a fixed aggregate path. No private study collections, user lists, raw errors, tokens or secrets.
+/* RUN169 DRAFT admin page. Registry/email data comes ONLY from an extra protected backend with a server-side SUPERADMIN_UID allowlist. Never query other users' Firestore data in the browser.
+ * All new roster/activity queries are read-only, session-scoped and fail closed.
+ * No passwords, private study collections, answers, raw errors, tokens or secrets.
  * Safari iOS12 / ES5 compatible.
  */
 (function(w,d){
  'use strict';
  var config=w.RS_FIREBASE_CONFIG||{},auth=null,db=null,authorized=false,report=null,tab='overview',locale='ru',busy=false,session=0,activeUser=null,forcedUser=null;
- var tabs=['overview','errors','browsers','sync','backups','updates','audit'];
+ var privateUsers=[],privateVisits=[],privatePage=null,privateBusy=false,privateError='',privateLoaded={users:false,visits:false};
+ var tabs=['overview','users','visits','errors','browsers','sync','backups','updates','audit'];
  var labels={
  ru:{title:'Администрирование',sub:'Закрытый кабинет • проверка прав',checking:'Проверяю права администратора…',
   notReady:'Система авторизации недоступна. Вернись на учебную страницу и проверь подключение Firebase.',
@@ -14,7 +15,8 @@
   denied:'В этом аккаунте нет подтверждённой роли администратора. Доступ закрыт.',
   authError:'Не удалось проверить права. Обнови страницу или повторно войди.',
   note:'Отсутствие сообщений не доказывает, что ошибок нет. Для статуса «ОК» нужны работающий мониторинг и свежие агрегированные данные.',
-  overview:'Обзор',errors:'Сбои сайта',browsers:'Браузеры',sync:'Синхронизация',backups:'Резервные копии',updates:'Обновления',audit:'Аудит',
+  overview:'Обзор',users:'Пользователи',visits:'Активность',errors:'Сбои сайта',browsers:'Браузеры',sync:'Синхронизация',backups:'Резервные копии',updates:'Обновления',audit:'Аудит',
+  usersTitle:'Зарегистрированные аккаунты',usersHelp:'Email используется только для управления аккаунтами. Последний вход не равен последнему посещению сайта.',visitsTitle:'Журнал посещений',visitsHelp:'Только добровольно переданные события. Нет события — не значит, что человек не заходил.',privateLoad:'Загрузить защищённые данные',privateNext:'Следующая страница',privateNoBackend:'Защищённый реестр ещё не подключён. Никакие данные пользователей не загружены.',privateDenied:'Нет прав суперадминистратора.',privateUnavailable:'Сервис временно недоступен.',privateEmpty:'Подтверждённых данных нет',privateVisitKinds:'visit: посещение · cards: карточки · tests: тесты · exam_start / exam_finish: экзамен',
   noData:'Нет данных',failed:'Сбой подключения агрегатов',ok:'ОК',problem:'Проблема',loading:'Загрузка сводки…',
   site:'Состояние сайта',seen:'Последняя сводка',count24:'Технические сбои за 24 часа',active7:'Активность за 7 дней',
   errorGroups:'Виды сбоев сайта',version:'Версия сайта',browserTitle:'Ошибки по браузерам',syncTitle:'Ошибки синхронизации',
@@ -27,7 +29,8 @@
   notReady:'Kirjautumispalvelu ei ole käytettävissä.',signIn:'Kirjaudu ensin opiskelusivulla Google-tilillä.',
   denied:'Tällä tilillä ei ole ylläpito-oikeuksia.',authError:'Oikeuksien tarkistus epäonnistui.',
   note:'Virheilmoitusten puuttuminen ei todista toimivuutta. OK vaatii toimivan seurannan ja tuoreet tiedot.',
-  overview:'Yhteenveto',errors:'Sivuston häiriöt',browsers:'Selaimet',sync:'Synkronointi',backups:'Varmuuskopiot',updates:'Päivitykset',audit:'Toimintaloki',
+  overview:'Yhteenveto',users:'Käyttäjät',visits:'Käynnit',errors:'Sivuston häiriöt',browsers:'Selaimet',sync:'Synkronointi',backups:'Varmuuskopiot',updates:'Päivitykset',audit:'Toimintaloki',
+  usersTitle:'Rekisteröityneet käyttäjät',usersHelp:'Sähköpostiosoitteet näkyvät vain tilien hallintaa varten. Viimeisin kirjautuminen ei ole sama kuin viimeinen käynti.',visitsTitle:'Käyntiloki',visitsHelp:'Vain vapaaehtoisesti ilmoitetut tapahtumat. Tietojen puuttuminen ei tarkoita, ettei käyttäjä olisi käynyt.',privateLoad:'Lataa suojatut tiedot',privateNext:'Seuraava sivu',privateNoBackend:'Suojattua käyttäjäluetteloa ei ole vielä yhdistetty.',privateDenied:'Ei pääkäyttäjän oikeutta.',privateUnavailable:'Palvelu ei ole käytettävissä.',privateEmpty:'Ei vahvistettuja tietoja',privateVisitKinds:'visit: käynti · cards: kortit · tests: testit · exam_start / exam_finish: koe',
   noData:'Ei tietoja',failed:'Koontitietoja ei voitu lukea',ok:'OK',problem:'Ongelma',loading:'Ladataan tietoja…',
   site:'Sivuston tila',seen:'Viimeisin päivitys',count24:'Tekniset häiriöt 24 tunnissa',active7:'Aktiivisuus 7 päivässä',
   errorGroups:'Sivuston häiriötyypit',version:'Sivuston versio',browserTitle:'Virheet selaimittain',syncTitle:'Synkronointivirheet',
@@ -39,7 +42,8 @@
   notReady:'Firebase Authentication is unavailable.',signIn:'First sign in to the study site with Google.',
   denied:'This account has no verified administrator role.',authError:'Could not verify permissions.',
   note:'No error reports does not prove the site is healthy. OK requires live monitoring and fresh aggregate data.',
-  overview:'Overview',errors:'Site failures',browsers:'Browsers',sync:'Sync',backups:'Backups',updates:'Updates',audit:'Audit',
+  overview:'Overview',users:'Users',visits:'Visits',errors:'Site failures',browsers:'Browsers',sync:'Sync',backups:'Backups',updates:'Updates',audit:'Audit',
+  usersTitle:'Registered accounts',usersHelp:'Email is shown only for account management. Last sign-in is not the same as last visit.',visitsTitle:'Visit log',visitsHelp:'Only voluntarily shared activity. Missing events do not mean a user did not visit.',privateLoad:'Load protected records',privateNext:'Next page',privateNoBackend:'Protected directory backend has not been connected.',privateDenied:'Superadmin permission required.',privateUnavailable:'Service unavailable.',privateEmpty:'No confirmed data',privateVisitKinds:'visit · cards · tests · exam_start · exam_finish',
   noData:'No data',failed:'Aggregate data unavailable',ok:'OK',problem:'Problem',loading:'Loading metrics…',
   site:'Site health',seen:'Last report',count24:'Technical failures in 24h',active7:'Active in 7 days',
   errorGroups:'Site failure groups',version:'Site version',browserTitle:'Errors by browser',syncTitle:'Sync failures',
@@ -100,6 +104,9 @@
       card(g,k('count24'),value((current||live)&&report?validNum(report.errors24h):null));
       card(g,k('active7'),value(current&&report?validNum(report.active7d):null));
       card(g,k('version'),value((current||live)&&report?safeLabel(report.releaseVersion):null));
+   } else if(tab==='users'||tab==='visits'){
+      renderPrivate(p);
+      return;
    } else if(tab==='updates'){
       var x=add(p,'div','panel','');
       add(x,'h2','',k('updateTitle'));add(x,'p','notice',k('blocked'));
@@ -158,8 +165,72 @@
    }
    add(p,'p','muted',report?t().noPersonal:t().missing);
  }
+ function localDate(x){if(!x)return '—';var n=Date.parse(x);return isFinite(n)?new Date(n).toLocaleString(locale==='fi'?'fi-FI':locale==='en'?'en-GB':'ru-RU'):'—';}
+ function privateFailure(e){
+   if(e&&e.message==='ACCESS_DENIED')return t().privateDenied;
+   if(e&&e.message==='NOT_CONFIGURED')return t().privateNoBackend;
+   return t().privateUnavailable;
+ }
+ function loadPrivate(which,next){
+   if(!authorized||privateBusy||!sameSession(session,activeUser))return;
+   var api=w.RS_SUPERADMIN_READ;
+   if(!api||!api.configured()){privateError=t().privateNoBackend;render();return;}
+   var n=session,user=activeUser;
+   privateBusy=true;privateError='';render();
+   var job=which==='users'?api.users(user,next?privatePage:null):api.activity(user);
+   job.then(function(data){
+     if(!sameSession(n,user))return;
+     if(which==='users'){
+       if(!next)privateUsers=[];
+       privateUsers=privateUsers.concat(data.users);
+       privatePage=data.nextPage;privateLoaded.users=true;
+     }else{privateVisits=data.rows;privateLoaded.visits=true;}
+     privateBusy=false;privateError='';render();
+   },function(e){
+     if(!sameSession(n,user))return;
+     privateBusy=false;privateError=privateFailure(e);render();
+   });
+ }
+ function renderPrivate(root){
+   var isUsers=tab==='users',box=add(root,'div','panel','');
+   add(box,'h2','',isUsers?t().usersTitle:t().visitsTitle);
+   add(box,'p','muted',isUsers?t().usersHelp:t().visitsHelp);
+   if(!isUsers)add(box,'p','muted',t().privateVisitKinds);
+   if(privateError)add(box,'p','notice',privateError);
+   if(!privateLoaded[tab]&&!privateError)add(box,'p','muted',t().privateNoBackend);
+   var load=add(box,'button','','');
+   load.type='button';load.textContent=t().privateLoad;load.disabled=privateBusy;
+   load.addEventListener('click',function(){loadPrivate(tab,false);});
+   if(isUsers){
+     var items=add(root,'div','','');
+     privateUsers.forEach(function(x){
+       var p=add(items,'div','panel','');
+       add(p,'strong','',x.email); // textContent only, never HTML markup.
+       if(x.displayName)add(p,'p','',x.displayName);
+       add(p,'p','muted',localDate(x.createdAt)+' · '+localDate(x.lastSignInAt));
+       add(p,'p','muted','Email verified: '+String(x.emailVerified)+' · Disabled: '+String(x.disabled));
+     });
+     if(privatePage){
+       var btn=add(root,'button','','');btn.type='button';btn.textContent=t().privateNext;
+       btn.disabled=privateBusy;btn.addEventListener('click',function(){loadPrivate('users',true);});
+     }
+     if(privateLoaded.users&&!privateUsers.length)add(root,'p','muted',t().privateEmpty);
+   }else{
+     var mailByKey={};
+     privateUsers.forEach(function(x){mailByKey[x.userKey]=x.email;});
+     privateVisits.forEach(function(x){
+       var row=add(root,'div','panel','');
+       add(row,'strong','',mailByKey[x.userKey]||'—');
+       add(row,'p','',x.kind+' · '+x.count);
+       add(row,'p','muted',localDate(x.firstAt)+' — '+localDate(x.lastAt));
+     });
+     if(privateLoaded.visits&&!privateVisits.length)add(root,'p','muted',t().privateEmpty);
+     if(privateVisits.length&&!privateUsers.length)add(root,'p','muted',t().usersHelp);
+   }
+ }
  function clearAccess(message){
    authorized=false;report=null;busy=false;
+   privateUsers=[];privateVisits=[];privatePage=null;privateBusy=false;privateError='';privateLoaded={users:false,visits:false};
    show('admin-root',false);
    wipe(el('admin-tabs'));wipe(el('admin-view'));
    text('auth-status',message);
