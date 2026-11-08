@@ -41,33 +41,50 @@
    correctStatementFi:cleanFi,correctStatementRu:cleanRu,correctStatementEn:cleanEn,sourceFi:x.fi,sourceId:x.id
   };
  }
+
+ function latinEligible(x){return !!(x&&x.la&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu);}
+ function latinPool(pool){
+  var used={},out=[];
+  shuffled(pool.filter(latinEligible)).forEach(function(x){
+   var key=x.la.toLocaleLowerCase().trim();
+   if(key&&!used[key]){used[key]=true;out.push(x);}
+  });
+  return out;
+ }
+ function latinClaim(x,correct,y,id,topic){
+  if(!latinEligible(x)||(!correct&&!distinct(x,y)))return null;
+  var target=correct?x:y;
+  return {id:id,topic:topic||x.examTopics[0],
+   fi:'Latinankielinen termi "'+x.la+'" tarkoittaa "'+target.fi+'".',
+   ru:'Латинский термин «'+x.la+'» означает «'+target.ru+'».',
+   en:'The Latin term "'+x.la+'" means "'+(target.en||target.fi)+'".',
+   correct:!!correct,latin:true,sourceFi:x.fi,sourceId:x.id,
+   explanationFi:x.examNoteFi,explanationRu:x.examNoteRu,
+   correctStatementFi:'Latinankielinen termi "'+x.la+'" tarkoittaa "'+x.fi+'".',
+   correctStatementRu:'Латинский термин «'+x.la+'» означает «'+x.ru+'».',
+   correctStatementEn:'The Latin term "'+x.la+'" means "'+(x.en||x.fi)+'".'};
+ }
+
  function grouped(pool,count,mode){
-  var data=shuffled(pool),n=data.length,groups=[],used={},i;
-  if(n<4)return [];
-  for(i=0;i<count;i++){
-   var start=(i*4)%n,items=[],fingerprint='',tries=0;
+  var data=shuffled(pool),latin=latinPool(pool),used={},out=[];
+  if(data.length<4)return [];
+  for(var i=0;i<count;i++){
+   var useLatin=i%3===0&&latin.length>=4;
+   var source=useLatin?latin:data,items=[],fingerprint='',tries=0,start=i*4%source.length;
    do{
-    items=[];for(var k=0;k<4;k++)items.push(data[(start+k)%n]);
+    items=[];for(var k=0;k<4;k++)items.push(source[(start+k)%source.length]);
     fingerprint=items.map(function(x){return x.id;}).sort().join('|');
     if(!used[fingerprint])break;
-    start=(start+1)%n;tries++;
-   }while(tries<n);
+    start=(start+1)%source.length;tries++;
+   }while(tries<source.length);
    if(used[fingerprint])break;
-   used[fingerprint]=true;
-   if(mode==='matching'){
-    groups.push({id:'MATCH-'+i+'-'+fingerprint,items:items,options:shuffled(items.map(function(x){return x.fi;}))});
-   }else{
-    var quiz=[];
-    // Two factual statements and two incorrect term/definition associations per group.
-    for(var t=0;t<4;t++){
-     var correct=t<2,x=items[t],y=!correct?otherFor(x,items,t+1):null;
-     if(!correct&&!y)return groups;
-     quiz.push(claim(x,correct,y,'MULTI-'+i+'-'+x.id+'-'+(correct?'T':'F')));
-    }
-    groups.push({id:'MULTI-'+i+'-'+fingerprint,items:shuffled(quiz)});
-   }
+   var question=mode==='matching'?buildMatchingFrom(items,useLatin):
+       buildMultiFrom(items,useLatin);
+   if(!question)continue;
+   question.id=(useLatin?'LA-':'')+(mode==='matching'?'MATCH-':'MULTI-')+i+'-'+fingerprint;
+   used[fingerprint]=true;out.push(question);
   }
-  return groups;
+  return out;
  }
  function trueFalse(pool,source,count){
   var originals=shuffled((source||[]).filter(function(q){
@@ -79,14 +96,17 @@
    var q=originals[k];if(used[q.id])continue;
    used[q.id]=true;result.push(q);
   }
-  var data=shuffled(pool),need=count-result.length,correction=0;
+  var data=latinPool(pool).concat(shuffled(pool.filter(function(x){return !latinEligible(x);}))),need=count-result.length,correction=0;
   for(var i=0;i<data.length&&need>0;i++){
    var x=data[i];
    // Alternating true and false, with the correct original FI/RU definition always stored.
    var correct=correction%2===1;
    var y=correct?null:otherFor(x,data,i+Math.max(1,Math.floor(data.length/2)));
    if(!correct&&!y)continue;
-   var item=claim(x,correct,y,'TF-DERIVED-'+x.id+'-'+(correct?'T':'F'));
+   var useLatin=latinEligible(x)&&correction<3;
+   var item=useLatin?latinClaim(x,correct,y,'TF-LA-'+x.id+'-'+(correct?'T':'F'),x.examTopics[0]):
+     claim(x,correct,y,'TF-DERIVED-'+x.id+'-'+(correct?'T':'F'));
+   if(!item)continue;
    if(!used[item.id]){result.push(item);used[item.id]=true;need--;correction++;}
   }
   return shuffled(result).slice(0,count);
@@ -101,30 +121,36 @@
  }
  /* RUN164: build disjoint matching/multiple-choice groups from explicitly selected
     distinct source terms. The existing 10-question practice generator remains unchanged. */
- function buildMatchingFrom(items){
+ function buildMatchingFrom(items,latin){
   if(!Array.isArray(items)||items.length!==4)return null;
   var seen={},list=items.slice(),parts=[];
   for(var i=0;i<4;i++){
-   if(!list[i]||!list[i].id||!list[i].fi||seen[list[i].fi])return null;
-   seen[list[i].fi]=true;parts.push(list[i].id);
+   if(!list[i]||!list[i].id||!list[i].fi||seen[list[i][latin?'la':'fi']]||
+      (latin&&!latinEligible(list[i])))return null;
+   seen[list[i][latin?'la':'fi']]=true;parts.push(list[i].id);
   }
   return {id:'MATCH-R164-'+parts.sort().join('|'),items:list,
-    options:shuffled(list.map(function(x){return x.fi;}))};
+    answerKey:latin?'la':'fi',
+    options:shuffled(list.map(function(x){return x[latin?'la':'fi'];}))};
  }
- function buildMultiFrom(items){
+ function buildMultiFrom(items,latin){
   if(!Array.isArray(items)||items.length!==4)return null;
   var list=shuffled(items),out=[],seen={};
   for(var i=0;i<list.length;i++){
-   if(!list[i]||!list[i].id||!list[i].fi||!list[i].ru||seen[list[i].fi])return null;
-   seen[list[i].fi]=true;
+   if(!list[i]||!list[i].id||!list[i].fi||!list[i].ru||
+     (latin&&!latinEligible(list[i]))||seen[list[i][latin?'la':'fi']])return null;
+   seen[list[i][latin?'la':'fi']]=true;
   }
   for(var j=0;j<4;j++){
    var correct=j<2,x=list[j],other=correct?null:otherFor(x,list,j+1);
    if(!correct&&!other)return null;
-   out.push(claim(x,correct,other,'MULTI-R164-'+x.id+'-'+(correct?'T':'F')));
+   var row=latin?latinClaim(x,correct,other,'MULTI-LA-R165-'+x.id+'-'+(correct?'T':'F'),x.examTopics[0]):
+     claim(x,correct,other,'MULTI-R164-'+x.id+'-'+(correct?'T':'F'));
+   if(!row)return null;out.push(row);
   }
-  return {id:'MULTI-R164-'+list.map(function(x){return x.id;}).sort().join('|'),
-    items:shuffled(out)};
+  return {id:(latin?'MULTI-LA-R165-':'MULTI-R164-')+list.map(function(x){return x.id;}).sort().join('|'),
+    latin:!!latin,items:shuffled(out)};
  }
-  w.RS_EXAM_ROUNDS={build:build,validTerms:validTerms,buildMatchingFrom:buildMatchingFrom,buildMultiFrom:buildMultiFrom};
+  w.RS_EXAM_ROUNDS={build:build,validTerms:validTerms,buildMatchingFrom:buildMatchingFrom,
+ buildMultiFrom:buildMultiFrom,latinClaim:latinClaim,latinPool:latinPool,claim:claim};
 })(window);
