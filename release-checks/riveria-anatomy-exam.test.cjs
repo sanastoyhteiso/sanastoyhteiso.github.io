@@ -19,7 +19,7 @@ function source(){
  vm.runInNewContext(fs.readFileSync('riveria-anatomy-exam.js','utf8'),context);
  return {d:w.RS_DATA,n,original,originalCor};
 }
-test('61 user Latin terms integrated without replacing 1,296 base term IDs',()=>{
+test('original 61 Latin terms preserved while expanding exam decks without replacing base IDs',()=>{
  const {d,n,originalCor}=source();
  assert.equal(n,1296);
  assert.equal(d.terms.find(x=>x.id==='T00574'),originalCor,'in-place enrichment preserves ID and stored progress');
@@ -28,7 +28,7 @@ test('61 user Latin terms integrated without replacing 1,296 base term IDs',()=>
    'pancreas belongs to both digestive and hormonal systems, same existing ID');
  assert.ok(originalCor.examNoteFi.includes('Rintaontelossa'));
  assert.ok(originalCor.examNoteRu.includes('грудной'));
- assert.equal(d.terms.filter(x=>x.la&&x.examTopics).length,61);
+ assert.ok(d.terms.filter(x=>x.la&&x.examTopics).length>=270,'expanded source has Latin study hints without losing original 61');
  assert.equal(d.terms.filter(x=>x.id.startsWith('T900')&&x.la).length,24);
  assert.ok(d.terms.length>n);
  const ids=d.terms.map(x=>x.id);
