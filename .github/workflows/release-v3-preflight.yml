@@ -13,6 +13,7 @@ on:
       - 'ipad-selects.css'
       - 'config.js'
       - 'release-checks/**'
+      - 'assets/anatomy/**'
       - 'backup-v3/**'
       - 'monitoring/**'
       - '.github/workflows/release-v3-preflight.yml'
@@ -96,6 +97,8 @@ jobs:
         run: node --test release-checks/v3-telemetry-client-admin.test.cjs
       - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)
         run: node --test release-checks/riveria-anatomy-exam.test.cjs
+      - name: RUN166 heart diagram attached to 21 labels, stable IDs, genuine binary image, offline cache
+        run: node --test release-checks/heart-image-run166.test.cjs
       - name: Verify 65 owner PDF heart/blood compound terms, preserved old progress (NO network)
         run: node --test release-checks/heart-blood-pdf-terms.test.cjs
       - name: RUN151 arterial vocabulary regression (FI/RU/Latin, 10 topics, cache)
