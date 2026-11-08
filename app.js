@@ -221,6 +221,7 @@
   function quizNew(){var run=examRun('translate');state.quiz=run.questions[run.index]||null;state.quizResult=null;}
 
   function examDisplayPair(){
+    if(state.view==='exam'&&state.mockRun&&state.mockRun.answers.length)return pair(state.mockRun.direction);
     return pair(state.view==='exam'?state.mockDirection:state.quizDirection);
   }
   function bilingualQuestion(fi,ru,en){
@@ -665,7 +666,16 @@
   window.addEventListener('online',setStatus);window.addEventListener('offline',setStatus);
   window.addEventListener('error',function(e){var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';});
   if(!D||!D.terms||!D.scenarios){root.innerHTML='<div class="panel"><h2>Не удалось открыть базу</h2><p>Проверь, что файл data.js загружен рядом с приложением. Если интернет отключён, открой сайт онлайн один раз для установки офлайн-кэша.</p></div>';return;}
-  window.RS_APP_LOCALE=function(){if(state.direction==='auto'){state.sessionSeen={};ensureDeck(true);}render();};
+  window.RS_APP_LOCALE=function(){
+    if(state.direction==='auto'){state.sessionSeen={};ensureDeck(true);}
+    if(state.view==='practice'&&state.quizMode==='translate'&&state.quizDirection==='auto'){
+      delete state.examRuns.translate;state.quiz=null;state.quizResult=null;
+    }
+    if(state.view==='exam'&&state.mockDirection==='auto'&&state.mockRun&&state.mockRun.answers.length===0){
+      state.mockRun=null;
+    }
+    render();
+  };
   window.RS_FAMILY_REFRESH=function(reset){
     load();
     // Background cloud readback updates progress, NOT the current learning session.
