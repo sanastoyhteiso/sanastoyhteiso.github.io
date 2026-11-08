@@ -180,8 +180,8 @@ test('new feedback and autosave use ES5; offline cache and UI assets must match'
  assert.ok(app.includes('truthAnswerFeedback('));
  assert.ok(app.includes('multipleAnswerFeedback('));
  assert.ok(css.includes('.exam-autosave-warning'));
- assert.ok(html.includes('app.js?v=latin-run164-v1'));
- assert.ok(sw.includes('app.js?v=latin-run164-v1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc32'));
+ assert.ok(html.includes('app.js?v=heart-run166-1'));
+ assert.ok(sw.includes('app.js?v=heart-run166-1'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc33'));
  assert.doesNotMatch(app,/=>|\?\./);
 });
