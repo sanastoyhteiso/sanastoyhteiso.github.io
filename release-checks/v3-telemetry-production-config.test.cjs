@@ -21,7 +21,7 @@ test('both root and admin use the same fresh config and cache revision',()=>{
  const sw=fs.readFileSync('sw.js','utf8');
  for(const src of [html,admin])assert.ok(src.includes('config.js?v=monitor-live-1'));
  assert.ok(sw.includes('config.js?v=monitor-live-1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc31'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc32'));
  assert.ok(html.includes('monitoring-client.js?v=run145-e2e-1'));
  assert.ok(admin.includes('monitoring-admin.js?v=run143-pilot-1'));
  assert.ok(!html.includes(worker));
