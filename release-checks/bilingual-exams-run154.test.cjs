@@ -16,7 +16,7 @@ function browser(){
  w.eval(read('data.js'));w.eval(read('riveria-anatomy-exam.js'));w.eval(read('riveria-true-false.js'));
  w.RS_FAMILY={uid:'synthetic-run154',storageKey:k=>'run154_'+k,sharedEnabled:()=>true};
  w.RS_COMM={subscribedTerms:()=>[],renderUsers:()=>{},renderLibrary:()=>{}};
- let locale='ru';w.RS_I18N={getLanguage:()=>locale};
+ let locale='ru';w.RS_I18N={getLanguage:()=>locale,category:(fi,ru)=>locale==='fi'?fi:ru};
  w.eval(read('app.js'));w.document.dispatchEvent(new w.Event('DOMContentLoaded',{bubbles:true}));
  return {w,d:w.document,close:()=>dom.window.close(),language:lang=>{locale=lang;w.document.documentElement.lang=lang;w.RS_APP_LOCALE(lang);}};
 }
