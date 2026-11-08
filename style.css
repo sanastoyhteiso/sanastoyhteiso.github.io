@@ -187,7 +187,7 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .rs-heart-image-help{font-size:12px;color:#53727d;margin:5px 0 11px}
 body.rs-heart-modal-open{overflow:hidden}
 .rs-heart-modal[hidden]{display:none!important}
-.rs-heart-modal{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;background:rgba(8,23,32,.96);color:#fff}
+.rs-heart-modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:99999;display:flex;flex-direction:column;background:rgba(8,23,32,.96);color:#fff}
 .rs-heart-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;font-size:15px}
 .rs-heart-modal-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none;cursor:grab}
 .rs-heart-modal-picture{max-width:96vw;max-height:76vh;object-fit:contain;user-select:none;-webkit-user-select:none;pointer-events:none;transform-origin:center center}
