@@ -118,7 +118,7 @@ test('versioned Safari12 assets and privacy: no learned writes from the round ge
  assert.ok(html.includes('exam-rounds-run155.js?v=latin-run164-v1'));
  assert.ok(sw.includes('exam-rounds-run155.js?v=latin-run164-v1'));
  assert.ok(html.includes('app.js?v=exam-preserve-run167-1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc34'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc35'));
  assert.doesNotMatch(module.replace(/\/\*[\s\S]*?\*\//g,''),/=>|\?\.|\blet\b|\bconst\b|firebase|fetch\s*\(|localStorage|indexedDB/i);
  assert.doesNotMatch(app,/=>|\?\./);
  assert.ok(css.includes('.exam-run-progress'));
