@@ -12,7 +12,7 @@ async function test(){
  const needle=' match /{document=**} { allow read, write: if false; }';
  assert.ok(base.includes(needle));
  // This synthetic fixture adds only the new path before deny-all, preserving old V3 contract.
- const rules=base.replace(needle,extra+'\n'+needle);
+ const rules=base.replace(needle,()=>extra+'\n'+needle);
  const env=await initializeTestEnvironment({projectId:'demo-sanastoyhteiso-production',
   firestore:{host:'127.0.0.1',port:8080,rules}});
  try{
