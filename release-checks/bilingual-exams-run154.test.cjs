@@ -13,7 +13,7 @@ function browser(){
  '<main id="main-content"></main><div id="toast"></div></body></html>',
  {url:'https://sanastoyhteiso.github.io/',runScripts:'outside-only',pretendToBeVisual:true});
  const w=dom.window;w.scrollTo=()=>{};w.Math.random=()=>0.34;
- w.eval(read('data.js'));w.eval(read('riveria-anatomy-exam.js'));w.eval(read('riveria-true-false.js'));
+ w.eval(read('data.js'));w.eval(read('riveria-anatomy-exam.js'));w.eval(read('riveria-true-false.js'));w.eval(read('exam-rounds-run155.js'));
  w.RS_FAMILY={uid:'synthetic-run154',storageKey:k=>'run154_'+k,sharedEnabled:()=>true};
  w.RS_COMM={subscribedTerms:()=>[],renderUsers:()=>{},renderLibrary:()=>{}};
  let locale='ru';w.RS_I18N={getLanguage:()=>locale,category:(fi,ru)=>locale==='fi'?fi:ru};
@@ -40,12 +40,12 @@ test('T/F uses RU main FI secondary then FI main RU secondary and one feedback b
   const cat=b.d.getElementById('quiz-cat');cat.value='EXAM05';
   cat.dispatchEvent(new b.w.Event('change',{bubbles:true}));
   let found=false;
-  for(let n=0;n<3;n++){
+  for(let n=0;n<10;n++){
     let main=b.d.querySelector('.exam-question-main').textContent;
     if(main.includes('Вены всегда')){found=true;break;}
     b.d.querySelector('[data-action="tf-next"]').click();
   }
-  assert.ok(found,'must find false statement from selected EXAM05 topic');
+  assert.ok(found,'must find false statement among the ten EXAM05 questions');
   b.d.querySelector('[data-action="tf-choose"][data-value="true"]').click();
   assert.equal(b.d.querySelectorAll('.exam-feedback-one').length,1);
   assert.equal(b.d.querySelectorAll('.exam-explain').length,1,'no repeated explanation blocks');
@@ -84,14 +84,14 @@ test('multiple choice shows each statement bilingually and one feedback per opti
  const b=browser();try{
   b.d.querySelector('[data-view="practice"]').click();
   b.d.querySelector('[data-action="quiz-mode"][data-value="multiselect"]').click();
-  assert.equal(b.d.querySelectorAll('.exam-multi-choice .exam-question-bilingual').length,3);
+  assert.equal(b.d.querySelectorAll('.exam-multi-choice .exam-question-bilingual').length,4);
   assert.equal(b.d.querySelector('.exam-question-main').getAttribute('lang'),'ru');
   b.language('fi');
   assert.equal(b.d.querySelector('.exam-question-main').getAttribute('lang'),'fi');
   const old=b.w.localStorage.getItem('run154_rs_scores_v1');
   b.d.querySelector('[data-action="multi-check"]').click();
-  assert.equal(b.d.querySelectorAll('.exam-feedback-one').length,3);
-  assert.equal(b.d.querySelectorAll('.exam-explain').length,3,'no duplicate explanation panels');
+  assert.equal(b.d.querySelectorAll('.exam-feedback-one').length,4);
+  assert.equal(b.d.querySelectorAll('.exam-explain').length,4,'no duplicate explanation panels');
   assert.match(b.d.getElementById('main-content').textContent,/Oikea väite/);
   assert.equal(b.w.localStorage.getItem('run154_rs_scores_v1'),old);
   b.d.querySelector('[data-action="quiz-mode"][data-value="translate"]').click();
@@ -101,9 +101,9 @@ test('multiple choice shows each statement bilingually and one feedback per opti
 test('ES5 new code, versioned cache and Safari 12 readable font fallbacks',()=>{
  const app=read('app.js'),html=read('index.html'),sw=read('sw.js'),css=read('style.css');
  assert.doesNotMatch(app,/=>|\?\./);
- assert.match(html,/app\.js\?v=bilingual-run154-v1/);
+ assert.match(html,/app\.js\?v=exam-rounds-run155-v1/);
  assert.match(html,/riveria-true-false\.js\?v=run154-bilingual-1/);
- assert.match(html,/style\.css\?v=bilingual-run154-1/);
+ assert.match(html,/style\.css\?v=exam-rounds-run155-1/);
  assert.match(sw,/v3\.0\.0-rc23/);
  assert.match(sw,/riveria-true-false\.js\?v=run154-bilingual-1/);
  assert.ok(css.includes('font-size:25px;font-size:clamp'));
