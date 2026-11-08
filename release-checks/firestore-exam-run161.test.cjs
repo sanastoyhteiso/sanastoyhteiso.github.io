@@ -49,7 +49,7 @@ async function test(){
   await assertSucceeds(setDoc(path(bob,'bob'),bobOwn));
   assert.equal((await assertSucceeds(getDoc(path(bob,'bob')))).data().ownerUid,'bob');
   // Old immutable sync_v3 owner events still permitted by preexisting fixture.
-  const ev={v:3,uid:'alice',id:'E_'+'a'.repeat(32),device:'D_'+'b'.repeat(32),
+  const ev={v:3,uid:'alice',id:'E_'+'0'.repeat(32),device:'D_'+'b'.repeat(32),
    kind:'answer',target:'T00001',time:1794000000000,data:{correct:true}};
   await assertSucceeds(setDoc(doc(alice.firestore(),'sync_v3','alice','events',ev.id),ev));
   console.log('PASS RUN161 private exam security: owner-only get/write, no list/delete, deny others, V3 intact');
