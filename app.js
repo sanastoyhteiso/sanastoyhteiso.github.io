@@ -5,7 +5,7 @@
   'use strict';
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
-  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{},
+  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto',
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
   function byId(id){return document.getElementById(id);}
@@ -74,7 +74,7 @@
   function isLearned(id){var p=state.scores[id]||{};return typeof p.learned==='boolean'?p.learned:Number(p.correct||0)>0;}
   /* Language direction is a view preference, never a progress/identity key. */
   function language(){if(window.RS_I18N)return window.RS_I18N.getLanguage();try{if(localStorage.getItem('sanastoyhteiso_language_mode')==='manual')return localStorage.getItem('sanastoyhteiso_legal_language')||'ru';}catch(e){}return (navigator.language||'ru').slice(0,2);}
-  function direction(which){if(which!=='auto')return which;return language()==='en'?'en-fi':'fi-ru';}
+  function direction(which){if(which!=='auto')return which;return language()==='en'?'en-fi':language()==='ru'?'ru-fi':'fi-ru';}
   function pair(which){var p=direction(which).split('-');return {from:p[0],to:p[1]};}
   function word(x,field){var z=x&&x[field];return typeof z==='string'?z.trim():'';}
   function eligible(x,which){var p=pair(which);return !!(word(x,p.from)&&word(x,p.to));}
@@ -220,22 +220,28 @@
   }
   function quizNew(){var run=examRun('translate');state.quiz=run.questions[run.index]||null;state.quizResult=null;}
 
-  function examDisplayLang(){
-    var code=window.RS_I18N&&window.RS_I18N.getLanguage?window.RS_I18N.getLanguage():document.documentElement.lang;
-    return code==='fi'||code==='en'?'fi':'ru';
+  function examDisplayPair(){
+    return pair(state.view==='exam'?state.mockDirection:state.quizDirection);
   }
-  function bilingualQuestion(fi,ru){
-    var first=examDisplayLang()==='fi',major=first?fi:ru,minor=first?ru:fi;
+  function bilingualQuestion(fi,ru,en){
+    var p=examDisplayPair(),content={fi:fi||'',ru:ru||'',en:en||''};
+    // Unsupported English wording is never silently invented from Russian or Finnish.
+    var major=content[p.from]||content.fi||content.ru,
+      minor=content[p.to]||content.ru||content.fi,
+      primary=content[p.from]?p.from:(content.fi?'fi':'ru'),
+      secondary=content[p.to]?p.to:(content.ru?'ru':'fi');
     return '<div class="exam-question-bilingual">'+
-      '<div class="exam-question-main" lang="'+(first?'fi':'ru')+'">'+safe(major)+'</div>'+
-      '<div class="exam-question-secondary" lang="'+(first?'ru':'fi')+'">'+
-      '<span class="exam-question-lang">'+(first?'RU':'FI')+'</span> '+safe(minor)+'</div></div>';
+      '<div class="exam-question-main" lang="'+primary+'">'+safe(major)+'</div>'+
+      '<div class="exam-question-secondary" lang="'+secondary+'">'+
+      '<span class="exam-question-lang">'+secondary.toUpperCase()+'</span> '+safe(minor)+'</div></div>';
   }
   function bilingualFeedback(q){
     var corrected=q.correct===false,fi=corrected?(q.correctStatementFi||q.explanationFi):q.explanationFi,
-      ru=corrected?(q.correctStatementRu||q.explanationRu):q.explanationRu;
+      ru=corrected?(q.correctStatementRu||q.explanationRu):q.explanationRu,
+      en=corrected?(q.correctStatementEn||''):(q.explanationEn||'');
     return '<div class="exam-explain exam-feedback-one"><p><b>'+
       (corrected?'Oikea väite / Правильное утверждение:':'Selitys / Объяснение')+'</b></p>'+
+      (en&&examDisplayPair().from==='en'?'<p lang="en"><b>EN:</b> '+safe(en)+'</p>':'')+
       '<p lang="fi"><b>FI:</b> '+safe(fi)+'</p>'+
       '<p lang="ru"><b>RU:</b> '+safe(ru)+'</p></div>';
   }
@@ -257,10 +263,11 @@
     var q=state.tfQuestion;
     var s=quizModeTabs()+examProgress(run)+'<div class="panel"><div class="form-row">'+
       '<label class="field"><span>Тема теста</span>'+examTopicSelect(state.filter,'quiz-cat')+'</label>'+
+      '<label class="field"><span>Направление / Suunta</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label>'+
       '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
     if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
-    s+=bilingualQuestion(q.fi,q.ru)+'<div class="mc-options">';
+    s+=bilingualQuestion(q.fi,q.ru,q.en)+'<div class="mc-options">';
     s+='<button class="btn white" data-action="tf-choose" data-value="true" '+(state.tfResult!==null?'disabled':'')+'>Tosi · Верно</button>';
     s+='<button class="btn white" data-action="tf-choose" data-value="false" '+(state.tfResult!==null?'disabled':'')+'>Epätosi · Неверно</button></div>';
     if(state.tfResult!==null){
@@ -289,7 +296,8 @@
   }
   function quizTopicPicker(){
     return '<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+
-      examTopicSelect(state.filter,'quiz-cat')+'</label></div></div>';
+      examTopicSelect(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление / Suunta</span>'+
+      directionSelect('quiz-dir',state.quizDirection,false)+'</label></div></div>';
   }
   function matchNew(){var run=examRun('matching');state.matchQuestion=run.questions[run.index]||null;state.matchResult=null;}
   function renderMatching(){
@@ -337,7 +345,7 @@
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],checked=state.multiResult&&state.multiResult.selected[i];
       s+='<label class="field exam-multi-choice"><input type="checkbox" data-multi-index="'+i+'" '+
-        (checked?'checked ':'')+(state.multiResult?'disabled ':'')+'>'+bilingualQuestion(item.fi,item.ru)+'</label>';
+        (checked?'checked ':'')+(state.multiResult?'disabled ':'')+'>'+bilingualQuestion(item.fi,item.ru,item.en)+'</label>';
       if(state.multiResult){
         s+='<div class="answer '+(item.correct?'correct':'wrong')+'">'+
           '<b>'+(item.correct?'Tosi / Верно':'Epätosi / Неверно')+'</b></div>';
@@ -484,13 +492,13 @@
     else if(action==='export-json'){exportJson();}
     else if(action==='export-tsv'){exportTsv();}
   });
-  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;quizNew();renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
+  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
   document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
   document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
   window.addEventListener('online',setStatus);window.addEventListener('offline',setStatus);
   window.addEventListener('error',function(e){var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';});
   if(!D||!D.terms||!D.scenarios){root.innerHTML='<div class="panel"><h2>Не удалось открыть базу</h2><p>Проверь, что файл data.js загружен рядом с приложением. Если интернет отключён, открой сайт онлайн один раз для установки офлайн-кэша.</p></div>';return;}
-  window.RS_APP_LOCALE=function(){if(state.direction==='auto'){state.sessionSeen={};ensureDeck(true);}if(state.quizDirection==='auto')quizNew();render();};
+  window.RS_APP_LOCALE=function(){if(state.direction==='auto'){state.sessionSeen={};ensureDeck(true);}render();};
   window.RS_FAMILY_REFRESH=function(reset){
     load();
     // Background cloud readback updates progress, NOT the current learning session.
