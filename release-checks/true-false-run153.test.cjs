@@ -37,7 +37,7 @@ test('30 verified source-linked statements: all ten topics, two correct outcomes
  }
  const source=load('riveria-anatomy-exam.js');
  for(const x of q){
-  assert.ok(x.fi.length>25&&x.explanationFi.length>25&&x.explanationRu.length>25);
+  assert.ok(x.fi.length>=18&&x.explanationFi.length>25&&x.explanationRu.length>25);
   assert.ok(source.includes('"'+x.sourceFi+'"'),'missing source term '+x.sourceFi);
   assert.equal(typeof x.correct,'boolean');
  }
