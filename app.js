@@ -138,7 +138,9 @@
   function quizModeTabs(){
     return '<div class="panel"><div class="form-row"><span class="hint">Тип теста / Testin tyyppi</span>'+
       '<button class="btn '+(state.quizMode==='translate'?'primary':'white')+'" data-action="quiz-mode" data-value="translate">4 варианта / 4 vaihtoehtoa</button>'+
-      '<button class="btn '+(state.quizMode==='truefalse'?'primary':'white')+'" data-action="quiz-mode" data-value="truefalse">Верно / Неверно · Tosi / Epätosi</button></div></div>';
+      '<button class="btn '+(state.quizMode==='truefalse'?'primary':'white')+'" data-action="quiz-mode" data-value="truefalse">Верно / Неверно · Tosi / Epätosi</button>'+
+      '<button class="btn '+(state.quizMode==='matching'?'primary':'white')+'" data-action="quiz-mode" data-value="matching">Сопоставление · Yhdistä parit</button>'+
+      '<button class="btn '+(state.quizMode==='multiselect'?'primary':'white')+'" data-action="quiz-mode" data-value="multiselect">Несколько ответов · Monivalinta</button></div></div>';
   }
   function tfPool(){
     var bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
