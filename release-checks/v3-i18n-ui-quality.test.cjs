@@ -64,8 +64,8 @@ test('localized preview version is synchronized in HTML and offline cache',()=>{
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
   assert.match(index,/i18n\.js\?v=v3-approved-ui-4/);
   assert.match(sw,/i18n\.js\?v=v3-approved-ui-4/);
-  const cache=sw.match(/CACHE_NAME='(riveria-sanasto-community-v3.0.0-rc16)'/);
-  assert.ok(cache,'TEST cache namespace must be content-addressed for old Safari; see study-offline-cache-version.test.cjs');
+  const cache=sw.match(/CACHE_NAME='(riveria-sanasto-community-v3\.0\.0-rc17-exam377)'/);
+  assert.ok(cache,'versioned cache namespace must change when exam overlay changes for old Safari');
   // The separate offline regression recomputes the digest from every cached asset.
   // This assertion keeps localization checks compatible with that stronger gate.
 });
