@@ -6,7 +6,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const {JSDOM}=require('jsdom');
 const read=p=>fs.readFileSync(p,'utf8');
-function completed(direction){
+function completed(direction,scenario){
  const dom=new JSDOM('<!doctype html><html lang="ru"><body>'+
   '<button data-view="cards">Cards</button><button data-view="practice">Tests</button>'+
   '<button data-view="exam">Exam</button><button data-view="dictionary">Dictionary</button>'+
@@ -20,6 +20,19 @@ function completed(direction){
  const q=w.RS_MOCK_EXAM.build(w.RS_DATA,w.RS_TRUE_FALSE.questions,direction);
  assert.equal(q.length,40);
  const answers=q.map(item=>{
+  if(scenario==='all-correct'){
+   if(item.type==='translate')return w.RS_MOCK_EXAM.evaluate(item,item.answer);
+   if(item.type==='truefalse')return w.RS_MOCK_EXAM.evaluate(item,item.question.correct);
+   if(item.type==='matching')return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(x=>x.fi));
+   return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(x=>!!x.correct));
+  }
+  if(scenario==='partial'&&item.type==='matching'){
+   return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map((x,i)=>i<2?x.fi:item.question.items[(i+1)%4].fi));
+  }
+  if(scenario==='partial'&&item.type==='multiselect'){
+   var used=false;
+   return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(x=>{if(x.correct&&!used){used=true;return true;}return false;}));
+  }
   if(item.type==='translate')return w.RS_MOCK_EXAM.evaluate(item,item.options.find(o=>o!==item.answer));
   if(item.type==='truefalse')return w.RS_MOCK_EXAM.evaluate(item,!item.question.correct);
   if(item.type==='matching'){
@@ -28,7 +41,8 @@ function completed(direction){
   }
   return w.RS_MOCK_EXAM.evaluate(item,item.question.items.map(term=>!term.correct));
  });
- assert.equal(answers.length,40);assert.ok(answers.every(x=>x.score<1));
+ assert.equal(answers.length,40);
+ if(!scenario||scenario==='all-wrong')assert.ok(answers.every(x=>x.score<1));
  const uid='exam_review_synthetic';
  const k='test_'+uid+'__rs_mock_exam_progress_v1';
  const draft={schema:1,choice:direction,run:{questions:q,index:40,answers,direction}};
@@ -47,6 +61,10 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
    const d=b.d,details=d.querySelectorAll('.exam-review');
    assert.ok(d.querySelector('.exam-run-done'),'40/40 completed screen');
    assert.equal(details.length,40,'40 synthetic wrong pages generate 40 review cards');
+   assert.match(d.querySelector('.panel h2').textContent,/Экзамен|Koe/);
+   assert.ok(d.getElementById('main-content').textContent.includes('Полный лист экзамена'));
+   assert.equal(d.querySelectorAll('.exam-review-missed').length,40);
+   assert.ok(details[0].querySelector('summary').textContent.includes('0 / 1 балл'));
    assert.ok(d.querySelector('[data-action="mock-restart"]'),'can retake completed exam');
    assert.match(d.querySelector('.exam-run-done').textContent,/Новый экзамен/);
    assert.match(d.querySelector('.exam-run-done').textContent,/заменит текущий разбор/);
@@ -109,6 +127,56 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
   }finally{b.close();}
  });
 }
+
+test('RUN163 all 40 correct are listed with 1 / 1 and only compact explanations',()=>{
+ const b=completed('ru-fi','all-correct');
+ try{
+  const d=b.d,rows=d.querySelectorAll('.exam-review');
+  assert.equal(rows.length,40);
+  assert.equal(d.querySelectorAll('.exam-review-passed').length,40);
+  assert.equal(d.querySelectorAll('.exam-review-missed').length,0);
+  for(let i=0;i<40;i++){
+   assert.ok(rows[i].querySelector('summary').textContent.includes('Задание '+(i+1)));
+   assert.match(rows[i].querySelector('summary').textContent,/1 \/ 1 балл/);
+   assert.match(rows[i].querySelector('summary').textContent,/✓ Верно/);
+   assert.ok(rows[i].querySelector('.exam-review-original'));
+   if(b.q[i].type==='truefalse')
+    assert.equal(rows[i].querySelectorAll('.exam-explain').length,0,'correct true-false must be concise');
+   if(b.q[i].type==='translate')
+    assert.equal(rows[i].querySelectorAll('.exam-explain').length,0,'correct translation must be concise');
+  }
+  assert.match(d.querySelector('.exam-run-done').textContent,/40 \/ 40 баллов/);
+  assert.match(d.getElementById('main-content').textContent,/Ошибочных и частично правильных/);
+  assert.equal(b.w.localStorage.getItem(b.k),b.original,'full report must be read-only');
+ }finally{b.close();}
+});
+test('RUN163 half-credit cases display 0,5 / 1 and correct-versus-wrong rows',()=>{
+ const b=completed('fi-ru','partial');
+ try{
+  const rows=b.d.querySelectorAll('.exam-review');
+  assert.equal(rows.length,40);
+  let partial=0;
+  for(let i=0;i<40;i++){
+   const q=b.q[i],row=rows[i],score=b.answers[i].score;
+   if(q.type==='matching'){
+    assert.equal(score,0.5);
+    assert.ok(row.querySelector('summary').textContent.includes('0,5 / 1 балл'));
+    assert.ok(row.querySelectorAll('.exam-review-right').length>=2);
+    assert.ok(row.querySelectorAll('.exam-review-wrong').length>=2);
+    partial++;
+   }else if(q.type==='multiselect'){
+    assert.equal(score,0.5);
+    assert.ok(row.querySelector('summary').textContent.includes('0,5 / 1 балл'));
+    assert.ok(row.querySelectorAll('.exam-review-right').length>=1);
+    assert.ok(row.querySelectorAll('.exam-review-wrong').length>=1);
+    partial++;
+   }
+  }
+  assert.equal(partial,20);
+  assert.equal(b.w.localStorage.getItem(b.k),b.original);
+ }finally{b.close();}
+});
+
 test('RUN163 no answer key or review panels shown before the 40th answer',()=>{
  const dom=new JSDOM('<!doctype html><html lang="ru"><body>'+
   '<button data-view="cards">Cards</button><button data-view="exam">Exam</button>'+
