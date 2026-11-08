@@ -37,7 +37,8 @@
   // Empty local on a newly opened second device MUST NOT erase a progressed cloud exam.
   if(l===0&&c>0)return {kind:'download',draft:cloud};
   if(c===0&&l>0)return {kind:'upload',draft:local};
-  if(!sameOrder(local,cloud)||!commonPrefix(local,cloud)){
+  if((local.attemptId&&cloud.attemptId&&local.attemptId!==cloud.attemptId)||
+    !sameOrder(local,cloud)||!commonPrefix(local,cloud)){
    if(l===0&&c===0)return {kind:'download',draft:cloud};
    return {kind:'conflict',local:local,cloud:cloud};
   }
@@ -108,6 +109,23 @@
    return result;
   });
  }
- w.RS_EXAM_CLOUD={choose:choose,sync:sync,validBase:validBase,ensureId:ensureId,
+ function reset(local,validator){
+  if(typeof validator!=='function'||!validator(local)||!validBase(local))return Promise.reject(fail('local-invalid'));
+  var ctx;try{ctx=currentAuth();}catch(e){return Promise.reject(e);}
+  var replacement=ensureId(local),doc=ctx.db.collection(COL).doc(ctx.uid);
+  // Explicit user-initiated new attempt. The transaction still requires a verified account
+  // and approved owner-only rules; no cloud deletion or broad write.
+  return ctx.db.runTransaction(function(tx){
+   return tx.get(doc).then(function(snapshot){
+    if(snapshot.exists)cloudDocument(snapshot.data(),validator);
+    tx.set(doc,serialize(replacement,ctx.uid));
+    return {kind:'reset',draft:replacement};
+   });
+  }).then(function(out){
+   if(!w.RS_FAMILY||ctx.uid!==w.RS_FAMILY.uid)throw fail('account-changed');
+   return out;
+  });
+ }
+ w.RS_EXAM_CLOUD={choose:choose,sync:sync,reset:reset,validBase:validBase,ensureId:ensureId,
   collection:COL,count:count};
 })(window);
