@@ -145,8 +145,9 @@ test('private UI resumes after fresh browser from the same cloud account',async(
   assert.match(d.getElementById('main-content').textContent,/Проверяю облачную копию/);
   await new Promise(resolve=>setTimeout(resolve,40));
   assert.match(d.querySelector('.exam-run-progress').textContent,/15 \/ 40/);
-  assert.match(d.querySelector('.exam-autosave-ok').textContent,/Прогресс экзамена/);
-  assert.match(d.getElementById('main-content').textContent,/доступен на других устройствах/);
+  assert.match(d.querySelector('.exam-autosave-ok').textContent,/Экзамен сохраняется автоматически/);
+  assert.equal(d.querySelectorAll('.exam-autosave-ok').length,1,'exactly one green save banner');
+  assert.match(d.getElementById('main-content').textContent,/на всех устройствах/);
   const draft=JSON.parse(w.localStorage.getItem('test_alice__rs_mock_exam_progress_v1'));
   assert.equal(draft.run.answers.length,14);
   assert.equal(draft.run.index,14);
