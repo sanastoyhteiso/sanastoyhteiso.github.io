@@ -97,8 +97,6 @@ jobs:
         run: node --test release-checks/v3-telemetry-client-admin.test.cjs
       - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)
         run: node --test release-checks/riveria-anatomy-exam.test.cjs
-      - name: RUN166 heart diagram attached to 21 labels, stable IDs, genuine binary image, offline cache
-        run: node --test release-checks/heart-image-run166.test.cjs
       - name: Verify 65 owner PDF heart/blood compound terms, preserved old progress (NO network)
         run: node --test release-checks/heart-blood-pdf-terms.test.cjs
       - name: RUN151 arterial vocabulary regression (FI/RU/Latin, 10 topics, cache)
@@ -139,6 +137,8 @@ jobs:
         run: node release-checks/v3-unified-browser.test.cjs
       - name: Exercise real release family.js Google login and recovery (synthetic no-cloud)
         run: node --test release-checks/v3-login-availability.test.cjs
+      - name: RUN166 heart diagram attached to 21 labels, stable IDs, genuine binary image, offline cache
+        run: node --test release-checks/heart-image-run166.test.cjs
 
   firestore-v3-rules-emulator:
     runs-on: ubuntu-latest
