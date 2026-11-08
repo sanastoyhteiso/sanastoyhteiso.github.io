@@ -1,0 +1,93 @@
+// PILOT: INSERT THIS BLOCK BEFORE existing match /{document=**} IN YOUR FIRESTORE RULES.
+// Only adds sync_v3. DO NOT replace any existing users/settings/libraries rules.
+    function v3SignedIn() {
+      return request.auth != null;
+    }
+    function v3Owner(uid) {
+      return v3SignedIn() && request.auth.uid == uid;
+    }
+    function validPayload() {
+      let k = request.resource.data.kind;
+      let d = request.resource.data.data;
+      return (
+        (k == 'answer' && d.keys().hasOnly(['correct','reviewLearned']) &&
+         d.keys().hasAll(['correct']) && d.correct is bool &&
+         (!d.keys().hasAny(['reviewLearned']) || d.reviewLearned is bool))
+        ||
+        (k == 'learned_set' && d.keys().hasOnly(['learned']) &&
+         d.learned is bool)
+        ||
+        (k == 'favorite_set' && d.keys().hasOnly(['starred']) &&
+         d.starred is bool)
+        ||
+        (k == 'word_delete' && d.keys().hasOnly(['deleted']) &&
+         d.deleted == true)
+        ||
+        (k == 'word_upsert' && d.keys().size() <= 24 &&
+         d.keys().hasAll(['fi','ru']) &&
+         d.fi is string && d.fi.size() > 0 && d.fi.size() <= 300 &&
+         d.ru is string && d.ru.size() > 0 && d.ru.size() <= 300)
+      );
+    }
+    function validEvent(uid,eventId) {
+      return request.resource.data.keys().hasOnly([
+               'v','uid','id','device','kind','target','time','data'
+             ]) &&
+             request.resource.data.keys().hasAll([
+               'v','uid','id','device','kind','target','time','data'
+             ]) &&
+             request.resource.data.v == 3 &&
+             request.resource.data.uid == uid &&
+             request.resource.data.id == eventId &&
+             eventId.matches('^E_[a-f0-9]{32}$') &&
+             request.resource.data.device is string &&
+             request.resource.data.device.matches('^D_[a-f0-9]{32}$') &&
+             request.resource.data.target is string &&
+             request.resource.data.target.size() > 0 &&
+             request.resource.data.target.size() <= 180 &&
+             request.resource.data.time is int &&
+             request.resource.data.data is map &&
+             request.resource.data.kind in [
+               'answer','learned_set','favorite_set','word_upsert','word_delete'
+             ] &&
+             validPayload();
+    }
+    // Append-only private per-user events.
+    match /sync_v3/{uid}/events/{eventId} {
+      allow get, list: if v3Owner(uid);
+      allow create: if v3Owner(uid) && validEvent(uid,eventId);
+      // Safe idempotent retries must not be able to alter the event body.
+      allow update: if false;
+      allow delete: if false;
+    }
+    // One-time per-user verified import baseline; immutable after creation.
+    match /sync_v3/{uid}/state/baseline {
+      allow get: if v3Owner(uid);
+      allow list: if false;
+      allow create: if v3Owner(uid)
+        && request.resource.data.keys().hasOnly([
+             'v','uid','migrationId','importedAt','sha256','source','snapshot'
+           ])
+        && request.resource.data.keys().hasAll([
+             'v','uid','migrationId','importedAt','sha256','source','snapshot'
+           ])
+        && request.resource.data.v == 3
+        && request.resource.data.uid == uid
+        && request.resource.data.migrationId is string
+        && request.resource.data.migrationId.size() > 0
+        && request.resource.data.migrationId.size() <= 180
+        && request.resource.data.importedAt is int
+        && request.resource.data.sha256 is string
+        && request.resource.data.sha256.matches('^[a-f0-9]{64}$')
+        && request.resource.data.source == 'approved-local-JSON'
+        && request.resource.data.snapshot is map
+        && request.resource.data.snapshot.keys().hasAll([
+             'scores','words','favorites'
+           ]);
+      allow update, delete: if false;
+    }
+    // Reserved separate collection; never permit client updates here yet.
+    match /sync_v3/{uid}/words/{wordId} {
+      allow get, list: if v3Owner(uid);
+      allow create, update, delete: if false;
+    }

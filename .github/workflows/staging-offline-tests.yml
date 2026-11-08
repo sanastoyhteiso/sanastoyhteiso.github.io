@@ -1,0 +1,119 @@
+# Staging-only tests. This workflow never connects to Firebase or Google.
+name: Staging offline sync tests
+on:
+  pull_request:
+    paths:
+      - 'staging/**'
+      - '.github/workflows/staging-offline-tests.yml'
+  workflow_dispatch:
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out PR source
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned staging test dependencies (offline demos only)
+        run: npm install --prefix staging --no-audit --no-fund
+      - name: Validate baseline code and catalog
+        run: node staging/tests/smoke.test.js
+      - name: Guard production modules, translations and script graph without deploying
+        run: node staging/tests/production-regression.test.cjs
+      - name: Run unmodified app modules in synthetic browser without real user accounts
+        run: node staging/tests/production-dom-smoke.test.cjs
+      - name: Verify public catalog is unchanged and FI/RU/EN complete
+        run: node staging/tests/v3-public-catalog.test.cjs
+      - name: Test trilingual v3 demo UI with isolated shadow sync and recovery
+        run: node staging/tests/site-v3-demo.test.cjs
+      - name: Validate iPad iOS12 readable dropdown polyfill and native change events
+        run: node staging/tests/ipad-selects.test.cjs
+      - name: Regression-test classic app layout, guided Mediatri and FI/EN/RU
+        run: node staging/tests/classic-v3-ui.test.cjs
+      - name: Test opt-in offline library sharing and untrusted JSON protection
+        run: node staging/tests/classic-library-sharing.test.cjs
+      - name: Test safe redirection of legacy test repo root to standalone v3
+        run: node staging/tests/test-site-entry.test.cjs
+      - name: Reject production Firebase project in future staging backend configuration
+        run: node staging/tests/staging-backend-guard.test.cjs
+      - name: Test duplicate-safe local Finnish finds and deterministic IDs
+        run: node staging/tests/study-v3-finds.test.cjs
+      - name: Verify real FI/RU term pilot browser isolation and ES5
+        run: node staging/tests/study-v3-browser.test.cjs
+      - name: Test complete Firestore V3 history pagination across 500 answers
+        run: node staging/tests/study-v3-pages.test.cjs
+      - name: Validate real-term fresh-start shadow study against two synthetic devices
+        run: node staging/tests/study-v3-engine.test.cjs
+      - name: Test isolated two-device demo sync core, offline queue and ES5 syntax
+        run: node staging/tests/v3-sync-demo-core.test.cjs
+      - name: Check isolated Firebase 8 two-device demo browser shell without network
+        run: node staging/tests/v3-sync-demo-browser.test.cjs
+      - name: Test Google registration and verified identities with isolated staging Auth SDK mocks
+        run: node staging/tests/v3-auth-isolation.test.cjs
+      - name: Test independently configured Google Auth pilot page with a fake SDK
+        run: node staging/tests/v3-auth-pilot.test.cjs
+      - name: Test profile registration preserves per-user alias, learned counts and privacy
+        run: node staging/tests/v3-profile-registration.test.cjs
+      - name: Verify no-overwrite owner-only Firebase profile store against a fake SDK
+        run: node staging/tests/v3-firestore-profile-store.test.cjs
+      - name: Verify owner-triggered isolated V3 profile pilot page
+        run: node staging/tests/v3-profile-pilot.test.cjs
+      - name: Prevent regressions of existing registration and profile UX
+        run: node staging/tests/registration-compatibility.test.cjs
+      - name: Test original classic UI with bottom mobile nav, Mediatri guide and FI EN RU
+        run: node staging/tests/classic-ui.test.cjs
+      - name: Parse production scripts and staging modules with Safari 12 syntax limits
+        run: node staging/tests/safari12-syntax.test.cjs
+      - name: Test offline sync, retries, account isolation and baseline
+        run: node staging/tests/sync-integration.test.js
+      - name: Reject unsafe progress keys and conflicting word identities
+        run: node staging/tests/sync-core-security.test.cjs
+      - name: Test safe paginated cloud pull on two devices
+        run: node staging/tests/sync-cloud-read.test.cjs
+      - name: Test guarded controller cloud preview and local change races
+        run: node staging/tests/sync-controller-cloud.test.cjs
+      - name: Test read-only current app storage adapter and pending ID collisions
+        run: node staging/tests/sync-local-adapter.test.cjs
+      - name: Test atomic IndexedDB shadow store, browser tabs and offline outbox
+        run: node staging/tests/sync-shadow-idb.test.cjs
+      - name: Test verified cloud read into isolated shadow without live app writes
+        run: node staging/tests/sync-shadow-reconcile.test.cjs
+      - name: Audit saved shadow history without restoring or modifying progress
+        run: node staging/tests/sync-recovery-audit.test.cjs
+      - name: Test read-only multilingual admin preview and permission guard
+        run: node staging/tests/admin-preview.test.cjs
+      - name: Test read-only Firestore permissions diagnostic
+        run: node staging/tests/firestore-diagnostics.test.cjs
+      - name: Compare two personal backups locally without uploads or writes
+        run: node staging/tests/migration-preflight.test.cjs
+      - name: Check personal JSON backup preflight without private data upload
+        run: node staging/tests/personal-backup-audit.test.cjs
+      - name: Check browser test pages have no uploads or write operations
+        run: node staging/tests/browser-pages.test.cjs
+      - name: Use Java for Firestore emulator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify original and proposed Firestore security rules in emulator
+        timeout-minutes: 8
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso 'node staging/tests/firestore-rules.test.cjs'
+      - name: Verify new independent development Firestore rules with two fake accounts
+        timeout-minutes: 8
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso-v3-development 'node staging/tests/firestore-v3-development.test.cjs'
+      - name: Verify owner-only My Finds rules on synthetic identities
+        timeout-minutes: 8
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso-v3-development 'node staging/tests/firestore-v3-finds.test.cjs'
+      - name: Verify deletable owner-only synthetic sync pilot in development emulator
+        timeout-minutes: 8
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso-v3-development 'node staging/tests/firestore-v3-sync-demo.test.cjs'
+      - name: Verify minimal owner-only sync_v3 pilot rules in emulator
+        timeout-minutes: 8
+        env:
+          FIRESTORE_RULES_FILE: staging/firestore.rules.pilot.test
+          PILOT_ADMIN_DISABLED: '1'
+        run: ./staging/node_modules/.bin/firebase emulators:exec --only firestore --config staging/firebase-emulator.json --project demo-sanastoyhteiso 'node staging/tests/firestore-rules.test.cjs'

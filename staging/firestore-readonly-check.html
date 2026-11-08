@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sanastoyhteisö — безопасная проверка Firestore</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;line-height:1.5;max-width:690px;padding:24px;margin:auto;background:#f5f8fc;color:#17283f}
+    main{background:#fff;border:1px solid #dae5f2;border-radius:14px;padding:24px}
+    h1{font-size:24px;margin:0 0 12px} h2{font-size:17px}
+    button{font:inherit;cursor:pointer;padding:10px 16px;border-radius:8px;border:1px solid #4169a0;background:#2456a1;color:#fff;margin:6px 8px 6px 0}
+    button[disabled]{opacity:.5;cursor:default} .secondary{background:#fff;color:#2456a1}
+    .muted{color:#526477} .good{color:#096b40} .bad{color:#9d2020}
+    li{margin:9px 0;overflow-wrap:anywhere} #result{padding:8px 0}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Sanastoyhteisö — диагностика Firestore</h1>
+    <p><strong>Только чтение.</strong> Эта тестовая страница не создаёт, не меняет и не удаляет документы. Не переносит учебные результаты и не запускает синхронизацию.</p>
+    <p class="muted">Этот файл предназначен для отдельного тестового развёртывания под разрешённым доменом Firebase. Не является частью работающего приложения.</p>
+    <h2>Авторизация</h2>
+    <p id="auth-state" role="status">Проверяю текущий вход Firebase…</p>
+    <button id="login" class="secondary" disabled>Войти через Google</button>
+    <button id="check" disabled>Проверить права (GET)</button>
+    <p id="status" role="status" aria-live="polite">Проверка ещё не запускалась.</p>
+    <ol id="result"></ol>
+    <p class="muted">Допустимые результаты: собственные настройки — 200/404; собственный baseline — 200/404; чтение чужого baseline — 403. Если что-то другое, ничего не публикуй и не изменяй.</p>
+  </main>
+  <script src="../config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="./rs-firestore-diagnostics.js"></script>
+  <script>
+  (function(){
+    'use strict';
+    var auth=null,busy=false;
+    function el(id){return document.getElementById(id);}
+    function setText(id,text){el(id).textContent=String(text);}
+    function showError(message){setText('status',message);el('status').className='bad';}
+    function updateButtons(){
+      el('login').disabled=busy||!auth||!!auth.currentUser;
+      el('check').disabled=busy||!auth||!auth.currentUser;
+    }
+    function readOnly(method,url,body,token){
+      if(method!=='GET'||body!==null||!/^https:\/\/firestore\.googleapis\.com\/v1\/projects\//.test(url))
+        return Promise.reject(Error('Only GET permitted'));
+      return new Promise(function(resolve,reject){
+        var x=new XMLHttpRequest();
+        try{
+          x.open('GET',url,true);x.timeout=18000;
+          x.setRequestHeader('Authorization','Bearer '+token);
+          x.setRequestHeader('Accept','application/json');
+        }catch(e){reject(Error('Request configuration failed'));return;}
+        x.onload=function(){resolve({status:x.status});}; // discard private body
+        x.onerror=function(){reject(Error('Network unavailable'));};
+        x.ontimeout=function(){reject(Error('Timeout'));};
+        try{x.send(null);}catch(e){reject(Error('Request could not be sent'));}
+      });
+    }
+    function check(){
+      if(busy||!auth||!auth.currentUser)return;
+      var uid=auth.currentUser.uid;
+      var c=window.RS_FIREBASE_CONFIG||{};
+      var d=window.RS_FIRESTORE_DIAGNOSTICS;
+      if(!c.projectId||!d){showError('Тестовый модуль не загрузился.');return;}
+      busy=true;updateButtons();setText('status','Проверка разрешений…');
+      el('status').className='';
+      el('result').textContent='';
+      var diag=d.create({
+        projectId:c.projectId,
+        activeUid:function(){return auth.currentUser&&auth.currentUser.uid||'';},
+        getToken:function(){return auth.currentUser.getIdToken();},
+        request:readOnly
+      });
+      diag.run().then(function(report){
+        if(!auth.currentUser||auth.currentUser.uid!==uid){
+          showError('Аккаунт изменился, проверка остановлена.');return;
+        }
+        var labels={
+          existing_settings:'Существующие личные настройки',
+          owner_baseline:'Собственный исходный снимок',
+          other_account_baseline:'Защита от другого пользователя'
+        };
+        (report.checks||[]).forEach(function(item){
+          var li=document.createElement('li');
+          li.className=item.pass?'good':'bad';
+          li.textContent=(item.pass?'✓ ':'✗ ')+(labels[item.name]||'Проверка')+
+            ' — HTTP '+item.status+'. '+item.note;
+          el('result').appendChild(li);
+        });
+        setText('status',report.ok?'Все проверки чтения пройдены. Никаких записей не сделано.':
+          'Не все проверки пройдены. '+report.message);
+        el('status').className=report.ok?'good':'bad';
+      }).catch(function(){showError('Ошибка проверки. База не изменена.');}).then(function(){
+        busy=false;updateButtons();
+      });
+    }
+    function login(){
+      if(!auth||busy)return;
+      busy=true;updateButtons();setText('auth-state','Открываю окно Google…');
+      var provider=new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(function(e){
+        setText('auth-state','Вход не завершён. Открой страницу в обычном браузере и попробуй снова.');
+      }).then(function(){busy=false;updateButtons();});
+    }
+    try{
+      if(!window.firebase||!window.RS_FIREBASE_CONFIG||!window.RS_FIRESTORE_DIAGNOSTICS)
+        throw Error('Test-only libraries unavailable');
+      var cfg=window.RS_FIREBASE_CONFIG;
+      if(!firebase.apps.length)firebase.initializeApp({
+        apiKey:cfg.apiKey,projectId:cfg.projectId,
+        authDomain:cfg.authDomain||cfg.projectId+'.firebaseapp.com'
+      });
+      auth=firebase.auth();
+      auth.onAuthStateChanged(function(user){
+        setText('auth-state',user?'Вход выполнен. Можно запустить безопасную проверку.':
+          'Вход не найден. Нажми «Войти через Google».');
+        updateButtons();
+      },function(){showError('Ошибка Firebase Authentication.');});
+      el('login').addEventListener('click',login);
+      el('check').addEventListener('click',check);
+      updateButtons();
+    }catch(e){showError('Не удалось открыть диагностику. Никаких данных не изменено.');}
+  })();
+  </script>
+</body>
+</html>
