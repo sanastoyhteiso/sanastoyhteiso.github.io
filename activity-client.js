@@ -6,7 +6,7 @@
 (function(w,d){
  'use strict';
  var PREFIX='rs_activity_consent_v1_',SENT='rs_activity_sent_v1_';
- var pending=false,attempted={},lastAccount='',waitingDelete=false;
+ var pending=false,attempted={},lastAccount='',waitingDelete=false,deleteBusy=false,deleteRetryAt=0;
  var labels={
   ru:{title:'Журнал посещений',info:'По желанию можно сообщать администратору о посещении сайта и открытии учебных разделов. Администратор может сопоставить эти события с твоим аккаунтом. Ответы, оценки и содержание словарей не отправляются. Хранение — до 30 дней. Согласие отдельно от диагностики ошибок.',
     check:'Разрешаю учёт моих посещений и учебных разделов',on:'Участие включено на этом устройстве.',off:'Участие выключено.',delete:'Отправлен запрос на удаление моей истории посещений.',pending:'Удаление истории ожидает соединения.'},
@@ -69,13 +69,18 @@
  function removeHistory(){
    var k=key('_pending-delete');if(!k)return Promise.resolve(false);
    try{w.localStorage.setItem(k,'yes');}catch(e){}
+   if(deleteBusy||Date.now()<deleteRetryAt)return Promise.resolve(false);
+   deleteBusy=true;
    return request('DELETE',null).then(function(){
+     deleteBusy=false;deleteRetryAt=0;
      if(k===key('_pending-delete')){
        try{w.localStorage.removeItem(k);w.localStorage.removeItem(key('_'+SENT));}catch(e){}
        waitingDelete=false;note(t().delete);
+       if(enabled())record('visit');
      }
      return true;
    },function(){
+     deleteBusy=false;deleteRetryAt=Date.now()+60000;
      waitingDelete=true;note(t().pending);return false;
    });
  }
@@ -86,7 +91,11 @@
  function record(kind){
    if(!/^(visit|cards|tests|exam_start|exam_finish)$/.test(kind)||!enabled())return false;
    var x=user();if(!x)return false;
-   flushDelete();
+   try{
+     if(w.localStorage.getItem(key('_pending-delete'))==='yes'){
+       flushDelete();return false; // delete the previous history before recording a new opted-in event
+     }
+   }catch(e){return false;}
    if(attempted[x.uid+'_'+kind]===today()||eventsSent()[kind]===today()||pending)return false;
    attempted[x.uid+'_'+kind]=today();pending=true;
    request('POST',{v:1,kind:kind,consent:true}).then(function(){
@@ -104,7 +113,7 @@
  function consent(value){
    var k=key('');if(!k)return;
    try{if(value)w.localStorage.setItem(k,'yes');else w.localStorage.removeItem(k);}catch(e){return;}
-   if(value){waitingDelete=false;note(t().on);record('visit');}
+   if(value){note(t().on);record('visit');}
    else{note(t().off);removeHistory();}
  }
  d.addEventListener('change',function(e){
