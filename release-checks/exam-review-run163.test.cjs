@@ -55,7 +55,7 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
     const row=details[i],q=b.q[i],grade=b.answers[i];
     modes.add(q.type);
     assert.match(row.textContent,/Исходное задание/,'all review cards must show original task');
-    assert.match(row.textContent,/Задание '+(i+1)/);
+    assert.ok(row.querySelector('summary').textContent.includes('Задание '+(i+1)), 'original question number is shown');
     assert.match(row.textContent,/Правильн|Oikea|valinta/);
     assert.ok(row.querySelector('.exam-review-original'));
     if(q.type==='translate'){
