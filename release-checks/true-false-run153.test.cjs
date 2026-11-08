@@ -104,7 +104,9 @@ test('matching dropdown pairs work in all ten exam topics, show correct pairs an
     b.d.querySelector('[data-action="match-check"]').click();
     const result=b.d.getElementById('main-content').textContent;
     assert.match(result,/Oikea pari/);
-    assert.match(result,/FI:/);assert.match(result,/RU:/);
+    assert.equal(b.d.querySelectorAll('.exam-question-bilingual').length,4,'four paired definitions must remain visible');
+    assert.equal(b.d.querySelectorAll('.exam-question-secondary').length,4,'every definition has a readable second language');
+    assert.equal(b.d.querySelectorAll('.exam-explain').length,0,'do not duplicate bilingual definitions after grading');
   }
   assert.equal(b.w.localStorage.getItem('run153_rs_scores_v1'),old);
  }finally{b.dom.window.close();}
