@@ -3,18 +3,22 @@
 'use strict';
 var cfg=window.RS_FIREBASE_CONFIG||{};
 var currentUid='',loading=false,saving=false,applying=false,lastFetch=0,lastProfile='',lastPreferences='',saveTimer=null,needsCloudSave=false;
+var ACCOUNT_AUTO_REFRESH_MS=10*60*1000;
+function quota(){return window.RS_FIRESTORE_QUOTA_GUARD;}
 function id(){return window.RS_FAMILY&&window.RS_FAMILY.uid||'';}
 function key(s){return 'rs_community_2_'+id()+'_'+s;}
 function localGet(k,f){try{var x=localStorage.getItem(k);return x?JSON.parse(x):f;}catch(e){return f;}}
 function localPut(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
 function notify(s,issue){var el=document.getElementById('account-profile-status');if(el){el.textContent=s;el.className='operation-status '+(issue?'warning':'info');}}
-function req(method,path,payload){return window.RS_FAMILY.getToken().then(function(t){return new Promise(function(resolve,reject){
+function req(method,path,payload){var guard=quota();if(guard&&!guard.allowed())return Promise.reject(guard.error());
+ return window.RS_FAMILY.getToken().then(function(t){if(guard&&!guard.allowed())throw guard.error();return new Promise(function(resolve,reject){
  var url='https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(cfg.projectId)+'/databases/(default)/documents/'+path;
  var x=new XMLHttpRequest();x.open(method,url,true);x.timeout=20000;x.setRequestHeader('Authorization','Bearer '+t);x.setRequestHeader('Accept','application/json');
  if(payload!==null){x.setRequestHeader('Content-Type','application/json');}
  x.onload=function(){var data={};try{data=JSON.parse(x.responseText||'{}');}catch(e){};
  if(x.status===404){resolve(null);return;}
  if(x.status>=200&&x.status<300){resolve(data);return;}
+ if(guard&&guard.mark(x.status,data)){reject(guard.error());return;}
  reject(Error((data.error&&data.error.message)||('HTTP '+x.status)));
  };x.onerror=function(){reject(Error('Нет соединения с Firebase'));};x.ontimeout=function(){reject(Error('Firebase не ответил'));};x.send(payload===null?null:JSON.stringify(payload));
  });});}
@@ -60,6 +64,7 @@ function loadPreferences(){var who=id();if(!who)return Promise.resolve(false);
  return true;
  }).catch(function(e){if(who===id())notify('Настройки пока не загружены из облака: '+e.message+'.',true);return false;});}
 function savePreferences(){if(!id()||saving||loading||applying||!navigator.onLine)return Promise.resolve(false);
+ if(quota()&&!quota().allowed()){notify(quota().message(),true);return Promise.resolve(false);}
  var fp=fingerprint();if(fp===lastPreferences)return Promise.resolve(true);
  var data=preferences(),subJson=JSON.stringify(data.subs);if(subJson.length>40000){notify('Слишком много подписок для синхронизации настроек.',true);return Promise.resolve(false);}
  saving=true;var who=id(),t=Date.now();localPut(key('prefsUpdated'),t);
@@ -72,11 +77,12 @@ function queueSave(force){if(loading||applying)return;if(!force&&fingerprint()==
  if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(function(){savePreferences();},800);
 }
 function refresh(){if(loading||!id()||!navigator.onLine)return Promise.resolve(false);
+ if(quota()&&!quota().allowed()){notify(quota().message(),true);return Promise.resolve(false);}
  var who=id();loading=true;lastFetch=Date.now();notify('Получаю имя и настройки аккаунта из Firebase…',false);
- return loadProfile().then(function(){return loadPreferences();}).then(function(){
-  if(who===id())lastPreferences=needsCloudSave?'':fingerprint();return true;
+ return loadProfile().then(function(profileOk){return loadPreferences().then(function(prefsOk){return !!(profileOk&&prefsOk);});}).then(function(ok){
+  if(ok&&who===id())lastPreferences=needsCloudSave?'':fingerprint();return ok;
  }).then(function(v){loading=false;
-  if(needsCloudSave&&who===id()){needsCloudSave=false;return savePreferences().then(function(){return v;});}
+  if(v&&needsCloudSave&&who===id()){needsCloudSave=false;return savePreferences().then(function(){return v;});}
   return v;
  },function(e){loading=false;notify('Не удалось обновить аккаунт: '+e.message,true);return false;});
 }
@@ -90,8 +96,8 @@ function profileSaved(name,show){if(!id())return;lastProfile=name;localPut(key('
 function init(){
  document.addEventListener('click',function(e){var t=e.target;while(t&&t!==document&&!(t.getAttribute&&t.getAttribute('data-account')))t=t.parentNode;
  if(t&&t!==document&&t.getAttribute('data-account')==='refresh')refresh();});
- document.addEventListener('visibilitychange',function(){if(!document.hidden&&id()&&Date.now()-lastFetch>30000)refresh();});
- window.addEventListener('focus',function(){if(id()&&Date.now()-lastFetch>30000)refresh();});
+ document.addEventListener('visibilitychange',function(){if(!document.hidden&&id()&&Date.now()-lastFetch>ACCOUNT_AUTO_REFRESH_MS)refresh();});
+ window.addEventListener('focus',function(){if(id()&&Date.now()-lastFetch>ACCOUNT_AUTO_REFRESH_MS)refresh();});
  window.addEventListener('online',function(){if(id())refresh().then(function(){queueSave(false);});});
 }
 window.RS_ACCOUNT={onAuth:onAuth,onLogout:onLogout,onLocalChange:function(){queueSave(false);},profileSaved:profileSaved,refresh:refresh};
