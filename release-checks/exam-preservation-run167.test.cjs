@@ -85,3 +85,45 @@ test('diagnostics ignore failed resources while recording genuine runtime errors
  assert.equal(api.entries()[0].code,'APP_RENDER_FAILED');
  assert.ok(!JSON.stringify(stored).includes('IMG'));
 });
+
+test('completed exam and all 40 review entries are restored after reauthentication and a new browser session',function(){
+ const a=browser();
+ let saved;
+ try{
+  a.d.querySelector('[data-view="exam"]').click();
+  for(let i=0;i<40;i++){
+   const pairs=a.d.querySelectorAll('[data-mock-match]');
+   const multi=a.d.querySelectorAll('[data-mock-multi]');
+   const buttons=a.d.querySelectorAll('[data-action="mock-answer"]');
+   if(pairs.length){
+    for(const pair of pairs)pair.value=pair.options[1].value;
+    a.d.querySelector('[data-action="mock-check"]').click();
+   }else if(multi.length){
+    multi[0].checked=true;a.d.querySelector('[data-action="mock-check"]').click();
+   }else{
+    assert.ok(buttons.length===2||buttons.length===4);
+    buttons[0].click();
+   }
+   const next=a.d.querySelector('[data-action="mock-next"]');
+   assert.ok(next,'answered question '+(i+1)+' must unlock the next step');
+   next.click();
+  }
+  assert.ok(a.d.querySelector('.exam-run-done'),'completed exam report should exist');
+  assert.equal(a.d.querySelectorAll('.exam-review').length,40,'the full original review is rendered');
+  saved=a.w.localStorage.getItem(a.key);
+  assert.equal(JSON.parse(saved).run.answers.length,40);
+  assert.equal(JSON.parse(saved).run.index,40);
+  a.setUid('first-account');
+  a.d.querySelector('[data-view="exam"]').click();
+  assert.ok(a.d.querySelector('.exam-run-done'),'same account relogin must preserve completed report');
+  assert.equal(a.d.querySelectorAll('.exam-review').length,40);
+  assert.equal(a.w.localStorage.getItem(a.key),saved,'same account relogin must not alter results');
+ }finally{a.close();}
+ const b=browser(saved);
+ try{
+  b.d.querySelector('[data-view="exam"]').click();
+  assert.ok(b.d.querySelector('.exam-run-done'),'next-day new browser instance restores saved completed exam');
+  assert.equal(b.d.querySelectorAll('.exam-review').length,40);
+  assert.equal(b.w.localStorage.getItem(b.key),saved);
+ }finally{b.close();}
+});
