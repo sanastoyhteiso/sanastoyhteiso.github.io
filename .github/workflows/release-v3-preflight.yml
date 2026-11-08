@@ -40,12 +40,6 @@ jobs:
           node --check admin/admin-page.js
           node --check study-diagnostics.js
           node --test release-checks/v3-i18n-ui-quality.test.cjs release-checks/v3-admin-access.test.cjs release-checks/v3-local-diagnostics.test.cjs
-      - name: RUN168 Firestore quota 429 public list, backoff and account refresh protection
-        run: |
-          node --check firestore-quota-guard.js
-          node --check community.js
-          node --check account-settings.js
-          node --test release-checks/firestore-quota-run168.test.cjs
       - name: Verify PROD one-owner admin claim grant is dry-run by default (offline only)
         run: |
           node --check admin/ops/grant-prod-admin-owner.cjs
@@ -100,6 +94,12 @@ jobs:
         run: node release-checks/v3-backup-codec.test.cjs
       - name: Install isolated browser simulation dependencies
         run: npm install --no-save jsdom@24.1.1 fake-indexeddb@6.2.7 acorn@8.14.0
+      - name: RUN168 Firestore quota 429 public list, backoff and account refresh protection
+        run: |
+          node --check firestore-quota-guard.js
+          node --check community.js
+          node --check account-settings.js
+          node --test release-checks/firestore-quota-run168.test.cjs
       - name: Verify owner-confirmed telemetry production URL and consent gate (NO network)
         run: node --test release-checks/v3-telemetry-production-config.test.cjs
       - name: Verify opt-in telemetry browser client and admin adapter (NO network)
