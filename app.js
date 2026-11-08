@@ -135,6 +135,25 @@
   function nextCard(){if(!state.deck.length)return;state.sessionSeen[state.deck[state.cardIndex].id]=true;if(state.cardIndex+1<state.deck.length){state.cardIndex++;}else{state.deck=[];ensureDeck(true);}state.flipped=false;renderCards();}
   function quizNew(){var opts=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){return matchCat(x,state.filter)&&eligible(x,state.quizDirection)&&!isLearned(x.id);});if(opts.length<4){state.quiz=null;return;}shuffle(opts);var p=pair(state.quizDirection),chosen=opts[0],right=word(chosen,p.to),used={};used[right]=true;var wrong=[];for(var i=1;i<opts.length&&wrong.length<3;i++){var txt=word(opts[i],p.to);if(!used[txt]){used[txt]=true;wrong.push(txt);}}if(wrong.length<3){state.quiz=null;return;}state.quiz={item:chosen,from:p.from,to:p.to,answer:right,options:shuffle([right].concat(wrong))};state.quizResult=null;}
 
+  function examDisplayLang(){
+    var code=window.RS_I18N&&window.RS_I18N.getLanguage?window.RS_I18N.getLanguage():document.documentElement.lang;
+    return code==='fi'||code==='en'?'fi':'ru';
+  }
+  function bilingualQuestion(fi,ru){
+    var first=examDisplayLang()==='fi',major=first?fi:ru,minor=first?ru:fi;
+    return '<div class="exam-question-bilingual">'+
+      '<div class="exam-question-main" lang="'+(first?'fi':'ru')+'">'+safe(major)+'</div>'+
+      '<div class="exam-question-secondary" lang="'+(first?'ru':'fi')+'">'+
+      '<span class="exam-question-lang">'+(first?'RU':'FI')+'</span> '+safe(minor)+'</div></div>';
+  }
+  function bilingualFeedback(q){
+    var corrected=q.correct===false,fi=corrected?(q.correctStatementFi||q.explanationFi):q.explanationFi,
+      ru=corrected?(q.correctStatementRu||q.explanationRu):q.explanationRu;
+    return '<div class="exam-explain exam-feedback-one"><p><b>'+
+      (corrected?'Oikea väite / Правильное утверждение:':'Selitys / Объяснение')+'</b></p>'+
+      '<p lang="fi"><b>FI:</b> '+safe(fi)+'</p>'+
+      '<p lang="ru"><b>RU:</b> '+safe(ru)+'</p></div>';
+  }
   function quizModeTabs(){
     return '<div class="panel"><div class="form-row"><span class="hint">Тип теста / Testin tyyppi</span>'+
       '<button class="btn '+(state.quizMode==='translate'?'primary':'white')+'" data-action="quiz-mode" data-value="translate">4 варианта / 4 vaihtoehtoa</button>'+
@@ -166,18 +185,14 @@
       '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
     if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
-    s+='<div class="flash-term" lang="fi">'+safe(q.fi)+'</div><div class="mc-options">';
+    s+=bilingualQuestion(q.fi,q.ru)+'<div class="mc-options">';
     s+='<button class="btn white" data-action="tf-choose" data-value="true" '+(state.tfResult!==null?'disabled':'')+'>Tosi · Верно</button>';
     s+='<button class="btn white" data-action="tf-choose" data-value="false" '+(state.tfResult!==null?'disabled':'')+'>Epätosi · Неверно</button></div>';
     if(state.tfResult!==null){
       s+='<div class="answer '+(state.tfResult?'correct':'wrong')+'">'+
         (state.tfResult?'✓ Oikein! · Правильно. ':'✕ Ei aivan. · Не совсем. ')+
         '<b>Oikea vastaus / Правильный ответ: '+(q.correct?'Tosi · Верно':'Epätosi · Неверно')+'</b></div>'+
-        (!q.correct?'<div class="exam-explain"><p><b>Oikea väite / Правильное утверждение:</b></p>'+
-          '<p lang="fi"><b>FI:</b> '+safe(q.correctStatementFi)+'</p>'+
-          '<p><b>RU:</b> '+safe(q.correctStatementRu)+'</p></div>':'')+
-        '<div class="exam-explain"><p><b>Selitys / Объяснение</b></p><p><b>FI:</b> '+safe(q.explanationFi)+'</p>'+
-        '<p><b>RU:</b> '+safe(q.explanationRu)+'</p></div>'+
+        bilingualFeedback(q)+
         '<button class="btn primary" data-action="tf-next">Seuraava / Следующий →</button>';
     }
     s+='</div><div class="panel"><span class="hint">Текущая сессия / Nykyinen harjoitus: '+
@@ -223,8 +238,8 @@
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],chosen=state.matchResult&&state.matchResult.selected[i]||'';
-      s+='<div class="form-row"><label class="field grow" for="match-'+i+'"><span lang="fi">'+safe(item.examNoteFi)+'</span></label>'+
-        '<select class="control" id="match-'+i+'" data-match-index="'+i+'" '+(state.matchResult?'disabled':'')+'>'+
+      s+='<div class="form-row"><div class="field grow" id="match-label-'+i+'">'+bilingualQuestion(item.examNoteFi,item.examNoteRu)+'</div>'+
+        '<select class="control" aria-labelledby="match-label-'+i+'" id="match-'+i+'" data-match-index="'+i+'" '+(state.matchResult?'disabled':'')+'>'+
         '<option value="">— Valitse / Выбери —</option>';
       for(var k=0;k<q.options.length;k++){
         s+='<option value="'+safe(q.options[k])+'"'+(chosen===q.options[k]?' selected':'')+'>'+safe(q.options[k])+'</option>';
@@ -233,7 +248,7 @@
       if(state.matchResult){
         s+='<div class="answer '+(chosen===item.fi?'correct':'wrong')+'">'+
           (chosen===item.fi?'✓ ':'✕ ')+'<b>Oikea pari / Правильная пара: '+safe(item.fi)+' — '+safe(item.ru)+'</b></div>'+
-          '<div class="exam-explain"><p><b>FI:</b> '+safe(item.examNoteFi)+'</p><p><b>RU:</b> '+safe(item.examNoteRu)+'</p></div>';
+          '';
       }
     }
     if(!state.matchResult)s+='<button class="btn primary" data-action="match-check">Tarkista / Проверить</button>';
@@ -273,15 +288,12 @@
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],checked=state.multiResult&&state.multiResult.selected[i];
-      s+='<label class="field" style="display:block;margin:0 0 12px"><input type="checkbox" data-multi-index="'+i+'" '+
-        (checked?'checked ':'')+(state.multiResult?'disabled ':'')+'><span lang="fi"> '+safe(item.fi)+'</span></label>';
+      s+='<label class="field exam-multi-choice"><input type="checkbox" data-multi-index="'+i+'" '+
+        (checked?'checked ':'')+(state.multiResult?'disabled ':'')+'>'+bilingualQuestion(item.fi,item.ru)+'</label>';
       if(state.multiResult){
         s+='<div class="answer '+(item.correct?'correct':'wrong')+'">'+
           '<b>'+(item.correct?'Tosi / Верно':'Epätosi / Неверно')+'</b></div>';
-        if(!item.correct)s+='<div class="exam-explain"><p><b>Oikea väite / Правильное утверждение:</b></p>'+
-          '<p lang="fi"><b>FI:</b> '+safe(item.correctStatementFi)+'</p><p><b>RU:</b> '+safe(item.correctStatementRu)+'</p></div>';
-        s+='<div class="exam-explain"><p><b>FI:</b> '+safe(item.explanationFi)+'</p>'+
-          '<p><b>RU:</b> '+safe(item.explanationRu)+'</p></div>';
+        s+=bilingualFeedback(item);
       }
     }
     if(!state.multiResult)s+='<button class="btn primary" data-action="multi-check">Tarkista / Проверить</button>';
