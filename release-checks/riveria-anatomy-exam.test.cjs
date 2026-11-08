@@ -171,14 +171,14 @@ test('entire set of 289 FI terms is in the ORIGINAL 10 exam dropdown items (with
   const word=lookup.get(expected.newMissingInPriorMain[i].toLocaleLowerCase('fi-FI').trim());
   assert.equal(word.id,'T'+(90200+i),'new words get stable non-conflicting IDs');
  }
- assert.equal(d.terms.length,1354,'1296 base + 45 old module novel + 13 new');
+ assert.equal(d.terms.length,1419,'1296 base + 58 prior new + 65 PDF compounds');
 });
 test('original T900xx terms, including old learned-word references, remain intact',()=>{
  const d=source().d,ids=new Set(d.terms.map(x=>x.id));
  for(const id of ['T90003','T90006','T90101','T90154']){
   assert.ok(ids.has(id),'historical exam card ID must not change: '+id);
  }
- assert.equal(d.terms.filter(x=>x.id.startsWith('T902')).length,13);
+ assert.equal(d.terms.filter(x=>x.id.startsWith('T902')).length,78,'13 prior new plus 65 PDF terms');
 });
 
 test('all 289 required exam terms have Finnish/Russian definitions and Latin when available',()=>{
