@@ -104,7 +104,7 @@ test('ES5 new code, versioned cache and Safari 12 readable font fallbacks',()=>{
  assert.match(html,/app\.js\?v=exam-rounds-run155-v1/);
  assert.match(html,/riveria-true-false\.js\?v=run154-bilingual-1/);
  assert.match(html,/style\.css\?v=exam-rounds-run155-1/);
- assert.match(sw,/v3\.0\.0-rc23/);
+ assert.match(sw,/v3\.0\.0-rc24/);
  assert.match(sw,/riveria-true-false\.js\?v=run154-bilingual-1/);
  assert.ok(css.includes('font-size:25px;font-size:clamp'));
 });
