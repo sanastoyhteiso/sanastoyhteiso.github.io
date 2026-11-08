@@ -12,12 +12,12 @@
 01,enrich-existing,T00557,navan seutu,область пупка,nava region,regio umbilicalis,study_hint,Navan seutu on vatsan keskialue navan ympärillä.,Околопупочная область — центральная часть живота вокруг пупка.,Anatomia: keho
 01,enrich-existing,T00539,nenä,нос,nose,nasus,study_hint,Nenä johtaa ja lämmittää hengitysilmaa sekä aistii hajuja.,Нос проводит и согревает вдыхаемый воздух и воспринимает запахи.,Anatomia: keho
 01,enrich-existing,T00541,niska,"задняя поверхность шеи, затылок",neck,nucha,study_hint,"Niska on kaulan takaosa, jonka lihakset tukevat päätä.","Затылочная часть шеи содержит мышцы, поддерживающие голову.",Anatomia: keho
-01,enrich-existing,T00536,otsa,лоб,forehead,frons,study_hint,Otsa on kasvojen yläosa silmien yläpuolella.,Лоб — верхняя область лица над глазами.,Anatomia: keho
+01,enrich-existing,T00536,otsa,лоб,forehead,frons,study_hint,Otsa on kasvojen yläosa silmien yläpuolella.,Лоб — верхняя область лица над глазами и бровями.,Anatomia: keho
 01,enrich-existing,T00533,pää,голова,head,caput,study_hint,Päässä sijaitsevat aivot ja useita aistinelimiä.,В голове находятся мозг и несколько органов чувств.,Anatomia: keho
-01,enrich-existing,T00552,rinta,грудь,breast,pectus,study_hint,Rinta on vartalon etupuolen yläosa.,Грудь — верхняя передняя область туловища.,Anatomia: keho
+01,enrich-existing,T00552,rinta,грудь,breast,pectus,study_hint,"Rinta on vartalon etupuolen yläosa, jossa on rintalasta ja kylkiluita.",Грудь — верхняя передняя область туловища.,Anatomia: keho
 01,enrich-existing,T00553,rintakehä,грудная клетка,chest,thorax,study_hint,Rintakehä suojaa sydäntä ja keuhkoja sekä liikkuu hengityksessä.,Грудная клетка защищает сердце и лёгкие и движется при дыхании.,Anatomia: keho
 01,enrich-existing,T00285,ruumiinlämpö,температура тела,body temperature,temperatura corporis,study_hint,"Ruumiinlämpö on kehon sisäinen lämpötila, joka pysyy yleensä melko vakaana.","Температура тела — внутренний показатель теплового состояния, обычно поддерживаемый в узких пределах.",Elintoiminnot ja mittaukset
-01,enrich-existing,T00537,silmä,глаз,eye,oculus,study_hint,Silmä vastaanottaa valoa näkemistä varten.,Глаз воспринимает свет для зрения.,Anatomia: keho
+01,enrich-existing,T00537,silmä,глаз,eye,oculus,study_hint,Silmä vastaanottaa valoa näkemistä varten.,Глаз воспринимает свет и помогает видеть окружающий мир.,Anatomia: keho
 01,enrich-existing,T00565,sisäelin,внутренний орган,internal organ,viscus,study_hint,"Sisäelin on kehon sisällä oleva elin, esimerkiksi maksa tai sydän.","Внутренний орган — орган внутри тела, например печень или сердце.",Anatomia: keho
 01,enrich-existing,T00556,vatsa,живот,belly,abdomen,study_hint,Vatsassa sijaitsee suuri osa ruoansulatuselimistä.,В животе расположена большая часть органов пищеварения.,Anatomia: keho
 01,enrich-existing,T00572,verisuoni,кровеносный сосуд,vascular,vas sanguineum,study_hint,Verisuonessa veri kulkee sydämeen tai sydämestä kudoksiin.,По кровеносным сосудам кровь движется к сердцу либо от сердца к тканям.,Anatomia: keho
@@ -63,7 +63,7 @@
 03,enrich-existing,T01234,luurankolihas,скелетная мышца,skeletal muscle,musculus skeletalis,study_hint,Luurankolihas kiinnittyy tavallisesti luuhun jänteellä ja liikuttaa niveliä.,Скелетная мышца обычно крепится к кости сухожилием и приводит суставы в движение.,Anatomia: Tuki ja liikuntaelimistö
 03,enrich-existing,T00608,luusto,скелет,skeleton,systema skeletale,study_hint,Luusto muodostaa kehon tukirangan ja suojaa sisäelimiä.,Скелет образует опору тела и защищает внутренние органы.,Anatomia: elimet
 03,enrich-existing,T01232,luuydin,костный мозг,bone marrow,medulla ossium,study_hint,Luuytimessä muodostuu monia veren soluja; keltainen luuydin sisältää enemmän rasvaa.,В костном мозге образуются клетки крови; жёлтый костный мозг содержит больше жировой ткани.,Anatomia: Tuki ja liikuntaelimistö
-03,enrich-existing,T01236,nikama,позвонок,vertebra,vertebra,study_hint,Nikama on yksi selkärangan luista.,Позвонок — отдельная кость позвоночного столба.,Anatomia: Tuki ja liikuntaelimistö
+03,enrich-existing,T01236,nikama,позвонок,vertebra,vertebra,study_hint,Nikama on yksi selkärangan luista ja suojaa osaltaan selkäydintä.,Позвонок — отдельная кость позвоночного столба.,Anatomia: Tuki ja liikuntaelimistö
 03,enrich-existing,T00568,nivel,сустав,joint,articulatio,study_hint,Nivel yhdistää luita ja sallii niiden liikkumisen toistensa suhteen.,Сустав соединяет кости и позволяет им двигаться относительно друг друга.,Anatomia: keho
 03,enrich-existing,T01233,nivelrusto,суставной хрящ,articular cartilage,cartilago articularis,study_hint,Nivelrusto peittää nivelpintoja ja vähentää kitkaa liikkeessä.,Суставной хрящ покрывает суставные поверхности и уменьшает трение.,Anatomia: Tuki ja liikuntaelimistö
 03,enrich-existing,T00570,nivelside,связка,ligament,ligamentum,study_hint,Nivelside yhdistää luita ja vakauttaa niveltä.,Связка соединяет кости и стабилизирует сустав.,Anatomia: keho
