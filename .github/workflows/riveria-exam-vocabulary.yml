@@ -1,0 +1,23 @@
+name: Riveria anatomy exam vocabulary (offline only)
+on:
+  pull_request:
+    paths:
+      - 'riveria-anatomy-exam.js'
+      - 'release-checks/riveria-exam-expanded.test.cjs'
+      - '.github/workflows/riveria-exam-vocabulary.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exam-vocabulary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check legacy Safari-compatible exam module syntax
+        run: node --check riveria-anatomy-exam.js
+      - name: Validate all 10 Riveria topic decks with synthetic browser bootstrap (no cloud)
+        run: node --test release-checks/riveria-exam-expanded.test.cjs
