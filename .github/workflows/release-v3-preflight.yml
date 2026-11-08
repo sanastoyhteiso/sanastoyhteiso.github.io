@@ -5,6 +5,8 @@ on:
       - 'index.html'
       - 'riveria-anatomy-exam.js'
       - 'app.js'
+      - 'activity-client.js'
+      - 'admin/superadmin-read.js'
       - 'study-diagnostics.js'
       - 'family.js'
       - 'community.js'
@@ -100,6 +102,13 @@ jobs:
           node --check community.js
           node --check account-settings.js
           node --test release-checks/firestore-quota-run168.test.cjs
+      - name: RUN169 strict superadmin and voluntary D1 activity security
+        run: |
+          node --check activity-client.js
+          node --check admin/superadmin-read.js
+          node --check admin/admin-page.js
+          node --check app.js
+          node --test release-checks/superadmin-run169.test.mjs
       - name: Verify owner-confirmed telemetry production URL and consent gate (NO network)
         run: node --test release-checks/v3-telemetry-production-config.test.cjs
       - name: Verify opt-in telemetry browser client and admin adapter (NO network)
