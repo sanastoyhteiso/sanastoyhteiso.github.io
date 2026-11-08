@@ -97,6 +97,95 @@
     if(x.examNoteRu)h+='<p><b>RU:</b> '+safe(x.examNoteRu)+'</p>';
     return h+'</div>';
   }
+  /* RUN166: One static illustration for the existing heart ID and 21 diagram labels.
+     No new account fields, preferences, progress writes or layout changes. */
+  var HEART_IMAGE_URL='assets/anatomy/heart-section-fi.jpg';
+  var HEART_IMAGE_IDS={
+    T00574:1,T90226:1,T01122:1,T01121:1,T90232:1,T01077:1,T01119:1,
+    T01114:1,T01115:1,T01116:1,T01117:1,
+    T90305:1,T90306:1,T90307:1,T90308:1,T90309:1,T90310:1,
+    T90311:1,T90312:1,T90313:1,T90314:1,T90315:1
+  };
+  function heartIllustration(x){
+    if(!x||!HEART_IMAGE_IDS[x.id])return '';
+    return '<div class="rs-heart-illustration"><button type="button" class="rs-heart-image-button" data-action="heart-open" aria-label="Увеличить схему сердца / Suurenna sydänkuva">'+
+      '<img class="rs-heart-image" src="'+HEART_IMAGE_URL+'" alt="Sydämen poikkileikkaus: suomalaiset anatomiset nimet / Разрез сердца с финскими названиями" width="1254" height="1254">'+
+      '</button><p class="rs-heart-image-help">Kosketa kuvaa suurentaaksesi · Нажми на изображение, чтобы увеличить</p></div>';
+  }
+  var heartModal=null,heartScale=1,heartX=0,heartY=0,heartTouchDistance=0,heartInitialScale=1,heartTouchX=0,heartTouchY=0,heartDragging=false,heartPrevFocus=null;
+  function heartTransform(){
+    if(!heartModal)return;
+    var pic=heartModal.querySelector('.rs-heart-modal-picture');
+    if(pic)pic.style.transform='translate('+heartX+'px,'+heartY+'px) scale('+heartScale+')';
+    var label=heartModal.querySelector('.rs-heart-modal-scale');
+    if(label)label.textContent=Math.round(heartScale*100)+'%';
+  }
+  function heartSetScale(v){
+    heartScale=Math.max(1,Math.min(5,v));
+    if(heartScale===1){heartX=0;heartY=0;}
+    heartTransform();
+  }
+  function heartDistance(a,b){
+    var x=a.clientX-b.clientX,y=a.clientY-b.clientY;return Math.sqrt(x*x+y*y);
+  }
+  function heartClose(){
+    if(!heartModal||heartModal.hidden)return;
+    heartModal.hidden=true;document.body.classList.remove('rs-heart-modal-open');
+    heartDragging=false;heartTouchDistance=0;
+    if(heartPrevFocus&&heartPrevFocus.focus)heartPrevFocus.focus();
+  }
+  function heartSetupModal(){
+    if(heartModal)return;
+    heartModal=document.createElement('div');heartModal.className='rs-heart-modal';heartModal.setAttribute('role','dialog');
+    heartModal.setAttribute('aria-modal','true');heartModal.setAttribute('aria-label','Sydämen poikkileikkaus / Схема сердца');heartModal.hidden=true;
+    heartModal.innerHTML='<div class="rs-heart-modal-head"><b>Sydämen poikkileikkaus · Схема сердца</b>'+
+      '<button type="button" class="rs-heart-modal-control" data-heart-control="close" aria-label="Закрыть / Sulje">✕</button></div>'+
+      '<div class="rs-heart-modal-stage"><img class="rs-heart-modal-picture" alt="Sydämen rakenne — sydämen poikkileikkaus" draggable="false"></div>'+
+      '<div class="rs-heart-modal-controls"><button type="button" class="rs-heart-modal-control" data-heart-control="minus" aria-label="Уменьшить">−</button>'+
+      '<span class="rs-heart-modal-scale">100%</span><button type="button" class="rs-heart-modal-control" data-heart-control="plus" aria-label="Увеличить">+</button>'+
+      '<button type="button" class="rs-heart-modal-control" data-heart-control="reset">100%</button></div>';
+    document.body.appendChild(heartModal);
+    heartModal.addEventListener('click',function(e){
+      var target=e.target;while(target&&target!==heartModal&&!target.getAttribute('data-heart-control'))target=target.parentNode;
+      var action=target&&target.getAttribute&&target.getAttribute('data-heart-control');
+      if(action==='close')heartClose();
+      else if(action==='plus')heartSetScale(heartScale+0.5);
+      else if(action==='minus')heartSetScale(heartScale-0.5);
+      else if(action==='reset')heartSetScale(1);
+    });
+    var stage=heartModal.querySelector('.rs-heart-modal-stage');
+    stage.addEventListener('touchstart',function(e){
+      if(e.touches.length===2){heartTouchDistance=heartDistance(e.touches[0],e.touches[1]);heartInitialScale=heartScale;heartDragging=false;}
+      else if(e.touches.length===1){heartTouchX=e.touches[0].clientX;heartTouchY=e.touches[0].clientY;heartDragging=true;}
+    },{passive:false});
+    stage.addEventListener('touchmove',function(e){
+      if(e.touches.length===2&&heartTouchDistance){e.preventDefault();heartSetScale(heartInitialScale*heartDistance(e.touches[0],e.touches[1])/heartTouchDistance);}
+      else if(e.touches.length===1&&heartDragging&&heartScale>1){
+        e.preventDefault();heartX+=e.touches[0].clientX-heartTouchX;heartY+=e.touches[0].clientY-heartTouchY;
+        heartTouchX=e.touches[0].clientX;heartTouchY=e.touches[0].clientY;heartTransform();
+      }
+    },{passive:false});
+    stage.addEventListener('touchend',function(e){if(e.touches.length<2)heartTouchDistance=0;if(!e.touches.length)heartDragging=false;});
+    stage.addEventListener('mousedown',function(e){heartDragging=true;heartTouchX=e.clientX;heartTouchY=e.clientY;});
+    document.addEventListener('mouseup',function(){heartDragging=false;});
+    stage.addEventListener('mousemove',function(e){
+      if(!heartDragging||heartScale===1)return;heartX+=e.clientX-heartTouchX;heartY+=e.clientY-heartTouchY;
+      heartTouchX=e.clientX;heartTouchY=e.clientY;heartTransform();
+    });
+    document.addEventListener('keydown',function(e){
+      if(!heartModal||heartModal.hidden)return;
+      if(e.key==='Escape'||e.keyCode===27)heartClose();
+      else if(e.key==='+'||e.key==='=')heartSetScale(heartScale+0.5);
+      else if(e.key==='-')heartSetScale(heartScale-0.5);
+    });
+  }
+  function heartOpen(){
+    var image=document.querySelector('.rs-heart-image');if(!image||!image.complete||!image.naturalWidth){toast('Изображение ещё загружается или временно недоступно.');return;}
+    heartSetupModal();heartPrevFocus=document.activeElement;
+    heartModal.querySelector('.rs-heart-modal-picture').src=image.src;
+    heartModal.hidden=false;document.body.classList.add('rs-heart-modal-open');heartSetScale(1);
+    var close=heartModal.querySelector('[data-heart-control="close"]');if(close)close.focus();
+  }
   function directionNotice(which){if(allTerms().some(function(x){return eligible(x,which);}))return '';return '<div class="notice">Для выбранного направления пока нет переводов. Выбери другое направление.</div>';}
   function cardPool(mode){var base=allTerms().concat(sharedEnabled()?D.phrases:[]);var out=[];for(var i=0;i<base.length;i++){var x=base[i];if(!matchCat(x,state.filter))continue;if(state.extraSearch&&!state.favorites[x.id])continue;if(state.latinOnly&&!word(x,'la'))continue;if(!eligible(x,state.direction))continue;if(mode==='review'?!isLearned(x.id):isLearned(x.id))continue;out.push(x);}return out;}
   function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
@@ -126,7 +215,7 @@
   if(!c){s+='<div class="panel empty"><b>'+(state.reviewLearned?'Повторение завершено':'Подход завершён')+'</b><p>'+(state.reviewLearned?'Выученные слова просмотрены.':'Слова больше не идут по кругу. Если остались трудные или пропущенные, начни новый подход.')+'</p><div class="btn-row"><button class="btn primary" data-action="restart-study">Начать новый подход</button><button class="btn white" data-view="learned">Открыть выученные</button>'+(state.reviewLearned?'<button class="btn white" data-action="study-mode">К новым словам</button>':'')+'</div></div>';}else{
     var languages=pair(state.direction),front=word(c,languages.from),back=word(c,languages.to),score=state.scores[c.id]||{};
     s+='<div class="section-title"><h2>Карточка '+(state.cardIndex+1)+' / '+state.deck.length+'</h2><p>'+safe(categoryName(c))+' · '+(score.correct||0)+' верных</p></div><div class="flashcard"><div class="flash-top"><span>'+safe(c.id)+'</span><button class="star-btn" data-action="favorite" aria-label="В избранное">'+(state.favorites[c.id]?'★':'☆')+'</button></div><div class="flash-term">'+safe(front)+'</div>';
-    if(state.flipped){s+='<div class="flash-trans">'+safe(back)+'</div>';if(c.example)s+='<div class="flash-example">'+safe(c.example)+(c.exampleRu?' — '+safe(c.exampleRu):'')+'</div>';s+=examNote(c);}else{s+='<div class="flash-hidden">Вспомни перевод — затем открой ответ</div>';}
+    if(state.flipped){s+='<div class="flash-trans">'+safe(back)+'</div>';if(c.example)s+='<div class="flash-example">'+safe(c.example)+(c.exampleRu?' — '+safe(c.exampleRu):'')+'</div>';s+=heartIllustration(c)+examNote(c);}else{s+='<div class="flash-hidden">Вспомни перевод — затем открой ответ</div>';}
     s+='<div class="flash-actions">'+(state.flipped?'<button class="btn good" data-action="mark-good">✓ Знаю</button><button class="btn white" data-action="mark-hard">↻ Повторить</button>':'<button class="btn primary" data-action="flip">◉ Показать ответ</button>')+'<button class="btn white" data-action="next-card">Следующее →</button></div><p class="hint">«Знаю» перемещает слово в «Выученные»; «Следующее» пропускает до следующего подхода.</p></div>';
   }
   s+='<div class="section-title"><h2>Темы для практики</h2></div><div>'+catHtml+'</div>';
@@ -801,7 +890,7 @@
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
     s+='<div class="panel"><p class="hint">'+(q.from==='la'?'Что означает латинский термин? / Mitä latinankielinen termi tarkoittaa?':q.to==='la'?'Выбери правильный латинский термин / Valitse oikea latinankielinen termi':'Выбери перевод:')+'</p><div class="flash-term" lang="'+safe(q.from)+'">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
     s+='</div>';
-    if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Следующий вопрос →')+'</button>';
+    if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+heartIllustration(q.item)+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Следующий вопрос →')+'</button>';
     s+='</div>';root.innerHTML=s;
   }
   function renderDict(){basePage('Словарь','Поиск по финским и русским словам. Экзаменационные темы — в общем списке.');var s=englishWarning(state.dictDirection)+'<div class="panel"><div class="form-row"><label class="field grow"><span>Поиск слова или перевода</span><input class="control" id="dict-search" type="search" placeholder="Например: turvotus, подгузник, одежда" value="'+safe(state.dictQuery)+'"></label><label class="field"><span>Тема</span>'+selectCats(state.dictFilter,'dict-cat')+'</label><label class="field"><span>Переводы</span>'+directionSelect('dict-dir',state.dictDirection,true)+'</label></div><label class="hint"><input type="checkbox" id="dict-phrases"'+(state.dictIncludePhrases?' checked':'')+'> Также показать фразы</label></div><div class="section-title"><h2>Результаты <span id="dict-count"></span></h2></div><div id="dict-results" class="dictionary-list"></div>';root.innerHTML=s;renderDictItems();}
@@ -883,6 +972,7 @@
   function fallbackCopy(s){var e=document.createElement('textarea');e.value=s;e.style.position='fixed';e.style.left='-9999px';document.body.appendChild(e);e.select();var ok=false;try{ok=document.execCommand('copy');}catch(ex){}document.body.removeChild(e);toast(ok?'Скопировано':'Выдели и скопируй текст вручную');}
   document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('button'):null;if(!b)return;var v=b.getAttribute('data-view');if(v){nav(v);return;}var action=b.getAttribute('data-action'),choice=b.getAttribute('data-value');if(!action)return;
     if(action==='open-cloud-panel'){var trigger=byId('cloud-toggle');if(trigger)trigger.click();}
+    else if(action==='heart-open'){heartOpen();}
     else if(action==='flip'){state.flipped=true;renderCards();}
     else if(action==='next-card'){nextCard();}
     else if(action==='mark-good'||action==='mark-hard'){var c=state.deck[state.cardIndex];grade(c.id,action==='mark-good');nextCard();}
