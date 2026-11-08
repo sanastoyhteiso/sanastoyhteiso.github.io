@@ -58,9 +58,9 @@ test('Tests contains only four practice modes; Exam stays reachable through dedi
 });
 test('offline worker and script use the same current navigation version',()=>{
  const html=read('index.html'),sw=read('sw.js'),src=read('app.js');
- assert.match(html,/app\.js\?v=latin-run164-v1/);
- assert.match(sw,/app\.js\?v=latin-run164-v1/);
- assert.match(sw,/v3\.0\.0-rc32/);
+ assert.match(html,/app\.js\?v=heart-run166-1/);
+ assert.match(sw,/app\.js\?v=heart-run166-1/);
+ assert.match(sw,/v3\.0\.0-rc33/);
  assert.doesNotMatch(src,/exam-nav-entry/,'no duplicate shortcut in quiz code');
  assert.doesNotMatch(src,/=>|\?\./,'old Safari parser compatibility');
 });

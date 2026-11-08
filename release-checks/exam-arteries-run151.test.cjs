@@ -33,13 +33,13 @@ test('previous three source terms and all 65 PDF terms retain original IDs',()=>
   const x=d.terms.find(x=>x.id===id);assert.equal(x.fi,fi);assert.ok(x.la&&x.examNoteFi&&x.examNoteRu);
  }
  for(let i=90213;i<=90277;i++)assert.equal(d.terms.filter(x=>x.id==='T'+i).length,1);
- assert.equal(d.terms.length,1446);
+ assert.equal(d.terms.length,1457);
 });
 test('offline cache links same version and ES5 adapter',()=>{
  const html=read('index.html'),sw=read('sw.js');
- const link='riveria-anatomy-exam.js?v=immune-run152-v1';
+ const link='riveria-anatomy-exam.js?v=heart-run166-1';
  assert.ok(html.includes(link));assert.ok(sw.includes(link));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc32'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc33'));
  assert.doesNotMatch(source,/\blet\s+|\bconst\s+|=>|\?\./);
  assert.doesNotMatch(source,/localStorage\.setItem|firebase\.auth|firestore|fetch\s*\(/i);
 });

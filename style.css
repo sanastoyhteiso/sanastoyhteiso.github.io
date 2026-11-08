@@ -178,3 +178,19 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .exam-review summary:focus-visible{outline:2px solid #2984a8;outline-offset:4px}
 .exam-review-passed .exam-review-title{color:#286942}
 .exam-review-missed .exam-review-title{color:#8e4d24}
+
+/* RUN166: scoped heart image on revealed cards; the existing site design is unchanged. */
+.rs-heart-illustration{margin:13px auto 7px;max-width:510px;text-align:center}
+.rs-heart-image-button{width:100%;padding:8px;background:#fff;border:1px solid #d5e6eb;border-radius:10px;cursor:zoom-in;display:block}
+.rs-heart-image-button:focus-visible,.rs-heart-modal-control:focus-visible{outline:3px solid #ecaf3b;outline-offset:3px}
+.rs-heart-image{display:block;max-width:100%;width:auto;height:auto;max-height:420px;margin:auto;object-fit:contain}
+.rs-heart-image-help{font-size:12px;color:#53727d;margin:5px 0 11px}
+body.rs-heart-modal-open{overflow:hidden}
+.rs-heart-modal[hidden]{display:none!important}
+.rs-heart-modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:99999;display:flex;flex-direction:column;background:rgba(8,23,32,.96);color:#fff}
+.rs-heart-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;font-size:15px}
+.rs-heart-modal-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none;cursor:grab}
+.rs-heart-modal-picture{max-width:96vw;max-height:76vh;object-fit:contain;user-select:none;-webkit-user-select:none;pointer-events:none;transform-origin:center center}
+.rs-heart-modal-controls{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 12px 20px;background:rgba(9,24,32,.96)}
+.rs-heart-modal-control{font:inherit;font-size:17px;font-weight:700;color:white;background:#294957;border:1px solid #7899a8;border-radius:9px;min-width:46px;min-height:44px;cursor:pointer}
+.rs-heart-modal-scale{min-width:62px;font-variant-numeric:tabular-nums;text-align:center}
