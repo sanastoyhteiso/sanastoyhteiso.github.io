@@ -103,7 +103,7 @@ test('exam UI displays only direction, locks wrong or blank partial, hides keys 
   assert.deepEqual(Object.keys(seenModes).sort(),['matching','multiselect','translate','truefalse']);
   assert.ok(b.d.querySelector('.exam-run-done'),'must have final page');
   assert.match(b.d.querySelector('.exam-run-done').textContent,/40 баллов/);
-  assert.match(b.d.getElementById('main-content').textContent,/Разбор ошибок/);
+  assert.match(b.d.getElementById('main-content').textContent,/Полный лист экзамена/);
   assert.equal(b.w.localStorage.getItem('run156_rs_scores_v1'),initial,'exam did not grade learning progress');
   b.d.querySelector('[data-action="mock-restart"]').click();
   assert.match(b.d.querySelector('.exam-run-progress').textContent,/1 \/ 40/);
