@@ -1,0 +1,1517 @@
+{
+  "source": "user-provided Riveria Päästä varpaisiin (2014) exam topic list; 2026-11-08",
+  "topicPages": [
+    {
+      "id": "EXAM01",
+      "pages": "s.7–12, 17",
+      "required": 41
+    },
+    {
+      "id": "EXAM02",
+      "pages": "s.25–30",
+      "required": 8
+    },
+    {
+      "id": "EXAM03",
+      "pages": "s.31–52",
+      "required": 51
+    },
+    {
+      "id": "EXAM04",
+      "pages": "s.53–66",
+      "required": 12
+    },
+    {
+      "id": "EXAM05",
+      "pages": "s.67–80",
+      "required": 34
+    },
+    {
+      "id": "EXAM06",
+      "pages": "s.81–89",
+      "required": 25
+    },
+    {
+      "id": "EXAM07",
+      "pages": "s.91–106",
+      "required": 24
+    },
+    {
+      "id": "EXAM08",
+      "pages": "s.107–114",
+      "required": 46
+    },
+    {
+      "id": "EXAM09",
+      "pages": "s.131–146",
+      "required": 16
+    },
+    {
+      "id": "EXAM10",
+      "pages": "s.161–190",
+      "required": 32
+    }
+  ],
+  "required": [
+    {
+      "fi": "aivot",
+      "topic": "EXAM01",
+      "sourceId": "T00534"
+    },
+    {
+      "fi": "hermo",
+      "topic": "EXAM01",
+      "sourceId": "T00571"
+    },
+    {
+      "fi": "imusolmuke",
+      "topic": "EXAM01",
+      "sourceId": "T00573"
+    },
+    {
+      "fi": "kasvot",
+      "topic": "EXAM01",
+      "sourceId": "T00535"
+    },
+    {
+      "fi": "kaula",
+      "topic": "EXAM01",
+      "sourceId": "T00540"
+    },
+    {
+      "fi": "keho",
+      "topic": "EXAM01",
+      "sourceId": "T00532"
+    },
+    {
+      "fi": "korva",
+      "topic": "EXAM01",
+      "sourceId": "T00538"
+    },
+    {
+      "fi": "kurkku",
+      "topic": "EXAM01",
+      "sourceId": "T00542"
+    },
+    {
+      "fi": "lantio",
+      "topic": "EXAM01",
+      "sourceId": "T00558"
+    },
+    {
+      "fi": "lämpötila",
+      "topic": "EXAM01",
+      "sourceId": "T00284"
+    },
+    {
+      "fi": "navan seutu",
+      "topic": "EXAM01",
+      "sourceId": "T00557"
+    },
+    {
+      "fi": "nenä",
+      "topic": "EXAM01",
+      "sourceId": "T00539"
+    },
+    {
+      "fi": "niska",
+      "topic": "EXAM01",
+      "sourceId": "T00541"
+    },
+    {
+      "fi": "otsa",
+      "topic": "EXAM01",
+      "sourceId": "T00536"
+    },
+    {
+      "fi": "pää",
+      "topic": "EXAM01",
+      "sourceId": "T00533"
+    },
+    {
+      "fi": "rinta",
+      "topic": "EXAM01",
+      "sourceId": "T00552"
+    },
+    {
+      "fi": "rintakehä",
+      "topic": "EXAM01",
+      "sourceId": "T00553"
+    },
+    {
+      "fi": "ruumiinlämpö",
+      "topic": "EXAM01",
+      "sourceId": "T00285"
+    },
+    {
+      "fi": "silmä",
+      "topic": "EXAM01",
+      "sourceId": "T00537"
+    },
+    {
+      "fi": "sisäelin",
+      "topic": "EXAM01",
+      "sourceId": "T00565"
+    },
+    {
+      "fi": "vatsa",
+      "topic": "EXAM01",
+      "sourceId": "T00556"
+    },
+    {
+      "fi": "verisuoni",
+      "topic": "EXAM01",
+      "sourceId": "T00572"
+    },
+    {
+      "fi": "aineenvaihdunta",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "DNA",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "elimistö",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "elin",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "homeostaasi",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "kromosomi",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "kudos",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "mitokondrio",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "mitoosi",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "perimäaine",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "ribosomi",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "solu",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "soluelin",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "soluhengitys",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "solujen erilaistuminen",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "solukalvo",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "solulima",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "solunjakautuminen",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "solutuma",
+      "topic": "EXAM01",
+      "sourceId": null
+    },
+    {
+      "fi": "hikirauhanen",
+      "topic": "EXAM02",
+      "sourceId": "T01287"
+    },
+    {
+      "fi": "iho",
+      "topic": "EXAM02",
+      "sourceId": "T00179"
+    },
+    {
+      "fi": "ihon suojakerros",
+      "topic": "EXAM02",
+      "sourceId": "T01290"
+    },
+    {
+      "fi": "ihonalaiskudos",
+      "topic": "EXAM02",
+      "sourceId": "T01286"
+    },
+    {
+      "fi": "karvatuppi",
+      "topic": "EXAM02",
+      "sourceId": "T01289"
+    },
+    {
+      "fi": "orvaskesi",
+      "topic": "EXAM02",
+      "sourceId": "T01284"
+    },
+    {
+      "fi": "talirauhanen",
+      "topic": "EXAM02",
+      "sourceId": "T01288"
+    },
+    {
+      "fi": "verinahka",
+      "topic": "EXAM02",
+      "sourceId": "T01285"
+    },
+    {
+      "fi": "alaselkä",
+      "topic": "EXAM03",
+      "sourceId": "T00555"
+    },
+    {
+      "fi": "jalkapohja",
+      "topic": "EXAM03",
+      "sourceId": "T00564"
+    },
+    {
+      "fi": "jänne",
+      "topic": "EXAM03",
+      "sourceId": "T00569"
+    },
+    {
+      "fi": "kyynärpää",
+      "topic": "EXAM03",
+      "sourceId": "T00545"
+    },
+    {
+      "fi": "kyynärvarsi",
+      "topic": "EXAM03",
+      "sourceId": "T00546"
+    },
+    {
+      "fi": "kämmen",
+      "topic": "EXAM03",
+      "sourceId": "T00549"
+    },
+    {
+      "fi": "käsi",
+      "topic": "EXAM03",
+      "sourceId": "T00548"
+    },
+    {
+      "fi": "lihaksisto",
+      "topic": "EXAM03",
+      "sourceId": "T00609"
+    },
+    {
+      "fi": "lihas",
+      "topic": "EXAM03",
+      "sourceId": "T00567"
+    },
+    {
+      "fi": "lonkka",
+      "topic": "EXAM03",
+      "sourceId": "T00559"
+    },
+    {
+      "fi": "lonkkanivel",
+      "topic": "EXAM03",
+      "sourceId": "T01238"
+    },
+    {
+      "fi": "luu",
+      "topic": "EXAM03",
+      "sourceId": "T00566"
+    },
+    {
+      "fi": "luurankolihas",
+      "topic": "EXAM03",
+      "sourceId": "T01234"
+    },
+    {
+      "fi": "luusto",
+      "topic": "EXAM03",
+      "sourceId": "T00608"
+    },
+    {
+      "fi": "luuydin",
+      "topic": "EXAM03",
+      "sourceId": "T01232"
+    },
+    {
+      "fi": "nikama",
+      "topic": "EXAM03",
+      "sourceId": "T01236"
+    },
+    {
+      "fi": "nivel",
+      "topic": "EXAM03",
+      "sourceId": "T00568"
+    },
+    {
+      "fi": "nivelrusto",
+      "topic": "EXAM03",
+      "sourceId": "T01233"
+    },
+    {
+      "fi": "nivelside",
+      "topic": "EXAM03",
+      "sourceId": "T00570"
+    },
+    {
+      "fi": "olkanivel",
+      "topic": "EXAM03",
+      "sourceId": "T01240"
+    },
+    {
+      "fi": "olkapää",
+      "topic": "EXAM03",
+      "sourceId": "T00543"
+    },
+    {
+      "fi": "olkavarsi",
+      "topic": "EXAM03",
+      "sourceId": "T00544"
+    },
+    {
+      "fi": "pakara",
+      "topic": "EXAM03",
+      "sourceId": "T00560"
+    },
+    {
+      "fi": "peukalo",
+      "topic": "EXAM03",
+      "sourceId": "T00551"
+    },
+    {
+      "fi": "pohje",
+      "topic": "EXAM03",
+      "sourceId": "T00563"
+    },
+    {
+      "fi": "polvi",
+      "topic": "EXAM03",
+      "sourceId": "T00562"
+    },
+    {
+      "fi": "polvinivel",
+      "topic": "EXAM03",
+      "sourceId": "T01239"
+    },
+    {
+      "fi": "ranne",
+      "topic": "EXAM03",
+      "sourceId": "T00547"
+    },
+    {
+      "fi": "reisi",
+      "topic": "EXAM03",
+      "sourceId": "T00561"
+    },
+    {
+      "fi": "selkä",
+      "topic": "EXAM03",
+      "sourceId": "T00554"
+    },
+    {
+      "fi": "selkäranka",
+      "topic": "EXAM03",
+      "sourceId": "T01235"
+    },
+    {
+      "fi": "sormi",
+      "topic": "EXAM03",
+      "sourceId": "T00550"
+    },
+    {
+      "fi": "tuki- ja liikuntaelimistö",
+      "topic": "EXAM03",
+      "sourceId": "T01231"
+    },
+    {
+      "fi": "välilevy",
+      "topic": "EXAM03",
+      "sourceId": "T01237"
+    },
+    {
+      "fi": "häpyluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "istuinluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "kallo",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "kylkiluut",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "kyynärluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "lapaluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "lonkkaluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "olkaluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "pohjeluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "polvilumpio",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "reisiluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "reisiluun pää",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "rintalasta",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "solisluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "suoliluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "sääriluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "värttinäluu",
+      "topic": "EXAM03",
+      "sourceId": null
+    },
+    {
+      "fi": "hemoglobiini",
+      "topic": "EXAM04",
+      "sourceId": "T01258"
+    },
+    {
+      "fi": "imuneste",
+      "topic": "EXAM04",
+      "sourceId": "T01259"
+    },
+    {
+      "fi": "imusuoni",
+      "topic": "EXAM04",
+      "sourceId": "T01260"
+    },
+    {
+      "fi": "imusuonisto",
+      "topic": "EXAM04",
+      "sourceId": "T00603"
+    },
+    {
+      "fi": "kateenkorva",
+      "topic": "EXAM04",
+      "sourceId": "T01261"
+    },
+    {
+      "fi": "perna",
+      "topic": "EXAM04",
+      "sourceId": "T00604"
+    },
+    {
+      "fi": "punasolu",
+      "topic": "EXAM04",
+      "sourceId": "T00586"
+    },
+    {
+      "fi": "valkosolu",
+      "topic": "EXAM04",
+      "sourceId": "T00587"
+    },
+    {
+      "fi": "vasta-aine",
+      "topic": "EXAM04",
+      "sourceId": "T01262"
+    },
+    {
+      "fi": "veri",
+      "topic": "EXAM04",
+      "sourceId": "T00584"
+    },
+    {
+      "fi": "verihiutale",
+      "topic": "EXAM04",
+      "sourceId": "T00588"
+    },
+    {
+      "fi": "veriplasma",
+      "topic": "EXAM04",
+      "sourceId": "T00585"
+    },
+    {
+      "fi": "aortta",
+      "topic": "EXAM05",
+      "sourceId": "T01131"
+    },
+    {
+      "fi": "aorttaläppä",
+      "topic": "EXAM05",
+      "sourceId": "T01121"
+    },
+    {
+      "fi": "diastolinen verenpaine",
+      "topic": "EXAM05",
+      "sourceId": "T00273"
+    },
+    {
+      "fi": "hiippaläppä",
+      "topic": "EXAM05",
+      "sourceId": "T01119"
+    },
+    {
+      "fi": "hiussuoni",
+      "topic": "EXAM05",
+      "sourceId": "T00583"
+    },
+    {
+      "fi": "hiussuoniverkosto",
+      "topic": "EXAM05",
+      "sourceId": "T01130"
+    },
+    {
+      "fi": "keuhkovaltimoläppä",
+      "topic": "EXAM05",
+      "sourceId": "T01122"
+    },
+    {
+      "fi": "kolmiliuskaläppä",
+      "topic": "EXAM05",
+      "sourceId": "T01120"
+    },
+    {
+      "fi": "laskimo",
+      "topic": "EXAM05",
+      "sourceId": "T00582"
+    },
+    {
+      "fi": "pieni verenkierto",
+      "topic": "EXAM05",
+      "sourceId": "T01128"
+    },
+    {
+      "fi": "pulssi",
+      "topic": "EXAM05",
+      "sourceId": "T00275"
+    },
+    {
+      "fi": "sepelvaltimo",
+      "topic": "EXAM05",
+      "sourceId": "T01123"
+    },
+    {
+      "fi": "sinussolmuke",
+      "topic": "EXAM05",
+      "sourceId": "T01127"
+    },
+    {
+      "fi": "suuri verenkierto",
+      "topic": "EXAM05",
+      "sourceId": "T01129"
+    },
+    {
+      "fi": "sydämen johtoratajärjestelmä",
+      "topic": "EXAM05",
+      "sourceId": "T01126"
+    },
+    {
+      "fi": "sydämen oikea eteinen",
+      "topic": "EXAM05",
+      "sourceId": "T01114"
+    },
+    {
+      "fi": "sydämen oikea kammio",
+      "topic": "EXAM05",
+      "sourceId": "T01116"
+    },
+    {
+      "fi": "sydämen vasen eteinen",
+      "topic": "EXAM05",
+      "sourceId": "T01115"
+    },
+    {
+      "fi": "sydämen vasen kammio",
+      "topic": "EXAM05",
+      "sourceId": "T01117"
+    },
+    {
+      "fi": "sydämen väliseinä",
+      "topic": "EXAM05",
+      "sourceId": "T01118"
+    },
+    {
+      "fi": "sydän",
+      "topic": "EXAM05",
+      "sourceId": "T00574"
+    },
+    {
+      "fi": "sydänlihas",
+      "topic": "EXAM05",
+      "sourceId": "T01124"
+    },
+    {
+      "fi": "sydänpussi",
+      "topic": "EXAM05",
+      "sourceId": "T01125"
+    },
+    {
+      "fi": "syke",
+      "topic": "EXAM05",
+      "sourceId": "T00276"
+    },
+    {
+      "fi": "syketaajuus",
+      "topic": "EXAM05",
+      "sourceId": "T00277"
+    },
+    {
+      "fi": "systolinen verenpaine",
+      "topic": "EXAM05",
+      "sourceId": "T00272"
+    },
+    {
+      "fi": "valtimo",
+      "topic": "EXAM05",
+      "sourceId": "T00581"
+    },
+    {
+      "fi": "verenkierto",
+      "topic": "EXAM05",
+      "sourceId": "T00304"
+    },
+    {
+      "fi": "verenkiertoelimistö",
+      "topic": "EXAM05",
+      "sourceId": "T00580"
+    },
+    {
+      "fi": "verenpaine",
+      "topic": "EXAM05",
+      "sourceId": "T00271"
+    },
+    {
+      "fi": "eteinen",
+      "topic": "EXAM05",
+      "sourceId": null
+    },
+    {
+      "fi": "läppä",
+      "topic": "EXAM05",
+      "sourceId": null
+    },
+    {
+      "fi": "oikea",
+      "topic": "EXAM05",
+      "sourceId": null
+    },
+    {
+      "fi": "vasen",
+      "topic": "EXAM05",
+      "sourceId": null
+    },
+    {
+      "fi": "hapen saturaatio",
+      "topic": "EXAM06",
+      "sourceId": "T00280"
+    },
+    {
+      "fi": "hapenpuute",
+      "topic": "EXAM06",
+      "sourceId": "T00305"
+    },
+    {
+      "fi": "hapetus",
+      "topic": "EXAM06",
+      "sourceId": "T00306"
+    },
+    {
+      "fi": "happisaturaatio",
+      "topic": "EXAM06",
+      "sourceId": "T00281"
+    },
+    {
+      "fi": "hengitys",
+      "topic": "EXAM06",
+      "sourceId": "T00279"
+    },
+    {
+      "fi": "hengityselimistö",
+      "topic": "EXAM06",
+      "sourceId": "T01140"
+    },
+    {
+      "fi": "hengitystaajuus",
+      "topic": "EXAM06",
+      "sourceId": "T00278"
+    },
+    {
+      "fi": "hengitystiet",
+      "topic": "EXAM06",
+      "sourceId": "T00576"
+    },
+    {
+      "fi": "henkitorvi",
+      "topic": "EXAM06",
+      "sourceId": "T00577"
+    },
+    {
+      "fi": "ilmatiehyt",
+      "topic": "EXAM06",
+      "sourceId": "T01145"
+    },
+    {
+      "fi": "kaasujenvaihto",
+      "topic": "EXAM06",
+      "sourceId": "T01150"
+    },
+    {
+      "fi": "keuhko",
+      "topic": "EXAM06",
+      "sourceId": "T00575"
+    },
+    {
+      "fi": "keuhkolohko",
+      "topic": "EXAM06",
+      "sourceId": "T01149"
+    },
+    {
+      "fi": "keuhkopussi",
+      "topic": "EXAM06",
+      "sourceId": "T01148"
+    },
+    {
+      "fi": "keuhkoputki",
+      "topic": "EXAM06",
+      "sourceId": "T00578"
+    },
+    {
+      "fi": "keuhkorakkula",
+      "topic": "EXAM06",
+      "sourceId": "T01146"
+    },
+    {
+      "fi": "keuhkorakkulat",
+      "topic": "EXAM06",
+      "sourceId": "T01147"
+    },
+    {
+      "fi": "kurkunpää",
+      "topic": "EXAM06",
+      "sourceId": "T01143"
+    },
+    {
+      "fi": "nenäontelo",
+      "topic": "EXAM06",
+      "sourceId": "T01141"
+    },
+    {
+      "fi": "nielu",
+      "topic": "EXAM06",
+      "sourceId": "T01142"
+    },
+    {
+      "fi": "pallea",
+      "topic": "EXAM06",
+      "sourceId": "T00579"
+    },
+    {
+      "fi": "palleahengitys",
+      "topic": "EXAM06",
+      "sourceId": "T01151"
+    },
+    {
+      "fi": "SpO2",
+      "topic": "EXAM06",
+      "sourceId": "T00282"
+    },
+    {
+      "fi": "äänihuuli",
+      "topic": "EXAM06",
+      "sourceId": "T01144"
+    },
+    {
+      "fi": "kurkunkansi",
+      "topic": "EXAM06",
+      "sourceId": null
+    },
+    {
+      "fi": "haima",
+      "topic": "EXAM07",
+      "sourceId": "T00596"
+    },
+    {
+      "fi": "haimaneste",
+      "topic": "EXAM07",
+      "sourceId": "T01168"
+    },
+    {
+      "fi": "mahalaukku",
+      "topic": "EXAM07",
+      "sourceId": "T00589"
+    },
+    {
+      "fi": "mahalaukun limakalvo",
+      "topic": "EXAM07",
+      "sourceId": "T01160"
+    },
+    {
+      "fi": "maksa",
+      "topic": "EXAM07",
+      "sourceId": "T00594"
+    },
+    {
+      "fi": "ohutsuoli",
+      "topic": "EXAM07",
+      "sourceId": "T00591"
+    },
+    {
+      "fi": "paksusuoli",
+      "topic": "EXAM07",
+      "sourceId": "T00592"
+    },
+    {
+      "fi": "peräaukko",
+      "topic": "EXAM07",
+      "sourceId": "T01166"
+    },
+    {
+      "fi": "peräsuoli",
+      "topic": "EXAM07",
+      "sourceId": "T00593"
+    },
+    {
+      "fi": "pohjukaissuoli",
+      "topic": "EXAM07",
+      "sourceId": "T01161"
+    },
+    {
+      "fi": "proteiini",
+      "topic": "EXAM07",
+      "sourceId": "T00467"
+    },
+    {
+      "fi": "ravintoaine",
+      "topic": "EXAM07",
+      "sourceId": "T00464"
+    },
+    {
+      "fi": "ravintoaineiden imeytyminen",
+      "topic": "EXAM07",
+      "sourceId": "T01171"
+    },
+    {
+      "fi": "ruoansulatuselimistö",
+      "topic": "EXAM07",
+      "sourceId": "T01159"
+    },
+    {
+      "fi": "ruoansulatusentsyymi",
+      "topic": "EXAM07",
+      "sourceId": "T01169"
+    },
+    {
+      "fi": "ruokatorvi",
+      "topic": "EXAM07",
+      "sourceId": "T00590"
+    },
+    {
+      "fi": "sappirakko",
+      "topic": "EXAM07",
+      "sourceId": "T00595"
+    },
+    {
+      "fi": "sappitiehyt",
+      "topic": "EXAM07",
+      "sourceId": "T01167"
+    },
+    {
+      "fi": "suolinukka",
+      "topic": "EXAM07",
+      "sourceId": "T01170"
+    },
+    {
+      "fi": "sykkyräsuoli",
+      "topic": "EXAM07",
+      "sourceId": "T01163"
+    },
+    {
+      "fi": "tyhjäsuoli",
+      "topic": "EXAM07",
+      "sourceId": "T01162"
+    },
+    {
+      "fi": "umpilisäke",
+      "topic": "EXAM07",
+      "sourceId": "T01165"
+    },
+    {
+      "fi": "umpisuoli",
+      "topic": "EXAM07",
+      "sourceId": "T01164"
+    },
+    {
+      "fi": "ruoansulatus",
+      "topic": "EXAM07",
+      "sourceId": null
+    },
+    {
+      "fi": "alaonttolaskimo",
+      "topic": "EXAM08",
+      "sourceId": "T01077"
+    },
+    {
+      "fi": "alkuvirtsa",
+      "topic": "EXAM08",
+      "sourceId": "T01093"
+    },
+    {
+      "fi": "Bowmanin kotelo",
+      "topic": "EXAM08",
+      "sourceId": "T01083"
+    },
+    {
+      "fi": "Bowmanin kotelon sisempi lehti",
+      "topic": "EXAM08",
+      "sourceId": "T01094"
+    },
+    {
+      "fi": "Bowmanin kotelon ulompi lehti",
+      "topic": "EXAM08",
+      "sourceId": "T01095"
+    },
+    {
+      "fi": "Bowmanin ontelo",
+      "topic": "EXAM08",
+      "sourceId": "T01084"
+    },
+    {
+      "fi": "distaalinen kiemuratiehyt",
+      "topic": "EXAM08",
+      "sourceId": "T01089"
+    },
+    {
+      "fi": "eritys (tubulaarinen eritys)",
+      "topic": "EXAM08",
+      "sourceId": "T01065"
+    },
+    {
+      "fi": "glomerulussuodatus",
+      "topic": "EXAM08",
+      "sourceId": "T01073"
+    },
+    {
+      "fi": "Henlen linko",
+      "topic": "EXAM08",
+      "sourceId": "T01088"
+    },
+    {
+      "fi": "kokoojaputki",
+      "topic": "EXAM08",
+      "sourceId": "T01090"
+    },
+    {
+      "fi": "kuona-aine",
+      "topic": "EXAM08",
+      "sourceId": "T01068"
+    },
+    {
+      "fi": "munuainen",
+      "topic": "EXAM08",
+      "sourceId": "T00597"
+    },
+    {
+      "fi": "munuaisallas",
+      "topic": "EXAM08",
+      "sourceId": "T01057"
+    },
+    {
+      "fi": "munuaiset",
+      "topic": "EXAM08",
+      "sourceId": "T01056"
+    },
+    {
+      "fi": "munuaiskeränen (glomerulus)",
+      "topic": "EXAM08",
+      "sourceId": "T01082"
+    },
+    {
+      "fi": "munuaiskuori",
+      "topic": "EXAM08",
+      "sourceId": "T01079"
+    },
+    {
+      "fi": "munuaislaskimo",
+      "topic": "EXAM08",
+      "sourceId": "T01076"
+    },
+    {
+      "fi": "munuaispyramidi",
+      "topic": "EXAM08",
+      "sourceId": "T01081"
+    },
+    {
+      "fi": "munuaisten tehtävät",
+      "topic": "EXAM08",
+      "sourceId": "T01097"
+    },
+    {
+      "fi": "munuaistiehyt",
+      "topic": "EXAM08",
+      "sourceId": "T01092"
+    },
+    {
+      "fi": "munuaisvaltimo",
+      "topic": "EXAM08",
+      "sourceId": "T01075"
+    },
+    {
+      "fi": "munuaisydin",
+      "topic": "EXAM08",
+      "sourceId": "T01080"
+    },
+    {
+      "fi": "nefroni",
+      "topic": "EXAM08",
+      "sourceId": "T01058"
+    },
+    {
+      "fi": "neste",
+      "topic": "EXAM08",
+      "sourceId": "T00473"
+    },
+    {
+      "fi": "neste- ja suolatasapaino",
+      "topic": "EXAM08",
+      "sourceId": "T01069"
+    },
+    {
+      "fi": "nestetasapaino",
+      "topic": "EXAM08",
+      "sourceId": "T00475"
+    },
+    {
+      "fi": "peritubulaariset hiussuonet",
+      "topic": "EXAM08",
+      "sourceId": "T01091"
+    },
+    {
+      "fi": "proksimaalinen kiemuratiehyt",
+      "topic": "EXAM08",
+      "sourceId": "T01087"
+    },
+    {
+      "fi": "suodatus",
+      "topic": "EXAM08",
+      "sourceId": "T01063"
+    },
+    {
+      "fi": "takaisinimeytyminen",
+      "topic": "EXAM08",
+      "sourceId": "T01064"
+    },
+    {
+      "fi": "tubuluseritys",
+      "topic": "EXAM08",
+      "sourceId": "T01074"
+    },
+    {
+      "fi": "tuojasuoni",
+      "topic": "EXAM08",
+      "sourceId": "T01085"
+    },
+    {
+      "fi": "urea (virtsa-aine)",
+      "topic": "EXAM08",
+      "sourceId": "T01067"
+    },
+    {
+      "fi": "vatsa-aortta",
+      "topic": "EXAM08",
+      "sourceId": "T01078"
+    },
+    {
+      "fi": "viejäsuoni",
+      "topic": "EXAM08",
+      "sourceId": "T01086"
+    },
+    {
+      "fi": "virtsa",
+      "topic": "EXAM08",
+      "sourceId": "T00096"
+    },
+    {
+      "fi": "virtsaelimistö",
+      "topic": "EXAM08",
+      "sourceId": "T01054"
+    },
+    {
+      "fi": "virtsan kulkureitti",
+      "topic": "EXAM08",
+      "sourceId": "T01072"
+    },
+    {
+      "fi": "virtsan muodostuminen",
+      "topic": "EXAM08",
+      "sourceId": "T01062"
+    },
+    {
+      "fi": "virtsaneritys",
+      "topic": "EXAM08",
+      "sourceId": "T01071"
+    },
+    {
+      "fi": "virtsanjohdin",
+      "topic": "EXAM08",
+      "sourceId": "T00598"
+    },
+    {
+      "fi": "virtsaputki",
+      "topic": "EXAM08",
+      "sourceId": "T00105"
+    },
+    {
+      "fi": "virtsarakko",
+      "topic": "EXAM08",
+      "sourceId": "T00104"
+    },
+    {
+      "fi": "virtsatiet",
+      "topic": "EXAM08",
+      "sourceId": "T01055"
+    },
+    {
+      "fi": "virtsa-aine",
+      "topic": "EXAM08",
+      "sourceId": null
+    },
+    {
+      "fi": "ADH (antidiureettinen hormoni)",
+      "topic": "EXAM09",
+      "sourceId": "T01060"
+    },
+    {
+      "fi": "aivolisäke",
+      "topic": "EXAM09",
+      "sourceId": "T00607"
+    },
+    {
+      "fi": "aldosteroni",
+      "topic": "EXAM09",
+      "sourceId": "T01061"
+    },
+    {
+      "fi": "glukagoni",
+      "topic": "EXAM09",
+      "sourceId": "T01252"
+    },
+    {
+      "fi": "haiman saarekkeet",
+      "topic": "EXAM09",
+      "sourceId": "T01250"
+    },
+    {
+      "fi": "hypotalamus",
+      "topic": "EXAM09",
+      "sourceId": "T01246"
+    },
+    {
+      "fi": "insuliini",
+      "topic": "EXAM09",
+      "sourceId": "T01251"
+    },
+    {
+      "fi": "kilpirauhanen",
+      "topic": "EXAM09",
+      "sourceId": "T00605"
+    },
+    {
+      "fi": "kilpirauhashormoni",
+      "topic": "EXAM09",
+      "sourceId": "T01253"
+    },
+    {
+      "fi": "lisäkilpirauhanen",
+      "topic": "EXAM09",
+      "sourceId": "T01247"
+    },
+    {
+      "fi": "lisämunuainen",
+      "topic": "EXAM09",
+      "sourceId": "T00606"
+    },
+    {
+      "fi": "lisämunuaiskuori",
+      "topic": "EXAM09",
+      "sourceId": "T01248"
+    },
+    {
+      "fi": "lisämunuaisydin",
+      "topic": "EXAM09",
+      "sourceId": "T01249"
+    },
+    {
+      "fi": "umpieritysjärjestelmä",
+      "topic": "EXAM09",
+      "sourceId": "T01245"
+    },
+    {
+      "fi": "verensokeri",
+      "topic": "EXAM09",
+      "sourceId": "T00287"
+    },
+    {
+      "fi": "verensokerin säätely",
+      "topic": "EXAM09",
+      "sourceId": "T01254"
+    },
+    {
+      "fi": "aivokalvo",
+      "topic": "EXAM10",
+      "sourceId": "T01197"
+    },
+    {
+      "fi": "aivokuori",
+      "topic": "EXAM10",
+      "sourceId": "T01188"
+    },
+    {
+      "fi": "aivorunko",
+      "topic": "EXAM10",
+      "sourceId": "T01190"
+    },
+    {
+      "fi": "aksoni",
+      "topic": "EXAM10",
+      "sourceId": "T01193"
+    },
+    {
+      "fi": "autonominen hermosto",
+      "topic": "EXAM10",
+      "sourceId": "T01198"
+    },
+    {
+      "fi": "dendriitti",
+      "topic": "EXAM10",
+      "sourceId": "T01194"
+    },
+    {
+      "fi": "hermoimpulssi",
+      "topic": "EXAM10",
+      "sourceId": "T01195"
+    },
+    {
+      "fi": "hermosolu",
+      "topic": "EXAM10",
+      "sourceId": "T01192"
+    },
+    {
+      "fi": "hermosto",
+      "topic": "EXAM10",
+      "sourceId": "T00600"
+    },
+    {
+      "fi": "isoaivot",
+      "topic": "EXAM10",
+      "sourceId": "T01187"
+    },
+    {
+      "fi": "keskushermosto",
+      "topic": "EXAM10",
+      "sourceId": "T00601"
+    },
+    {
+      "fi": "kuulohermo",
+      "topic": "EXAM10",
+      "sourceId": "T01219"
+    },
+    {
+      "fi": "kuuloluut",
+      "topic": "EXAM10",
+      "sourceId": "T01217"
+    },
+    {
+      "fi": "kyynelrauhanen",
+      "topic": "EXAM10",
+      "sourceId": "T01212"
+    },
+    {
+      "fi": "mustuainen",
+      "topic": "EXAM10",
+      "sourceId": "T01207"
+    },
+    {
+      "fi": "mykiö",
+      "topic": "EXAM10",
+      "sourceId": "T01208"
+    },
+    {
+      "fi": "näköhermo",
+      "topic": "EXAM10",
+      "sourceId": "T01210"
+    },
+    {
+      "fi": "pikkuaivot",
+      "topic": "EXAM10",
+      "sourceId": "T01189"
+    },
+    {
+      "fi": "sarveiskalvo",
+      "topic": "EXAM10",
+      "sourceId": "T01205"
+    },
+    {
+      "fi": "selkäydin",
+      "topic": "EXAM10",
+      "sourceId": "T00599"
+    },
+    {
+      "fi": "silmänpaine",
+      "topic": "EXAM10",
+      "sourceId": "T01211"
+    },
+    {
+      "fi": "simpukka (korva)",
+      "topic": "EXAM10",
+      "sourceId": "T01218"
+    },
+    {
+      "fi": "sisäkorva",
+      "topic": "EXAM10",
+      "sourceId": "T01215"
+    },
+    {
+      "fi": "synapsi",
+      "topic": "EXAM10",
+      "sourceId": "T01196"
+    },
+    {
+      "fi": "tasapainoelin",
+      "topic": "EXAM10",
+      "sourceId": "T01220"
+    },
+    {
+      "fi": "tärykalvo",
+      "topic": "EXAM10",
+      "sourceId": "T01216"
+    },
+    {
+      "fi": "ulkokorva",
+      "topic": "EXAM10",
+      "sourceId": "T01213"
+    },
+    {
+      "fi": "verkkokalvo",
+      "topic": "EXAM10",
+      "sourceId": "T01209"
+    },
+    {
+      "fi": "välikorva",
+      "topic": "EXAM10",
+      "sourceId": "T01214"
+    },
+    {
+      "fi": "värikalvo",
+      "topic": "EXAM10",
+      "sourceId": "T01206"
+    },
+    {
+      "fi": "ydinjatke",
+      "topic": "EXAM10",
+      "sourceId": "T01191"
+    },
+    {
+      "fi": "ääreishermosto",
+      "topic": "EXAM10",
+      "sourceId": "T00602"
+    }
+  ],
+  "newMissingInPriorMain": [
+    "aineenvaihdunta",
+    "DNA",
+    "elimistö",
+    "homeostaasi",
+    "kromosomi",
+    "mitokondrio",
+    "perimäaine",
+    "ribosomi",
+    "soluelin",
+    "soluhengitys",
+    "solujen erilaistuminen",
+    "solulima",
+    "solutuma"
+  ]
+}
