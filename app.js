@@ -186,7 +186,112 @@
     root.innerHTML=s;
   }
 
-  function renderQuiz(){if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
+
+  function quizTopicPicker(){
+    return '<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+
+      selectCats(state.filter,'quiz-cat')+'</label></div></div>';
+  }
+  function matchNew(){
+    var topics=(D.examTopics||[]).filter(function(t){return state.filter==='all'||t.id===state.filter;});
+    shuffle(topics);
+    var chosen=null,words=[];
+    for(var i=0;i<topics.length;i++){
+      var id=topics[i].id,valid=D.terms.filter(function(x){
+        return x.examTopics&&x.examTopics.indexOf(id)>=0&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu;
+      });
+      if(valid.length>=4&&!state.matchSeen[id]){chosen=id;words=valid;break;}
+    }
+    if(!chosen){state.matchSeen={};for(var j=0;j<topics.length;j++){
+      var topicId=topics[j].id,items=D.terms.filter(function(x){
+        return x.examTopics&&x.examTopics.indexOf(topicId)>=0&&x.fi&&x.ru&&x.examNoteFi&&x.examNoteRu;
+      });
+      if(items.length>=4){chosen=topicId;words=items;break;}
+    }}
+    if(!chosen){state.matchQuestion=null;state.matchResult=null;return;}
+    shuffle(words);
+    var picked=words.slice(0,4);
+    var options=shuffle(picked.map(function(x){return x.fi;}));
+    state.matchQuestion={topic:chosen,items:picked,options:options};
+    state.matchSeen[chosen]=true;
+    state.matchResult=null;
+  }
+  function renderMatching(){
+    basePage('Проверь себя','Yhdistä oikeat parit / Соедини правильные пары.');
+    if(!state.matchQuestion)matchNew();
+    var q=state.matchQuestion;
+    var s=quizModeTabs()+quizTopicPicker()+'<div class="panel"><p class="hint">Yhdistä selitys ja termi / Подбери термин к определению.</p>';
+    if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
+    for(var i=0;i<q.items.length;i++){
+      var item=q.items[i],chosen=state.matchResult&&state.matchResult.selected[i]||'';
+      s+='<div class="form-row"><label class="field grow" for="match-'+i+'"><span lang="fi">'+safe(item.examNoteFi)+'</span></label>'+
+        '<select class="control" id="match-'+i+'" data-match-index="'+i+'" '+(state.matchResult?'disabled':'')+'>'+
+        '<option value="">— Valitse / Выбери —</option>';
+      for(var k=0;k<q.options.length;k++){
+        s+='<option value="'+safe(q.options[k])+'"'+(chosen===q.options[k]?' selected':'')+'>'+safe(q.options[k])+'</option>';
+      }
+      s+='</select></div>';
+      if(state.matchResult){
+        s+='<div class="answer '+(chosen===item.fi?'correct':'wrong')+'">'+
+          (chosen===item.fi?'✓ ':'✕ ')+'<b>Oikea pari / Правильная пара: '+safe(item.fi)+' — '+safe(item.ru)+'</b></div>'+
+          '<div class="exam-explain"><p><b>FI:</b> '+safe(item.examNoteFi)+'</p><p><b>RU:</b> '+safe(item.examNoteRu)+'</p></div>';
+      }
+    }
+    if(!state.matchResult)s+='<button class="btn primary" data-action="match-check">Tarkista / Проверить</button>';
+    else s+='<div class="answer '+(state.matchResult.count===q.items.length?'correct':'wrong')+'">'+
+      'Oikein / Правильно: '+state.matchResult.count+' / '+q.items.length+'</div>'+
+      '<button class="btn primary" data-action="match-next">Seuraava / Следующий →</button>';
+    root.innerHTML=s+'</div>';
+  }
+  function multiNew(){
+    var all=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
+    var groups={},topicIds=[];
+    for(var i=0;i<all.length;i++){
+      var x=all[i];
+      if(state.filter!=='all'&&x.topic!==state.filter)continue;
+      if(!groups[x.topic]){groups[x.topic]=[];topicIds.push(x.topic);}
+      groups[x.topic].push(x);
+    }
+    shuffle(topicIds);
+    var topic=null;
+    for(var j=0;j<topicIds.length;j++){
+      var id=topicIds[j],rows=groups[id];
+      if(!state.multiSeen[id]&&rows.length>=3&&rows.filter(function(x){return x.correct;}).length>=2&&rows.some(function(x){return !x.correct;})){topic=id;break;}
+    }
+    if(!topic){state.multiSeen={};for(var k=0;k<topicIds.length;k++){
+      var t=topicIds[k],q=groups[t];
+      if(q.length>=3&&q.filter(function(x){return x.correct;}).length>=2&&q.some(function(x){return !x.correct;})){topic=t;break;}
+    }}
+    state.multiQuestion=topic?{topic:topic,items:shuffle(groups[topic].slice())}:null;
+    if(topic)state.multiSeen[topic]=true;
+    state.multiResult=null;
+  }
+  function renderMulti(){
+    basePage('Проверь себя','Monivalinta / Отметь все верные утверждения.');
+    if(!state.multiQuestion)multiNew();
+    var q=state.multiQuestion;
+    var s=quizModeTabs()+quizTopicPicker()+'<div class="panel"><p class="hint">Valitse kaikki oikeat väitteet / Выбери ВСЕ верные утверждения.</p>';
+    if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
+    for(var i=0;i<q.items.length;i++){
+      var item=q.items[i],checked=state.multiResult&&state.multiResult.selected[i];
+      s+='<label class="field" style="display:block;margin:0 0 12px"><input type="checkbox" data-multi-index="'+i+'" '+
+        (checked?'checked ':'')+(state.multiResult?'disabled ':'')+'><span lang="fi"> '+safe(item.fi)+'</span></label>';
+      if(state.multiResult){
+        s+='<div class="answer '+(item.correct?'correct':'wrong')+'">'+
+          '<b>'+(item.correct?'Tosi / Верно':'Epätosi / Неверно')+'</b></div>';
+        if(!item.correct)s+='<div class="exam-explain"><p><b>Oikea väite / Правильное утверждение:</b></p>'+
+          '<p lang="fi"><b>FI:</b> '+safe(item.correctStatementFi)+'</p><p><b>RU:</b> '+safe(item.correctStatementRu)+'</p></div>';
+        s+='<div class="exam-explain"><p><b>FI:</b> '+safe(item.explanationFi)+'</p>'+
+          '<p><b>RU:</b> '+safe(item.explanationRu)+'</p></div>';
+      }
+    }
+    if(!state.multiResult)s+='<button class="btn primary" data-action="multi-check">Tarkista / Проверить</button>';
+    else s+='<div class="answer '+(state.multiResult.correct?'correct':'wrong')+'">'+
+      (state.multiResult.correct?'✓ Oikein / Все правильно':'✕ Ei aivan / Не все ответы правильные')+
+      '</div><button class="btn primary" data-action="multi-next">Seuraava / Следующий →</button>';
+    root.innerHTML=s+'</div>';
+  }
+
+  function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
     s+='<div class="panel"><p class="hint">Выбери перевод:</p><div class="flash-term">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
     s+='</div>';
