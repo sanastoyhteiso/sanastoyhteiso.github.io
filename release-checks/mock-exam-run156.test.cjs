@@ -139,3 +139,22 @@ test('ES5, cache rc25, exam nav, and all versioned scripts present',()=>{
  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\//g,''),/=>|\?\.|\bconst\b|\blet\b|fetch\s*\(|localStorage|firestore|firebase/i);
  assert.doesNotMatch(app,/=>|\?\./);
 });
+
+
+test('auto language picks site direction; exam direction stays fixed after first answer and refreshes only before start',()=>{
+ const b=browser();try{
+  b.d.querySelector('[data-view="exam"]').click();
+  b.lang('fi');
+  assert.equal(b.d.querySelector('#mock-dir').value,'auto');
+  let match=b.d.querySelectorAll('[data-mock-match]'),multi=b.d.querySelectorAll('[data-mock-multi]'),buttons=b.d.querySelectorAll('[data-action="mock-answer"]');
+  if(match.length){for(const x of match)x.value=x.options[1].value;b.d.querySelector('[data-action="mock-check"]').click();}
+  else if(multi.length){multi[0].checked=true;b.d.querySelector('[data-action="mock-check"]').click();}
+  else buttons[0].click();
+  const exactPage=b.d.querySelector('.exam-run-progress').textContent;
+  b.lang('en');
+  assert.equal(b.d.querySelector('.exam-run-progress').textContent,exactPage);
+  assert.ok(b.d.querySelector('[data-action="mock-next"]'),'language switch does not erase accepted exam answer');
+  b.d.querySelector('[data-action="mock-next"]').click();
+  assert.match(b.d.querySelector('.exam-run-progress').textContent,/2 \/ 40/);
+ }finally{b.close();}
+});
