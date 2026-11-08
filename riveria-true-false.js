@@ -19,7 +19,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Solukalvo säätelee aineiden kulkua soluun ja sieltä ulos.",
       "explanationRu": "Клеточная мембрана регулирует поступление веществ в клетку и выход из неё.",
-      "sourceFi": "solukalvo"
+      "sourceFi": "solukalvo",
+      "correctStatementFi": "Solukalvo säätelee sitä, mitä aineita soluun pääsee ja mitä aineita sieltä poistuu.",
+      "correctStatementRu": "Клеточная мембрана регулирует, какие вещества поступают в клетку и выходят из неё."
     },
     {
       "id": "TF0003",
@@ -46,7 +48,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Hikirauhanen erittää hikeä; talia erittää talirauhanen.",
       "explanationRu": "Потовая железа выделяет пот, а кожное сало выделяет сальная железа.",
-      "sourceFi": "hikirauhanen"
+      "sourceFi": "hikirauhanen",
+      "correctStatementFi": "Hikirauhanen viilentää kehoa erittämällä hikeä, ja talirauhanen erittää talia.",
+      "correctStatementRu": "Потовая железа охлаждает тело, выделяя пот, а сальная железа выделяет кожное сало."
     },
     {
       "id": "TF0006",
@@ -73,7 +77,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Värttinäluu on peukalon puolella; kyynärluu on pikkusormen puolella.",
       "explanationRu": "Лучевая кость находится со стороны большого пальца; локтевая — со стороны мизинца.",
-      "sourceFi": "värttinäluu"
+      "sourceFi": "värttinäluu",
+      "correctStatementFi": "Värttinäluu sijaitsee kyynärvarressa peukalon puolella.",
+      "correctStatementRu": "Лучевая кость находится в предплечье со стороны большого пальца."
     },
     {
       "id": "TF0009",
@@ -100,7 +106,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Verihiutaleet osallistuvat hyytymiseen; vasta-aineita tuottavat plasmasolut.",
       "explanationRu": "Тромбоциты участвуют в свёртывании крови; антитела вырабатывают плазматические клетки.",
-      "sourceFi": "verihiutale"
+      "sourceFi": "verihiutale",
+      "correctStatementFi": "Verihiutaleet osallistuvat veren hyytymiseen, ja plasmasolut tuottavat vasta-aineita.",
+      "correctStatementRu": "Тромбоциты участвуют в свёртывании крови, а плазматические клетки вырабатывают антитела."
     },
     {
       "id": "TF0012",
@@ -127,7 +135,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Laskimot tuovat verta kohti sydäntä; valtimot vievät verta sydämestä pois.",
       "explanationRu": "Вены несут кровь к сердцу, а артерии — от сердца.",
-      "sourceFi": "laskimo"
+      "sourceFi": "laskimo",
+      "correctStatementFi": "Laskimot kuljettavat verta kohti sydäntä, ja valtimot kuljettavat verta sydämestä pois.",
+      "correctStatementRu": "Вены несут кровь к сердцу, а артерии — от сердца."
     },
     {
       "id": "TF0015",
@@ -154,7 +164,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Pallea on lihas, joka erottaa rinta- ja vatsaontelon ja auttaa hengityksessä.",
       "explanationRu": "Диафрагма — мышца, отделяющая грудную и брюшную полости и участвующая в дыхании.",
-      "sourceFi": "pallea"
+      "sourceFi": "pallea",
+      "correctStatementFi": "Pallea on rinta- ja vatsaontelon erottava lihas, joka auttaa hengityksessä.",
+      "correctStatementRu": "Диафрагма — мышца, разделяющая грудную и брюшную полости и участвующая в дыхании."
     },
     {
       "id": "TF0018",
@@ -181,7 +193,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Maksa tuottaa sappea, ja sappirakko varastoi ja tiivistää sitä.",
       "explanationRu": "Желчь вырабатывается в печени; желчный пузырь её накапливает и концентрирует.",
-      "sourceFi": "sappirakko"
+      "sourceFi": "sappirakko",
+      "correctStatementFi": "Maksa tuottaa sappea, ja sappirakko varastoi ja tiivistää sitä.",
+      "correctStatementRu": "Печень вырабатывает желчь, а желчный пузырь её накапливает и концентрирует."
     },
     {
       "id": "TF0021",
@@ -208,7 +222,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Virtsanjohdin kuljettaa virtsan munuaisesta rakkoon. Virtsaputki johtaa virtsan rakosta ulos.",
       "explanationRu": "Мочеточник проводит мочу от почки к пузырю; мочеиспускательный канал — наружу.",
-      "sourceFi": "virtsanjohdin"
+      "sourceFi": "virtsanjohdin",
+      "correctStatementFi": "Virtsanjohdin kuljettaa virtsan munuaisesta virtsarakkoon, ja virtsaputki johtaa virtsan rakosta ulos.",
+      "correctStatementRu": "Мочеточник проводит мочу от почки к мочевому пузырю, а мочеиспускательный канал выводит мочу наружу."
     },
     {
       "id": "TF0024",
@@ -235,7 +251,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Glukagoni nostaa verensokeria, esimerkiksi ruokailujen välillä; insuliini laskee sitä.",
       "explanationRu": "Глюкагон повышает уровень сахара, в том числе между приёмами пищи; инсулин снижает.",
-      "sourceFi": "glukagoni"
+      "sourceFi": "glukagoni",
+      "correctStatementFi": "Glukagoni nostaa verensokeria erityisesti ruokailujen välillä tai paaston aikana.",
+      "correctStatementRu": "Глюкагон повышает уровень сахара в крови, особенно между приёмами пищи и во время голодания."
     },
     {
       "id": "TF0027",
@@ -262,7 +280,9 @@ window.RS_TRUE_FALSE={
       "correct": false,
       "explanationFi": "Ääreishermostoon kuuluvat keskushermoston ulkopuolella sijaitsevat hermot.",
       "explanationRu": "Периферическая нервная система включает нервы вне головного и спинного мозга.",
-      "sourceFi": "ääreishermosto"
+      "sourceFi": "ääreishermosto",
+      "correctStatementFi": "Ääreishermosto koostuu keskushermoston ulkopuolella sijaitsevista hermoista.",
+      "correctStatementRu": "Периферическая нервная система состоит из нервов, расположенных вне центральной нервной системы."
     },
     {
       "id": "TF0030",
