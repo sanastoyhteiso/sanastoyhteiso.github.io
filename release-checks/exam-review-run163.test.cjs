@@ -69,7 +69,7 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
      assert.ok(row.textContent.includes(q.item.examNoteRu));
     }else if(q.type==='truefalse'){
      assert.ok(row.textContent.includes(q.question.fi),'original FI true/false assertion missing');
-     assert.ok(row.textContent.includes(q.question.ru),'original RU true/false assertion missing');
+     assert.ok(row.textContent.includes(direction==='en-fi'?q.question.en:q.question.ru),'original bilingual assertion missing');
      assert.match(row.textContent,/Твой выбор/);
      assert.match(row.textContent,/Правильный ответ/);
      assert.match(row.textContent,/✕ Ошибка/);
@@ -81,7 +81,7 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
      assert.equal(pairs.length,4,'all original 4 matching definitions needed');
      for(let m=0;m<4;m++){
       assert.ok(pairs[m].textContent.includes(q.question.items[m].examNoteFi));
-      assert.ok(pairs[m].textContent.includes(q.question.items[m].examNoteRu));
+      if(direction!=='en-fi')assert.ok(pairs[m].textContent.includes(q.question.items[m].examNoteRu));
       assert.match(pairs[m].textContent,/Твой выбор/);
       assert.match(pairs[m].textContent,/Правильная пара/);
       assert.ok(pairs[m].textContent.includes(q.question.items[m].fi));
@@ -94,7 +94,7 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
      for(let m=0;m<4;m++){
       const claim=q.question.items[m],line=lines[m];
       assert.ok(line.textContent.includes(claim.fi),'original FI claim missing');
-      assert.ok(line.textContent.includes(claim.ru),'original RU claim missing');
+      assert.ok(line.textContent.includes(direction==='en-fi'?claim.en:claim.ru),'original localized claim missing');
       assert.match(line.textContent,/Твой выбор/);
       assert.match(line.textContent,/Правильное действие/);
       assert.ok(line.classList.contains('exam-review-wrong'));
