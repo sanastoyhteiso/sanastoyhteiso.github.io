@@ -145,8 +145,9 @@ test('private UI resumes after fresh browser from the same cloud account',async(
   assert.match(d.getElementById('main-content').textContent,/Проверяю облачную копию/);
   await new Promise(resolve=>setTimeout(resolve,40));
   assert.match(d.querySelector('.exam-run-progress').textContent,/15 \/ 40/);
-  assert.match(d.querySelector('.exam-autosave-ok').textContent,/Прогресс экзамена/);
-  assert.match(d.getElementById('main-content').textContent,/доступен на других устройствах/);
+  assert.match(d.querySelector('.exam-autosave-ok').textContent,/Экзамен сохраняется автоматически/);
+  assert.equal(d.querySelectorAll('.exam-autosave-ok').length,1,'exactly one green save banner');
+  assert.match(d.getElementById('main-content').textContent,/на всех устройствах/);
   const draft=JSON.parse(w.localStorage.getItem('test_alice__rs_mock_exam_progress_v1'));
   assert.equal(draft.run.answers.length,14);
   assert.equal(draft.run.index,14);
@@ -166,4 +167,32 @@ test('ES5, explicit private owner-only rules, no legacy score or Firebase tariff
  assert.ok(app.includes('mockCloudQueue()'));
  assert.ok(!client.includes('rs_scores_v1'));
  assert.ok(!client.includes('sync_v3/'));
+});
+
+
+test('RUN162: failed cloud sync shows one warning, not a misleading green save confirmation',async()=>{
+ const dom=new JSDOM('<!doctype html><html lang="ru"><body>'+
+  '<button data-view="cards">Cards</button><button data-view="exam">Exam</button>'+
+  '<h1 id="page-title"></h1><p id="page-subtitle"></p>'+
+  '<div id="online-status"></div><div id="storage-status"></div>'+
+  '<main id="main-content"></main><div id="toast"></div></body></html>',
+  {url:'https://sanastoyhteiso.github.io/',runScripts:'outside-only',pretendToBeVisual:true});
+ try{
+  const w=dom.window,d=w.document;
+  w.scrollTo=()=>{};w.Math.random=()=>0.38;
+  w.RS_FAMILY={uid:'test-user',storageKey:k=>'run162_'+k,sharedEnabled:()=>true};
+  w.RS_COMM={subscribedTerms:()=>[],renderUsers:()=>{},renderLibrary:()=>{}};
+  w.RS_I18N={getLanguage:()=> 'ru',category:(fi,ru)=>ru};
+  for(const file of ['data.js','riveria-anatomy-exam.js','riveria-true-false.js',
+   'exam-rounds-run155.js','mock-exam-run156.js'])w.eval(read(file));
+  w.RS_EXAM_CLOUD={sync:()=>Promise.reject(Object.assign(new Error('offline'),{code:'unavailable'}))};
+  w.eval(read('app.js'));d.dispatchEvent(new w.Event('DOMContentLoaded',{bubbles:true}));
+  d.querySelector('[data-view="exam"]').click();
+  await new Promise(resolve=>setTimeout(resolve,30));
+  assert.equal(d.querySelectorAll('.exam-autosave-warning').length,1);
+  assert.equal(d.querySelectorAll('.exam-autosave-ok').length,0);
+  assert.match(d.querySelector('.exam-autosave-warning').textContent,/только на этом устройстве/);
+  assert.ok(d.querySelector('[data-action="mock-cloud-retry"]'));
+  assert.match(d.querySelector('.exam-run-progress').textContent,/1 \/ 40/);
+ }finally{dom.window.close();}
 });
