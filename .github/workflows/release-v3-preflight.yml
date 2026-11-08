@@ -5,6 +5,7 @@ on:
       - 'index.html'
       - 'riveria-anatomy-exam.js'
       - 'app.js'
+      - 'study-diagnostics.js'
       - 'family.js'
       - 'community.js'
       - 'sw.js'
@@ -113,6 +114,8 @@ jobs:
         run: node --test release-checks/mock-exam-run156.test.cjs
       - name: RUN157 missing Exam mobile navigation and Tests shortcut
         run: node --test release-checks/exam-navigation-run157.test.cjs
+      - name: RUN167 preserve invalid/legacy exam storage across logout and login (offline)
+        run: node --test release-checks/exam-preservation-run167.test.cjs
       - name: RUN158-159 feedback correctness and exam autosave across reload
         run: node --test release-checks/exam-feedback-autosave-run158159.test.cjs
       - name: RUN161 private two-device mock exam sync synthetic tests (offline)
