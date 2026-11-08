@@ -463,17 +463,22 @@
   }
   function mockCloudMessage(){
     if(state.mockCloudStatus==='checking')return '<p class="exam-cloud-working">⏳ Сверяю облачную копию экзамена…</p>';
-    if(state.mockCloudStatus==='synced')return '<p class="exam-autosave-ok">✓ Экзамен сохранён в облаке для твоего аккаунта и доступен на других устройствах.</p>';
+    if(state.mockCloudStatus==='synced')return state.mockSaveOk?
+      '<p class="exam-autosave-ok exam-save-compact" role="status">✓ Экзамен сохраняется автоматически — на всех устройствах.</p>':
+      '<p class="exam-autosave-warning" role="alert">⚠ Облако работает, но локальное сохранение недоступно.</p>';
     if(state.mockCloudStatus==='conflict')return '<div class="exam-autosave-warning" role="alert"><b>Найдены две разные попытки экзамена.</b>'+
       '<p>Ни одна не перезаписана. Сейчас сохранена твоя локальная попытка.</p>'+
       '<button type="button" class="btn white" data-action="mock-cloud-use-remote">Продолжить облачную попытку (локальная будет сохранена отдельно)</button>'+
       '<button type="button" class="btn white" data-action="mock-cloud-keep-local">Остаться на этой попытке без облачной записи</button></div>';
     if(state.mockCloudStatus==='error'||state.mockCloudStatus==='reset-failed')
       return '<div class="exam-autosave-warning" role="alert">⚠ Облачная синхронизация не подтверждена: '+
-        safe(state.mockCloudError||'проверка недоступна')+'. Локальная попытка сохранена.'+
+        safe(state.mockCloudError||'проверка недоступна')+(state.mockSaveOk?'. Экзамен сохранён только на этом устройстве.':'. Локальное сохранение также недоступно.')+
         '<button type="button" class="btn white" data-action="mock-cloud-retry">Повторить облачную проверку</button></div>';
-    if(state.mockCloudStatus==='local-only')return '<p class="exam-autosave-warning">⚠ Для этой попытки выбрано только локальное сохранение.</p>';
-    return '<p class="hint">Проверка облачной копии начнётся при открытии экзамена.</p>';
+    if(state.mockCloudStatus==='local-only')return '<p class="exam-autosave-warning" role="status">'+
+      (state.mockSaveOk?'✓ Экзамен сохранён только на этом устройстве.':'⚠ Локальное сохранение недоступно.')+'</p>';
+    return state.mockSaveOk?
+      '<p class="exam-autosave-ok exam-save-compact" role="status">✓ Экзамен сохраняется на этом устройстве.</p>':
+      '<p class="exam-autosave-warning" role="alert">⚠ Автосохранение недоступно — не закрывай страницу.</p>';
   }
   function mockCloudErrorText(err){
     var code=String(err&&err.code||'');
@@ -645,8 +650,6 @@
     var s='<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+
       directionSelect('mock-dir',state.mockDirection,false)+'</label></div>'+
       '<p class="hint">Тренировочный экзамен, не официальная оценка Riveria. Один вопрос — максимум 1 балл. Ответы и правильные варианты показываются только в конце.</p>'+
-      (state.mockSaveOk?'<p class="exam-autosave-ok">✓ Прогресс экзамена сохраняется автоматически на этом устройстве. Можно вернуться к продолжению.</p>':
-       '<p class="exam-autosave-warning" role="alert">⚠ Автосохранение недоступно. Если закрыть страницу, ответы могут потеряться.</p>')+
       mockCloudMessage()+'</div>';
     if(run.index>=n){
       var report=window.RS_MOCK_EXAM.report(run);
