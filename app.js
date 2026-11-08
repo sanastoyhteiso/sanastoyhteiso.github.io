@@ -5,7 +5,7 @@
   'use strict';
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
-  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true,
+  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true, mockAttemptId:null, mockCloudStatus:'unchecked', mockCloudBusy:false, mockCloudError:'', mockCloudConflict:null, mockCloudPending:false, mockCloudSerial:0,
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
   function byId(id){return document.getElementById(id);}
@@ -433,7 +433,7 @@
     if(!key){state.mockSaveOk=false;return false;}
     try{
       window.localStorage.setItem(key,JSON.stringify({schema:1,choice:state.mockDirection,
-        run:state.mockRun}));
+        attemptId:state.mockAttemptId,run:state.mockRun}));
       state.mockSaveOk=true;return true;
     }catch(e){state.mockSaveOk=false;return false;}
   }
@@ -442,12 +442,145 @@
     if(!key)return;
     try{window.localStorage.removeItem(key);state.mockSaveOk=true;}catch(e){state.mockSaveOk=false;}
   }
+  var mockCloudTimer=null;
+  function mockDraft(){
+    return {schema:1,choice:state.mockDirection,attemptId:state.mockAttemptId,
+      run:state.mockRun};
+  }
+  function mockArchiveCopy(draft){
+    if(!draft||!draft.run||!draft.run.answers||!draft.run.answers.length)return;
+    var k=null;
+    try{
+      k=window.RS_FAMILY&&window.RS_FAMILY.storageKey('rs_mock_exam_cloud_archive_v1');
+      if(!k)return;
+      var saved=JSON.parse(window.localStorage.getItem(k)||'[]');
+      if(!Array.isArray(saved))saved=[];
+      var old=JSON.stringify(draft),found=false;
+      for(var i=0;i<saved.length;i++){if(JSON.stringify(saved[i])===old)found=true;}
+      if(!found){saved.push(draft);if(saved.length>4)saved=saved.slice(-4);
+        window.localStorage.setItem(k,JSON.stringify(saved));}
+    }catch(e){/* No private user data is logged. Local current attempt remains intact. */}
+  }
+  function mockCloudMessage(){
+    if(state.mockCloudStatus==='checking')return '<p class="exam-cloud-working">⏳ Сверяю облачную копию экзамена…</p>';
+    if(state.mockCloudStatus==='synced')return '<p class="exam-autosave-ok">✓ Экзамен сохранён в облаке для твоего аккаунта и доступен на других устройствах.</p>';
+    if(state.mockCloudStatus==='conflict')return '<div class="exam-autosave-warning" role="alert"><b>Найдены две разные попытки экзамена.</b>'+
+      '<p>Ни одна не перезаписана. Сейчас сохранена твоя локальная попытка.</p>'+
+      '<button type="button" class="btn white" data-action="mock-cloud-use-remote">Продолжить облачную попытку (локальная будет сохранена отдельно)</button>'+
+      '<button type="button" class="btn white" data-action="mock-cloud-keep-local">Остаться на этой попытке без облачной записи</button></div>';
+    if(state.mockCloudStatus==='error'||state.mockCloudStatus==='reset-failed')
+      return '<div class="exam-autosave-warning" role="alert">⚠ Облачная синхронизация не подтверждена: '+
+        safe(state.mockCloudError||'проверка недоступна')+'. Локальная попытка сохранена.'+
+        '<button type="button" class="btn white" data-action="mock-cloud-retry">Повторить облачную проверку</button></div>';
+    if(state.mockCloudStatus==='local-only')return '<p class="exam-autosave-warning">⚠ Для этой попытки выбрано только локальное сохранение.</p>';
+    return '<p class="hint">Проверка облачной копии начнётся при открытии экзамена.</p>';
+  }
+  function mockCloudErrorText(err){
+    var code=String(err&&err.code||'');
+    if(code==='auth-required'||code==='verify-email')return 'нужен вход в подтверждённый Google-аккаунт';
+    if(code==='permission-denied')return 'сервер не разрешил доступ к частному документу (Firestore Rules ещё не включены)';
+    if(code==='offline'||code==='unavailable')return 'нет связи с облаком';
+    if(code==='cloud-invalid')return 'облачная копия имеет неподдерживаемый формат';
+    if(code==='snapshot-too-large')return 'размер экзамена превышает установленный лимит';
+    return 'облачный сервер недоступен';
+  }
+  function mockCloudApply(result,originalDraft){
+    if(!result||!result.kind)return;
+    if(result.kind==='conflict'){
+      state.mockCloudConflict=result;
+      state.mockCloudStatus='conflict';
+      return;
+    }
+    if(result.kind==='downloaded'){
+      var now=mockDraft(),choice=window.RS_EXAM_CLOUD.choose(now,result.draft);
+      if(choice.kind==='conflict'){
+        state.mockCloudConflict={local:now,cloud:result.draft};
+        state.mockCloudStatus='conflict';return;
+      }
+      if(choice.kind==='download'||choice.kind==='equal'){
+        // Archive the old nonempty local attempt before replacing with a longer server copy.
+        mockArchiveCopy(now);
+        state.mockRun=result.draft.run;
+        state.mockDirection=result.draft.choice;
+        state.mockAttemptId=result.draft.attemptId||null;
+        mockSaveDraft();
+      }else if(choice.kind==='upload'){
+        state.mockCloudPending=true;
+      }
+    }else if(result.kind==='uploaded'||result.kind==='reset'){
+      if(state.mockRun===originalDraft.run){
+        state.mockAttemptId=result.draft.attemptId;
+        mockSaveDraft();
+      }else state.mockCloudPending=true;
+    }else if(result.kind==='synced'&&result.draft){
+      state.mockAttemptId=result.draft.attemptId||state.mockAttemptId;
+      mockSaveDraft();
+    }
+    state.mockCloudStatus='synced';
+    state.mockCloudError='';
+  }
+  function mockCloudSync(force){
+    if(!window.RS_EXAM_CLOUD||!state.mockRun||state.mockCloudBusy||
+       state.mockCloudStatus==='conflict'||state.mockCloudStatus==='local-only'||
+       state.mockCloudStatus==='reset-failed')return;
+    var uid=window.RS_FAMILY&&window.RS_FAMILY.uid,serial=++state.mockCloudSerial;
+    var draft=mockDraft();
+    state.mockCloudPending=false;
+    state.mockCloudBusy=true;
+    state.mockCloudStatus='checking';
+    window.RS_EXAM_CLOUD.sync(draft,mockValidDraft).then(function(result){
+      if(serial!==state.mockCloudSerial||uid!==(window.RS_FAMILY&&window.RS_FAMILY.uid))return;
+      mockCloudApply(result,draft);
+    }).catch(function(err){
+      if(serial!==state.mockCloudSerial)return;
+      state.mockCloudStatus='error';
+      state.mockCloudError=mockCloudErrorText(err);
+    }).then(function(){
+      if(serial!==state.mockCloudSerial)return;
+      state.mockCloudBusy=false;
+      if(state.view==='exam')renderMockExam();
+      if(state.mockCloudPending&&state.mockCloudStatus==='synced'){
+        state.mockCloudPending=false;
+        mockCloudQueue();
+      }
+    });
+  }
+  function mockCloudQueue(){
+    if(state.mockCloudStatus==='conflict'||state.mockCloudStatus==='local-only'||
+      state.mockCloudStatus==='reset-failed')return;
+    state.mockCloudPending=true;
+    if(state.mockCloudBusy)return;
+    if(mockCloudTimer)clearTimeout(mockCloudTimer);
+    mockCloudTimer=setTimeout(function(){
+      mockCloudTimer=null;
+      if(state.mockCloudPending)mockCloudSync(false);
+    },450);
+  }
+  function mockCloudRestart(){
+    if(!window.RS_EXAM_CLOUD)return;
+    var uid=window.RS_FAMILY&&window.RS_FAMILY.uid,serial=++state.mockCloudSerial;
+    var draft=mockDraft();
+    state.mockCloudBusy=true;state.mockCloudStatus='checking';
+    window.RS_EXAM_CLOUD.reset(draft,mockValidDraft).then(function(result){
+      if(serial!==state.mockCloudSerial||uid!==(window.RS_FAMILY&&window.RS_FAMILY.uid))return;
+      mockCloudApply(result,draft);
+    }).catch(function(err){
+      if(serial!==state.mockCloudSerial)return;
+      state.mockCloudStatus='reset-failed';
+      state.mockCloudError=mockCloudErrorText(err);
+    }).then(function(){
+      if(serial!==state.mockCloudSerial)return;
+      state.mockCloudBusy=false;if(state.view==='exam')renderMockExam();
+    });
+  }
+
   function mockInit(){
     if(state.mockRun)return state.mockRun;
     var stored=mockReadDraft();
     if(stored){
       state.mockDirection=stored.choice;
       state.mockRun=stored.run;
+      state.mockAttemptId=stored.attemptId||null;
       return state.mockRun;
     }
     var dir=direction(state.mockDirection),bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[],
@@ -503,11 +636,18 @@
     basePage('Экзамен / Koe / Exam','40 перемешанных заданий из всех десяти тем. Порог сдачи 80% (32 из 40).');
     var run=mockInit(),n=run.questions.length,p=examDisplayPair();
     if(n!==40){root.innerHTML='<div class="panel">Не удалось подготовить 40 проверяемых вопросов. Учебные данные не изменены.</div>';return;}
+    if(state.mockCloudStatus==='unchecked')mockCloudSync(true);
+    if(state.mockCloudBusy&&state.mockCloudStatus==='checking'){
+      root.innerHTML='<div class="panel"><h3>Проверяю облачную копию экзамена</h3>'+
+        '<p>Сейчас твоя локальная попытка защищена от перезаписи. '+safe('Ожидание подтверждения облака.')+'</p></div>';
+      return;
+    }
     var s='<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+
       directionSelect('mock-dir',state.mockDirection,false)+'</label></div>'+
       '<p class="hint">Тренировочный экзамен, не официальная оценка Riveria. Один вопрос — максимум 1 балл. Ответы и правильные варианты показываются только в конце.</p>'+
       (state.mockSaveOk?'<p class="exam-autosave-ok">✓ Прогресс экзамена сохраняется автоматически на этом устройстве. Можно вернуться к продолжению.</p>':
-       '<p class="exam-autosave-warning" role="alert">⚠ Автосохранение недоступно. Если закрыть страницу, ответы могут потеряться.</p>')+'</div>';
+       '<p class="exam-autosave-warning" role="alert">⚠ Автосохранение недоступно. Если закрыть страницу, ответы могут потеряться.</p>')+
+      mockCloudMessage()+'</div>';
     if(run.index>=n){
       var report=window.RS_MOCK_EXAM.report(run);
       s+='<div class="panel exam-run-done"><h2>'+(report.passed?'✓ Сдано / Hyväksytty':'✕ Не сдано / Hylätty')+'</h2>'+
@@ -579,6 +719,7 @@
     if(!gradeResult)return;
     run.answers[run.index]=gradeResult;
     mockSaveDraft();
+    mockCloudQueue();
     renderMockExam();
   }
   function mockValidateAndSubmit(){
@@ -703,8 +844,27 @@
       else if(q.type==='truefalse'&&(choice==='true'||choice==='false'))mockSubmit(choice==='true');
     }
     else if(action==='mock-check'){mockValidateAndSubmit();}
-    else if(action==='mock-next'){var er=mockInit();if(er.answers[er.index]){er.index++;mockSaveDraft();renderMockExam();}}
-    else if(action==='mock-restart'){mockClearDraft();state.mockRun=null;renderMockExam();}
+    else if(action==='mock-next'){var er=mockInit();if(er.answers[er.index]){er.index++;mockSaveDraft();mockCloudQueue();renderMockExam();}}
+    else if(action==='mock-restart'){
+      mockArchiveCopy(mockDraft());mockClearDraft();state.mockRun=null;state.mockAttemptId=null;
+      state.mockCloudConflict=null;state.mockCloudStatus='starting-new';mockInit();mockCloudRestart();renderMockExam();
+    }
+    else if(action==='mock-cloud-retry'){
+      if(state.mockCloudStatus==='reset-failed')mockCloudRestart();
+      else {state.mockCloudStatus='unchecked';renderMockExam();}
+    }
+    else if(action==='mock-cloud-use-remote'){
+      var conflict=state.mockCloudConflict;
+      if(conflict&&conflict.cloud&&mockValidDraft(conflict.cloud)){
+        mockArchiveCopy(mockDraft());
+        state.mockRun=conflict.cloud.run;state.mockDirection=conflict.cloud.choice;
+        state.mockAttemptId=conflict.cloud.attemptId||null;
+        state.mockCloudConflict=null;state.mockCloudStatus='synced';mockSaveDraft();renderMockExam();
+      }
+    }
+    else if(action==='mock-cloud-keep-local'){
+      state.mockCloudConflict=null;state.mockCloudStatus='local-only';renderMockExam();
+    }
     else if(action==='quiz-mode'){if(['translate','truefalse','matching','multiselect'].indexOf(choice)>=0){
       state.quizMode=choice;if(choice!=='translate'&&state.filter!=='all'&&!isExamTopic(state.filter))state.filter='all';state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
     else if(action==='exam-restart'){examRestart(state.quizMode);}
@@ -741,10 +901,10 @@
     else if(action==='export-json'){exportJson();}
     else if(action==='export-tsv'){exportTsv();}
   });
-  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='mock-dir'){var er=mockInit();if(er.answers.length===0){mockClearDraft();state.mockDirection=e.target.value;state.mockRun=null;}else{toast('Направление фиксируется после первого ответа. Для изменения начни новый экзамен.');}renderMockExam();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
+  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='mock-dir'){var er=mockInit();if(er.answers.length===0){mockClearDraft();state.mockDirection=e.target.value;state.mockRun=null;state.mockAttemptId=null;mockInit();mockCloudRestart();}else{toast('Направление фиксируется после первого ответа. Для изменения начни новый экзамен.');}renderMockExam();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
   document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
   document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
-  window.addEventListener('online',setStatus);window.addEventListener('offline',setStatus);
+  window.addEventListener('online',function(){setStatus();if(state.view==='exam'&&state.mockRun&&state.mockCloudStatus!=='conflict'){state.mockCloudStatus='unchecked';renderMockExam();}});window.addEventListener('offline',setStatus);
   window.addEventListener('error',function(e){var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';});
   if(!D||!D.terms||!D.scenarios){root.innerHTML='<div class="panel"><h2>Не удалось открыть базу</h2><p>Проверь, что файл data.js загружен рядом с приложением. Если интернет отключён, открой сайт онлайн один раз для установки офлайн-кэша.</p></div>';return;}
   window.RS_APP_LOCALE=function(){
@@ -763,7 +923,7 @@
     // Resetting a shuffled deck here skips a visible card after Know/Repeat.
     // A real account switch still explicitly requests the full reset.
     if(reset){
-      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.mockRun=null;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
+      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.mockRun=null;state.mockAttemptId=null;state.mockCloudSerial++;state.mockCloudStatus='unchecked';state.mockCloudConflict=null;state.mockCloudPending=false;state.mockCloudBusy=false;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();
