@@ -80,7 +80,7 @@ test('diagnostics ignore failed resources while recording genuine runtime errors
  listeners.error[0]({target:{tagName:'IMG'}});
  listeners.error[0]({target:{tagName:'SCRIPT'}});
  assert.equal(api.entries().length,0,'resource loading is not proof of app render failure');
- listeners.error[0]({target:ctx});
+ listeners.error[0]({}); // synthetic runtime event without resource target
  assert.equal(api.entries().length,1);
  assert.equal(api.entries()[0].code,'APP_RENDER_FAILED');
  assert.ok(!JSON.stringify(stored).includes('IMG'));
