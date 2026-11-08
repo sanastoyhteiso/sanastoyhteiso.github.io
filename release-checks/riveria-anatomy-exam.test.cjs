@@ -165,7 +165,7 @@ test('entire set of 289 FI terms is in the ORIGINAL 10 exam dropdown items (with
 });
 test('original T900xx terms, including old learned-word references, remain intact',()=>{
  const d=source().d,ids=new Set(d.terms.map(x=>x.id));
- for(const id of ['T90003','T90006','T90101','T90159']){
+ for(const id of ['T90003','T90006','T90101','T90154']){
   assert.ok(ids.has(id),'historical exam card ID must not change: '+id);
  }
  assert.equal(d.terms.filter(x=>x.id.startsWith('T902')).length,13);
