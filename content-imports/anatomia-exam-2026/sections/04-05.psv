@@ -1,0 +1,42 @@
+veri|sanguis|Veri kuljettaa happea, ravintoaineita ja kuona-aineita sekä osallistuu puolustukseen.|Кровь переносит кислород, питательные вещества и продукты обмена, а также участвует в защите организма.
+veriplasma|plasma sanguinis|Veriplasma on veren nestemäinen osa, jossa kulkee liuenneita aineita.|Плазма — жидкая часть крови, по которой переносятся растворённые вещества.
+punasolu|erythrocytus|Punasolut sisältävät hemoglobiinia ja kuljettavat happea.|Эритроциты содержат гемоглобин и переносят кислород.
+valkosolu|leucocytus|Valkosolut tunnistavat ja torjuvat taudinaiheuttajia.|Лейкоциты распознают возбудителей болезней и защищают от них организм.
+verihiutale|thrombocytus|Verihiutaleet osallistuvat verenvuodon tyrehdyttämiseen ja hyytymän muodostumiseen.|Тромбоциты помогают останавливать кровотечение и образовывать сгусток.
+imusuonisto|systema lymphaticum|Imusuonisto palauttaa kudosnestettä verenkiertoon ja tukee immuunipuolustusta.|Лимфатическая система возвращает тканевую жидкость в кровь и участвует в иммунной защите.
+perna|lien|Perna suodattaa verta ja osallistuu immuunipuolustukseen sekä vanhojen punasolujen poistamiseen.|Селезёнка фильтрует кровь, участвует в иммунитете и удалении старых эритроцитов.
+hemoglobiini|haemoglobinum|Hemoglobiini on punasolun proteiini, joka sitoo ja kuljettaa happea.|Гемоглобин — белок эритроцитов, связывающий и переносящий кислород.
+imuneste|lympha|Imuneste on imusuonissa kulkeva neste, joka palautuu lopulta verenkiertoon.|Лимфа — жидкость лимфатических сосудов, которая затем возвращается в кровоток.
+imusuoni|vas lymphaticum|Imusuoni kuljettaa imunestettä kudoksista kohti suurempia imuteitä.|Лимфатический сосуд отводит лимфу от тканей к более крупным лимфатическим протокам.
+kateenkorva|thymus|Kateenkorvassa T-lymfosyytit kypsyvät erityisesti lapsuudessa.|В тимусе созревают Т-лимфоциты, особенно активно в детстве.
+vasta-aine|immunoglobulinum|Vasta-aine on proteiini, joka tunnistaa tietyn antigeenin.|Антитело — белок, распознающий определённый антиген.
+verenpaine|pressio sanguinis|Verenpaine on veren aiheuttama paine valtimon seinämää vasten.|Артериальное давление — давление крови на стенки артерий.
+systolinen verenpaine|pressio sanguinis systolica|Systolinen paine on valtimon korkeampi paine sydämen supistuessa.|Систолическое давление — более высокое давление в артериях при сокращении сердца.
+diastolinen verenpaine|pressio sanguinis diastolica|Diastolinen paine on valtimon alempi paine sydämen rentoutuessa.|Диастолическое давление — более низкое давление в артериях при расслаблении сердца.
+pulssi|pulsus|Pulssi on sydämen pumppauksen synnyttämä valtimon paineaalto, jonka voi tuntea iholta.|Пульс — волна давления в артерии от сердечных сокращений, которую можно прощупать.
+syke|frequentia cardiaca|Syke kuvaa sydämen lyöntien määrää aikayksikössä.|Частота сердечных сокращений показывает, сколько раз сердце сокращается за единицу времени.
+syketaajuus|frequentia cardiaca|Syketaajuus ilmoitetaan tavallisesti lyönteinä minuutissa.|Частота пульса обычно выражается количеством ударов в минуту.
+verenkierto|circulatio|Verenkierto kuljettaa verta sydämen, keuhkojen ja kudosten välillä.|Кровообращение обеспечивает движение крови между сердцем, лёгкими и тканями.
+sydän|cor|Sydän on lihaksikas pumppu, joka työntää verta keuhkoihin ja kaikkialle kehoon.|Сердце — мышечный насос, направляющий кровь в лёгкие и по всему организму.
+verenkiertoelimistö|systema cardiovasculare|Verenkiertoelimistöön kuuluvat sydän ja verisuonet.|Сердечно-сосудистая система состоит из сердца и кровеносных сосудов.
+valtimo|arteria|Valtimo vie verta sydämestä poispäin; happipitoisuus vaihtelee verenkierron osan mukaan.|Артерия несёт кровь от сердца; содержание кислорода зависит от круга кровообращения.
+laskimo|vena|Laskimo kuljettaa verta sydäntä kohti; siinä on usein takaisinvirtausta estäviä läppiä.|Вена несёт кровь к сердцу; многие вены имеют клапаны против обратного тока.
+hiussuoni|vas capillare|Hiussuonen ohuen seinämän läpi vaihtuvat kaasut ja ravintoaineet.|Через тонкую стенку капилляра обмениваются газы и питательные вещества.
+sydämen oikea eteinen|atrium dextrum|Oikea eteinen vastaanottaa vähähappista verta ylä- ja alaonttolaskimosta.|Правое предсердие принимает венозную кровь из верхней и нижней полых вен.
+sydämen vasen eteinen|atrium sinistrum|Vasen eteinen vastaanottaa keuhkoista tulevaa happirikasta verta.|Левое предсердие принимает насыщенную кислородом кровь из лёгких.
+sydämen oikea kammio|ventriculus dexter|Oikea kammio pumppaa veren keuhkovaltimorunkoon ja keuhkoihin.|Правый желудочек направляет кровь через лёгочный ствол к лёгким.
+sydämen vasen kammio|ventriculus sinister|Vasen kammio pumppaa veren aorttaan ja koko elimistöön.|Левый желудочек выбрасывает кровь в аорту для снабжения всего организма.
+sydämen väliseinä|septum cordis|Väliseinä erottaa sydämen oikean ja vasemman puolen.|Перегородка разделяет правую и левую половины сердца.
+hiippaläppä|valva mitralis|Hiippaläppä on vasemman eteisen ja kammion välissä ja estää veren takaisinvirtauksen.|Митральный клапан между левым предсердием и желудочком препятствует обратному току крови.
+kolmiliuskaläppä|valva tricuspidalis|Kolmiliuskaläppä erottaa oikean eteisen ja kammion.|Трёхстворчатый клапан расположен между правым предсердием и желудочком.
+aorttaläppä|valva aortae|Aorttaläppä estää veren palaamisen aortasta vasempaan kammioon.|Аортальный клапан препятствует возврату крови из аорты в левый желудочек.
+keuhkovaltimoläppä|valva trunci pulmonalis|Keuhkovaltimoläppä estää veren takaisinvirtauksen keuhkovaltimorungosta oikeaan kammioon.|Клапан лёгочного ствола препятствует возврату крови в правый желудочек.
+sepelvaltimo|arteria coronaria|Sepelvaltimot tuovat happea ja ravinteita sydänlihakselle.|Коронарные артерии снабжают сердечную мышцу кислородом и питательными веществами.
+sydänlihas|myocardium|Sydänlihas supistuu rytmisesti ja saa sydämen pumppaamaan verta.|Миокард ритмично сокращается и обеспечивает насосную работу сердца.
+sydänpussi|pericardium|Sydänpussi ympäröi sydäntä ja vähentää kitkaa sydämen liikkuessa.|Перикард окружает сердце и уменьшает трение при его движениях.
+sydämen johtoratajärjestelmä|systema conducens cordis|Johtoratajärjestelmä välittää sähköiset impulssit ja järjestää sydämen supistukset.|Проводящая система распространяет электрические импульсы и координирует сокращения сердца.
+sinussolmuke|nodus sinuatrialis|Sinussolmuke käynnistää normaalin sydämen sykkeen.|Синусовый узел обычно задаёт нормальный ритм сердца.
+pieni verenkierto|circulatio pulmonalis|Pieni verenkierto vie verta oikeasta kammiosta keuhkoihin ja vasempaan eteiseen.|Малый круг ведёт кровь из правого желудочка через лёгкие в левое предсердие.
+suuri verenkierto|circulatio systemica|Suuri verenkierto vie verta vasemmasta kammiosta kudoksiin ja takaisin oikeaan eteiseen.|Большой круг ведёт кровь из левого желудочка к тканям и возвращает её в правое предсердие.
+hiussuoniverkosto|rete capillare|Hiussuoniverkosto on kudosten pienistä suonista muodostuva vaihtopinta.|Капиллярная сеть — множество мелких сосудов, через которые происходит обмен с тканями.
+aortta|aorta|Aortta on suuri valtimo, joka lähtee sydämen vasemmasta kammiosta.|Аорта — крупнейшая артерия, выходящая из левого желудочка сердца.
