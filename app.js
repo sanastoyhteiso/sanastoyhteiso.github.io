@@ -7,7 +7,7 @@
   var root = document.getElementById('main-content');
   var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true, mockAttemptId:null, mockCloudStatus:'unchecked', mockCloudBusy:false, mockCloudError:'', mockCloudConflict:null, mockCloudPending:false, mockCloudSerial:0,
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
-    userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
+    userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:'',latinOnly:false,latinReturnDirection:'auto'};
   function byId(id){return document.getElementById(id);}
   function safe(v){return String(v===undefined||v===null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
   function clean(v){return String(v||'').toLocaleLowerCase().replace(/ё/g,'е').replace(/[.,:;!?()\[\]{}«»"']/g,' ').replace(/\s+/g,' ').replace(/^\s+|\s+$/g,'');}
@@ -78,7 +78,9 @@
   function pair(which){var p=direction(which).split('-');return {from:p[0],to:p[1]};}
   function word(x,field){var z=x&&x[field];return typeof z==='string'?z.trim():'';}
   function eligible(x,which){var p=pair(which);return !!(word(x,p.from)&&word(x,p.to));}
-  function directionSelect(id,current,allowAll){var opts=[['auto','Автоматически (по языку сайта)'],['fi-ru','Финский → русский'],['ru-fi','Русский → финский'],['fi-en','Финский → английский'],['en-fi','Английский → финский']];
+  function directionSelect(id,current,allowAll,withLatin){var opts=[['auto','Автоматически (по языку сайта)'],['fi-ru','Финский → русский'],['ru-fi','Русский → финский'],['fi-en','Финский → английский'],['en-fi','Английский → финский']];
+    if(withLatin)opts=opts.concat([['la-fi','Латынь → финский'],['la-ru','Латынь → русский'],['la-en','Латынь → английский'],
+      ['fi-la','Финский → латынь'],['ru-la','Русский → латынь'],['en-la','Английский → латынь']]);
     if(allowAll)opts.unshift(['all','Все три языка (FI / RU / EN)']);
     var h='<select id="'+id+'" class="control">';for(var i=0;i<opts.length;i++)h+='<option value="'+opts[i][0]+'"'+(current===opts[i][0]?' selected':'')+'>'+safe(opts[i][1])+'</option>';return h+'</select>';
   }
@@ -96,7 +98,7 @@
     return h+'</div>';
   }
   function directionNotice(which){if(allTerms().some(function(x){return eligible(x,which);}))return '';return '<div class="notice">Для выбранного направления пока нет переводов. Выбери другое направление.</div>';}
-  function cardPool(mode){var base=allTerms().concat(sharedEnabled()?D.phrases:[]);var out=[];for(var i=0;i<base.length;i++){var x=base[i];if(!matchCat(x,state.filter))continue;if(state.extraSearch&&!state.favorites[x.id])continue;if(!eligible(x,state.direction))continue;if(mode==='review'?!isLearned(x.id):isLearned(x.id))continue;out.push(x);}return out;}
+  function cardPool(mode){var base=allTerms().concat(sharedEnabled()?D.phrases:[]);var out=[];for(var i=0;i<base.length;i++){var x=base[i];if(!matchCat(x,state.filter))continue;if(state.extraSearch&&!state.favorites[x.id])continue;if(state.latinOnly&&!word(x,'la'))continue;if(!eligible(x,state.direction))continue;if(mode==='review'?!isLearned(x.id):isLearned(x.id))continue;out.push(x);}return out;}
   function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
   function ensureDeck(reset){if(reset||!state.deck.length){var items=cardPool(state.reviewLearned?'review':'study').filter(function(x){return !state.sessionSeen[x.id];});shuffle(items);state.deck=items.slice(0,Math.min(state.cardsCount,items.length));state.cardIndex=0;state.flipped=false;}}
   function numberLearned(){var n=0,valid={};allTerms().concat(sharedEnabled()?D.phrases:[]).forEach(function(x){valid[x.id]=1;});Object.keys(state.scores).forEach(function(k){if(valid[k]&&isLearned(k))n++;});return n;}
@@ -120,7 +122,7 @@
   function render(){setStatus();document.querySelectorAll('[data-view]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-view')===state.view || (state.view==='add'||state.view==='backup')&&b.getAttribute('data-view')==='more');});if(state.view==='users'){basePage('Пользователи','Добровольно открытые показатели прогресса.');if(window.RS_COMM)window.RS_COMM.renderUsers(root);}else if(state.view==='libraries'){basePage('Библиотека','Подключай открытые тематические словари.');if(window.RS_COMM)window.RS_COMM.renderLibrary(root);}else if(state.view==='cards')renderCards();else if(state.view==='learned')renderLearned();else if(state.view==='practice')renderQuiz();else if(state.view==='exam')renderMockExam();else if(state.view==='dictionary')renderDict();else if(state.view==='mediatri')renderMediatri();else if(state.view==='add')renderAdd();else if(state.view==='backup')renderBackup();else renderMore();if(window.RS_V3_RELEASE)window.RS_V3_RELEASE.status();}
   function renderCards(){basePage(state.reviewLearned?'Повторение выученного':'Изучаем слова',state.reviewLearned?'Отдельное повторение по твоему выбору.':'Выученные слова не возвращаются в обычную колоду.');ensureDeck(false);var c=state.deck[state.cardIndex],i,catHtml='',cats=optionsForCat().slice(0,7);for(i=0;i<cats.length;i++){catHtml+='<button class="tag '+(state.filter===cats[i][0]?'chosen':'')+'" data-action="cat-quick" data-value="'+safe(cats[i][0])+'">'+safe(cats[i][1])+'</button>';}
   var s=metric()+englishWarning(state.direction)+'<div class="banner"><b>'+(state.reviewLearned?'Повторение выученных':'Новые слова без повторов')+'</b><p>'+(state.reviewLearned?'Здесь можно освежить выученное. Если слово забылось, нажми «Повторить», чтобы вернуть его в обычное обучение.':'После «Знаю» слово уходит в раздел «Выученные» и не повторяется в обычных карточках. Пропущенные слова вернутся в следующем подходе.')+'</p></div>';
-  s+='<div class="panel"><div class="form-row"><label class="field"><span>Тема</span>'+selectCats(state.filter,'cards-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('cards-dir',state.direction,false)+'</label><label class="field"><span>Слова за подход</span><select id="cards-count" class="control"><option value="10"'+(state.cardsCount===10?' selected':'')+'>10</option><option value="20"'+(state.cardsCount===20?' selected':'')+'>20</option><option value="50"'+(state.cardsCount===50?' selected':'')+'>50</option></select></label></div><div class="btn-row"><button class="btn white" data-action="reshuffle">↻ Перемешать</button><button class="btn white" data-action="only-favorites">'+(state.extraSearch?'★ Только избранное':'☆ Только избранное')+'</button><button class="btn white" data-view="learned">✓ Выученные ('+numberLearned()+')</button>'+(state.reviewLearned?'<button class="btn primary" data-action="study-mode">К новым словам</button>':'')+'</div></div>';
+  s+='<div class="panel"><div class="form-row"><label class="field"><span>Тема</span>'+selectCats(state.filter,'cards-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('cards-dir',state.direction,false,true)+'</label><label class="field"><span>Слова за подход</span><select id="cards-count" class="control"><option value="10"'+(state.cardsCount===10?' selected':'')+'>10</option><option value="20"'+(state.cardsCount===20?' selected':'')+'>20</option><option value="50"'+(state.cardsCount===50?' selected':'')+'>50</option></select></label></div><div class="btn-row"><button class="btn '+(state.latinOnly?'primary':'white')+'" data-action="latin-cards">Ⓛ Латынь / Latina</button><button class="btn white" data-action="reshuffle">↻ Перемешать</button><button class="btn white" data-action="only-favorites">'+(state.extraSearch?'★ Только избранное':'☆ Только избранное')+'</button><button class="btn white" data-view="learned">✓ Выученные ('+numberLearned()+')</button>'+(state.reviewLearned?'<button class="btn primary" data-action="study-mode">К новым словам</button>':'')+'</div></div>';
   if(!c){s+='<div class="panel empty"><b>'+(state.reviewLearned?'Повторение завершено':'Подход завершён')+'</b><p>'+(state.reviewLearned?'Выученные слова просмотрены.':'Слова больше не идут по кругу. Если остались трудные или пропущенные, начни новый подход.')+'</p><div class="btn-row"><button class="btn primary" data-action="restart-study">Начать новый подход</button><button class="btn white" data-view="learned">Открыть выученные</button>'+(state.reviewLearned?'<button class="btn white" data-action="study-mode">К новым словам</button>':'')+'</div></div>';}else{
     var languages=pair(state.direction),front=word(c,languages.from),back=word(c,languages.to),score=state.scores[c.id]||{};
     s+='<div class="section-title"><h2>Карточка '+(state.cardIndex+1)+' / '+state.deck.length+'</h2><p>'+safe(categoryName(c))+' · '+(score.correct||0)+' верных</p></div><div class="flashcard"><div class="flash-top"><span>'+safe(c.id)+'</span><button class="star-btn" data-action="favorite" aria-label="В избранное">'+(state.favorites[c.id]?'★':'☆')+'</button></div><div class="flash-term">'+safe(front)+'</div>';
@@ -282,7 +284,7 @@
     var q=state.tfQuestion;
     var s=quizModeTabs()+examProgress(run)+'<div class="panel"><div class="form-row">'+
       '<label class="field"><span>Тема теста</span>'+examTopicSelect(state.filter,'quiz-cat')+'</label>'+
-      '<label class="field"><span>Направление / Suunta</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label>'+
+      '<label class="field"><span>Направление / Suunta</span>'+directionSelect('quiz-dir',state.quizDirection,false,true)+'</label>'+
       '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
     if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
@@ -628,7 +630,7 @@
         ' · '+safe(mockTopicLabel(q.topic))+'</summary>'+
         '<div class="exam-review-original"><p class="exam-review-title">Исходное задание / Alkuperäinen tehtävä</p>';
       if(q.type==='translate'){
-        s+='<p class="hint">Выбери один правильный перевод / Valitse yksi oikea käännös</p>'+
+        s+='<p class="hint">'+(q.from==='la'?'Что означает латинский термин? / Mitä latinankielinen termi tarkoittaa?':'Выбери один правильный перевод / Valitse yksi oikea käännös')+'</p>'+
           '<p class="exam-review-term" lang="'+safe(q.from)+'">'+safe(word(q.item,q.from))+'</p>'+
           '<ol class="exam-review-options">';
         for(var t=0;t<q.options.length;t++){
@@ -720,8 +722,8 @@
       '<span class="hint">'+safe(mockTypeLabel(q.type))+' · '+safe(mockTopicLabel(q.topic))+'</span></div>'+
       '<div class="panel">';
     if(q.type==='translate'){
-      s+='<p class="hint">Выбери один правильный перевод / Valitse yksi oikea käännös</p>'+
-        '<div class="flash-term" lang="'+p.from+'">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';
+      s+='<p class="hint">'+(q.from==='la'?'Что означает латинский термин? / Mitä latinankielinen termi tarkoittaa?':'Выбери один правильный перевод / Valitse yksi oikea käännös')+'</p>'+
+        '<div class="flash-term" lang="'+safe(q.from)+'">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';
       for(var t=0;t<q.options.length;t++){
         s+='<button class="btn white" data-action="mock-answer" data-value="'+t+'"'+(done?' disabled':'')+'>'+safe(q.options[t])+'</button>';
       }
@@ -797,7 +799,7 @@
 
   function renderQuiz(){if(state.quizMode==='matching'){renderMatching();return;}if(state.quizMode==='multiselect'){renderMulti();return;}if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');var run=examRun('translate');if(!run.questions.length||run.index>=run.questions.length){root.innerHTML=quizModeTabs()+examSummary(run);return;}if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+examProgress(run)+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
-    s+='<div class="panel"><p class="hint">Выбери перевод:</p><div class="flash-term">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
+    s+='<div class="panel"><p class="hint">'+(q.from==='la'?'Что означает латинский термин? / Mitä latinankielinen termi tarkoittaa?':q.to==='la'?'Выбери правильный латинский термин / Valitse oikea latinankielinen termi':'Выбери перевод:')+'</p><div class="flash-term" lang="'+safe(q.from)+'">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
     s+='</div>';
     if(state.quizResult!==null)s+='<div class="answer '+(state.quizResult?'correct':'wrong')+'">'+(state.quizResult?'Верно! ':'Пока не так. ')+'<b>'+safe(word(q.item,q.from))+'</b> — '+safe(q.answer)+'</div>'+examNote(q.item)+'<button class="btn primary" data-action="quiz-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Следующий вопрос →')+'</button>';
     s+='</div>';root.innerHTML=s;
@@ -885,6 +887,16 @@
     else if(action==='next-card'){nextCard();}
     else if(action==='mark-good'||action==='mark-hard'){var c=state.deck[state.cardIndex];grade(c.id,action==='mark-good');nextCard();}
     else if(action==='favorite'){var id=state.deck[state.cardIndex].id;state.favorites[id]=!state.favorites[id];save('rs_favorites_v1',state.favorites);var fm=value('rs_favorite_meta_v1',{});fm[id]={starred:!!state.favorites[id],updatedAt:Date.now()};save('rs_favorite_meta_v1',fm);renderCards();}
+    else if(action==='latin-cards'){
+      if(!state.latinOnly){
+        state.latinReturnDirection=state.direction;
+        state.latinOnly=true;
+        state.direction=language()==='en'?'la-en':language()==='fi'?'la-fi':'la-ru';
+      }else{
+        state.latinOnly=false;state.direction=state.latinReturnDirection||'auto';
+      }
+      state.sessionSeen={};state.deck=[];ensureDeck(true);renderCards();
+    }
     else if(action==='reshuffle'){state.sessionSeen={};ensureDeck(true);renderCards();}
     else if(action==='restart-study'){state.sessionSeen={};state.deck=[];ensureDeck(true);renderCards();}
     else if(action==='study-mode'){state.reviewLearned=false;state.sessionSeen={};state.deck=[];renderCards();}
@@ -978,7 +990,7 @@
     // Resetting a shuffled deck here skips a visible card after Know/Repeat.
     // A real account switch still explicitly requests the full reset.
     if(reset){
-      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.mockRun=null;state.mockAttemptId=null;state.mockCloudSerial++;state.mockCloudStatus='unchecked';state.mockCloudConflict=null;state.mockCloudPending=false;state.mockCloudBusy=false;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
+      state.deck=[];state.sessionSeen={};state.latinOnly=false;state.latinReturnDirection='auto';state.quiz=null;state.examRuns={};state.mockRun=null;state.mockAttemptId=null;state.mockCloudSerial++;state.mockCloudStatus='unchecked';state.mockCloudConflict=null;state.mockCloudPending=false;state.mockCloudBusy=false;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();
