@@ -183,8 +183,8 @@ test('RUN164: input data unchanged and versioned assets include Latin engine off
  assert.ok(rounds.includes('buildMatchingFrom'));
  assert.ok(html.includes('mock-exam-run156.js?v=latin-run164-v1'));
  assert.ok(html.includes('exam-rounds-run155.js?v=latin-run164-v1'));
- assert.ok(html.includes('app.js?v=exam-preserve-run167-1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc35'));
+ assert.ok(html.includes('app.js?v=superadmin-run169-1'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc36'));
  assert.ok(sw.includes('mock-exam-run156.js?v=latin-run164-v1'));
  assert.ok(css.includes('.flashcard'));
  assert.doesNotMatch(app,/=>|\?\./);
