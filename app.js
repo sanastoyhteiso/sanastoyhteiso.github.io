@@ -385,7 +385,8 @@
       directionSelect('quiz-dir',state.quizDirection,false,true)+'</label></div></div>';
   }
   function matchNew(){var run=examRun('matching');state.matchQuestion=run.questions[run.index]||null;state.matchResult=null;}
-  function matchAnswerLabel(fi,items){
+  function matchAnswerLabel(fi,items,answerKey){
+    if(answerKey==='la')return fi;
     var target=examDisplayPair().to;
     for(var j=0;j<items.length;j++){
       if(items[j].fi===fi)return word(items[j],target)||fi;
@@ -399,8 +400,8 @@
       root.innerHTML=quizModeTabs()+quizTopicPicker()+examSummary(run);return;
     }
     if(!state.matchQuestion)matchNew();
-    var q=state.matchQuestion;
-    var s=quizModeTabs()+examProgress(run)+quizTopicPicker()+'<div class="panel"><p class="hint">Yhdistä selitys ja termi / Подбери термин к определению.</p>';
+    var q=state.matchQuestion,answerKey=q&&q.answerKey==='la'?'la':'fi';
+    var s=quizModeTabs()+examProgress(run)+quizTopicPicker()+'<div class="panel"><p class="hint">'+(answerKey==='la'?'Latina: yhdistä termit ja selitykset / Латынь: сопоставь термины и определения':'Yhdistä selitys ja termi / Подбери термин к определению.')+'</p>';
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],chosen=state.matchResult&&state.matchResult.selected[i]||'';
@@ -410,12 +411,12 @@
         '<option value="">— Valitse / Выбери —</option>';
       for(var k=0;k<q.options.length;k++){
         s+='<option value="'+safe(q.options[k])+'"'+(chosen===q.options[k]?' selected':'')+'>'+
-          safe(matchAnswerLabel(q.options[k],q.items))+'</option>';
+          safe(matchAnswerLabel(q.options[k],q.items,answerKey))+'</option>';
       }
       s+='</select></div>';
       if(state.matchResult){
-        s+='<div class="answer '+(chosen===item.fi?'correct':'wrong')+'">'+
-          (chosen===item.fi?'✓ ':'✕ ')+'<b>Oikea pari / Правильная пара: '+safe(item.fi)+' — '+safe(item.ru)+'</b></div>'+
+        s+='<div class="answer '+(chosen===item[answerKey]?'correct':'wrong')+'">'+
+          (chosen===item[answerKey]?'✓ ':'✕ ')+'<b>Oikea pari / Правильная пара: '+safe(item[answerKey])+' — '+safe(item.fi)+' — '+safe(item.ru)+'</b></div>'+
           '';
       }
     }
@@ -675,8 +676,8 @@
   function mockReviewTerm(fi,items){
     if(!fi)return '—';
     for(var i=0;i<items.length;i++){
-      if(items[i].fi===fi){
-        return '<b>FI:</b> '+safe(items[i].fi)+' · <b>RU:</b> '+safe(items[i].ru)+
+      if(items[i].fi===fi||items[i].la===fi){
+        return (items[i].la?'<b>LA:</b> '+safe(items[i].la)+' · ':'')+'<b>FI:</b> '+safe(items[i].fi)+' · <b>RU:</b> '+safe(items[i].ru)+
           (items[i].en?' · <b>EN:</b> '+safe(items[i].en):'');
       }
     }
@@ -715,11 +716,12 @@
            ' · Верно / Oikein</p>':
            truthAnswerFeedback(result.selected,q.question.correct)+bilingualFeedback(q.question));
       }else if(q.type==='matching'){
-        s+='<p class="hint">Yhdistä oikeat parit / Сопоставь все четыре определения</p>';
+        s+='<p class="hint">'+(q.question.answerKey==='la'?'Latina: yhdistä neljä termiä / Сопоставь четыре латинских термина':'Yhdistä oikeat parit / Сопоставь все четыре определения')+'</p>';
         for(var m=0;m<q.question.items.length;m++){
           var term=q.question.items[m],
             selected=result.selected&&result.selected[m]||'',
-            match=selected===term.fi;
+            correctField=q.question.answerKey==='la'?'la':'fi',
+            match=selected===term[correctField];
           s+='<div class="exam-review-row '+(match?'exam-review-right':'exam-review-wrong')+'">'+
             '<p class="exam-review-row-heading">'+(match?'✓ Правильно / Oikein':'✕ Ошибка / Väärin')+
             ' · '+(m+1)+' / '+q.question.items.length+'</p>'+
@@ -727,7 +729,7 @@
               p.from==='en'?'Which Finnish medical term corresponds to the English medical term "'+term.en+'"?':
               'Choose the English term for the Finnish description.')+
             '<p><b>Твой выбор / Valitsit:</b> '+mockReviewTerm(selected,q.question.items)+'</p>'+
-            '<p><b>Правильная пара / Oikea pari:</b> '+mockReviewTerm(term.fi,q.question.items)+'</p></div>';
+            '<p><b>Правильная пара / Oikea pari:</b> '+mockReviewTerm(term[correctField],q.question.items)+'</p></div>';
         }
       }else if(q.type==='multiselect'){
         s+='<p class="hint">Valitse kaikki oikeat väitteet / Отметь все верные утверждения</p>';
@@ -808,7 +810,7 @@
           '<option value="">— Valitse / Выбери —</option>';
         for(var z=0;z<q.question.options.length;z++){
           var fi=q.question.options[z],label=fi;
-          for(var w0=0;w0<q.question.items.length;w0++){
+          if(q.question.answerKey!=='la')for(var w0=0;w0<q.question.items.length;w0++){
             if(q.question.items[w0].fi===fi)label=word(q.question.items[w0],p.to)||fi;
           }
           s+='<option value="'+safe(fi)+'"'+(done&&run.answers[run.index].selected[a]===fi?' selected':'')+'>'+safe(label)+'</option>';
@@ -1003,7 +1005,7 @@
     else if(action==='match-next'){examNext('matching');}
     else if(action==='match-check'){if(!state.matchQuestion||state.matchResult)return;var mq=state.matchQuestion,chosen=[],correctCount=0;
       for(var mi=0;mi<mq.items.length;mi++){var sel=byId('match-'+mi),value=sel?sel.value:'';chosen.push(value);
-        if(value===mq.items[mi].fi)correctCount++;}
+        if(value===mq.items[mi][mq.answerKey==='la'?'la':'fi'])correctCount++;}
       state.matchResult={selected:chosen,count:correctCount};examMark('matching',correctCount===mq.items.length,correctCount,mq.items.length);renderMatching();}
     else if(action==='multi-next'){examNext('multiselect');}
     else if(action==='multi-check'){if(!state.multiQuestion||state.multiResult)return;var rows=state.multiQuestion.items,selected=[],allRight=true;
