@@ -497,7 +497,7 @@
     // Resetting a shuffled deck here skips a visible card after Know/Repeat.
     // A real account switch still explicitly requests the full reset.
     if(reset){
-      state.deck=[];state.sessionSeen={};state.quiz=null;state.cardIndex=0;state.flipped=false;
+      state.deck=[];state.sessionSeen={};state.quiz=null;state.examRuns={};state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();
