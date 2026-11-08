@@ -34,7 +34,7 @@
  }
  function validDate(s){return s===null||(typeof s==='string'&&s.length<=35&&isFinite(Date.parse(s)));}
  function userRow(x){
-   return x&&typeof x.email==='string'&&x.email.length<=254&&x.email.indexOf('@')>0&&
+   return x&&typeof x.email==='string'&&x.email.length<=254&&(x.email===''||x.email.indexOf('@')>0)&&
      typeof x.displayName==='string'&&x.displayName.length<=100&&
      typeof x.userKey==='string'&&/^[a-f0-9]{64}$/.test(x.userKey)&&
      typeof x.emailVerified==='boolean'&&typeof x.disabled==='boolean'&&
@@ -47,12 +47,12 @@
      validDate(x.firstAt)&&validDate(x.lastAt);
  }
  function users(user,page){
-   if(page!==undefined&&page!==null&&(!/^[A-Za-z0-9_\-]{1,512}$/.test(page)))return Promise.reject(Error('BAD_PAGE'));
+   if(page!==undefined&&page!==null&&(!/^[A-Za-z0-9._~+\/=-]{1,1024}$/.test(page)))return Promise.reject(Error('BAD_PAGE'));
    var path='/v1/admin/users?limit=50'+(page?'&page='+encodeURIComponent(page):'');
    return request(user,path).then(function(v){
      if(!v||v.schema!==1||!Array.isArray(v.users)||v.users.length>50||
         v.users.some(function(x){return !userRow(x);})||
-        !(v.nextPage===null||typeof v.nextPage==='string'&&/^[A-Za-z0-9_\-]{1,512}$/.test(v.nextPage)))
+        !(v.nextPage===null||typeof v.nextPage==='string'&&/^[A-Za-z0-9._~+\/=-]{1,1024}$/.test(v.nextPage)))
        throw Error('INVALID_SERVER_RESPONSE');
      return {users:v.users,nextPage:v.nextPage};
    });
