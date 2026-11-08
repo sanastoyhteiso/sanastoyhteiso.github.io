@@ -171,7 +171,10 @@
       s+='<div class="answer '+(state.tfResult?'correct':'wrong')+'">'+
         (state.tfResult?'✓ Oikein! · Правильно. ':'✕ Ei aivan. · Не совсем. ')+
         '<b>Oikea vastaus / Правильный ответ: '+(q.correct?'Tosi · Верно':'Epätosi · Неверно')+'</b></div>'+
-        '<div class="exam-explain"><p><b>FI:</b> '+safe(q.explanationFi)+'</p>'+
+        (!q.correct?'<div class="exam-explain"><p><b>Oikea väite / Правильное утверждение:</b></p>'+
+          '<p lang="fi"><b>FI:</b> '+safe(q.correctStatementFi)+'</p>'+
+          '<p><b>RU:</b> '+safe(q.correctStatementRu)+'</p></div>':'')+
+        '<div class="exam-explain"><p><b>Selitys / Объяснение</b></p><p><b>FI:</b> '+safe(q.explanationFi)+'</p>'+
         '<p><b>RU:</b> '+safe(q.explanationRu)+'</p></div>'+
         '<button class="btn primary" data-action="tf-next">Seuraava / Следующий →</button>';
     }
