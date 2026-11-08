@@ -5,7 +5,7 @@
   'use strict';
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
-  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true, mockAttemptId:null, mockCloudStatus:'unchecked', mockCloudBusy:false, mockCloudError:'', mockCloudConflict:null, mockCloudPending:false, mockCloudSerial:0,
+  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true, mockAttemptId:null, mockCloudStatus:'unchecked', mockDraftBlocked:false, mockCloudBusy:false, mockCloudError:'', mockCloudConflict:null, mockCloudPending:false, mockCloudSerial:0,
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:'',latinOnly:false,latinReturnDirection:'auto'};
   function byId(id){return document.getElementById(id);}
@@ -513,13 +513,18 @@
     if(!key){state.mockSaveOk=false;return null;}
     try{
       var raw=window.localStorage.getItem(key);
-      if(!raw){state.mockSaveOk=true;return null;}
+      if(!raw){state.mockDraftBlocked=false;state.mockSaveOk=true;return null;}
       var draft=JSON.parse(raw);
-      state.mockSaveOk=true;
-      return mockValidDraft(draft)?draft:null;
-    }catch(e){state.mockSaveOk=false;return null;}
+      if(!mockValidDraft(draft)){
+        // A former release may have stored an older, still valuable exam.
+        // Never overwrite the original bytes with a freshly built 1/40 attempt.
+        state.mockDraftBlocked=true;state.mockSaveOk=false;return null;
+      }
+      state.mockDraftBlocked=false;state.mockSaveOk=true;return draft;
+    }catch(e){state.mockDraftBlocked=true;state.mockSaveOk=false;return null;}
   }
   function mockSaveDraft(){
+    if(state.mockDraftBlocked)return false;
     var key=mockStorageKey();
     if(!key){state.mockSaveOk=false;return false;}
     try{
@@ -529,6 +534,7 @@
     }catch(e){state.mockSaveOk=false;return false;}
   }
   function mockClearDraft(){
+    if(state.mockDraftBlocked)return;
     var key=mockStorageKey();
     if(!key)return;
     try{window.localStorage.removeItem(key);state.mockSaveOk=true;}catch(e){state.mockSaveOk=false;}
@@ -671,8 +677,10 @@
   }
 
   function mockInit(){
+    if(state.mockDraftBlocked)return null;
     if(state.mockRun)return state.mockRun;
     var stored=mockReadDraft();
+    if(state.mockDraftBlocked)return null;
     if(stored){
       state.mockDirection=stored.choice;
       state.mockRun=stored.run;
@@ -781,7 +789,15 @@
 
   function renderMockExam(){
     basePage('Экзамен / Koe / Exam','40 перемешанных заданий из всех десяти тем. Порог сдачи 80% (32 из 40).');
-    var run=mockInit(),n=run.questions.length,p=examDisplayPair();
+    var run=mockInit();
+    if(!run){
+      root.innerHTML='<div class="panel" role="alert"><h2>Сохранённая попытка требует восстановления</h2>'+
+        '<p>На этом устройстве найдена запись экзамена, которую текущая версия сайта не смогла прочитать. Она оставлена без изменений: новый экзамен поверх неё не создан.</p>'+
+        '<p>Сначала сохрани исходный файл. Не очищай данные сайта и не начинай новый экзамен в другом браузере.</p>'+
+        '<button type="button" class="btn primary" data-action="mock-export-preserved">Скачать сохранённую запись экзамена (JSON)</button></div>';
+      return;
+    }
+    var n=run.questions.length,p=examDisplayPair();
     if(n!==40){root.innerHTML='<div class="panel">Не удалось подготовить 40 проверяемых вопросов. Учебные данные не изменены.</div>';return;}
     if(state.mockCloudStatus==='unchecked')mockCloudSync(true);
     if(state.mockCloudBusy&&state.mockCloudStatus==='checking'){
@@ -965,6 +981,14 @@
     }
     var fi=form.elements.fi.value.replace(/^\s+|\s+$/g,''),ru=form.elements.ru.value.replace(/^\s+|\s+$/g,'');if(!fi||!ru){toast('Нужно заполнить оба языка.');return;}var cat=form.elements.cat.value;if(cat==='custom')cat=form.elements.customCat.value.replace(/^\s+|\s+$/g,'')||'Мои слова';var p={id:'L'+Date.now()+Math.floor(Math.random()*1000),fi:fi,ru:ru,cat:cat,catRu:'Мои слова',example:form.elements.example.value,exampleRu:'',level:'B1',priority:1};p.updatedAt=Date.now();state.userWords.push(p);save('rs_user_words_v1',state.userWords);clearAddDraft(fi,ru);renderAdd();toast('Слово сохранено в личном словаре.');}
   function triggerDownload(text,name,mime){try{var blob=new Blob([text],{type:mime||'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);window.setTimeout(function(){URL.revokeObjectURL(url);},10000);toast('Файл подготовлен. Проверь загрузки браузера.');}catch(e){toast('Не удалось сохранить файл. Попробуй другой браузер.');}}
+  function mockExportPreserved(){
+    var key=mockStorageKey();
+    try{
+      var raw=key&&window.localStorage.getItem(key);
+      if(!raw){toast('Сохранённая запись не найдена в этом браузере.');return;}
+      triggerDownload(raw,'sanastoyhteiso-exam-preserved-'+Date.now()+'.json','application/json;charset=utf-8');
+    }catch(e){toast('Не удалось прочитать локальную копию экзамена. Не очищай данные сайта.');}
+  }
   function exportJson(){var data={app:'Riveria Sanasto',version:1,created:new Date().toISOString(),userWords:state.userWords,scores:state.scores,favorites:state.favorites,favoriteMeta:value('rs_favorite_meta_v1',{}),deletedWords:value('rs_deleted_words_v1',{})};triggerDownload(JSON.stringify(data,null,2),'riveria-sanasto-backup.json','application/json;charset=utf-8');}
   function exportTsv(){var rows=[['ID','Suomi','Русский','Aihe / Тема FI','Тема RU','Тип','Esimerkki FI','Пример RU','Latin','Уровень*','Источник / происхождение','Приоритет','Статус','Повторений','Верных','Последнее повторение','Следующее повторение','Заметки']];state.userWords.forEach(function(x){rows.push([x.id,x.fi,x.ru,x.cat,x.catRu,'termi',x.example||'','','','B1','Riveria Sanasto офлайн',1,'Новый',0,0,'','','Добавлено в приложении. Сверить дубликаты перед импортом.']);});var txt=rows.map(function(row){return row.map(function(x){return String(x===undefined?'':x).replace(/[\t\r\n]+/g,' ');}).join('\t');}).join('\r\n');triggerDownload('\ufeff'+txt,'riveria-sanasto-my-words.tsv','text/tab-separated-values;charset=utf-8');}
   function restoreFile(file){if(!file)return;var reader=new FileReader();reader.onload=function(){try{var x=JSON.parse(reader.result);if(x.app!=='Riveria Sanasto'||!Array.isArray(x.userWords)||typeof x.scores!=='object'||typeof x.favorites!=='object')throw new Error('Invalid backup');if(!window.confirm('Заменить текущие локальные слова и результаты данными из резервной копии?'))return;state.userWords=x.userWords.slice(0,5000).filter(function(y){return y&&typeof y.fi==='string'&&typeof y.ru==='string'&&y.id;});state.scores=x.scores;state.favorites=x.favorites;save('rs_user_words_v1',state.userWords);save('rs_scores_v1',state.scores);save('rs_favorites_v1',state.favorites);save('rs_favorite_meta_v1',x.favoriteMeta||{});save('rs_deleted_words_v1',x.deletedWords||{});load();if(window.RS_FAMILY)window.RS_FAMILY.schedule();toast('Личная резервная копия восстановлена');renderBackup();}catch(e){toast('Файл не похож на резервную копию Riveria Sanasto.');}};reader.readAsText(file);}
@@ -973,6 +997,7 @@
   document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('button'):null;if(!b)return;var v=b.getAttribute('data-view');if(v){nav(v);return;}var action=b.getAttribute('data-action'),choice=b.getAttribute('data-value');if(!action)return;
     if(action==='open-cloud-panel'){var trigger=byId('cloud-toggle');if(trigger)trigger.click();}
     else if(action==='heart-open'){heartOpen();}
+    else if(action==='mock-export-preserved'){mockExportPreserved();}
     else if(action==='flip'){state.flipped=true;renderCards();}
     else if(action==='next-card'){nextCard();}
     else if(action==='mark-good'||action==='mark-hard'){var c=state.deck[state.cardIndex];grade(c.id,action==='mark-good');nextCard();}
@@ -1062,7 +1087,12 @@
   document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
   document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
   window.addEventListener('online',function(){setStatus();if(state.view==='exam'&&state.mockRun&&state.mockCloudStatus!=='conflict'){state.mockCloudStatus='unchecked';renderMockExam();}});window.addEventListener('offline',setStatus);
-  window.addEventListener('error',function(e){var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';});
+  window.addEventListener('error',function(e){
+    // In capture phase IMG/LINK/SCRIPT resource errors also reach window.
+    // They must not be presented as an application-render crash.
+    if(e&&e.target&&e.target!==window)return;
+    var x=byId('storage-status');if(x)x.textContent='Ошибка интерфейса — сделай резервную копию';
+  });
   if(!D||!D.terms||!D.scenarios){root.innerHTML='<div class="panel"><h2>Не удалось открыть базу</h2><p>Проверь, что файл data.js загружен рядом с приложением. Если интернет отключён, открой сайт онлайн один раз для установки офлайн-кэша.</p></div>';return;}
   window.RS_APP_LOCALE=function(){
     if(state.direction==='auto'){state.sessionSeen={};ensureDeck(true);}
@@ -1080,7 +1110,7 @@
     // Resetting a shuffled deck here skips a visible card after Know/Repeat.
     // A real account switch still explicitly requests the full reset.
     if(reset){
-      state.deck=[];state.sessionSeen={};state.latinOnly=false;state.latinReturnDirection='auto';state.quiz=null;state.examRuns={};state.mockRun=null;state.mockAttemptId=null;state.mockCloudSerial++;state.mockCloudStatus='unchecked';state.mockCloudConflict=null;state.mockCloudPending=false;state.mockCloudBusy=false;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
+      state.deck=[];state.sessionSeen={};state.latinOnly=false;state.latinReturnDirection='auto';state.quiz=null;state.examRuns={};state.mockRun=null;state.mockAttemptId=null;state.mockDraftBlocked=false;state.mockCloudSerial++;state.mockCloudStatus='unchecked';state.mockCloudConflict=null;state.mockCloudPending=false;state.mockCloudBusy=false;state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;state.cardIndex=0;state.flipped=false;
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();

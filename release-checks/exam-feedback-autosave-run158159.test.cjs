@@ -168,9 +168,9 @@ test('bad or unavailable storage never crashes the exam and visibly warns when s
  const corrupted=browser('A',{[key('A')]:'{"schema":1,"run":{"index":99}}'});
  try{
   corrupted.d.querySelector('[data-view="exam"]').click();
-  assert.match(corrupted.d.querySelector('.exam-run-progress').textContent,/1 \/ 40/);
-  const parsed=JSON.parse(corrupted.w.localStorage.getItem(key('A')));
-  assert.equal(parsed.run.questions.length,40);assert.equal(parsed.run.index,0);
+  assert.equal(corrupted.d.querySelector('.exam-run-progress'),null,'do not start a new exam over unrecognized storage');
+  assert.ok(corrupted.d.querySelector('[data-action="mock-export-preserved"]'),'offer safe read-only export');
+  assert.equal(corrupted.w.localStorage.getItem(key('A')),'{"schema":1,"run":{"index":99}}','legacy data remains byte-for-byte unchanged');
  }finally{corrupted.close();}
 });
 test('new feedback and autosave use ES5; offline cache and UI assets must match',()=>{
@@ -180,8 +180,8 @@ test('new feedback and autosave use ES5; offline cache and UI assets must match'
  assert.ok(app.includes('truthAnswerFeedback('));
  assert.ok(app.includes('multipleAnswerFeedback('));
  assert.ok(css.includes('.exam-autosave-warning'));
- assert.ok(html.includes('app.js?v=heart-run166-1'));
- assert.ok(sw.includes('app.js?v=heart-run166-1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc33'));
+ assert.ok(html.includes('app.js?v=exam-preserve-run167-1'));
+ assert.ok(sw.includes('app.js?v=exam-preserve-run167-1'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc34'));
  assert.doesNotMatch(app,/=>|\?\./);
 });
