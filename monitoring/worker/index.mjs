@@ -375,7 +375,7 @@ export default {
   await env.DB.prepare('DELETE FROM telemetry_quota WHERE updated_ms<?').bind(now-2*86400000).run();
   // Optional RUN169 schema migration: migrations are applied manually before enabling activity.
   if(env.ACTIVITY_ENABLED==='true'){
-    await env.DB.prepare('DELETE FROM activity_days WHERE day<?').bind(dayInHelsinki(now-30*86400000)).run();
+    await env.DB.prepare('DELETE FROM activity_days WHERE last_ms<?').bind(now-30*86400000).run();
   }
   // Directory access auditing may be enabled without voluntary activity.
   if(env.ACTIVITY_ENABLED==='true'||typeof env.ADMIN_DIRECTORY_SERVICE_ACCOUNT_JSON==='string'){
