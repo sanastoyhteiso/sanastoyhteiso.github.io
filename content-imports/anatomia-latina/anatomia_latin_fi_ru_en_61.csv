@@ -1,0 +1,62 @@
+﻿seq,section,fi,la,latin_original,ru,en,cat,catRu,existing_term_id,action,notes,source
+1,CV,verenkierto,circulatio,Circulatio,кровообращение,circulatory,Elintoiminnot ja mittaukset,Показатели здоровья,T00304,enrich-latin-existing,,user-list-2026-11-07
+2,CV,sydän,cor,Cor,сердце,heart,Anatomia: elimet,Органы и системы,T00574,enrich-latin-existing,,user-list-2026-11-07
+3,CV,eteinen,atrium,Atrium,предсердие,atrium of heart,Anatomia: Sydän ja verenkierto,Анатомия: сердце и кровообращение,,new-term-candidate,,user-list-2026-11-07
+4,CV,laskimo,vena,"Vena, venae (v.)",вена,vein,Anatomia: elimet,Органы и системы,T00582,enrich-latin-existing,Латинское venae — форма родительного падежа ед. ч.,user-list-2026-11-07
+5,CV,valtimo,arteria,"Arteria, arteriae (a.)",артерия,artery,Anatomia: elimet,Органы и системы,T00581,enrich-latin-existing,Arteriae — родительный падеж ед. ч.; a. — сокращение.,user-list-2026-11-07
+6,CV,läppä,valva,Valva,клапан,valve,Anatomia: Sydän ja verenkierto,Анатомия: сердце и кровообращение,,new-term-candidate,,user-list-2026-11-07
+7,CV,sepelvaltimo,arteria coronaria,Arteriae coronariae,коронарная артерия,coronary artery,Anatomia: Sydän ja verenkierto,Анатомия: сердце и кровообращение,T01123,enrich-latin-existing,Исходная латинская форма во множественном числе; для финского единственного выбрана форма единственного числа.,user-list-2026-11-07
+8,CV,vasen,sinister,Sinister (sin.),левый,left,Anatomia: Sydän ja verenkierto,Анатомия: сердце и кровообращение,,new-term-candidate,,user-list-2026-11-07
+9,CV,oikea,dexter,Dexter (dex.),правый,right,Anatomia: Sydän ja verenkierto,Анатомия: сердце и кровообращение,,new-term-candidate,,user-list-2026-11-07
+10,RESP,hengitys,respiratio,Respiratio,дыхание,breathing,Elintoiminnot ja mittaukset,Показатели здоровья,T00279,enrich-latin-existing,,user-list-2026-11-07
+11,RESP,keuhko,pulmo,"Pulmo, pulmones",лёгкое,lung,Anatomia: elimet,Органы и системы,T00575,enrich-latin-existing,В списке также keuhkot — лёгкие; латинская форма множественного числа pulmones.,user-list-2026-11-07
+12,RESP,keuhkopussi,pleura,Pleura,плевра,pleura,Anatomia: Hengityselimistö,Анатомия: дыхательная система,T01148,enrich-latin-existing,,user-list-2026-11-07
+13,RESP,henkitorvi,trachea,Trachea,трахея,trachea,Anatomia: elimet,Органы и системы,T00577,enrich-latin-existing,,user-list-2026-11-07
+14,RESP,keuhkoputki,bronchus,Bronchus,бронх,bronchial tube,Anatomia: elimet,Органы и системы,T00578,enrich-latin-existing,,user-list-2026-11-07
+15,RESP,kurkunkansi,epiglottis,Epiglottis,надгортанник,epiglottis,Anatomia: Hengityselimistö,Анатомия: дыхательная система,,new-term-candidate,,user-list-2026-11-07
+16,RESP,kurkunpää,larynx,Larynx,гортань,larynx,Anatomia: Hengityselimistö,Анатомия: дыхательная система,T01143,enrich-latin-existing,,user-list-2026-11-07
+17,RESP,nielu,pharynx,Pharynx,глотка,pharynx,Anatomia: Hengityselimistö,Анатомия: дыхательная система,T01142,enrich-latin-existing,,user-list-2026-11-07
+18,RESP,pallea,diaphragma,Diaphragma,диафрагма,diaphragm,Anatomia: elimet,Органы и системы,T00579,enrich-latin-existing,,user-list-2026-11-07
+19,DIG,ruoansulatus,digestio,Digestio,пищеварение,digestion,Anatomia: Ruoansulatuselimistö,Анатомия: пищеварительная система,,new-term-candidate,Нормализовано финское написание Ruuansulatus → ruoansulatus.,user-list-2026-11-07
+20,DIG,haima,pancreas,Pancreas,поджелудочная железа,pancreas,Anatomia: elimet,Органы и системы,T00596,enrich-latin-existing,,user-list-2026-11-07
+21,DIG,mahalaukku,gaster,Gaster,желудок,stomach,Anatomia: elimet,Органы и системы,T00589,enrich-latin-existing,Также употребляется ventriculus.,user-list-2026-11-07
+22,DIG,maksa,hepar,Hepar,печень,liver,Anatomia: elimet,Органы и системы,T00594,enrich-latin-existing,,user-list-2026-11-07
+23,DIG,sappirakko,vesica biliaris,Vesica biliaris,желчный пузырь,gall bladder,Anatomia: elimet,Органы и системы,T00595,enrich-latin-existing,,user-list-2026-11-07
+24,DIG,ohutsuoli,intestinum tenue,Intestinum tenue,тонкая кишка,small intestine,Anatomia: elimet,Органы и системы,T00591,enrich-latin-existing,,user-list-2026-11-07
+25,DIG,pohjukaissuoli,duodenum,duodenum,двенадцатиперстная кишка,duodenum,Anatomia: Ruoansulatuselimistö,Анатомия: пищеварительная система,T01161,enrich-latin-existing,,user-list-2026-11-07
+26,DIG,tyhjäsuoli,jejunum,jejunum,тощая кишка,jejunum,Anatomia: Ruoansulatuselimistö,Анатомия: пищеварительная система,T01162,enrich-latin-existing,,user-list-2026-11-07
+27,DIG,sykkyräsuoli,ileum,ileum,подвздошная кишка,ileum,Anatomia: Ruoansulatuselimistö,Анатомия: пищеварительная система,T01163,enrich-latin-existing,,user-list-2026-11-07
+28,DIG,paksusuoli,intestinum crassum,Colon/ Intestinum crassum,толстая кишка,colon,Anatomia: elimet,Органы и системы,T00592,enrich-latin-existing,"Colon — ободочная кишка, часть толстой кишки; полное название intestinum crassum.",user-list-2026-11-07
+29,DIG,ruokatorvi,oesophagus,Oesophagus,пищевод,esophagus,Anatomia: elimet,Органы и системы,T00590,enrich-latin-existing,,user-list-2026-11-07
+30,DIG,peräaukko,anus,Anus,анальное отверстие,anus,Anatomia: Ruoansulatuselimistö,Анатомия: пищеварительная система,T01166,enrich-latin-existing,,user-list-2026-11-07
+31,DIG,peräsuoli,rectum,Rectum,прямая кишка,rectum,Anatomia: elimet,Органы и системы,T00593,enrich-latin-existing,,user-list-2026-11-07
+32,URIN,virtsaneritys,diuresis,Diureesi,"диурез, выделение мочи",urination,Anatomia: Virtsaelimistö,Анатомия: мочевыделительная система,T01071,enrich-latin-existing,"Diureesi — финская форма; diuresis — медицинский латинизированный термин, не название органа.",user-list-2026-11-07
+33,URIN,munuaiset,renes,renes,почки (мн. ч.),kidneys,Anatomia: Virtsaelimistö,Анатомия: мочевыделительная система,T01056,enrich-latin-existing,"Множественное число, ед. ч. ren.",user-list-2026-11-07
+34,URIN,virtsa,urina,urina,моча,urine,Vaipat ja erittäminen,Подгузники и выделения,T00096,enrich-latin-existing,,user-list-2026-11-07
+35,URIN,virtsa-aine,urea,urea,мочевина,urea,Anatomia: Virtsaelimistö,Анатомия: мочевыделительная система,,new-term-candidate,,user-list-2026-11-07
+36,URIN,virtsaputki,urethra,uretha,мочеиспускательный канал,urethra,Vaipat ja erittäminen,Подгузники и выделения,T00105,enrich-latin-existing,Исправлена латинская опечатка uretha → urethra.,user-list-2026-11-07
+37,MSK,lihas,musculus,"Musculus, musculi (m.)",мышца,muscle,Anatomia: keho,Анатомия тела,T00567,enrich-latin-existing,Musculi — форма родительного падежа ед. ч.,user-list-2026-11-07
+38,MSK,luu,os,"Os, ossa",кость,bone,Anatomia: keho,Анатомия тела,T00566,enrich-latin-existing,В списке также luut — кости; латинское множественное ossa.,user-list-2026-11-07
+39,MSK,nivel,articulatio,Articulatio,сустав,joint,Anatomia: keho,Анатомия тела,T00568,enrich-latin-existing,,user-list-2026-11-07
+40,MSK,kallo,cranium,Cranium,череп,cranium,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+41,MSK,lapaluu,scapula,Scapula,лопатка,scapula,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+42,MSK,solisluu,clavicula,Clavicula,ключица,clavicle,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+43,MSK,värttinäluu,radius,Radius,лучевая кость,radius,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+44,MSK,kyynärluu,ulna,Ulna,локтевая кость,ulna,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+45,MSK,lonkkaluu,os coxae,coxae,тазовая кость,hip bone,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,В исходном тексте coxae без os; нормативное название os coxae.,user-list-2026-11-07
+46,MSK,reisiluu,femur,Femur,бедренная кость,femur,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+47,MSK,reisiluun pää,caput femoris,Caput femoris,головка бедренной кости,head of femur,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+48,MSK,polvilumpio,patella,Patella,надколенник,patella,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+49,MSK,sääriluu,tibia,Tibia,большеберцовая кость,tibia,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+50,MSK,pohjeluu,fibula,Fibula,малоберцовая кость,fibula,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+51,MSK,rintalasta,sternum,Sternum,грудина,sternum,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+52,MSK,kylkiluut,costae,"Costa, costae",рёбра,ribs,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,"Финское kylkiluut — мн. ч.; лат. costa — одно ребро, costae — рёбра.",user-list-2026-11-07
+53,MSK,olkaluu,humerus,Humerus,плечевая кость,humerus,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,,user-list-2026-11-07
+54,MSK,häpyluu,os pubis,pubis,лобковая кость,pubis,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,Полная анатомическая форма os pubis.,user-list-2026-11-07
+55,MSK,istuinluu,os ischii,ischium,седалищная кость,ischium,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,Полная анатомическая форма os ischii; ischium употребляется как краткая форма.,user-list-2026-11-07
+56,MSK,suoliluu,os ilium,ilium,подвздошная кость таза,ilium,Anatomia: Tuki ja liikuntaelimistö,Анатомия: опорно-двигательный аппарат,,new-term-candidate,Полная анатомическая форма os ilium; ilium также употребляется.,user-list-2026-11-07
+57,SKIN,iho,cutis,cutis,кожа,skin,"Iho, haavat ja turvotus","Кожа, раны и отёки",T00179,enrich-latin-existing,,user-list-2026-11-07
+58,SKIN,orvaskesi,epidermis,epidermis,эпидермис,epidermis,Anatomia: Iho,Анатомия: кожа,T01284,enrich-latin-existing,,user-list-2026-11-07
+59,SKIN,verinahka,dermis,dermis,дерма,dermis,Anatomia: Iho,Анатомия: кожа,T01285,enrich-latin-existing,,user-list-2026-11-07
+60,SKIN,ihonalaiskudos,subcutis,subcutis,подкожная клетчатка,subcutaneous tissue,Anatomia: Iho,Анатомия: кожа,T01286,enrich-latin-existing,,user-list-2026-11-07
+61,NERVE,hermo,nervus,Nervus (n.),нерв,nerve,Anatomia: keho,Анатомия тела,T00571,enrich-latin-existing,n. — принятое сокращение.,user-list-2026-11-07

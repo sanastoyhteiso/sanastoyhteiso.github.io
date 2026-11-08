@@ -1,0 +1,38 @@
+﻿existing_term_id,fi,la,latin_original,notes
+T00304,verenkierto,circulatio,Circulatio,
+T00574,sydän,cor,Cor,
+T00582,laskimo,vena,"Vena, venae (v.)",Латинское venae — форма родительного падежа ед. ч.
+T00581,valtimo,arteria,"Arteria, arteriae (a.)",Arteriae — родительный падеж ед. ч.; a. — сокращение.
+T01123,sepelvaltimo,arteria coronaria,Arteriae coronariae,Исходная латинская форма во множественном числе; для финского единственного выбрана форма единственного числа.
+T00279,hengitys,respiratio,Respiratio,
+T00575,keuhko,pulmo,"Pulmo, pulmones",В списке также keuhkot — лёгкие; латинская форма множественного числа pulmones.
+T01148,keuhkopussi,pleura,Pleura,
+T00577,henkitorvi,trachea,Trachea,
+T00578,keuhkoputki,bronchus,Bronchus,
+T01143,kurkunpää,larynx,Larynx,
+T01142,nielu,pharynx,Pharynx,
+T00579,pallea,diaphragma,Diaphragma,
+T00596,haima,pancreas,Pancreas,
+T00589,mahalaukku,gaster,Gaster,Также употребляется ventriculus.
+T00594,maksa,hepar,Hepar,
+T00595,sappirakko,vesica biliaris,Vesica biliaris,
+T00591,ohutsuoli,intestinum tenue,Intestinum tenue,
+T01161,pohjukaissuoli,duodenum,duodenum,
+T01162,tyhjäsuoli,jejunum,jejunum,
+T01163,sykkyräsuoli,ileum,ileum,
+T00592,paksusuoli,intestinum crassum,Colon/ Intestinum crassum,"Colon — ободочная кишка, часть толстой кишки; полное название intestinum crassum."
+T00590,ruokatorvi,oesophagus,Oesophagus,
+T01166,peräaukko,anus,Anus,
+T00593,peräsuoli,rectum,Rectum,
+T01071,virtsaneritys,diuresis,Diureesi,"Diureesi — финская форма; diuresis — медицинский латинизированный термин, не название органа."
+T01056,munuaiset,renes,renes,"Множественное число, ед. ч. ren."
+T00096,virtsa,urina,urina,
+T00105,virtsaputki,urethra,uretha,Исправлена латинская опечатка uretha → urethra.
+T00567,lihas,musculus,"Musculus, musculi (m.)",Musculi — форма родительного падежа ед. ч.
+T00566,luu,os,"Os, ossa",В списке также luut — кости; латинское множественное ossa.
+T00568,nivel,articulatio,Articulatio,
+T00179,iho,cutis,cutis,
+T01284,orvaskesi,epidermis,epidermis,
+T01285,verinahka,dermis,dermis,
+T01286,ihonalaiskudos,subcutis,subcutis,
+T00571,hermo,nervus,Nervus (n.),n. — принятое сокращение.
