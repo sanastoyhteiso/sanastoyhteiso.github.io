@@ -178,3 +178,7 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .exam-review summary:focus-visible{outline:2px solid #2984a8;outline-offset:4px}
 .exam-review-passed .exam-review-title{color:#286942}
 .exam-review-missed .exam-review-title{color:#8e4d24}
+
+/* RUN165 mixed Latin flashcard toggle, readable on old iOS and desktop. */
+.latin-card-toggle{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;line-height:1.5;min-height:36px}
+.latin-card-toggle input{width:18px;height:18px;flex-shrink:0}
