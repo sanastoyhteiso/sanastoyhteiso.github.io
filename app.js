@@ -246,6 +246,24 @@
       '<p lang="fi"><b>FI:</b> '+safe(fi)+'</p>'+
       '<p lang="ru"><b>RU:</b> '+safe(ru)+'</p></div>';
   }
+  function truthValueLabel(value){
+    return value?'Tosi · Верно · True':'Epätosi · Неверно · False';
+  }
+  function truthAnswerFeedback(selected,expected){
+    var correct=selected===expected;
+    return '<div class="answer exam-judgement '+(correct?'correct':'wrong')+'" role="status" aria-live="polite">'+
+      '<p class="exam-judgement-title">'+(correct?'✓ Правильно! / Oikein!':'✕ Ошибка / Väärin!')+'</p>'+
+      '<p><b>Твой выбор / Valitsit:</b> '+truthValueLabel(selected)+
+      ' <b>'+(correct?'✓ верный выбор':'✕ ошибочный выбор')+'</b></p>'+
+      '<p><b>Oikea vastaus / Правильный ответ:</b> '+truthValueLabel(expected)+'</p></div>';
+  }
+  function multipleAnswerFeedback(selected,expected){
+    var correct=selected===expected;
+    return '<div class="answer exam-judgement '+(correct?'correct':'wrong')+'">'+
+      '<p class="exam-judgement-title">'+(correct?'✓ Правильно / Oikein':'✕ Ошибка / Väärin')+'</p>'+
+      '<p><b>'+(selected?'Ты отметил утверждение / Valitsit väitteen':'Ты не отметил утверждение / Et valinnut väitettä')+'</b></p>'+
+      '<p><b>Истинность / Väite on:</b> '+truthValueLabel(expected)+'</p></div>';
+  }
   function quizModeTabs(){
     return '<div class="panel"><div class="form-row"><span class="hint">Тип теста / Testin tyyppi</span>'+
       '<button class="btn '+(state.quizMode==='translate'?'primary':'white')+'" data-action="quiz-mode" data-value="translate">4 варианта / 4 vaihtoehtoa</button>'+
@@ -270,12 +288,11 @@
     s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
     if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
     s+=bilingualQuestion(q.fi,q.ru,q.en)+'<div class="mc-options">';
-    s+='<button class="btn white" data-action="tf-choose" data-value="true" '+(state.tfResult!==null?'disabled':'')+'>Tosi · Верно</button>';
-    s+='<button class="btn white" data-action="tf-choose" data-value="false" '+(state.tfResult!==null?'disabled':'')+'>Epätosi · Неверно</button></div>';
+    var chosen=state.tfResult===null?null:(state.tfResult?q.correct:!q.correct);
+    s+='<button class="btn '+(chosen===true?(state.tfResult?'quiz-picked-correct':'quiz-picked-wrong'):'white')+'" data-action="tf-choose" data-value="true" '+(state.tfResult!==null?'disabled':'')+'>Tosi · Верно'+(chosen===true?(state.tfResult?' ✓':' ✕'):'')+'</button>';
+    s+='<button class="btn '+(chosen===false?(state.tfResult?'quiz-picked-correct':'quiz-picked-wrong'):'white')+'" data-action="tf-choose" data-value="false" '+(state.tfResult!==null?'disabled':'')+'>Epätosi · Неверно'+(chosen===false?(state.tfResult?' ✓':' ✕'):'')+'</button></div>';
     if(state.tfResult!==null){
-      s+='<div class="answer '+(state.tfResult?'correct':'wrong')+'">'+
-        (state.tfResult?'✓ Oikein! · Правильно. ':'✕ Ei aivan. · Не совсем. ')+
-        '<b>Oikea vastaus / Правильный ответ: '+(q.correct?'Tosi · Верно':'Epätosi · Неверно')+'</b></div>'+
+      s+=truthAnswerFeedback(chosen,q.correct)+
         bilingualFeedback(q)+
         '<button class="btn primary" data-action="tf-next">'+(run.index===run.questions.length-1?'Результат / Tulos →':'Seuraava / Следующий →')+'</button>';
     }
@@ -358,8 +375,7 @@
       s+='<label class="field exam-multi-choice"><input type="checkbox" data-multi-index="'+i+'" '+
         (checked?'checked ':'')+(state.multiResult?'disabled ':'')+'>'+bilingualQuestion(item.fi,item.ru,item.en)+'</label>';
       if(state.multiResult){
-        s+='<div class="answer '+(item.correct?'correct':'wrong')+'">'+
-          '<b>'+(item.correct?'Tosi / Верно':'Epätosi / Неверно')+'</b></div>';
+        s+=multipleAnswerFeedback(!!checked,item.correct);
         s+=bilingualFeedback(item);
       }
     }
@@ -400,8 +416,7 @@
       if(q.type==='translate'){
         s+='<p><b>Oikea vastaus / Правильный ответ:</b> '+safe(q.answer)+'</p>'+examNote(q.item);
       }else if(q.type==='truefalse'){
-        s+='<p><b>Oikea vastaus / Правильный ответ:</b> '+
-          (q.question.correct?'Tosi / Верно':'Epätosi / Неверно')+'</p>'+bilingualFeedback(q.question);
+        s+=truthAnswerFeedback(result.selected,q.question.correct)+bilingualFeedback(q.question);
       }else if(q.type==='matching'){
         for(var m=0;m<result.details.length;m++){
           var d=result.details[m];if(d.selected!==d.correct){
@@ -412,8 +427,8 @@
       }else{
         for(var k=0;k<result.details.length;k++){
           var item=result.details[k];if(item.selected!==item.correct){
-            s+='<div><b>'+(item.correct?'Tosi / Верно':'Epätosi / Неверно')+
-              '</b>'+bilingualFeedback(item.term)+'</div>';
+            s+='<div>'+multipleAnswerFeedback(item.selected,item.correct)+
+              bilingualFeedback(item.term)+'</div>';
           }
         }
       }
