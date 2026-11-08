@@ -127,3 +127,16 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 #main-content [id^="mock-match-label-"] .exam-question-secondary{font-size:15px;font-size:clamp(14px,1.4vw,16px)}
 #main-content select[data-mock-match]{flex:1;min-width:170px;max-width:100%}
 @media(max-width:600px){.exam-mock-percent{font-size:43px}#main-content [id^="mock-match-label-"]{min-width:100%}#main-content select[data-mock-match]{min-width:0;width:100%}}
+
+
+/* RUN158: a false statement is not the same as a wrong learner answer.
+   Both icon and explicit text convey success or error; Safari12 compatible. */
+.answer.exam-judgement{border-width:2px;border-style:solid;border-radius:12px;padding:15px 17px;margin:14px 0;line-height:1.5}
+.answer.exam-judgement.correct{background:#ecf9f0;border-color:#368d5e;color:#185b36}
+.answer.exam-judgement.wrong{background:#fff1f0;border-color:#bc4444;color:#8d2525}
+.exam-judgement-title{font-size:18px;font-weight:800;margin:0 0 7px}
+.exam-judgement p{margin:5px 0}
+.mc-options .btn.quiz-picked-correct:disabled{opacity:1;background:#e6f8ed;border:2px solid #368d5e;color:#165b36;font-weight:800}
+.mc-options .btn.quiz-picked-wrong:disabled{opacity:1;background:#fff0ee;border:2px solid #bc4444;color:#8d2525;font-weight:800}
+.exam-review .exam-judgement{margin:10px 0}
+@media(max-width:600px){.exam-judgement-title{font-size:17px}.answer.exam-judgement{padding:12px}}
