@@ -49,7 +49,7 @@ test('production 1296 base words stay byte-stable and 65 new public IDs are coll
 test('each compound is in an EXISTING exam subject with full FI/RU and accurate slide metadata',()=>{
  const {d}=load();
  assert.equal(d.examTopics.length,10,'no eleventh dropdown category');
- assert.deepEqual(d.examTopics.map(x=>x.pages),['7–12, 17','25–30','31–52','53–66','67–80','81–89','91–106','107–114','131–146','161–190']);
+ assert.deepEqual(Array.from(d.examTopics,x=>x.pages),['7–12, 17','25–30','31–52','53–66','67–80','81–89','91–106','107–114','131–146','161–190']);
  const lookup=new Map(d.terms.map(x=>[norm(x.fi),x]));
  for(let i=0;i<source.records.length;i++){
   const expected=source.records[i],actual=lookup.get(norm(expected.fi));
