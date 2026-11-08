@@ -150,7 +150,7 @@
     var corrected=q.correct===false,fi=corrected?(q.correctStatementFi||q.explanationFi):q.explanationFi,
       ru=corrected?(q.correctStatementRu||q.explanationRu):q.explanationRu;
     return '<div class="exam-explain exam-feedback-one"><p><b>'+
-      (corrected?'Oikea väite / Правильное утверждение':'Selitys / Объяснение')+'</b></p>'+
+      (corrected?'Oikea väite / Правильное утверждение:':'Selitys / Объяснение')+'</b></p>'+
       '<p lang="fi"><b>FI:</b> '+safe(fi)+'</p>'+
       '<p lang="ru"><b>RU:</b> '+safe(ru)+'</p></div>';
   }
