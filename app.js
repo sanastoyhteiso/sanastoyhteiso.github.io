@@ -134,7 +134,54 @@
   function grade(id,ok){var p=state.scores[id]||{correct:0,wrong:0,seen:0};p.seen=(p.seen||0)+1;if(ok){p.correct=(p.correct||0)+1;p.learned=true;p.learnedUpdatedAt=Date.now();}else{p.wrong=(p.wrong||0)+1;if(state.reviewLearned){p.learned=false;p.learnedUpdatedAt=Date.now();}}p.last=Date.now();state.scores[id]=p;save('rs_scores_v1',state.scores);}
   function nextCard(){if(!state.deck.length)return;state.sessionSeen[state.deck[state.cardIndex].id]=true;if(state.cardIndex+1<state.deck.length){state.cardIndex++;}else{state.deck=[];ensureDeck(true);}state.flipped=false;renderCards();}
   function quizNew(){var opts=allTerms().concat(sharedEnabled()?D.phrases:[]).filter(function(x){return matchCat(x,state.filter)&&eligible(x,state.quizDirection)&&!isLearned(x.id);});if(opts.length<4){state.quiz=null;return;}shuffle(opts);var p=pair(state.quizDirection),chosen=opts[0],right=word(chosen,p.to),used={};used[right]=true;var wrong=[];for(var i=1;i<opts.length&&wrong.length<3;i++){var txt=word(opts[i],p.to);if(!used[txt]){used[txt]=true;wrong.push(txt);}}if(wrong.length<3){state.quiz=null;return;}state.quiz={item:chosen,from:p.from,to:p.to,answer:right,options:shuffle([right].concat(wrong))};state.quizResult=null;}
-  function renderQuiz(){basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');if(!state.quiz)quizNew();var q=state.quiz;var s=englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
+
+  function quizModeTabs(){
+    return '<div class="panel"><div class="form-row"><span class="hint">Тип теста / Testin tyyppi</span>'+
+      '<button class="btn '+(state.quizMode==='translate'?'primary':'white')+'" data-action="quiz-mode" data-value="translate">4 варианта / 4 vaihtoehtoa</button>'+
+      '<button class="btn '+(state.quizMode==='truefalse'?'primary':'white')+'" data-action="quiz-mode" data-value="truefalse">Верно / Неверно · Tosi / Epätosi</button></div></div>';
+  }
+  function tfPool(){
+    var bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[];
+    return bank.filter(function(q){return q&&q.id&&q.fi&&typeof q.correct==='boolean'&&
+      (state.filter==='all'||q.topic===state.filter);});
+  }
+  function tfNew(){
+    var items=tfPool(),available=items.filter(function(q){return !state.tfSeen[q.id];});
+    if(!available.length){state.tfSeen={};available=items.slice();}
+    if(!available.length){state.tfQuestion=null;state.tfResult=null;return;}
+    shuffle(available);
+    if(state.tfQuestion&&available.length>1&&available[0].id===state.tfQuestion.id){
+      var temp=available[0];available[0]=available[1];available[1]=temp;
+    }
+    state.tfQuestion=available[0];state.tfSeen[state.tfQuestion.id]=true;state.tfResult=null;
+  }
+  function renderTrueFalse(){
+    basePage('Проверь себя','Tosi vai epätosi? Прочитай утверждение по-фински.');
+    if(!state.tfQuestion)tfNew();
+    var q=state.tfQuestion;
+    var s=quizModeTabs()+'<div class="panel"><div class="form-row">'+
+      '<label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label>'+
+      '<button class="btn white" data-action="tf-next">Другой вопрос ↻</button></div></div>';
+    s+='<div class="panel"><p class="hint">Tosi vai epätosi? / Верно или неверно?</p>';
+    if(!q){s+='<p>Для этой темы утверждений пока нет. Выбери экзаменационную тему.</p></div>';root.innerHTML=s;return;}
+    s+='<div class="flash-term" lang="fi">'+safe(q.fi)+'</div><div class="mc-options">';
+    s+='<button class="btn white" data-action="tf-choose" data-value="true" '+(state.tfResult!==null?'disabled':'')+'>Tosi · Верно</button>';
+    s+='<button class="btn white" data-action="tf-choose" data-value="false" '+(state.tfResult!==null?'disabled':'')+'>Epätosi · Неверно</button></div>';
+    if(state.tfResult!==null){
+      s+='<div class="answer '+(state.tfResult?'correct':'wrong')+'">'+
+        (state.tfResult?'✓ Oikein! · Правильно. ':'✕ Ei aivan. · Не совсем. ')+
+        '<b>Oikea vastaus / Правильный ответ: '+(q.correct?'Tosi · Верно':'Epätosi · Неверно')+'</b></div>'+
+        '<div class="exam-explain"><p><b>FI:</b> '+safe(q.explanationFi)+'</p>'+
+        '<p><b>RU:</b> '+safe(q.explanationRu)+'</p></div>'+
+        '<button class="btn primary" data-action="tf-next">Seuraava / Следующий →</button>';
+    }
+    s+='</div><div class="panel"><span class="hint">Текущая сессия / Nykyinen harjoitus: '+
+      '✓ '+state.tfCorrect+' · ✕ '+state.tfWrong+
+      '. Этот тест не меняет статус «Выучено».</span></div>';
+    root.innerHTML=s;
+  }
+
+  function renderQuiz(){if(state.quizMode==='truefalse'){renderTrueFalse();return;}basePage('Проверь себя','Выбери правильный перевод. Каждый ответ сохраняется в статистике.');if(!state.quiz)quizNew();var q=state.quiz;var s=quizModeTabs()+englishWarning(state.quizDirection)+'<div class="panel"><div class="form-row"><label class="field"><span>Тема теста</span>'+selectCats(state.filter,'quiz-cat')+'</label><label class="field"><span>Направление</span>'+directionSelect('quiz-dir',state.quizDirection,false)+'</label><button class="btn white" data-action="quiz-next">Другой вопрос ↻</button></div></div>';
     if(!q){s+='<div class="panel">Для теста нужно хотя бы четыре слова. Выбери другую тему.</div>';root.innerHTML=s;return;}
     s+='<div class="panel"><p class="hint">Выбери перевод:</p><div class="flash-term">'+safe(word(q.item,q.from))+'</div><div class="mc-options">';for(var i=0;i<q.options.length;i++){s+='<button class="btn '+(state.quizResult!==null&&q.options[i]===q.answer?'good':'white')+'" '+(state.quizResult!==null?'disabled':'')+' data-action="quiz-choose" data-value="'+i+'">'+safe(q.options[i])+'</button>';}
     s+='</div>';
