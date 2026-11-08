@@ -300,6 +300,13 @@
       directionSelect('quiz-dir',state.quizDirection,false)+'</label></div></div>';
   }
   function matchNew(){var run=examRun('matching');state.matchQuestion=run.questions[run.index]||null;state.matchResult=null;}
+  function matchAnswerLabel(fi,items){
+    var target=examDisplayPair().to;
+    for(var j=0;j<items.length;j++){
+      if(items[j].fi===fi)return word(items[j],target)||fi;
+    }
+    return fi;
+  }
   function renderMatching(){
     basePage('Проверь себя','Yhdistä oikeat parit / Соедини правильные пары.');
     var run=examRun('matching');
@@ -312,11 +319,13 @@
     if(!q){root.innerHTML=s+'<p>Выбери экзаменационную тему.</p></div>';return;}
     for(var i=0;i<q.items.length;i++){
       var item=q.items[i],chosen=state.matchResult&&state.matchResult.selected[i]||'';
-      s+='<div class="form-row"><div class="field grow" id="match-label-'+i+'">'+bilingualQuestion(item.examNoteFi,item.examNoteRu)+'</div>'+
+      s+='<div class="form-row"><div class="field grow" id="match-label-'+i+'">'+bilingualQuestion(item.examNoteFi,item.examNoteRu,
+        examDisplayPair().from==='en'?'Which Finnish medical term corresponds to the English term "'+safe(item.en)+'"?':'Choose the English term that matches this description.')+'</div>'+
         '<select class="control" aria-labelledby="match-label-'+i+'" id="match-'+i+'" data-match-index="'+i+'" '+(state.matchResult?'disabled':'')+'>'+
         '<option value="">— Valitse / Выбери —</option>';
       for(var k=0;k<q.options.length;k++){
-        s+='<option value="'+safe(q.options[k])+'"'+(chosen===q.options[k]?' selected':'')+'>'+safe(q.options[k])+'</option>';
+        s+='<option value="'+safe(q.options[k])+'"'+(chosen===q.options[k]?' selected':'')+'>'+
+          safe(matchAnswerLabel(q.options[k],q.items))+'</option>';
       }
       s+='</select></div>';
       if(state.matchResult){
