@@ -118,6 +118,8 @@ jobs:
         run: node --test release-checks/exam-cloud-run161.test.cjs
       - name: RUN163 full original question and answer in post-exam error review
         run: node --test release-checks/exam-review-run163.test.cjs
+      - name: RUN164 Latin flashcards and exam without repeated source terms
+        run: node --test release-checks/exam-latin-run164.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)

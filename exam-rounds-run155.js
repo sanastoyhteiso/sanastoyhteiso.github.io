@@ -99,5 +99,32 @@
   }),count);
   return [];
  }
- w.RS_EXAM_ROUNDS={build:build,validTerms:validTerms};
+ /* RUN164: build disjoint matching/multiple-choice groups from explicitly selected
+    distinct source terms. The existing 10-question practice generator remains unchanged. */
+ function buildMatchingFrom(items){
+  if(!Array.isArray(items)||items.length!==4)return null;
+  var seen={},list=items.slice(),parts=[];
+  for(var i=0;i<4;i++){
+   if(!list[i]||!list[i].id||!list[i].fi||seen[list[i].fi])return null;
+   seen[list[i].fi]=true;parts.push(list[i].id);
+  }
+  return {id:'MATCH-R164-'+parts.sort().join('|'),items:list,
+    options:shuffled(list.map(function(x){return x.fi;}))};
+ }
+ function buildMultiFrom(items){
+  if(!Array.isArray(items)||items.length!==4)return null;
+  var list=shuffled(items),out=[],seen={};
+  for(var i=0;i<list.length;i++){
+   if(!list[i]||!list[i].id||!list[i].fi||!list[i].ru||seen[list[i].fi])return null;
+   seen[list[i].fi]=true;
+  }
+  for(var j=0;j<4;j++){
+   var correct=j<2,x=list[j],other=correct?null:otherFor(x,list,j+1);
+   if(!correct&&!other)return null;
+   out.push(claim(x,correct,other,'MULTI-R164-'+x.id+'-'+(correct?'T':'F')));
+  }
+  return {id:'MULTI-R164-'+list.map(function(x){return x.id;}).sort().join('|'),
+    items:shuffled(out)};
+ }
+  w.RS_EXAM_ROUNDS={build:build,validTerms:validTerms,buildMatchingFrom:buildMatchingFrom,buildMultiFrom:buildMultiFrom};
 })(window);
