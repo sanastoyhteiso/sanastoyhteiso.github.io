@@ -43,90 +43,107 @@
   }
   return out;
  }
- function chooseGroups(words,reserved,g){
-  var remaining=words.filter(function(t){return !reserved[t.id];});
-  if(remaining.length<8)return null;
-  for(var tries=0;tries<90;tries++){
-   var shuffled=shuffle(remaining),match=g.buildMatchingFrom(shuffled.slice(0,4)),
-       multi=g.buildMultiFrom(shuffled.slice(4,8));
-   if(match&&multi)return {match:match,multi:multi};
-  }
-  return null;
- }
  function statementSignature(q){
   if(q.type==='translate')return 'TERM|'+q.from+'|'+normalized(q.item[q.from]);
   if(q.type==='truefalse')return 'TRUEFALSE|'+normalized(q.question.fi);
-  var items=q.question.items||[];
-  if(q.type==='matching')return 'MATCH|'+items.map(function(t){return normalized(t.fi);}).sort().join('|');
-  return 'MULTI|'+items.map(function(t){return normalized(t.fi);}).sort().join('|');
+  if(q.type==='matching')return 'MATCH|'+q.question.items.map(function(t){
+   return normalized(t.fi);
+  }).sort().join('|');
+  return 'MULTI|'+q.question.items.map(function(t){return normalized(t.fi);}).sort().join('|');
  }
+ // A topic's 10 distinct target terms are allocated BEFORE making any questions.
+ // Five Latin targets and five different standard targets yield two Latin modes
+ // and two standard modes per topic, so the full 40 has 5 Latin of EACH format.
  function builtTopic(g,d,bank,topic,direction,globalReserved,globalLatin,wantLatin,seenSignatures){
-  var words=g.validTerms(d,topic),tfs=g.build('truefalse',topic,d,bank,10).filter(function(q){
-    return !!q.en;
-  });
-  // Hand-authored teacher-study facts first, then derived statements, no repeated source IDs.
-  var hand=shuffle(tfs.filter(function(x){return x.id.indexOf('TF-DERIVED-')!==0;})),
-      derived=shuffle(tfs.filter(function(x){return x.id.indexOf('TF-DERIVED-')===0;})),
-      tfOptions=hand.concat(derived);
-  for(var ti=0;ti<tfOptions.length;ti++){
-   var tf=tfOptions[ti],sigTF='TRUEFALSE|'+normalized(tf.fi);
-   if(seenSignatures[sigTF]||(tf.sourceId&&globalReserved[tf.sourceId]))continue;
-   var base={};Object.keys(globalReserved).forEach(function(id){base[id]=true;});
-   if(tf.sourceId)base[tf.sourceId]=true;
-   var latinKinds=wantLatin?[true,false]:[false,true];
-   for(var latinIndex=0;latinIndex<latinKinds.length;latinIndex++){
-    var latin=latinKinds[latinIndex],
-      candidates=translateCandidates(topic,direction,words,base,latin,globalLatin);
-    for(var trIndex=0;trIndex<candidates.length;trIndex++){
-     var tr=candidates[trIndex],key='TERM|'+tr.from+'|'+normalized(tr.item[tr.from]);
-     if(seenSignatures[key])continue;
-     var used={};Object.keys(base).forEach(function(id){used[id]=true;});
-     used[tr.item.id]=true;
-     var groups=chooseGroups(words,used,g);
-     if(!groups)continue;
-     var set=[tr,{id:'EX-TF-'+topic+'-'+tf.id,topic:topic,type:'truefalse',question:tf},
-       {id:'EX-MATCH-'+topic+'-'+groups.match.id,topic:topic,type:'matching',question:groups.match},
-       {id:'EX-MULTI-'+topic+'-'+groups.multi.id,topic:topic,type:'multiselect',question:groups.multi}];
-     var localSeen={},valid=true;
-     for(var u=0;u<set.length;u++){
-      var sign=statementSignature(set[u]);
-      if(localSeen[sign]||seenSignatures[sign]){valid=false;break;}
-      localSeen[sign]=true;
-     }
-     if(!valid)continue;
-     // Only commit reserved terms after building the entire four-part topic.
-     if(tf.sourceId)globalReserved[tf.sourceId]=true;
-     globalReserved[tr.item.id]=true;
-     for(var m=0;m<4;m++){
-      globalReserved[groups.match.items[m].id]=true;
-      globalReserved[groups.multi.items[m].sourceId]=true;
-     }
-     if(latin)globalLatin[normalized(tr.item.la)]=true;
-     Object.keys(localSeen).forEach(function(k){seenSignatures[k]=true;});
-     return set;
-    }
+  var words=g.validTerms(d,topic);
+  var fresh=shuffle(words.filter(function(t){
+    return !globalReserved[t.id]&&t.examTopics&&t.examTopics[0]===topic;
+  }));
+  if(fresh.length<10)return null;
+  var targetLanguage=direction.split('-')[1],tries=0;
+  for(tries=0;tries<55;tries++){
+   var allLatin=g.latinPool(fresh).filter(function(x){
+     return latinUnambiguous(x,words,targetLanguage);
+   });
+   var unusedLatin=shuffle(allLatin.filter(function(x){return !globalLatin[normalized(x.la)];}));
+   // Prefer a Latin spelling never previously quizzed in this same 40-page exam.
+   var chosenLatin=unusedLatin.length>=5?unusedLatin.slice(0,5):shuffle(allLatin).slice(0,5);
+   if(chosenLatin.length<5)return null;
+   var reserved={},i;
+   for(i=0;i<5;i++)reserved[chosenLatin[i].id]=true;
+   var standard=shuffle(fresh.filter(function(x){return !reserved[x.id];})).slice(0,5);
+   if(standard.length!==5)return null;
+   var targetTr=wantLatin?chosenLatin[0]:standard[0],trReserved={};
+   for(i=0;i<words.length;i++){
+    if(words[i].id!==targetTr.id)trReserved[words[i].id]=true;
    }
+   var trList=translateCandidates(topic,direction,words,trReserved,wantLatin,globalLatin);
+   if(!trList.length)continue;
+   var tr=trList[0],targetTF=wantLatin?standard[0]:chosenLatin[0],
+     truth=Math.random()<.5,other=null;
+   if(!truth){
+    var wrong=shuffle(words.filter(function(x){
+     return x.id!==targetTF.id&&x.fi!==targetTF.fi&&x.ru!==targetTF.ru;
+    }));
+    other=wrong[0];if(!other)continue;
+   }
+   var statement=wantLatin?
+     g.claim(targetTF,truth,other,'EX-TF-R165-'+topic+'-'+targetTF.id):
+     g.latinClaim(targetTF,truth,other,'EX-TF-LA-R165-'+topic+'-'+targetTF.id,topic);
+   if(!statement)continue;
+   statement.topic=topic;
+   var matchItems=wantLatin?chosenLatin.slice(1):standard.slice(1),
+       multiItems=wantLatin?standard.slice(1):chosenLatin.slice(1),
+       matching=g.buildMatchingFrom(matchItems,wantLatin),
+       multi=g.buildMultiFrom(multiItems,!wantLatin);
+   if(!matching||!multi)continue;
+   var set=[tr,
+    {id:'EX-'+statement.id,topic:topic,type:'truefalse',latin:!wantLatin,question:statement},
+    {id:'EX-MATCH-R165-'+topic+'-'+matching.id,topic:topic,type:'matching',latin:!!wantLatin,question:matching},
+    {id:'EX-MULTI-R165-'+topic+'-'+multi.id,topic:topic,type:'multiselect',latin:!wantLatin,question:multi}];
+   var local={},collision=false;
+   for(i=0;i<set.length;i++){
+    var signature=statementSignature(set[i]);
+    if(local[signature]||seenSignatures[signature]){collision=true;break;}
+    local[signature]=true;
+   }
+   if(collision)continue;
+   for(i=0;i<5;i++){
+    globalReserved[chosenLatin[i].id]=true;
+    globalReserved[standard[i].id]=true;
+    globalLatin[normalized(chosenLatin[i].la)]=true;
+   }
+   Object.keys(local).forEach(function(k){seenSignatures[k]=true;});
+   return set;
   }
   return null;
  }
  function build(d,bank,direction){
   var g=w.RS_EXAM_ROUNDS,topics=d&&d.examTopics||[],out=[],seen={},usedTerms={},
-      usedLatin={},signature={},latinCount=0;
+   usedLatin={},signatures={},latinCount=0;
   if(!g||topics.length!==10||!/^(fi-ru|ru-fi|fi-en|en-fi)$/.test(direction)||
-     typeof g.buildMatchingFrom!=='function'||typeof g.buildMultiFrom!=='function')return [];
-  var eligible=shuffle(topics.filter(function(t){
-    var words=g.validTerms(d,t.id),target=direction.split('-')[1],n=0,unique={};
-    for(var i=0;i<words.length;i++){
-     if(words[i].la&&words[i][target]&&latinUnambiguous(words[i],words,target)&&
-        !unique[normalized(words[i].la)]){unique[normalized(words[i].la)]=true;n++;}
-    }
-    return n>=4;
-  }));
+     typeof g.buildMatchingFrom!=='function'||typeof g.buildMultiFrom!=='function'||
+     typeof g.latinPool!=='function'||typeof g.latinClaim!=='function'||
+     typeof g.claim!=='function')return [];
   var latinTopics={};
-  for(var p=0;p<Math.min(5,eligible.length);p++)latinTopics[eligible[p].id]=true;
+  var eligible=shuffle(topics.filter(function(t){
+   var pool=g.validTerms(d,t.id).filter(function(x){
+    return x.examTopics&&x.examTopics[0]===t.id;
+   }),lang=direction.split('-')[1],n=0,used={};
+   for(var i=0;i<pool.length;i++){
+    var x=pool[i],key=normalized(x.la);
+    if(key&&x[lang]&&!used[key]&&latinUnambiguous(x,pool,lang)){
+     used[key]=true;n++;
+    }
+   }
+   return n>=5;
+  }));
+  if(eligible.length!==10)return [];
+  for(var p=0;p<5;p++)latinTopics[eligible[p].id]=true;
   for(var j=0;j<topics.length;j++){
-   var topic=topics[j].id,
-       selected=builtTopic(g,d,bank,topic,direction,usedTerms,usedLatin,!!latinTopics[topic],signature);
+   var topic=topics[j].id;
+   var selected=builtTopic(g,d,bank,topic,direction,usedTerms,usedLatin,
+     !!latinTopics[topic],signatures);
    if(!selected)return [];
    for(var k=0;k<selected.length;k++){
     var question=selected[k];
@@ -135,8 +152,7 @@
     if(question.latin)latinCount++;
    }
   }
-  // Never silently offer fewer than the promised Latin questions: fail closed.
-  if(out.length!==40||latinCount<Math.min(4,eligible.length))return [];
+  if(out.length!==40||latinCount!==20)return [];
   return shuffle(out);
  }
  function evaluate(q,answer){
@@ -152,8 +168,9 @@
   if(q.type==='matching'){
    if(!answer||answer.length!==q.question.items.length)return null;
    for(i=0;i<q.question.items.length;i++){
-    if(answer[i]===q.question.items[i].fi)good++;
-    details.push({selected:answer[i],correct:q.question.items[i].fi,term:q.question.items[i]});
+    var key=q.question.answerKey==='la'?'la':'fi';
+    if(answer[i]===q.question.items[i][key])good++;
+    details.push({selected:answer[i],correct:q.question.items[i][key],term:q.question.items[i]});
    }
    return {score:good/q.question.items.length,perfect:good===q.question.items.length,details:details,selected:answer};
   }
