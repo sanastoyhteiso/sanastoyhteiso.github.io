@@ -98,6 +98,8 @@ jobs:
         run: node --test release-checks/riveria-anatomy-exam.test.cjs
       - name: Verify 65 owner PDF heart/blood compound terms, preserved old progress (NO network)
         run: node --test release-checks/heart-blood-pdf-terms.test.cjs
+      - name: RUN151 arterial vocabulary regression (FI/RU/Latin, 10 topics, cache)
+        run: node --test release-checks/exam-arteries-run151.test.cjs
       - name: Verify cards and quiz remain stable after cloud readback (NEW-019)
         run: node --test release-checks/v3-card-stability-on-cloud-refresh.test.cjs
       - name: Verify V3 user public counters respect learned flags and opt-in (NEW-020)
