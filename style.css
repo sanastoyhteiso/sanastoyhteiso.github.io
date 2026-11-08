@@ -150,3 +150,23 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 
 /* RUN162: one compact exam autosave status instead of two stacked banners. */
 .exam-save-compact{margin-top:8px;padding:8px 12px;line-height:1.4;font-size:14px;font-weight:600}
+
+
+/* RUN163: show each original exam question and both answers in post-exam review.
+   These panels are revealed only after all 40 questions. */
+.exam-review-original{margin-top:12px;padding-top:6px}
+.exam-review-title{font-size:15px;font-weight:800;margin:0 0 9px}
+.exam-review-term{font-size:18px;font-weight:750;line-height:1.5;overflow-wrap:anywhere;margin:8px 0 12px}
+.exam-review-options{padding-left:26px;margin:8px 0 15px;line-height:1.55}
+.exam-review-options li{padding:7px 9px;margin:5px 0;border:1px solid #e0e9ee;border-radius:7px;overflow-wrap:anywhere}
+.exam-review-options li.exam-review-right,.exam-review-row.exam-review-right{background:#effaf3;border-color:#9dccae}
+.exam-review-options li.exam-review-wrong,.exam-review-row.exam-review-wrong{background:#fff2f0;border-color:#e2aca8}
+.exam-review-options li b{font-size:13px;display:block;line-height:1.4}
+.exam-review-row{border:1px solid #d5e4ec;border-radius:10px;padding:12px 14px;margin:12px 0;overflow-wrap:anywhere}
+.exam-review-row-heading{font-weight:800;margin:0 0 8px}
+.exam-review-row p{line-height:1.55}
+.exam-review .exam-question-main{font-size:17px;line-height:1.5}
+.exam-review .exam-question-secondary{font-size:14px;line-height:1.55}
+.exam-review .exam-question-bilingual{margin:8px 0 14px}
+.exam-review .exam-judgement{margin:12px 0}
+@media(max-width:600px){.exam-review-row{padding:11px 12px}.exam-review-term{font-size:17px}.exam-review-options{padding-left:22px}}
