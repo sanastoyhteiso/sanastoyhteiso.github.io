@@ -87,3 +87,46 @@ test('static ES5 compatible, cache version and mode scripts synchronized',()=>{
  assert.ok(sw.includes('app.js?v=truefalse-run153-v1'));
  assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc22'));
 });
+
+
+test('matching dropdown pairs work in all ten exam topics, show correct pairs and FI/RU notes',()=>{
+ const b=browser();try{
+  b.d.querySelector('[data-view="practice"]').click();
+  b.d.querySelector('[data-action="quiz-mode"][data-value="matching"]').click();
+  const old=b.w.localStorage.getItem('run153_rs_scores_v1');
+  for(let i=1;i<=10;i++){
+    const topic='EXAM'+String(i).padStart(2,'0'),select=b.d.getElementById('quiz-cat');
+    select.value=topic;select.dispatchEvent(new b.w.Event('change',{bubbles:true}));
+    const dropdowns=b.d.querySelectorAll('[data-match-index]');
+    assert.equal(dropdowns.length,4,topic);
+    for(const dd of dropdowns)assert.equal(dd.options.length,5,'placeholder and four unique answers');
+    dropdowns[0].value=dropdowns[0].options[1].value;
+    b.d.querySelector('[data-action="match-check"]').click();
+    const result=b.d.getElementById('main-content').textContent;
+    assert.match(result,/Oikea pari/);
+    assert.match(result,/FI:/);assert.match(result,/RU:/);
+  }
+  assert.equal(b.w.localStorage.getItem('run153_rs_scores_v1'),old);
+ }finally{b.dom.window.close();}
+});
+test('multiple-selection checks every option, reveals corrected FI/RU statements',()=>{
+ const b=browser();try{
+  b.d.querySelector('[data-view="practice"]').click();
+  b.d.querySelector('[data-action="quiz-mode"][data-value="multiselect"]').click();
+  const before=b.w.localStorage.getItem('run153_rs_scores_v1');
+  for(let i=1;i<=10;i++){
+    const topic='EXAM'+String(i).padStart(2,'0'),s=b.d.getElementById('quiz-cat');
+    s.value=topic;s.dispatchEvent(new b.w.Event('change',{bubbles:true}));
+    assert.equal(b.d.querySelectorAll('[data-multi-index]').length,3,topic);
+    assert.equal(b.d.querySelectorAll('[data-multi-index]:checked').length,0,'no answers preselected');
+    b.d.querySelector('[data-action="multi-check"]').click();
+    const text=b.d.getElementById('main-content').textContent;
+    assert.match(text,/Oikea väite/);
+    assert.match(text,/FI:/);assert.match(text,/RU:/);
+    assert.ok(b.d.querySelector('[data-action="multi-next"]'));
+  }
+  assert.equal(b.w.localStorage.getItem('run153_rs_scores_v1'),before);
+  b.d.querySelector('[data-action="quiz-mode"][data-value="translate"]').click();
+  assert.ok(b.d.querySelector('[data-action="quiz-choose"]'));
+ }finally{b.dom.window.close();}
+});
