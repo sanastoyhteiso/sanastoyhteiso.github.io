@@ -59,7 +59,7 @@ test('T/F uses RU main FI secondary then FI main RU secondary and one feedback b
   assert.equal(b.d.querySelectorAll('.exam-feedback-one').length,1);
   assert.equal(b.w.localStorage.getItem('run154_rs_scores_v1'),before);
   b.language('en');
-  assert.equal(b.d.querySelector('.exam-question-main').getAttribute('lang'),'fi','English fallback must not falsely claim reviewed English translation');
+  assert.equal(b.d.querySelector('.exam-question-main').getAttribute('lang'),'en','English original question must use reviewed EN translation');
  }finally{b.close();}
 });
 test('matching shows RU main and FI under it, no duplicated definition after feedback',()=>{
@@ -101,10 +101,10 @@ test('multiple choice shows each statement bilingually and one feedback per opti
 test('ES5 new code, versioned cache and Safari 12 readable font fallbacks',()=>{
  const app=read('app.js'),html=read('index.html'),sw=read('sw.js'),css=read('style.css');
  assert.doesNotMatch(app,/=>|\?\./);
- assert.match(html,/app\.js\?v=exam-rounds-run155-v1/);
- assert.match(html,/riveria-true-false\.js\?v=run154-bilingual-1/);
- assert.match(html,/style\.css\?v=exam-rounds-run155-1/);
+ assert.match(html,/app\.js\?v=mock-exam-run156-v1/);
+ assert.match(html,/riveria-true-false\.js\?v=run156-en-1/);
+ assert.match(html,/style\.css\?v=mock-exam-run156-1/);
  assert.match(sw,/v3\.0\.0-rc24/);
- assert.match(sw,/riveria-true-false\.js\?v=run154-bilingual-1/);
+ assert.match(sw,/riveria-true-false\.js\?v=run156-en-1/);
  assert.ok(css.includes('font-size:25px;font-size:clamp'));
 });
