@@ -115,3 +115,15 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .exam-run-done h2{margin-bottom:14px}
 .exam-run-done p{line-height:1.6}
 @media(max-width:600px){.exam-run-progress>b{font-size:16px}.exam-run-done{padding:20px 12px}}
+
+/* RUN156 — forty-page exam. Consistent with existing Riveria learning UI and Safari12. */
+.exam-mock-percent{font-size:50px;font-size:clamp(38px,6vw,62px);font-weight:800;color:#184d66;letter-spacing:-.02em;margin:16px 0}
+.exam-review{background:#f4fafb;border:1px solid #d6e9ec;border-radius:12px;padding:13px 16px;margin:12px 0}
+.exam-review summary{font-weight:700;cursor:pointer;line-height:1.5}
+.exam-review p{line-height:1.55}
+.exam-review .exam-explain{margin:12px 0}
+#main-content [id^="mock-match-label-"]{flex:2;min-width:220px}
+#main-content [id^="mock-match-label-"] .exam-question-main{font-size:18px;font-size:clamp(17px,2vw,22px)}
+#main-content [id^="mock-match-label-"] .exam-question-secondary{font-size:15px;font-size:clamp(14px,1.4vw,16px)}
+#main-content select[data-mock-match]{flex:1;min-width:170px;max-width:100%}
+@media(max-width:600px){.exam-mock-percent{font-size:43px}#main-content [id^="mock-match-label-"]{min-width:100%}#main-content select[data-mock-match]{min-width:0;width:100%}}

@@ -1,6 +1,6 @@
 /* RUN153: public fixed true/false questions, no private data or cloud writes. ES5 compatible. */
 window.RS_TRUE_FALSE={
-  "version": "run154-bilingual-1",
+  "version": "run156-en-1",
   "scope": "10 Päästä varpaisiin 2014 topics, original exam-note-grounded educational items; independent explanations, not book verbatim",
   "questions": [
     {
@@ -11,7 +11,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Solu on pienin toimiva yksikkö, ja useat samantyyppiset solut muodostavat kudoksen.",
       "explanationRu": "Клетка — наименьшая функциональная единица организма; однотипные клетки образуют ткань.",
       "sourceFi": "solu",
-      "ru": "Клетка — наименьшая функционирующая структурная единица организма."
+      "ru": "Клетка — наименьшая функционирующая структурная единица организма.",
+      "en": "A cell is the smallest functional structural unit of the body."
     },
     {
       "id": "TF0002",
@@ -23,7 +24,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "solukalvo",
       "correctStatementFi": "Solukalvo säätelee sitä, mitä aineita soluun pääsee ja mitä aineita sieltä poistuu.",
       "correctStatementRu": "Клеточная мембрана регулирует, какие вещества поступают в клетку и выходят из неё.",
-      "ru": "Клеточная мембрана не влияет на то, какие вещества поступают в клетку."
+      "ru": "Клеточная мембрана не влияет на то, какие вещества поступают в клетку.",
+      "en": "The cell membrane does not affect which substances can enter a cell.",
+      "correctStatementEn": "The cell membrane regulates which substances enter and leave the cell."
     },
     {
       "id": "TF0003",
@@ -33,7 +36,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Tuma sisältää perintöainesta eli DNA:ta.",
       "explanationRu": "В ядре клетки находится наследственный материал — ДНК.",
       "sourceFi": "tuma",
-      "ru": "В ядре клетки содержится ДНК."
+      "ru": "В ядре клетки содержится ДНК.",
+      "en": "The cell nucleus contains DNA."
     },
     {
       "id": "TF0004",
@@ -43,7 +47,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Ehjä iho toimii suojana mikrobeja ja haitallisia aineita vastaan.",
       "explanationRu": "Неповреждённая кожа служит барьером для микробов и вредных веществ.",
       "sourceFi": "ihon suojatehtävä",
-      "ru": "Кожа помогает предотвращать проникновение микробов в организм."
+      "ru": "Кожа помогает предотвращать проникновение микробов в организм.",
+      "en": "The skin helps prevent microbes from entering the body."
     },
     {
       "id": "TF0005",
@@ -55,7 +60,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "hikirauhanen",
       "correctStatementFi": "Hikirauhanen viilentää kehoa erittämällä hikeä, ja talirauhanen erittää talia.",
       "correctStatementRu": "Потовая железа охлаждает тело, выделяя пот, а сальная железа выделяет кожное сало.",
-      "ru": "Потовая железа охлаждает тело, выделяя кожное сало."
+      "ru": "Потовая железа охлаждает тело, выделяя кожное сало.",
+      "en": "Sweat glands cool the body by secreting sebum.",
+      "correctStatementEn": "Sweat glands cool the body by secreting sweat; sebaceous glands produce sebum."
     },
     {
       "id": "TF0006",
@@ -65,7 +72,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Ihonalaiskudoksen rasva ja sidekudos pehmentävät iskuja ja eristävät lämpöä.",
       "explanationRu": "Подкожная клетчатка смягчает удары и способствует теплоизоляции.",
       "sourceFi": "ihonalaiskudos",
-      "ru": "Подкожная клетчатка помогает защищать тело от ударов."
+      "ru": "Подкожная клетчатка помогает защищать тело от ударов.",
+      "en": "Subcutaneous tissue helps protect the body from impacts."
     },
     {
       "id": "TF0007",
@@ -75,7 +83,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Kallo on luinen rakenne, joka suojaa aivoja.",
       "explanationRu": "Череп — костная структура, защищающая головной мозг.",
       "sourceFi": "kallo",
-      "ru": "Череп защищает головной мозг."
+      "ru": "Череп защищает головной мозг.",
+      "en": "The skull protects the brain."
     },
     {
       "id": "TF0008",
@@ -87,7 +96,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "värttinäluu",
       "correctStatementFi": "Värttinäluu sijaitsee kyynärvarressa peukalon puolella.",
       "correctStatementRu": "Лучевая кость находится в предплечье со стороны большого пальца.",
-      "ru": "Лучевая кость находится в предплечье со стороны мизинца."
+      "ru": "Лучевая кость находится в предплечье со стороны мизинца.",
+      "en": "The radius is on the little-finger side of the forearm.",
+      "correctStatementEn": "The radius lies on the thumb side of the forearm."
     },
     {
       "id": "TF0009",
@@ -97,7 +108,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Lihaksen supistuminen liikuttaa kehoa ja auttaa ylläpitämään asentoa.",
       "explanationRu": "Сокращение мышц обеспечивает движение и помогает поддерживать позу.",
       "sourceFi": "lihas",
-      "ru": "Сокращение мышечной ткани обеспечивает движение."
+      "ru": "Сокращение мышечной ткани обеспечивает движение.",
+      "en": "Contraction of muscle tissue enables movement."
     },
     {
       "id": "TF0010",
@@ -107,7 +119,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Hemoglobiini sitoo ja kuljettaa happea verenkierrossa.",
       "explanationRu": "Гемоглобин эритроцитов связывает и переносит кислород.",
       "sourceFi": "hemoglobiini",
-      "ru": "Гемоглобин эритроцитов переносит кислород."
+      "ru": "Гемоглобин эритроцитов переносит кислород.",
+      "en": "Hemoglobin in red blood cells transports oxygen."
     },
     {
       "id": "TF0011",
@@ -119,7 +132,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "verihiutale",
       "correctStatementFi": "Verihiutaleet osallistuvat veren hyytymiseen, ja plasmasolut tuottavat vasta-aineita.",
       "correctStatementRu": "Тромбоциты участвуют в свёртывании крови, а плазматические клетки вырабатывают антитела.",
-      "ru": "Тромбоциты вырабатывают большую часть антител."
+      "ru": "Тромбоциты вырабатывают большую часть антител.",
+      "en": "Platelets produce most antibodies.",
+      "correctStatementEn": "Platelets participate in blood clotting, while plasma cells produce antibodies."
     },
     {
       "id": "TF0012",
@@ -129,7 +144,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Fibrinogeenista muodostuu fibriiniä hyytymisen aikana.",
       "explanationRu": "Фибриноген — белок плазмы, из которого при свёртывании образуется фибрин.",
       "sourceFi": "fibrinogeeni",
-      "ru": "Фибриноген — белок плазмы, участвующий в свёртывании крови."
+      "ru": "Фибриноген — белок плазмы, участвующий в свёртывании крови.",
+      "en": "Fibrinogen is a plasma protein involved in blood clotting."
     },
     {
       "id": "TF0013",
@@ -139,7 +155,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Oikeasta kammiosta veri kulkee keuhkovaltimoa pitkin keuhkoihin.",
       "explanationRu": "Правый желудочек направляет кровь по лёгочной артерии в лёгкие.",
       "sourceFi": "keuhkoverenkierto",
-      "ru": "Правый желудочек сердца перекачивает кровь в лёгкие."
+      "ru": "Правый желудочек сердца перекачивает кровь в лёгкие.",
+      "en": "The right ventricle pumps blood to the lungs."
     },
     {
       "id": "TF0014",
@@ -151,7 +168,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "laskimo",
       "correctStatementFi": "Laskimot kuljettavat verta kohti sydäntä, ja valtimot kuljettavat verta sydämestä pois.",
       "correctStatementRu": "Вены несут кровь к сердцу, а артерии — от сердца.",
-      "ru": "Вены всегда несут кровь от сердца."
+      "ru": "Вены всегда несут кровь от сердца.",
+      "en": "Veins always carry blood away from the heart.",
+      "correctStatementEn": "Veins carry blood toward the heart, while arteries carry blood away from the heart."
     },
     {
       "id": "TF0015",
@@ -161,7 +180,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Sinussolmuke käynnistää sydämen sähköisiä impulsseja, jotka leviävät sydämen johtoradastossa.",
       "explanationRu": "Синусовый узел в норме задаёт ритм электрической активности сердца.",
       "sourceFi": "sinussolmuke",
-      "ru": "Синусовый узел в норме задаёт ритм электрической активности сердца."
+      "ru": "Синусовый узел в норме задаёт ритм электрической активности сердца.",
+      "en": "The sinoatrial node normally sets the pace of the heart's electrical activity."
     },
     {
       "id": "TF0016",
@@ -171,7 +191,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Keuhkorakkuloiden ja hiussuonten välillä tapahtuu kaasujenvaihto.",
       "explanationRu": "В альвеолах происходит обмен кислорода и углекислого газа с кровью.",
       "sourceFi": "keuhkorakkula",
-      "ru": "В альвеолах кислород поступает в кровь, а углекислый газ выходит из крови."
+      "ru": "В альвеолах кислород поступает в кровь, а углекислый газ выходит из крови.",
+      "en": "In the alveoli, oxygen enters the blood and carbon dioxide leaves the blood."
     },
     {
       "id": "TF0017",
@@ -183,7 +204,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "pallea",
       "correctStatementFi": "Pallea on rinta- ja vatsaontelon erottava lihas, joka auttaa hengityksessä.",
       "correctStatementRu": "Диафрагма — мышца, разделяющая грудную и брюшную полости и участвующая в дыхании.",
-      "ru": "Диафрагма — железа в животе, вырабатывающая гормоны."
+      "ru": "Диафрагма — железа в животе, вырабатывающая гормоны.",
+      "en": "The diaphragm is a gland in the abdomen that produces hormones.",
+      "correctStatementEn": "The diaphragm is a muscle separating the chest and abdominal cavities and helps with breathing."
     },
     {
       "id": "TF0018",
@@ -193,7 +216,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Henkitorvi haarautuu keuhkoputkiksi, joita pitkin ilma kulkee keuhkoihin.",
       "explanationRu": "Трахея переходит в бронхи, проводящие воздух к лёгким.",
       "sourceFi": "henkitorvi",
-      "ru": "Трахея проводит воздух к бронхам."
+      "ru": "Трахея проводит воздух к бронхам.",
+      "en": "The trachea conducts air to the bronchi."
     },
     {
       "id": "TF0019",
@@ -203,7 +227,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Suurin osa ravintoaineista imeytyy ohutsuolessa.",
       "explanationRu": "Основная часть питательных веществ всасывается в тонком кишечнике.",
       "sourceFi": "ohutsuoli",
-      "ru": "В тонком кишечнике всасывается большая часть питательных веществ."
+      "ru": "В тонком кишечнике всасывается большая часть питательных веществ.",
+      "en": "Most nutrients are absorbed in the small intestine."
     },
     {
       "id": "TF0020",
@@ -215,7 +240,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "sappirakko",
       "correctStatementFi": "Maksa tuottaa sappea, ja sappirakko varastoi ja tiivistää sitä.",
       "correctStatementRu": "Печень вырабатывает желчь, а желчный пузырь её накапливает и концентрирует.",
-      "ru": "Желчный пузырь вырабатывает всю желчь организма."
+      "ru": "Желчный пузырь вырабатывает всю желчь организма.",
+      "en": "The gallbladder produces all the bile in the body.",
+      "correctStatementEn": "The liver produces bile; the gallbladder stores and concentrates it."
     },
     {
       "id": "TF0021",
@@ -225,7 +252,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Haiman eksokriininen osa tuottaa ruoansulatusentsyymejä ja endokriininen osa hormoneja.",
       "explanationRu": "Поджелудочная железа вырабатывает пищеварительные ферменты и гормоны.",
       "sourceFi": "haima",
-      "ru": "Поджелудочная железа вырабатывает и пищеварительные ферменты, и гормоны."
+      "ru": "Поджелудочная железа вырабатывает и пищеварительные ферменты, и гормоны.",
+      "en": "The pancreas produces both digestive enzymes and hormones."
     },
     {
       "id": "TF0022",
@@ -235,7 +263,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Munuaiset suodattavat verta ja osallistuvat kuona-aineiden poistoon virtsassa.",
       "explanationRu": "Почки фильтруют кровь и выводят продукты обмена с мочой.",
       "sourceFi": "munuaiset",
-      "ru": "Почки образуют мочу и выводят продукты обмена."
+      "ru": "Почки образуют мочу и выводят продукты обмена.",
+      "en": "The kidneys produce urine and remove metabolic waste."
     },
     {
       "id": "TF0023",
@@ -247,7 +276,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "virtsanjohdin",
       "correctStatementFi": "Virtsanjohdin kuljettaa virtsan munuaisesta virtsarakkoon, ja virtsaputki johtaa virtsan rakosta ulos.",
       "correctStatementRu": "Мочеточник проводит мочу от почки к мочевому пузырю, а мочеиспускательный канал выводит мочу наружу.",
-      "ru": "Мочеточник проводит мочу из мочевого пузыря наружу."
+      "ru": "Мочеточник проводит мочу из мочевого пузыря наружу.",
+      "en": "The ureter carries urine from the bladder to the outside of the body.",
+      "correctStatementEn": "The ureter carries urine from a kidney to the bladder; the urethra carries urine out of the body."
     },
     {
       "id": "TF0024",
@@ -257,7 +288,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Nefronissa tapahtuu virtsan muodostumiseen liittyvää suodattumista ja aineiden käsittelyä.",
       "explanationRu": "Нефрон — функциональная единица почки, участвующая в образовании мочи.",
       "sourceFi": "nefroni",
-      "ru": "Нефрон — функциональная единица почки."
+      "ru": "Нефрон — функциональная единица почки.",
+      "en": "The nephron is the functional unit of the kidney."
     },
     {
       "id": "TF0025",
@@ -267,7 +299,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Insuliini edistää glukoosin käyttöä ja varastoitumista, jolloin verensokeri laskee.",
       "explanationRu": "Инсулин способствует использованию и запасанию глюкозы, снижая уровень сахара крови.",
       "sourceFi": "insuliini",
-      "ru": "Инсулин помогает снижать концентрацию глюкозы в крови."
+      "ru": "Инсулин помогает снижать концентрацию глюкозы в крови.",
+      "en": "Insulin helps lower blood glucose levels."
     },
     {
       "id": "TF0026",
@@ -279,7 +312,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "glukagoni",
       "correctStatementFi": "Glukagoni nostaa verensokeria erityisesti ruokailujen välillä tai paaston aikana.",
       "correctStatementRu": "Глюкагон повышает уровень сахара в крови, особенно между приёмами пищи и во время голодания.",
-      "ru": "Глюкагон снижает сахар в крови, особенно во время голодания."
+      "ru": "Глюкагон снижает сахар в крови, особенно во время голодания.",
+      "en": "Glucagon lowers blood sugar, particularly during fasting.",
+      "correctStatementEn": "Glucagon raises blood sugar, especially between meals and during fasting."
     },
     {
       "id": "TF0027",
@@ -289,7 +324,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Glykogeeniä varastoidaan esimerkiksi maksaan ja lihaksiin.",
       "explanationRu": "Гликоген — запасная форма глюкозы в печени и мышцах.",
       "sourceFi": "glykogeeni",
-      "ru": "Гликоген — запасная форма глюкозы."
+      "ru": "Гликоген — запасная форма глюкозы.",
+      "en": "Glycogen is the storage form of glucose."
     },
     {
       "id": "TF0028",
@@ -299,7 +335,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Keskushermostoon kuuluvat aivot ja selkäydin.",
       "explanationRu": "Головной и спинной мозг образуют центральную нервную систему.",
       "sourceFi": "keskushermosto",
-      "ru": "Головной и спинной мозг образуют центральную нервную систему."
+      "ru": "Головной и спинной мозг образуют центральную нервную систему.",
+      "en": "The brain and spinal cord form the central nervous system."
     },
     {
       "id": "TF0029",
@@ -311,7 +348,9 @@ window.RS_TRUE_FALSE={
       "sourceFi": "ääreishermosto",
       "correctStatementFi": "Ääreishermosto koostuu keskushermoston ulkopuolella sijaitsevista hermoista.",
       "correctStatementRu": "Периферическая нервная система состоит из нервов, расположенных вне центральной нервной системы.",
-      "ru": "Периферическая нервная система состоит только из головного и спинного мозга."
+      "ru": "Периферическая нервная система состоит только из головного и спинного мозга.",
+      "en": "The peripheral nervous system consists only of the brain and spinal cord.",
+      "correctStatementEn": "The peripheral nervous system consists of nerves outside the brain and spinal cord."
     },
     {
       "id": "TF0030",
@@ -321,7 +360,8 @@ window.RS_TRUE_FALSE={
       "explanationFi": "Hermoimpulssi etenee hermosolun kalvoa pitkin.",
       "explanationRu": "Нервный импульс — электрический сигнал, распространяющийся по мембране нервной клетки.",
       "sourceFi": "hermoimpulssi",
-      "ru": "Нервный импульс — электрический сигнал, распространяющийся по нервной клетке."
+      "ru": "Нервный импульс — электрический сигнал, распространяющийся по нервной клетке.",
+      "en": "A nerve impulse is an electrical signal traveling along a nerve cell."
     }
   ]
 };

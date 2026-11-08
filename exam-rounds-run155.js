@@ -29,14 +29,16 @@
  }
  function claim(x,correct,y,id){
   // Only use facts literally already present in source FI/RU notes. Mismatched meanings are labeled false.
-  var cleanFi='Termi "'+x.fi+'" tarkoittaa seuraavaa: '+x.examNoteFi;
-  var cleanRu='Термин «'+x.fi+'» означает следующее: '+x.examNoteRu;
-  var wrongFi=y?'Termi "'+x.fi+'" tarkoittaa seuraavaa: '+y.examNoteFi:cleanFi;
-  var wrongRu=y?'Термин «'+x.fi+'» означает следующее: '+y.examNoteRu:cleanRu;
+  var cleanFi='Suomenkielinen termi "'+x.fi+'" vastaa käsitettä "'+x.fi+'".';
+  var cleanRu='Финский термин «'+x.fi+'» соответствует понятию «'+x.ru+'».';
+  var cleanEn='The Finnish medical term "'+x.fi+'" corresponds to "'+x.en+'".';
+  var wrongFi=y?'Suomenkielinen termi "'+x.fi+'" vastaa käsitettä "'+y.fi+'".':cleanFi;
+  var wrongRu=y?'Финский термин «'+x.fi+'» соответствует понятию «'+y.ru+'».':cleanRu;
+  var wrongEn=y?'The Finnish medical term "'+x.fi+'" corresponds to "'+y.en+'".':cleanEn;
   return {
    id:id,topic:x.examTopics[0],fi:correct?cleanFi:wrongFi,ru:correct?cleanRu:wrongRu,
-   correct:!!correct,explanationFi:x.examNoteFi,explanationRu:x.examNoteRu,
-   correctStatementFi:cleanFi,correctStatementRu:cleanRu,sourceFi:x.fi,sourceId:x.id
+   en:correct?cleanEn:wrongEn,correct:!!correct,explanationFi:x.examNoteFi,explanationRu:x.examNoteRu,
+   correctStatementFi:cleanFi,correctStatementRu:cleanRu,correctStatementEn:cleanEn,sourceFi:x.fi,sourceId:x.id
   };
  }
  function grouped(pool,count,mode){

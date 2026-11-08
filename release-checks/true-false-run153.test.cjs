@@ -81,11 +81,11 @@ test('static ES5 compatible, cache version and mode scripts synchronized',()=>{
  const app=load('app.js'),data=load('riveria-true-false.js'),html=load('index.html'),sw=load('sw.js');
  assert.doesNotMatch(app,/=>|\?\./);
  assert.doesNotMatch(data,/\bconst\b|\blet\b|=>|\?\./);
- assert.ok(html.includes('riveria-true-false.js?v=run154-bilingual-1'));
- assert.ok(sw.includes('riveria-true-false.js?v=run154-bilingual-1'));
- assert.ok(html.includes('app.js?v=exam-rounds-run155-v1'));
- assert.ok(sw.includes('app.js?v=exam-rounds-run155-v1'));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc24'));
+ assert.ok(html.includes('riveria-true-false.js?v=run156-en-1'));
+ assert.ok(sw.includes('riveria-true-false.js?v=run156-en-1'));
+ assert.ok(html.includes('app.js?v=mock-exam-run156-v1'));
+ assert.ok(sw.includes('app.js?v=mock-exam-run156-v1'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc25'));
 });
 
 

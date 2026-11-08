@@ -39,7 +39,7 @@ test('offline cache links same version and ES5 adapter',()=>{
  const html=read('index.html'),sw=read('sw.js');
  const link='riveria-anatomy-exam.js?v=immune-run152-v1';
  assert.ok(html.includes(link));assert.ok(sw.includes(link));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc24'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc25'));
  assert.doesNotMatch(source,/\blet\s+|\bconst\s+|=>|\?\./);
  assert.doesNotMatch(source,/localStorage\.setItem|firebase\.auth|firestore|fetch\s*\(/i);
 });
