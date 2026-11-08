@@ -619,10 +619,13 @@
     var s='',count=0,p=pair(run.direction);
     for(var i=0;i<run.answers.length;i++){
       var result=run.answers[i],q=run.questions[i];
-      if(!result||result.score===1)continue;
-      count++;
-      s+='<details class="exam-review"><summary>Задание '+(i+1)+' — '+safe(mockTypeLabel(q.type))+
-        ' · '+Math.round(result.score*100)+'% · '+safe(mockTopicLabel(q.topic))+'</summary>'+
+      if(!result||!q)continue;
+      if(result.score<1)count++;
+      var perfect=result.score===1,points=(Math.round(result.score*100)/100).toFixed(2).replace(/0+$/,'').replace(/\.$/,'').replace('.',',');
+      var mark=perfect?'✓ Верно / Oikein':result.score>0?'◐ Частично / Osittain':'✕ Ошибка / Väärin';
+      s+='<details class="exam-review '+(perfect?'exam-review-passed':'exam-review-missed')+'"><summary>Задание '+(i+1)+
+        ' · '+mark+' · '+points+' / 1 балл · '+safe(mockTypeLabel(q.type))+
+        ' · '+safe(mockTopicLabel(q.topic))+'</summary>'+
         '<div class="exam-review-original"><p class="exam-review-title">Исходное задание / Alkuperäinen tehtävä</p>';
       if(q.type==='translate'){
         s+='<p class="hint">Выбери один правильный перевод / Valitse yksi oikea käännös</p>'+
@@ -636,12 +639,14 @@
         }
         s+='</ol><p><b>Твой ответ / Valitsit:</b> '+safe(result.selected||'—')+'</p>'+
           '<p><b>Правильный ответ / Oikea vastaus:</b> '+safe(q.answer)+'</p>'+
-          examNote(q.item);
+          (perfect?'':examNote(q.item));
       }else if(q.type==='truefalse'){
         s+='<p class="hint">Tosi vai epätosi? / Верно или неверно?</p>'+
           bilingualQuestion(q.question.fi,q.question.ru,q.question.en)+
-          truthAnswerFeedback(result.selected,q.question.correct)+
-          bilingualFeedback(q.question);
+          (perfect?
+           '<p class="exam-review-right"><b>✓ Твой ответ / Valitsit: </b>'+truthValueLabel(result.selected)+
+           ' · Верно / Oikein</p>':
+           truthAnswerFeedback(result.selected,q.question.correct)+bilingualFeedback(q.question));
       }else if(q.type==='matching'){
         s+='<p class="hint">Yhdistä oikeat parit / Сопоставь все четыре определения</p>';
         for(var m=0;m<q.question.items.length;m++){
@@ -677,8 +682,10 @@
       }
       s+='</div></details>';
     }
-    return '<div class="panel"><h2>Разбор ошибок / Virheiden tarkistus ('+count+')</h2>'+
-      (count?s:'<p>Все ответы правильные! / Kaikki oikein!</p>')+'</div>';
+    return '<div class="panel"><h2>Полный лист экзамена / Koko kokeen tarkistus (40)</h2>'+
+      '<p class="hint">Все задания с баллами и ответами. Раскрой строку, чтобы увидеть исходный вопрос и свой выбор. Подробное объяснение — при ошибке.</p>'+
+      '<p><b>Ошибочных и частично правильных / Virheitä:</b> '+count+' / 40</p>'+
+      s+'</div>';
   }
 
   function renderMockExam(){
