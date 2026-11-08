@@ -57,7 +57,7 @@ test('40 questions scored out of 40, 32/40 pass while 31/40 fail, partial marks 
  assert.equal(engine.report({answers}).percent,77.5);
  const q=engine.build(w.RS_DATA,w.RS_TRUE_FALSE.questions,'fi-ru');
  const matching=q.find(x=>x.type==='matching'),multi=q.find(x=>x.type==='multiselect');
- const right=matching.question.items.map(x=>x.fi);
+ const right=matching.question.items.map(x=>x[matching.question.answerKey==='la'?'la':'fi']);
  assert.equal(engine.evaluate(matching,right).score,1);
  const wrong=right.slice();wrong[0]='';assert.equal(engine.evaluate(matching,wrong).score,.75);
  const correct=multi.question.items.map(x=>!!x.correct);
