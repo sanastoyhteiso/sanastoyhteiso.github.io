@@ -91,7 +91,7 @@ test('CSV is UTF8-BOM and contains 289 data records, with no multiline cells',()
 });
 test('main source/PR9/production have no modification from this validator',()=>{
  const self=read('test-content.cjs');
- for(const x of [/writeFileSync\s*\(/,/unlinkSync\s*\(/,/fetch\s*\(/,/setCustomUserClaims\s*\(/,/firebase-admin/,/child_process/])
+ for(const x of [/writeFileSync\s*\(/,/unlinkSync\s*\(/,/fetch\s*\(/,/setCustomUserClaims\s*\(/,/require\s*\(\s*['\"]firebase-admin['\"]\s*\)/,/require\s*\(\s*['\"]child_process['\"]\s*\)/])
    assert.equal(x.test(self),false,String(x));
  assert.equal(data.status,'CONTENT_READY_DRAFT_NOT_DEPLOYED');
 });
