@@ -66,7 +66,7 @@ test('local error journal is visible only after verified admin claim, never to o
   assert.equal(h.pending.length,1);
   h.pending[0].resolve({exists:false});await tick();
   const tabs=h.elems['admin-tabs'].children;
-  assert.ok(tabs.length>1);tabs[1].listeners.click();
+  assert.ok(tabs.length>1);const errorsTab=tabs.find(x=>x.textContent==='Сбои сайта');assert.ok(errorsTab);errorsTab.listeners.click();
   assert.equal(reads,1);
   const collect=node=>[node.textContent].concat(...node.children.map(collect));
   assert.ok(collect(h.elems['admin-view']).some(s=>s.includes('SYNC_QUEUE_STUCK')));
