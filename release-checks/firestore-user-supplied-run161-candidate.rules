@@ -183,10 +183,7 @@ service cloud.firestore {
           d.schema == 1 &&
           d.ownerUid == uid &&
           d.attemptId is string &&
-          d.attemptId.matches('^A_[a-f0-9]+_[a-f0-9]+
-  }
-}
-) &&
+          d.attemptId.matches('^A_[a-f0-9]+_[a-f0-9]+$') &&
           d.updatedAt is int && d.updatedAt > 0 &&
           d.answersCount is int && d.answersCount >= 0 && d.answersCount <= 40 &&
           d.position is int && d.position >= 0 && d.position <= 40 &&
