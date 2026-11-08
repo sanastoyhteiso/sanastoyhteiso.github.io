@@ -61,7 +61,7 @@ for(const direction of ['fi-ru','ru-fi','en-fi']){
    const d=b.d,details=d.querySelectorAll('.exam-review');
    assert.ok(d.querySelector('.exam-run-done'),'40/40 completed screen');
    assert.equal(details.length,40,'40 synthetic wrong pages generate 40 review cards');
-   assert.match(d.querySelector('.panel h2').textContent,/Экзамен|Koe/);
+   assert.match(d.querySelector('.exam-run-done h2').textContent,/Сдано|Не сдано|Hyväksytty|Hylätty/);
    assert.ok(d.getElementById('main-content').textContent.includes('Полный лист экзамена'));
    assert.equal(d.querySelectorAll('.exam-review-missed').length,40);
    assert.ok(details[0].querySelector('summary').textContent.includes('0 / 1 балл'));
