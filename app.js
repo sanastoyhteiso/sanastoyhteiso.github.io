@@ -5,7 +5,7 @@
   'use strict';
   var D = window.RS_DATA || null;
   var root = document.getElementById('main-content');
-  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto',
+  var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true,
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
     userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:''};
   function byId(id){return document.getElementById(id);}
@@ -387,11 +387,74 @@
   }
 
 
+  /* RUN159. Local, account-scoped exam draft; does not change rs_scores_v1 or write to Firebase.
+     Store exact shuffled pages so reopening never rerolls the remaining questions. */
+  function mockStorageKey(){
+    try{return window.RS_FAMILY&&typeof window.RS_FAMILY.storageKey==='function'?
+      window.RS_FAMILY.storageKey('rs_mock_exam_progress_v1'):null;}catch(e){return null;}
+  }
+  function mockValidDraft(x){
+    if(!x||x.schema!==1||!x.run||!Array.isArray(x.run.questions)||x.run.questions.length!==40||
+      !Array.isArray(x.run.answers)||x.run.answers.length>40||
+      typeof x.run.index!=='number'||Math.floor(x.run.index)!==x.run.index||
+      x.run.index<0||x.run.index>40||!/^(fi-ru|ru-fi|fi-en|en-fi)$/.test(x.run.direction)||
+      ['auto','fi-ru','ru-fi','fi-en','en-fi'].indexOf(x.choice)<0)return false;
+    var a=x.run.answers,idx=x.run.index,seen={},types={},topics={},q,i;
+    if(idx===40&&a.length!==40)return false;
+    if(idx<40&&a.length!==idx&&a.length!==idx+1)return false;
+    for(i=0;i<40;i++){
+      q=x.run.questions[i];
+      if(!q||typeof q.id!=='string'||seen[q.id]||!isExamTopic(q.topic)||
+        ['translate','truefalse','matching','multiselect'].indexOf(q.type)<0)return false;
+      seen[q.id]=true;types[q.type]=(types[q.type]||0)+1;topics[q.topic]=(topics[q.topic]||0)+1;
+    }
+    for(i=0;i<a.length;i++){
+      if(!a[i]||typeof a[i].score!=='number'||!isFinite(a[i].score)||
+        a[i].score<0||a[i].score>1||typeof a[i].perfect!=='boolean')return false;
+    }
+    for(i=0;i<10;i++){
+      var topic='EXAM'+(i===9?'10':'0'+(i+1));
+      if(topics[topic]!==4)return false;
+    }
+    return types.translate===10&&types.truefalse===10&&types.matching===10&&types.multiselect===10;
+  }
+  function mockReadDraft(){
+    var key=mockStorageKey();
+    if(!key){state.mockSaveOk=false;return null;}
+    try{
+      var raw=window.localStorage.getItem(key);
+      if(!raw){state.mockSaveOk=true;return null;}
+      var draft=JSON.parse(raw);
+      state.mockSaveOk=true;
+      return mockValidDraft(draft)?draft:null;
+    }catch(e){state.mockSaveOk=false;return null;}
+  }
+  function mockSaveDraft(){
+    var key=mockStorageKey();
+    if(!key){state.mockSaveOk=false;return false;}
+    try{
+      window.localStorage.setItem(key,JSON.stringify({schema:1,choice:state.mockDirection,
+        run:state.mockRun}));
+      state.mockSaveOk=true;return true;
+    }catch(e){state.mockSaveOk=false;return false;}
+  }
+  function mockClearDraft(){
+    var key=mockStorageKey();
+    if(!key)return;
+    try{window.localStorage.removeItem(key);state.mockSaveOk=true;}catch(e){state.mockSaveOk=false;}
+  }
   function mockInit(){
     if(state.mockRun)return state.mockRun;
+    var stored=mockReadDraft();
+    if(stored){
+      state.mockDirection=stored.choice;
+      state.mockRun=stored.run;
+      return state.mockRun;
+    }
     var dir=direction(state.mockDirection),bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[],
       items=window.RS_MOCK_EXAM&&window.RS_MOCK_EXAM.build(D,bank,dir)||[];
     state.mockRun={questions:items,index:0,answers:[],direction:dir};
+    if(items.length===40)mockSaveDraft();
     return state.mockRun;
   }
   function mockTypeLabel(type){
@@ -443,7 +506,9 @@
     if(n!==40){root.innerHTML='<div class="panel">Не удалось подготовить 40 проверяемых вопросов. Учебные данные не изменены.</div>';return;}
     var s='<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+
       directionSelect('mock-dir',state.mockDirection,false)+'</label></div>'+
-      '<p class="hint">Тренировочный экзамен, не официальная оценка Riveria. Один вопрос — максимум 1 балл. Ответы и правильные варианты показываются только в конце.</p></div>';
+      '<p class="hint">Тренировочный экзамен, не официальная оценка Riveria. Один вопрос — максимум 1 балл. Ответы и правильные варианты показываются только в конце.</p>'+
+      (state.mockSaveOk?'<p class="exam-autosave-ok">✓ Прогресс экзамена сохраняется автоматически на этом устройстве. Можно вернуться к продолжению.</p>':
+       '<p class="exam-autosave-warning" role="alert">⚠ Автосохранение недоступно. Если закрыть страницу, ответы могут потеряться.</p>')+'</div>';
     if(run.index>=n){
       var report=window.RS_MOCK_EXAM.report(run);
       s+='<div class="panel exam-run-done"><h2>'+(report.passed?'✓ Сдано / Hyväksytty':'✕ Не сдано / Hylätty')+'</h2>'+
@@ -514,6 +579,7 @@
     var gradeResult=window.RS_MOCK_EXAM.evaluate(q,answer);
     if(!gradeResult)return;
     run.answers[run.index]=gradeResult;
+    mockSaveDraft();
     renderMockExam();
   }
   function mockValidateAndSubmit(){
@@ -638,8 +704,8 @@
       else if(q.type==='truefalse'&&(choice==='true'||choice==='false'))mockSubmit(choice==='true');
     }
     else if(action==='mock-check'){mockValidateAndSubmit();}
-    else if(action==='mock-next'){var er=mockInit();if(er.answers[er.index]){er.index++;renderMockExam();}}
-    else if(action==='mock-restart'){state.mockRun=null;renderMockExam();}
+    else if(action==='mock-next'){var er=mockInit();if(er.answers[er.index]){er.index++;mockSaveDraft();renderMockExam();}}
+    else if(action==='mock-restart'){mockClearDraft();state.mockRun=null;renderMockExam();}
     else if(action==='quiz-mode'){if(['translate','truefalse','matching','multiselect'].indexOf(choice)>=0){
       state.quizMode=choice;if(choice!=='translate'&&state.filter!=='all'&&!isExamTopic(state.filter))state.filter='all';state.tfQuestion=null;state.matchQuestion=null;state.multiQuestion=null;renderQuiz();}}
     else if(action==='exam-restart'){examRestart(state.quizMode);}
@@ -676,7 +742,7 @@
     else if(action==='export-json'){exportJson();}
     else if(action==='export-tsv'){exportTsv();}
   });
-  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='mock-dir'){var er=mockInit();if(er.answers.length===0){state.mockDirection=e.target.value;state.mockRun=null;}else{toast('Направление фиксируется после первого ответа. Для изменения начни новый экзамен.');}renderMockExam();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
+  document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='mock-dir'){var er=mockInit();if(er.answers.length===0){mockClearDraft();state.mockDirection=e.target.value;state.mockRun=null;}else{toast('Направление фиксируется после первого ответа. Для изменения начни новый экзамен.');}renderMockExam();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
   document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
   document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
   window.addEventListener('online',setStatus);window.addEventListener('offline',setStatus);
@@ -688,7 +754,7 @@
       delete state.examRuns.translate;state.quiz=null;state.quizResult=null;
     }
     if(state.view==='exam'&&state.mockDirection==='auto'&&state.mockRun&&state.mockRun.answers.length===0){
-      state.mockRun=null;
+      mockClearDraft();state.mockRun=null;
     }
     render();
   };
