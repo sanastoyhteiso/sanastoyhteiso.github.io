@@ -48,7 +48,7 @@ function seeded(){
   const q=qs[i];let value;
   if(q.type==='translate')value=q.options[0];
   else if(q.type==='truefalse')value=false;
-  else if(q.type==='matching')value=q.question.items.map(x=>x.fi);
+  else if(q.type==='matching')value=q.question.items.map(x=>x[q.question.answerKey==='la'?'la':'fi']);
   else value=q.question.items.map(x=>!!x.correct);
   answers.push(w.RS_MOCK_EXAM.evaluate(q,value));
  }
