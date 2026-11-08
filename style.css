@@ -178,3 +178,8 @@ body.family-locked .shell,body.family-locked .mobile-nav {visibility:hidden}
 .exam-review summary:focus-visible{outline:2px solid #2984a8;outline-offset:4px}
 .exam-review-passed .exam-review-title{color:#286942}
 .exam-review-missed .exam-review-title{color:#8e4d24}
+
+/* RUN164 Latin cards and matching, accessible on iOS12 and desktop. */
+.latin-card-toggle{display:flex;align-items:center;gap:8px;min-height:38px;font-size:14px;font-weight:600;line-height:1.5}
+.latin-card-toggle input{width:18px;height:18px;flex-shrink:0;accent-color:#197c9b}
+.flashcard .flash-term[lang="la"]{font-style:italic}
