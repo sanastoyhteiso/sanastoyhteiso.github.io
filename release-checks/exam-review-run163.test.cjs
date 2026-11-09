@@ -206,6 +206,6 @@ test('RUN163 ES5 compatible; consistent mobile CSS and cloud schema unchanged',(
  assert.ok(css.includes('.exam-review-row'));
  assert.match(html,/app\.js\?v=exam-preserve-run167-1/);
  assert.match(html,/style\.css\?v=heart-run166-1/);
- assert.match(sw,/v3\.0\.0-rc35/);
+ assert.match(sw,/v3\.0\.0-rc36/);
  assert.doesNotMatch(app,/=>|\?\./,'must remain compatible with legacy Safari');
 });
