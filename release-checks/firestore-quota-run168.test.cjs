@@ -111,5 +111,5 @@ test('scripting remains ES5 and cannot log or send token, UID or user-answer pay
  ['firestore-quota-guard.js?v=quota-run168-1','community.js?v=quota-run168-1','account-settings.js?v=quota-run168-1'].forEach(function(v){
   assert.ok(html.includes(v));assert.ok(sw.includes(v));
  });
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc36'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc37'));
 });

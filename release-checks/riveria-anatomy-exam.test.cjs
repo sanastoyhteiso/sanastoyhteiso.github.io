@@ -80,7 +80,8 @@ test('10 exam topics remain, Latin learning directions only in Cards and four-op
    assert.equal(opts.length,10,'missing topic dropdown in '+view);
    assert.ok(opts[0].textContent.includes('Ihmiselimistö ja solut'));
    assert.ok(opts[9].textContent.includes('Hermosto ja aistit'));
-   assert.ok(opts[0].textContent.includes('7–12, 17'));
+   assert.ok(!opts[0].textContent.includes('7–12, 17'),'pages must be hidden only in menu labels');
+   assert.equal(b.w.RS_DATA.examTopics[0].pages,'7–12, 17','reference page metadata must remain intact');
    const direction=b.d.querySelectorAll('select[id$="-dir"] option');
    if(view==='dictionary')for(const x of direction)assert.ok(!/\bla\b|latin/i.test(x.value),'Dictionary UI keeps core directions');
    else assert.ok(Array.from(direction).some(x=>x.value==='la-ru'),'Latin study directions must be available in '+view);

@@ -195,10 +195,10 @@
   function optionsForCat(){var map={},list=[],i,x,all=allTerms();for(i=0;i<all.length;i++){x=all[i];if(x.cat==='Anatomia: Riveria koe')continue;if(!map[x.cat]){map[x.cat]=1;list.push([x.cat,x.catRu||x.cat]);}}list.sort(function(a,b){return a[1].localeCompare(b[1]);});return list;}
   function selectCats(current,id){
     var cats=optionsForCat(),s='<select id="'+id+'" class="control"><option value="all">Все темы</option>',exam=sharedEnabled()&&D.examTopics||[];
-    if(exam.length){s+='<optgroup label="Riveria · Päästä varpaisiin (2014)">';
+    if(exam.length){s+='<optgroup label="Riveria · Экзамен: анатомия и физиология">';
       for(var j=0;j<exam.length;j++){
         var t=exam[j];
-        s+='<option value="'+safe(t.id)+'"'+(current===t.id?' selected':'')+'>'+safe(t.fi+' — '+t.ru+' (с. '+t.pages+')')+'</option>';
+        s+='<option value="'+safe(t.id)+'"'+(current===t.id?' selected':'')+'>'+safe(t.fi+' — '+t.ru)+'</option>';
       }
       s+='</optgroup>';
     }
@@ -399,7 +399,7 @@
     for(var i=0;i<data.length;i++){
       var t=data[i];
       s+='<option value="'+safe(t.id)+'"'+(current===t.id?' selected':'')+'>'+
-        safe(t.fi+' — '+t.ru+' (с. '+t.pages+')')+'</option>';
+        safe(t.fi+' — '+t.ru)+'</option>';
     }
     return s+'</select>';
   }

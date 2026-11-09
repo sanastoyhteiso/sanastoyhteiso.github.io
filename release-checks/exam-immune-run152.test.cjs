@@ -50,7 +50,7 @@ test('all previous RUN151 IDs, notes and topic pages stay stable',()=>{
 test('ES5 and consistent offline cache version for the new source',()=>{
  const html=read('index.html'),sw=read('sw.js'),needle='riveria-anatomy-exam.js?v=moodle-run170-1';
  assert.ok(html.includes(needle));assert.ok(sw.includes(needle));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc36'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc37'));
  assert.doesNotMatch(src,/\blet\s+|\bconst\s+|=>|\?\./);
  assert.doesNotMatch(src,/localStorage\.setItem|firebase\.auth|firestore|fetch\s*\(/i);
 });
