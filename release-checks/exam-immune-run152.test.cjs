@@ -8,7 +8,7 @@ function catalog(){const ctx={window:{}};vm.runInNewContext(read('data.js'),ctx)
 const names=['fagosyytti','interferoni','antigeeni','tulehdusreaktio','plasmasolu','seerumi','fibrinogeeni','synnynnäinen immuniteetti','hankittu immuniteetti','normaalifloora','makrofagi','T-muistisolu','T-tappajasolu','B-imusolu','immunologinen muisti','C-reaktiivinen proteiini','histamiini','plasma','fagosytoosi','hapen kuljetus','värekarvat'];
 test('21 new terms are unique with FI/RU descriptions and proper exam topic',()=>{
  const d=catalog(),ids=d.terms.map(x=>x.id),fis=d.terms.map(x=>x.fi.toLocaleLowerCase('fi-FI'));
- assert.equal(d.terms.length,1457);
+ assert.equal(d.terms.length,1471);
  assert.equal(d.examTopics.length,10);
  assert.equal(new Set(ids).size,ids.length);assert.equal(new Set(fis).size,fis.length);
  for(let i=0;i<names.length;i++){
@@ -48,9 +48,9 @@ test('all previous RUN151 IDs, notes and topic pages stay stable',()=>{
  assert.equal(d.terms.filter(x=>x.fi==='veriryhmä').length,0,'excluded EI scope');
 });
 test('ES5 and consistent offline cache version for the new source',()=>{
- const html=read('index.html'),sw=read('sw.js'),needle='riveria-anatomy-exam.js?v=heart-run166-1';
+ const html=read('index.html'),sw=read('sw.js'),needle='riveria-anatomy-exam.js?v=moodle-run170-1';
  assert.ok(html.includes(needle));assert.ok(sw.includes(needle));
- assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc35'));
+ assert.ok(sw.includes('riveria-sanasto-community-v3.0.0-rc36'));
  assert.doesNotMatch(src,/\blet\s+|\bconst\s+|=>|\?\./);
  assert.doesNotMatch(src,/localStorage\.setItem|firebase\.auth|firestore|fetch\s*\(/i);
 });
