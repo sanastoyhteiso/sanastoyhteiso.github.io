@@ -172,7 +172,7 @@ test('entire set of 289 FI terms is in the ORIGINAL 10 exam dropdown items (with
   const word=lookup.get(expected.newMissingInPriorMain[i].toLocaleLowerCase('fi-FI').trim());
   assert.equal(word.id,'T'+(90200+i),'new words get stable non-conflicting IDs');
  }
- assert.equal(d.terms.length,1457,'1296 base + 58 prior new + 65 PDF compounds + 6 RUN151 arteries + 21 RUN152 immunity/blood terms + 11 RUN166 heart structures');
+ assert.equal(d.terms.length,1485,'1457 previously unique words + 28 RUN170 Moodle terms');
 });
 test('original T900xx terms, including old learned-word references, remain intact',()=>{
  const d=source().d,ids=new Set(d.terms.map(x=>x.id));
