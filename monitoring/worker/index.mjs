@@ -80,7 +80,7 @@ async function verifyFirebase(jwt,now=Date.now(),httpFetch=fetch){
  const verified=await crypto.subtle.verify('RSASSA-PKCS1-v1_5',key,
    decoded(parts[2]),new TextEncoder().encode(parts[0]+'.'+parts[1]));
  if(!verified)throw Error('BAD_SIGNATURE');
- return {sub:claim.sub,admin:claim.admin===true,verified:true};
+ return {sub:claim.sub,admin:claim.admin===true,provider:claim.firebase&&claim.firebase.sign_in_provider,verified:true};
 }
 async function hmacHex(secret,message){
  if(typeof secret!=='string'||secret.length<32)throw Error('SERVER_NOT_CONFIGURED');
@@ -146,29 +146,202 @@ async function summary(db,now){
   note:'Authenticated reports only; coverage and no-error status unverified'
  };
 }
+
+/* RUN169. Optional privileged directory. Never expose Admin credentials to Pages JS. */
+let directoryToken=null,directoryExpiry=0;
+function ownerAllowed(env,user){
+ return !!(user&&user.verified===true&&user.admin===true&&
+   user.provider==='google.com'&&typeof env.SUPERADMIN_UID==='string'&&
+   /^[A-Za-z0-9_:.-]{6,128}$/.test(env.SUPERADMIN_UID)&&
+   user.sub===env.SUPERADMIN_UID);
+}
+function dayInHelsinki(ms){
+ const parts=new Intl.DateTimeFormat('en-GB',{
+   timeZone:'Europe/Helsinki',year:'numeric',month:'2-digit',day:'2-digit'
+ }).formatToParts(new Date(ms));
+ const p={};for(const item of parts)if(item.type!=='literal')p[item.type]=item.value;
+ return p.year+'-'+p.month+'-'+p.day;
+}
+function dateFromMillis(v){
+ const n=Number(v);
+ return Number.isFinite(n)&&n>0&&n<4102444800000?new Date(n).toISOString():null;
+}
+function base64Url(data){
+ const bytes=typeof data==='string'?new TextEncoder().encode(data):data;
+ let value='';for(let i=0;i<bytes.length;i++)value+=String.fromCharCode(bytes[i]);
+ return btoa(value).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+async function directoryAccessToken(env,now,httpFetch=fetch){
+ if(directoryToken&&now+60000<directoryExpiry)return directoryToken;
+ if(typeof env.ADMIN_DIRECTORY_SERVICE_ACCOUNT_JSON!=='string')throw Error('DIRECTORY_NOT_CONFIGURED');
+ let sa;
+ try{sa=JSON.parse(env.ADMIN_DIRECTORY_SERVICE_ACCOUNT_JSON);}catch(_ignore){throw Error('DIRECTORY_NOT_CONFIGURED');}
+ if(!sa||sa.project_id!==PROJECT||typeof sa.client_email!=='string'||
+    !/^[A-Za-z0-9._-]+@[a-z0-9.-]+\.gserviceaccount\.com$/.test(sa.client_email)||
+    typeof sa.private_key!=='string'||!sa.private_key.startsWith('-----BEGIN PRIVATE KEY-----'))
+   throw Error('DIRECTORY_NOT_CONFIGURED');
+ const clean=sa.private_key.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g,'');
+ let key;
+ try{
+   const bytes=Uint8Array.from(atob(clean),c=>c.charCodeAt(0));
+   key=await crypto.subtle.importKey('pkcs8',bytes,
+     {name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['sign']);
+ }catch(_ignore){throw Error('DIRECTORY_NOT_CONFIGURED');}
+ const t=Math.floor(now/1000);
+ const head=base64Url(JSON.stringify({alg:'RS256',typ:'JWT'}));
+ const claims=base64Url(JSON.stringify({
+   iss:sa.client_email,
+   scope:'https://www.googleapis.com/auth/identitytoolkit',
+   aud:'https://oauth2.googleapis.com/token',
+   iat:t,exp:t+1800
+ }));
+ const signed=await crypto.subtle.sign('RSASSA-PKCS1-v1_5',key,new TextEncoder().encode(head+'.'+claims));
+ const assertion=head+'.'+claims+'.'+base64Url(new Uint8Array(signed));
+ const body=new URLSearchParams({
+   grant_type:'urn:ietf:params:oauth:grant-type:jwt-bearer',assertion
+ });
+ const res=await httpFetch('https://oauth2.googleapis.com/token',{
+   method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+   body:body.toString()
+ });
+ if(!res.ok)throw Error('DIRECTORY_OAUTH_FAILED');
+ const data=await res.json();
+ if(typeof data.access_token!=='string'||data.access_token.length<100||
+    !Number.isFinite(Number(data.expires_in)))throw Error('DIRECTORY_OAUTH_FAILED');
+ directoryToken=data.access_token;
+ directoryExpiry=now+Math.min(1800,Math.max(60,Number(data.expires_in)-90))*1000;
+ return directoryToken;
+}
+async function adminAudit(db,env,user,kind,now){
+ const actor=await hmacHex(env.HASH_KEY,'admin:'+user.sub);
+ await db.prepare('INSERT INTO admin_audit(actor_key,kind,at_ms) VALUES(?,?,?)')
+   .bind(actor,kind,now).run();
+}
+async function listRegisteredUsers(db,env,user,url,now,httpFetch=fetch){
+ if(!ownerAllowed(env,user))throw Error('ADMIN_DENIED');
+ if(Array.from(url.searchParams.keys()).some(k=>!['limit','page'].includes(k))||
+   url.searchParams.get('limit')!=='50')throw Error('BAD_QUERY');
+ const page=url.searchParams.get('page');
+ if(page!==null&&!/^[A-Za-z0-9._~+\/=\-]{1,1024}$/.test(page))throw Error('BAD_QUERY');
+ // Audit before reading personal contact information. Fail closed if audit storage is unavailable.
+ await adminAudit(db,env,user,'directory_read',now);
+ const token=await directoryAccessToken(env,now,httpFetch);
+ const target=new URL('https://identitytoolkit.googleapis.com/v1/projects/'+PROJECT+'/accounts:batchGet');
+ target.searchParams.set('maxResults','50');
+ if(page)target.searchParams.set('nextPageToken',page);
+ const response=await httpFetch(target.href,{
+   method:'GET',headers:{Authorization:'Bearer '+token}
+ });
+ if(!response.ok)throw Error('DIRECTORY_API_FAILED');
+ const data=await response.json();
+ if(data.users!==undefined&&!Array.isArray(data.users))throw Error('DIRECTORY_API_INVALID');
+ const rows=[];
+ for(const x of (data.users||[]).slice(0,50)){
+   if(!x||typeof x.localId!=='string'||x.localId.length>128)continue;
+   const email=typeof x.email==='string'&&x.email.length<=254?x.email:'';
+   const displayName=typeof x.displayName==='string'?x.displayName.slice(0,100):'';
+   rows.push({
+     userKey:await hmacHex(env.HASH_KEY,'directory:'+x.localId),
+     email,displayName,emailVerified:x.emailVerified===true,disabled:x.disabled===true,
+     createdAt:dateFromMillis(x.createdAt),lastSignInAt:dateFromMillis(x.lastLoginAt)
+   });
+ }
+ return {
+   schema:1,users:rows,
+   nextPage:typeof data.nextPageToken==='string'&&data.nextPageToken.length<=1024?
+     data.nextPageToken:null
+ };
+}
+function validVisit(v){
+ return !!v&&typeof v==='object'&&!Array.isArray(v)&&
+   Object.keys(v).sort().join('|')==='consent|kind|v'&&
+   v.v===1&&v.consent===true&&
+   ['visit','cards','tests','exam_start','exam_finish'].includes(v.kind);
+}
+async function markVisit(db,env,user,event,now){
+ if(env.ACTIVITY_ENABLED!=='true')throw Error('ACTIVITY_DISABLED');
+ const key=await hmacHex(env.HASH_KEY,'directory:'+user.sub),day=dayInHelsinki(now);
+ const existing=await db.prepare('SELECT 1 AS exists_flag FROM activity_days WHERE actor_key=? AND day=? AND kind=?')
+   .bind(key,day,event.kind).first();
+ if(existing)return {ok:true,duplicate:true};
+ const daily=await db.prepare('SELECT COUNT(*) AS n FROM activity_days WHERE day=?').bind(day).first();
+ if((daily&&daily.n||0)>=2000)throw Error('ACTIVITY_GLOBAL_LIMIT');
+ await db.prepare('INSERT OR IGNORE INTO activity_days(actor_key,day,kind,first_ms,last_ms) VALUES(?,?,?,?,?)')
+   .bind(key,day,event.kind,now,now).run();
+ return {ok:true,duplicate:false};
+}
+async function clearOwnVisits(db,env,user){
+ const key=await hmacHex(env.HASH_KEY,'directory:'+user.sub);
+ await db.prepare('DELETE FROM activity_days WHERE actor_key=?').bind(key).run();
+ return {ok:true,deleted:true};
+}
+async function adminActivity(db,env,user,url,now){
+ if(!ownerAllowed(env,user))throw Error('ADMIN_DENIED');
+ if(Array.from(url.searchParams.keys()).some(k=>k!=='days')||
+    url.searchParams.get('days')!=='30')throw Error('BAD_QUERY');
+ await adminAudit(db,env,user,'activity_read',now);
+ const cutoff=dayInHelsinki(now-29*86400000);
+ const results=await db.prepare(
+   'SELECT actor_key,kind,COUNT(*) AS n,MIN(first_ms) AS first_ms,MAX(last_ms) AS last_ms '+
+   'FROM activity_days WHERE day>=? GROUP BY actor_key,kind ORDER BY last_ms DESC LIMIT 500'
+ ).bind(cutoff).all();
+ return {schema:1,coverage:'opt_in_only',updatedAt:new Date(now).toISOString(),
+   rows:(results.results||[]).map(x=>({
+     userKey:x.actor_key,kind:x.kind,count:Number(x.n),
+     firstAt:dateFromMillis(x.first_ms),lastAt:dateFromMillis(x.last_ms)
+   }))};
+}
+
 function configured(env){
  return env&&env.FIREBASE_PROJECT_ID===PROJECT&&env.DB&&typeof env.HASH_KEY==='string'&&env.HASH_KEY.length>=32;
 }
-export const __test={validEvent,verifyFirebase,hmacHex,record,summary,configured};
+export const __test={validEvent,verifyFirebase,hmacHex,record,summary,configured,ownerAllowed,dayInHelsinki,validVisit,listRegisteredUsers,markVisit,adminActivity};
 export default {
  async fetch(request,env){
   const now=Date.now();
   if(!configured(env))return fail(503,'BACKEND_NOT_CONFIGURED');
   if(request.headers.get('Origin')!==ORIGIN)return fail(403,'ORIGIN_DENIED');
   const url=new URL(request.url);
-  if(url.search||!['/v1/events','/v1/summary'].includes(url.pathname))return fail(404,'NOT_FOUND');
+  const adminRoute=url.pathname==='/v1/admin/users'||url.pathname==='/v1/admin/activity';
+  const activityRoute=url.pathname==='/v1/activity';
+  if(!['/v1/events','/v1/summary','/v1/admin/users','/v1/admin/activity','/v1/activity'].includes(url.pathname)||
+     (url.search&&!adminRoute))return fail(404,'NOT_FOUND');
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{
     'Access-Control-Allow-Origin':ORIGIN,
-    'Access-Control-Allow-Methods':'POST, GET, OPTIONS',
+    'Access-Control-Allow-Methods':'POST, GET, DELETE, OPTIONS',
     'Access-Control-Allow-Headers':'Authorization, Content-Type',
     'Access-Control-Max-Age':'600','Vary':'Origin'
   }});
   if((url.pathname==='/v1/events'&&request.method!=='POST')||
-     (url.pathname==='/v1/summary'&&request.method!=='GET'))return fail(405,'METHOD_DENIED');
+     (url.pathname==='/v1/summary'&&request.method!=='GET')||
+     (adminRoute&&request.method!=='GET')||
+     (activityRoute&&!['POST','DELETE'].includes(request.method)))
+      return fail(405,'METHOD_DENIED');
   let user;
   try{user=await ident(request,now,fetch);}
   catch(_ignore){return fail(401,'AUTH_DENIED');}
   try{
+   if(adminRoute){
+     if(!ownerAllowed(env,user))return fail(403,'SUPERADMIN_REQUIRED');
+     if(url.pathname==='/v1/admin/users'){
+       if(typeof env.ADMIN_DIRECTORY_SERVICE_ACCOUNT_JSON!=='string')return fail(503,'DIRECTORY_NOT_CONFIGURED');
+       return answer(await listRegisteredUsers(env.DB,env,user,url,now));
+     }
+     if(env.ACTIVITY_ENABLED!=='true')return fail(503,'ACTIVITY_NOT_CONFIGURED');
+     return answer(await adminActivity(env.DB,env,user,url,now));
+   }
+   if(activityRoute){
+     if(request.method==='DELETE')return answer(await clearOwnVisits(env.DB,env,user));
+     if((request.headers.get('Content-Type')||'').split(';')[0].toLowerCase()!=='application/json')
+       return fail(415,'CONTENT_TYPE');
+     const raw=await request.text();
+     if(raw.length>160)return fail(413,'TOO_LARGE');
+     let payload;
+     try{payload=JSON.parse(raw);}catch(_ignore){return fail(400,'INVALID_JSON');}
+     if(!validVisit(payload))return fail(400,'INVALID_ACTIVITY');
+     const result=await markVisit(env.DB,env,user,payload,now);
+     return answer(result,result.duplicate?200:201);
+   }
    if(url.pathname==='/v1/summary'){
     if(!user.admin)return fail(403,'ADMIN_REQUIRED');
     return answer(await summary(env.DB,now));
@@ -184,7 +357,9 @@ export default {
    const result=await record(env.DB,env,user,event,now);
    return answer(result,result.duplicate?200:201);
   }catch(error){
-   if(error.message==='ACTOR_LIMIT'||error.message==='GLOBAL_LIMIT')return fail(429,'RATE_LIMIT');
+   if(error.message==='ACTOR_LIMIT'||error.message==='GLOBAL_LIMIT'||error.message==='ACTIVITY_GLOBAL_LIMIT')return fail(429,'RATE_LIMIT');
+   if(error.message==='BAD_QUERY')return fail(400,'INVALID_QUERY');
+   if(error.message==='ACTIVITY_DISABLED')return fail(503,'ACTIVITY_NOT_CONFIGURED');
    return fail(503,'BACKEND_UNAVAILABLE');
   }
  },
@@ -198,5 +373,13 @@ export default {
   if(!verified||verified.value_ms!==now)throw Error('CRON_READBACK_FAILED');
   await env.DB.prepare('DELETE FROM telemetry_events WHERE received_ms<?').bind(now-HISTORY_MS).run();
   await env.DB.prepare('DELETE FROM telemetry_quota WHERE updated_ms<?').bind(now-2*86400000).run();
+  // Optional RUN169 schema migration: migrations are applied manually before enabling activity.
+  if(env.ACTIVITY_ENABLED==='true'){
+    await env.DB.prepare('DELETE FROM activity_days WHERE last_ms<?').bind(now-30*86400000).run();
+  }
+  // Directory access auditing may be enabled without voluntary activity.
+  if(env.ACTIVITY_ENABLED==='true'||typeof env.ADMIN_DIRECTORY_SERVICE_ACCOUNT_JSON==='string'){
+    await env.DB.prepare('DELETE FROM admin_audit WHERE at_ms<?').bind(now-90*86400000).run();
+  }
  }
 };

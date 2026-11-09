@@ -690,7 +690,7 @@
     var dir=direction(state.mockDirection),bank=window.RS_TRUE_FALSE&&window.RS_TRUE_FALSE.questions||[],
       items=window.RS_MOCK_EXAM&&window.RS_MOCK_EXAM.build(D,bank,dir)||[];
     state.mockRun={questions:items,index:0,answers:[],direction:dir};
-    if(items.length===40)mockSaveDraft();
+    if(items.length===40){mockSaveDraft();if(window.RS_ACTIVITY_CLIENT)window.RS_ACTIVITY_CLIENT.record('exam_start');}
     return state.mockRun;
   }
   function mockTypeLabel(type){
@@ -960,6 +960,7 @@
     '<div class="panel"><h2>Резервная копия</h2><p>Создай копию личных слов, избранного и результатов повторений.</p><div class="btn-row"><button class="btn primary" data-action="export-json">↓ Скачать JSON</button><button class="btn white" data-action="export-tsv">↓ Мои слова в TSV</button></div><hr style="border:0;border-top:1px solid #e1ecf0;margin:23px 0"><label class="field"><span>Восстановить личную копию (.json)</span><input type="file" id="backup-file" accept=".json,application/json"></label><p class="notice">Импорт заменяет локальные данные только вошедшего пользователя. Сначала создай резервную копию.</p></div>'+
     ''+(window.RS_COMM?window.RS_COMM.dataPanel():'')+
     (window.RS_MONITOR_CLIENT?window.RS_MONITOR_CLIENT.panelHtml():'')+
+    (window.RS_ACTIVITY_CLIENT?window.RS_ACTIVITY_CLIENT.panelHtml():'')+
     '<div class="panel soft"><b>Без интернета</b><p>Карточки и новые слова остаются доступными в ранее открытом браузере. Для входа на новом устройстве или после выхода из аккаунта требуется интернет. Автоматическая синхронизация выполняется только при подключении.</p></div>';
   }
   function renderLearned(){basePage('Выученные слова','Эти карточки не появляются в обычном обучении. Любое слово можно вернуть на изучение.');
@@ -970,7 +971,7 @@
     if(!list.length){dest.innerHTML='<div class="panel empty">Здесь пока нет выученных слов. Нажимай «Знаю» на карточках, чтобы они сюда попадали.</div>';return;}
     var shown=list.slice(0,120);dest.innerHTML=shown.map(function(x){return '<div class="dict-row"><div><b>'+safe(word(x,pair(state.direction).from))+'</b><p>'+safe(word(x,pair(state.direction).to))+'</p><small>'+safe(categoryName(x))+'</small></div><button class="tiny-btn" data-action="return-to-study" data-value="'+safe(x.id)+'">Вернуть на изучение</button></div>';}).join('')+(list.length>shown.length?'<p class="hint">Показаны первые '+shown.length+' из '+list.length+'. Для остальных используй поиск.</p>':'');}
   function renderMore(){basePage('Дополнительно','Личные материалы и сообщество.');root.innerHTML='<div class="panel"><div class="btn-row"><button class="btn white" data-view="learned">✓ Выученные</button><button class="btn primary" data-view="add">＋ Добавить слово</button><button class="btn white" data-view="backup">⇄ Данные</button><button class="btn white" data-view="libraries">▤ Библиотека</button><button class="btn white" data-view="users">♙ Пользователи</button></div></div>';}
-  function nav(v){if(v==='cards'&&state.view!=='cards'){state.reviewLearned=false;state.sessionSeen={};state.deck=[];}state.view=v==='more'?'more':v;render();window.scrollTo(0,0);}
+  function nav(v){if(v==='cards'&&state.view!=='cards'){state.reviewLearned=false;state.sessionSeen={};state.deck=[];}state.view=v==='more'?'more':v;render();if(window.RS_ACTIVITY_CLIENT){if(v==='cards')window.RS_ACTIVITY_CLIENT.record('cards');else if(v==='practice')window.RS_ACTIVITY_CLIENT.record('tests');}window.scrollTo(0,0);}
   function saveCustom(form){
     if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()){
       window.RS_V3_RELEASE.formWord(form,byId('v3-find-topic')?byId('v3-find-topic').value:'other',byId('v3-find-note')?byId('v3-find-note').value:'').then(function(){
@@ -1026,7 +1027,7 @@
       else if(q.type==='truefalse'&&(choice==='true'||choice==='false'))mockSubmit(choice==='true');
     }
     else if(action==='mock-check'){mockValidateAndSubmit();}
-    else if(action==='mock-next'){var er=mockInit();if(er.answers[er.index]){er.index++;mockSaveDraft();mockCloudQueue();renderMockExam();}}
+    else if(action==='mock-next'){var er=mockInit();if(er&&er.answers[er.index]){er.index++;mockSaveDraft();mockCloudQueue();if(er.index===40&&window.RS_ACTIVITY_CLIENT)window.RS_ACTIVITY_CLIENT.record('exam_finish');renderMockExam();}}
     else if(action==='mock-restart'){
       mockArchiveCopy(mockDraft());mockClearDraft();state.mockRun=null;state.mockAttemptId=null;
       state.mockCloudConflict=null;state.mockCloudStatus='starting-new';mockInit();mockCloudRestart();renderMockExam();
@@ -1114,8 +1115,10 @@
       state.view='cards';state.filter='all';state.extraSearch=false;
     }
     render();
+    if(window.RS_ACTIVITY_CLIENT)window.RS_ACTIVITY_CLIENT.record('visit');
   };
   load();setStatus();render();
+  if(window.RS_ACTIVITY_CLIENT)window.RS_ACTIVITY_CLIENT.record('visit');
   if(('serviceWorker' in navigator)&&(location.protocol==='https:'||location.hostname==='localhost')){
     window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').then(function(reg){reg.update();},function(err){toast('Офлайн-кэш не установлен: '+err.message);});});
   }
