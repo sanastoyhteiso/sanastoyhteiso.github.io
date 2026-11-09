@@ -18,3 +18,14 @@
 **Резерв:** `backup/pre-dictionary-help-run172-20261109` от `8cea45f414336d1d16d55509ca4bd7dfb0796b70`. Рабочая ветка `docs/dictionary-onboarding-run172-20261109`. Добавлен `release-checks/about-dictionary-start-run172.test.cjs` и отдельный шаг preflight CI; обязательные прежние проверки не отключать.
 
 **Статус: НАЧАЛ; не говорить, что опубликовано, пока не подтверждён точный GitHub Pages deploy.**
+
+
+## ЗАВЕРШИЛ — 09.11.2026
+
+- [PR №46](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/46) объединён squash в рабочий commit `378284dab589d57c323cd734895789dbf9b8ff21`.
+- CI [№42620893976](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42620893976) = **SUCCESS 3/3**; test `release-checks/about-dictionary-start-run172.test.cjs` подтверждает три языка, кнопки и сохранение ручного выбора библиотеки.
+- GitHub Pages [№42621196609](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42621196609) = **SUCCESS 3/3** именно для указанного выпуска.
+- Инструкция опубликована в `https://sanastoyhteiso.github.io/about.html` (ссылка `О проекте` уже была в футере). Встроенная Riveria: `Данные → Мой словарь → Показывать слова → Мой словарь + библиотека Riveria`. Публичные подписки: `Библиотека → Найти словари → Подключить`. FI/EN/RU соответствуют интерфейсу.
+- **Обнаружено после публикации по замечанию владельца:** старый динамический счётчик на `about.html` читал лишь `data.js` (1296 слов), не весь каталог. Проблема исправлена последующим RUN173, [PR №47](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/47), отдельно, без изменения этого руководства. См. `docs/ABOUT_LIVE_COUNT_RUN173_RU.md`.
+- Входные настройки `mine/all`, аккаунты, Firestore, прогресс, обычный вид и будущий автоонбординг не менялись. PR №43 не затронут.
+- **Статус: ЗАВЕРШИЛ — инструкция опубликована.**
