@@ -33,7 +33,7 @@ test('previous three source terms and all 65 PDF terms retain original IDs',()=>
   const x=d.terms.find(x=>x.id===id);assert.equal(x.fi,fi);assert.ok(x.la&&x.examNoteFi&&x.examNoteRu);
  }
  for(let i=90213;i<=90277;i++)assert.equal(d.terms.filter(x=>x.id==='T'+i).length,1);
- assert.equal(d.terms.length,1471);
+ assert.equal(d.terms.length,1485);
 });
 test('offline cache links same version and ES5 adapter',()=>{
  const html=read('index.html'),sw=read('sw.js');
