@@ -156,6 +156,8 @@ jobs:
         run: node --test release-checks/exam-menu-run171.test.cjs
       - name: RUN172 FI EN RU public About dictionary onboarding and no scope mutation
         run: node --test release-checks/about-dictionary-start-run172.test.cjs
+      - name: RUN173 About shows dynamic total from merged Riveria anatomy catalog
+        run: node --test release-checks/about-live-term-count-run173.test.cjs
 
   firestore-v3-rules-emulator:
     runs-on: ubuntu-latest
