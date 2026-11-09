@@ -8,7 +8,7 @@ function catalog(){const ctx={window:{}};vm.runInNewContext(read('data.js'),ctx)
 const names=['fagosyytti','interferoni','antigeeni','tulehdusreaktio','plasmasolu','seerumi','fibrinogeeni','synnynnäinen immuniteetti','hankittu immuniteetti','normaalifloora','makrofagi','T-muistisolu','T-tappajasolu','B-imusolu','immunologinen muisti','C-reaktiivinen proteiini','histamiini','plasma','fagosytoosi','hapen kuljetus','värekarvat'];
 test('21 new terms are unique with FI/RU descriptions and proper exam topic',()=>{
  const d=catalog(),ids=d.terms.map(x=>x.id),fis=d.terms.map(x=>x.fi.toLocaleLowerCase('fi-FI'));
- assert.equal(d.terms.length,1471);
+ assert.equal(d.terms.length,1485);
  assert.equal(d.examTopics.length,10);
  assert.equal(new Set(ids).size,ids.length);assert.equal(new Set(fis).size,fis.length);
  for(let i=0;i<names.length;i++){
