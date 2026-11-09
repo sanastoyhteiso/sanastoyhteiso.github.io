@@ -33,7 +33,7 @@ assert.ok(app.includes("if(state.flipped){")&&app.includes("heartIllustration(c)
 assert.ok(app.includes("heartIllustration(q.item)+examNote(q.item)"),'the 4-choice quiz must show the picture only after grading');
 assert.ok(app.includes('heartSetScale')&&app.includes('touchmove')&&app.includes('data-heart-control'),'image zoom missing');
 assert.ok(css.includes('.rs-heart-modal')&&css.includes('.rs-heart-image'));
-const heartRev='heart-run166-1',examRev='moodle-run170-1',appRev='exam-preserve-run167-1',cache='riveria-sanasto-community-v3.0.0-rc36',picture='assets/anatomy/heart-section-fi.jpg';
+const heartRev='heart-run166-1',examRev='moodle-run170-1',appRev='exam-preserve-run167-1',cache='riveria-sanasto-community-v3.0.0-rc37',picture='assets/anatomy/heart-section-fi.jpg';
 [['app.js',appRev],['riveria-anatomy-exam.js',examRev],['style.css',heartRev]].forEach(pair=>{const p=pair[0],rev=pair[1];assert.ok(html.includes(p+'?v='+rev),p+' HTML revision');assert.ok(sw.includes(p+'?v='+rev),p+' offline revision');});
 assert.ok(sw.includes(cache)&&sw.includes(picture)&&app.includes(picture),'offline image path and new cache required');
 assert.ok(fs.existsSync(picture),'Production heart JPEG missing — upload the provided generated image to assets/anatomy/heart-section-fi.jpg before merge');
