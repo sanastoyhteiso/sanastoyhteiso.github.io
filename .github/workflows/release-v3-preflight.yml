@@ -150,6 +150,8 @@ jobs:
         run: node --test release-checks/v3-login-availability.test.cjs
       - name: RUN166 heart diagram attached to 21 labels, stable IDs, genuine binary image, offline cache
         run: node --test release-checks/heart-image-run166.test.cjs
+      - name: RUN170 Latin in yellow Moodle answer keys and 28 new source-preserving cards
+        run: node --test release-checks/moodle-yellow-answers-run170.test.cjs
 
   firestore-v3-rules-emulator:
     runs-on: ubuntu-latest
