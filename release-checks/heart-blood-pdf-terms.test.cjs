@@ -39,9 +39,9 @@ test('production 1296 base words stay byte-stable and 65 new public IDs are coll
  assert.equal(sha,'fa65cf3ba0683309050a7dc729d6898699a63bbc');
  const {d,baseline}=load();
  assert.equal(baseline.length,1296);
- assert.equal(d.terms.length,1471,'1296 original + 58 previous exam words + 65 PDF terms + 6 RUN151 arteries + 21 RUN152 immunity terms + 11 RUN166 heart structures');
- assert.equal(new Set(d.terms.map(x=>x.id)).size,1471);
- assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,1471);
+ assert.equal(d.terms.length,1485,'1457 previously unique words + 28 RUN170 Moodle terms');
+ assert.equal(new Set(d.terms.map(x=>x.id)).size,1485);
+ assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,1485);
  for(let i=0;i<1296;i++)for(const f of Object.keys(baseline[i]))assert.deepEqual(d.terms[i][f],baseline[i][f],baseline[i].id+' '+f);
  const added=d.terms.filter(x=>/^T902(?:[1-6]\d|7[0-7])$/.test(x.id));
  assert.equal(added.filter(x=>Number(x.id.slice(1))>=90213).length,65);
