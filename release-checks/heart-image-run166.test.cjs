@@ -8,7 +8,7 @@ const old=ctx.window.RS_DATA.terms.map(x=>({id:x.id,fi:x.fi,ru:x.ru}));
 assert.equal(old.length,1296);
 vm.runInContext(read('riveria-anatomy-exam.js'),ctx);
 const d=ctx.window.RS_DATA;
-assert.equal(d.terms.length,1471,'previous 1446 unique public terms + 11 RUN166 records');
+assert.equal(d.terms.length,1485,'1457 previously unique words + 28 RUN170 Moodle terms');
 assert.equal(d.examTopics.length,10);
 const byId=new Map(d.terms.map(x=>[x.id,x]));
 const norms=d.terms.map(x=>x.fi.toLocaleLowerCase('fi').trim());
