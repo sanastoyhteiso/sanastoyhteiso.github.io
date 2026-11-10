@@ -199,7 +199,8 @@ function shellViz(e){
   var radius=33+i*step,number=a[i],dots=Math.min(number,32);
   for(var j=0;j<dots;j++){
    var ang=-Math.PI/2+2*Math.PI*j/dots+(i%2)*0.11;
-   svg+='<circle class="shell-dot" data-shell-electron="'+i+'" cx="'+(160+radius*Math.cos(ang)).toFixed(2)+'" cy="'+(160+radius*Math.sin(ang)).toFixed(2)+'" r="'+(i===a.length-1?'4.2':'3.2')+'" fill="'+(i===a.length-1?'#16917a':'#417cbb')+'"/>';
+   var baseDotRadius=i===a.length-1?4.6:3.8;
+   svg+='<circle class="shell-dot" data-shell-electron="'+i+'" data-base-r="'+baseDotRadius+'" cx="'+(160+radius*Math.cos(ang)).toFixed(2)+'" cy="'+(160+radius*Math.sin(ang)).toFixed(2)+'" r="'+baseDotRadius+'" fill="'+(i===a.length-1?'#16917a':'#417cbb')+'"/>';
   }
  }
  svg+='<circle cx="160" cy="160" r="20" fill="#e8b594" stroke="#b37e63"/><text x="160" y="165" text-anchor="middle" font-size="13" font-weight="800" fill="#4b281e">+'+e.n+'</text></svg>';
@@ -235,6 +236,8 @@ function focusShell(e,index){
   var selected=Number(dots[i].getAttribute('data-shell-electron'))===index;
   dots[i].classList.toggle('shell-selected',selected);
   dots[i].classList.toggle('shell-muted',!selected);
+  var originalRadius=Number(dots[i].getAttribute('data-base-r'));
+  if(originalRadius>0)dots[i].setAttribute('r',String(originalRadius+(selected?1.5:0)));
  }
  var rings=panel.querySelectorAll('[data-shell-ring]');
  for(i=0;i<rings.length;i++){
