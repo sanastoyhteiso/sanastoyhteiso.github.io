@@ -68,10 +68,20 @@ function cardHtml(x){
    '<details class="subdetails"><summary>Подробнее и пример / Lisätiedot ja esimerkki</summary>'+
    '<p lang="fi"><b>FI:</b> '+esc(x.moreFi)+'</p>'+
    '<p lang="ru"><b>RU:</b> '+esc(x.moreRu)+'</p></details>'+
+   (x.id==='C10'?'<p><a class="table-entry-link" href="./periodic-table.html">Открыть интерактивную таблицу / Avaa jaksollinen järjestelmä →</a></p>':'')+
    '<div class="meta">'+tags(x)+'</div></div>';
  return '<details class="science-card" data-card-id="'+esc(x.id)+'"><summary>'+
    notationChip(x)+'<span class="science-card-names"><span class="term" lang="fi">'+esc(x.fi)+'</span><span class="trans" lang="ru"> · '+esc(x.ru)+'</span></span>'+
    '<span class="caret" aria-hidden="true">›</span></summary>'+body+'</details>';
+}
+function updateQuickLinks(){
+ var selected=els.scope.value;
+ var buttons=d.querySelectorAll('[data-topics]');
+ for(var i=0;i<buttons.length;i++){
+  var topics=' '+(buttons[i].getAttribute('data-topics')||'')+' ';
+  buttons[i].hidden=(selected!=='all'&&topics.indexOf(' '+selected+' ')<0);
+ }
+ var link=get('periodic-link');if(link)link.hidden=!(selected==='all'||selected==='chemistry');
 }
 function renderGuide(){
  visible=filtered();
@@ -157,14 +167,14 @@ function setup(){
   tabGuide:get('tab-guide'),tabTrain:get('tab-train'),guide:get('guide'),train:get('train'),
   trainBox:get('train-box'),track:get('track-fill'),retry:get('retry-missed')
  };
- els.scope.onchange=renderGuide;els.origin.onchange=renderGuide;els.query.oninput=renderGuide;
+ els.scope.onchange=function(){updateQuickLinks();renderGuide();};els.origin.onchange=renderGuide;els.query.oninput=renderGuide;
  var qs=d.querySelectorAll('[data-q]');
  for(var j=0;j<qs.length;j++)qs[j].onclick=function(){
   els.query.value=this.getAttribute('data-q');showTrainTab(false);renderGuide();els.query.focus();
  };
  var symbolButtons=d.querySelectorAll('[data-symbol]');
  for(var j2=0;j2<symbolButtons.length;j2++)symbolButtons[j2].onclick=function(){
-  els.scope.value='all';els.origin.value='all';els.query.value=this.getAttribute('data-symbol');
+  els.origin.value='all';els.query.value=this.getAttribute('data-symbol');
   showTrainTab(false);renderGuide();
   var first=els.list.querySelector('.science-card');if(first)first.open=true;
  };
@@ -184,7 +194,7 @@ function setup(){
   var m=w.location.search.match(/[?&]q=([^&]+)/);
   if(m)els.query.value=decodeURIComponent(m[1].replace(/\+/g,' ')).slice(0,100);
  }catch(e){}
- renderGuide();
+ updateQuickLinks();renderGuide();
 }
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',setup);else setup();
 })(window,document);
