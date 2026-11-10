@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eaf4f7">
+<meta name="description" content="Fysiikka ja kemia — краткие ответы FI/RU по физике, химии и органической химии, поиск и тренировка к собеседованию.">
+<title>Физика и химия · Fysiikka ja kemia — Sanastoyhteisö</title>
+<style>
+:root{color-scheme:light;--bg:#edf5f7;--paper:#fff;--text:#1d3742;--muted:#53727e;--line:#cddfe6;--accent:#176b83;--accentsoft:#e7f4f7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font:16px/1.52 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--text)}
+a{color:#176b83}
+header{background:#fff;border-bottom:1px solid var(--line)}
+.wrap{max-width:960px;margin:auto;padding:18px 17px}
+.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.brand{text-decoration:none;font-weight:800}
+h1{font-size:clamp(26px,5vw,38px);line-height:1.16;margin:10px 0}
+h2{font-size:20px;margin:0 0 10px}
+.lead{color:#466570;max-width:730px}
+.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.09em;font-size:12px;font-weight:850}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;margin:15px 0;box-shadow:0 2px 12px rgba(15,59,78,.035)}
+button,input,select{font:inherit;color:inherit}
+button{min-height:45px;padding:9px 14px;border:1px solid #9ebecb;border-radius:10px;background:#fff;cursor:pointer;font-weight:650}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus,select:focus,summary:focus-visible{outline:3px solid #c49a38;outline-offset:2px}
+.tabs{display:flex;gap:9px;flex-wrap:wrap}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:white}
+.controls{display:flex;flex-wrap:wrap;gap:10px}
+.field{display:flex;flex:1 1 210px;flex-direction:column;gap:5px}
+.field label{font-size:13px;font-weight:750}
+input,select{background:#fff;border:1px solid #9ebecb;border-radius:10px;min-height:47px;padding:10px;width:100%}
+#query{font-size:18px}
+.quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.quick button{font-size:13px;min-height:37px;padding:6px 10px;border-radius:999px;color:#18576b;border-color:#c4dbe4;background:#f5fafb}
+.stats{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;color:var(--muted);padding:6px 0}
+.science-card{background:#fff;border:1px solid #cbdde4;border-radius:13px;margin:10px 0;overflow:hidden}
+.science-card>summary{cursor:pointer;display:flex;align-items:center;gap:13px;padding:16px 14px;list-style:none;min-height:60px}
+.science-card>summary::-webkit-details-marker{display:none}
+.science-card[open]{border-color:#84b6c7;box-shadow:0 2px 13px rgba(25,109,131,.08)}
+.science-card[open]>summary{background:#f2f9fa;border-bottom:1px solid var(--line)}
+.caret{margin-left:auto;color:var(--accent);font-size:23px;transition:transform .15s}
+.science-card[open] .caret{transform:rotate(90deg)}
+.term{font-weight:780;font-size:17px}
+.trans{color:#526f7b;font-size:14px}
+.card-body{padding:5px 16px 16px}
+.langlabel{font-size:12px;color:#537581;font-weight:850;letter-spacing:.06em;margin-top:15px}
+.say{font-size:19px;line-height:1.6;margin:5px 0 8px;font-weight:630}
+.ruanswer{font-size:16px;line-height:1.58;margin:5px 0 8px}
+.formula{background:#e7f4f7;padding:10px 14px;border-radius:10px;display:inline-block;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:18px;font-weight:750;max-width:100%;overflow-wrap:anywhere;margin-top:8px}
+.subdetails{border-top:1px dashed #c8dbe3;margin-top:15px;padding-top:11px}
+.subdetails summary{font-weight:680;cursor:pointer;color:var(--accent);padding:6px 0}
+.meta{font-size:12px;color:var(--muted);margin:10px 0}
+.marker{display:inline-block;font-size:11px;font-weight:750;padding:3px 8px;border:1px solid #cbdbe0;background:#f4f8f9;border-radius:9px;margin-right:7px}
+.notice{font-size:14px;background:#fff8e8;border-left:3px solid #b18b3e;padding:10px 12px;line-height:1.55;border-radius:0 8px 8px 0;margin-top:14px}
+#list{margin-top:12px}
+.empty{padding:40px 12px;text-align:center;background:white;border:1px solid var(--line);border-radius:14px;color:var(--muted)}
+.train-question{font-weight:800;font-size:clamp(20px,4vw,27px);margin:8px 0}
+.train-sub{font-size:16px;color:var(--muted)}
+.train-answer{border-top:1px solid var(--line);margin-top:16px;padding-top:13px}
+.train-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.track{height:9px;background:#dcecef;border-radius:50px;overflow:hidden;margin:13px 0}
+.track span{display:block;height:100%;background:#177c93}
+.exercise-note{font-size:14px;color:var(--muted)}
+[hidden]{display:none!important}
+footer{font-size:13px;text-align:center;color:#59727c;margin:30px 0}
+@media (max-width:600px){.wrap{padding:14px 12px}.panel{padding:14px}.science-card>summary{padding:13px 12px}.term{font-size:16px}.say{font-size:18px}.train-actions button{flex:1 1 100px}}
+@media print{header,.tabs,.controls,.quick,#train,#query,#empty,#count{display:none!important}.science-card{break-inside:avoid}.science-card>summary{border-bottom:1px solid #ccc}.science-card .card-body{display:block!important}}
+</style>
+</head>
+<body>
+<header><div class="header wrap">
+<a class="brand" href="./index.html">✚ Sanastoyhteisö 3.0</a>
+<a href="./index.html">← На главную / Etusivulle</a>
+</div></header>
+<main class="wrap">
+<div class="eyebrow">Riveria · Suulliseen keskusteluun valmistautuminen</div>
+<h1>Физика и химия <span style="color:#437788;font-weight:450">· Fysiikka ja kemia</span></h1>
+<p class="lead">Быстрые ответы на вопросы собеседования. Найди термин, нажми на него, прочитай короткое объяснение на финском и полный перевод на русский. Вторая вкладка — тренировка устного ответа.</p>
+<div class="notice">Основа: 17 страниц предоставленного конспекта, разделённые по темам. Школьные дополнения и вопросы из твоего списка отмечены отдельно. Это учебная памятка, а не официальные экзаменационные ответы Riveria. / Opiskelun tueksi, ei virallinen koevastaus.</div>
+<section class="panel">
+<div class="tabs" role="tablist" aria-label="Режим обучения">
+<button type="button" role="tab" aria-selected="true" id="tab-guide" aria-controls="guide">Шпаргалка · Muistilista</button>
+<button type="button" role="tab" aria-selected="false" id="tab-train" aria-controls="train">Тренировка · Harjoitus</button>
+</div>
+<div class="controls" style="margin-top:16px">
+<div class="field"><label for="scope">Раздел / Aihe</label><select id="scope">
+<option value="all">Физика + химия · Kaikki</option>
+<option value="physics">Физика · Fysiikka</option>
+<option value="chemistry">Химия · Kemia</option>
+<option value="organic">Органическая химия · Orgaaninen kemia</option>
+</select></div>
+<div class="field"><label for="origin">Источник / Lähde</label><select id="origin">
+<option value="all">Конспект + дополнения</option>
+<option value="notes">Только конспект (стр. 1–17)</option>
+<option value="added">Только дополнительные темы</option>
+</select></div>
+</div>
+<div class="field" style="margin-top:12px"><label for="query">Поиск по-русски или по-фински / Haku</label>
+<input id="query" type="search" placeholder="Закон Ньютона, атом, metallit, энергия…" autocomplete="off" spellcheck="false"></div>
+<div class="quick" aria-label="Быстрый поиск / Pikahaku">
+<button type="button" data-q="ньютон">Ньютон</button>
+<button type="button" data-q="ускорение">Ускорение</button>
+<button type="button" data-q="энергия">Энергия</button>
+<button type="button" data-q="атом">Атом</button>
+<button type="button" data-q="таблица">Таблица Менделеева</button>
+<button type="button" data-q="металлы">Металлы</button>
+<button type="button" data-q="пестициды">Пестициды</button>
+</div>
+</section>
+<section id="guide" role="tabpanel" aria-labelledby="tab-guide">
+<div class="stats"><span id="count" aria-live="polite">Загрузка тем…</span><button type="button" id="expand-all">Раскрыть все / Avaa kaikki</button></div>
+<div id="list"></div>
+<div id="empty" class="empty" hidden>Ничего не найдено. Попробуй другое слово на русском или финском. / Ei hakutuloksia.</div>
+</section>
+<section id="train" role="tabpanel" aria-labelledby="tab-train" hidden>
+<div class="panel">
+<h2>Тренировка устного ответа / Suullinen harjoitus</h2>
+<p>Прочитай тему, попробуй объяснить её <b>по-фински вслух</b>, затем открой образец ответа. Отметь, знал ли ты ответ. Повторять можно сколько угодно.</p>
+<div class="train-actions"><button type="button" class="primary" id="start-train">Начать 10 вопросов / Aloita</button><button type="button" id="retry-missed" hidden>Повторить трудные / Kertaa</button></div>
+<div class="track"><span id="track-fill" style="width:0%"></span></div>
+<div id="train-box" aria-live="polite" class="exercise-note">Здесь появится первый вопрос. / Ensimmäinen kysymys tulee tähän.</div>
+</div>
+</section>
+<div class="panel" style="font-size:14px">
+<b>Как учить:</b> сначала выучи короткий финский ответ, а подробное объяснение используй, если попросят пример. В тренировке вопрос задаётся в том же виде, как его могут произнести на собеседовании.
+<p class="meta">Конспект: страницы 1–9 — физика, 10–17 — химия. Органическая химия, пестициды, закон Ома и другие обозначенные темы дополнены отдельно. Страница общедоступна, но не содержит личных данных и не сохраняет результаты в Firebase.</p>
+</div>
+</main>
+<footer>Sanastoyhteisö · Muistilista FI/RU · Учебные материалы / Opiskelumateriaali</footer>
+<script src="./science-physics-data.js?v=20261110-1"></script>
+<script src="./science-chemistry-data.js?v=20261110-1"></script>
+<script src="./science-trainer.js?v=20261110-1"></script>
+</body></html>
