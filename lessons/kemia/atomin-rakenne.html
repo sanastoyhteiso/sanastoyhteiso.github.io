@@ -54,11 +54,73 @@ html.embed #reset{margin-top:5px;min-height:32px;font-size:12px;align-self:flex-
  html.embed .atom-controls{display:flex;flex-direction:column}
  html.embed .atom-visual svg{max-height:180px}
 }
+
+/* RUN-KEMIA-007: the model and its data now share one compact visual workspace. */
+.atom-workspace{display:grid;grid-template-columns:minmax(225px,295px) minmax(0,1fr);gap:16px;align-items:center}
+.atom-left{min-width:0;display:flex;flex-direction:column;gap:10px}
+.atom-left .atom-controls{display:flex;flex-direction:column;gap:7px}
+.atom-left .atom-controls .control{padding:8px 11px}
+.atom-left .atom-controls .control label{font-size:13px}
+.atom-left .atom-controls .counter button{min-height:35px}
+.atom-left .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.atom-left .stat{padding:8px 9px;font-size:12px;min-width:0}
+.atom-left .stat strong{font-size:18px;overflow-wrap:anywhere}
+.atom-visual{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.atom-visual .model{width:100%;min-height:0}
+.atom-visual svg{width:min(100%,390px);height:auto;max-height:330px}
+.atom-visual #explain{font-size:13px;color:#516b76;margin:0;text-align:center}
+#reset{margin-top:7px;padding:6px 10px;min-height:34px}
+@media(max-width:650px) and (orientation:portrait){
+ .atom-workspace{grid-template-columns:minmax(0,1fr);gap:4px}
+ .atom-left{display:contents}
+ .atom-left .atom-controls{grid-row:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .atom-left .atom-controls .control{padding:5px;min-width:0}
+ .atom-left .atom-controls .control label{font-size:11px;text-align:center}
+ .atom-left .atom-controls .counter{gap:1px}
+ .atom-left .atom-controls .counter button{min-width:27px;padding:0}
+ .atom-left .atom-controls .counter output{font-size:17px}
+ .atom-visual{grid-row:2}
+ .atom-visual svg{max-height:230px}
+ .atom-left .stats{grid-row:3;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+ .atom-left .stat{padding:5px;font-size:10px}
+ .atom-left .stat strong{font-size:14px}
+}
+@media(max-width:850px) and (orientation:landscape){
+ .atom-workspace{grid-template-columns:minmax(180px,235px) minmax(0,1fr);gap:8px}
+ .atom-left .atom-controls{display:flex;flex-direction:column}
+ .atom-left .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .atom-visual svg{max-height:220px}
+}
+html.embed .atom-workspace{display:grid;grid-template-columns:minmax(205px,35%) minmax(0,1fr);gap:8px;align-items:stretch}
+html.embed .atom-left{display:flex;flex-direction:column;gap:5px;min-height:0;overflow:hidden}
+html.embed .atom-left .atom-controls{display:flex;flex-direction:column;gap:4px}
+html.embed .atom-left .atom-controls .control{padding:5px 8px}
+html.embed .atom-left .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+html.embed .atom-left .stat{padding:5px;font-size:10px}
+html.embed .atom-left .stat strong{font-size:15px}
+html.embed .atom-visual{display:flex;flex-direction:column;min-height:0;justify-content:center}
+html.embed .atom-visual .model{min-height:0;flex:1;max-height:100%}
+html.embed .atom-visual svg{max-width:100%;max-height:100%;height:100%}
+@media(max-width:650px) and (orientation:portrait){
+ html.embed .atom-workspace{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:3px}
+ html.embed .atom-left{display:contents}
+ html.embed .atom-left .atom-controls{grid-row:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+ html.embed .atom-left .atom-controls .control{padding:3px}
+ html.embed .atom-visual{grid-row:2}
+ html.embed .atom-left .stats{grid-row:3;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+ html.embed .atom-left .stat{padding:3px;font-size:10px}
+ html.embed .atom-left .stat strong{font-size:13px}
+}
+@media(max-width:850px) and (orientation:landscape){
+ html.embed .atom-workspace{grid-template-columns:minmax(160px,32%) minmax(0,1fr)}
+ html.embed .atom-left .atom-controls{display:flex;flex-direction:column}
+ html.embed .atom-left .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style><script>if(location.search.indexOf("embed=1")!==-1)document.documentElement.className+=" embed";</script></head><body><main>
 <p><a href="../../index.html">← Sanastoyhteisö</a></p><div class="languages"><button type="button" data-lang="fi" aria-pressed="true">FI</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
 <section class="panel"><h1 data-i="title">Atomin rakenne</h1><p data-i="intro">Atomi koostuu ytimestä ja sitä ympäröivästä elektroniverhosta. Ytimessä on positiivisia protoneja ja varauksettomia neutroneja. Elektroniverhossa on negatiivisia elektroneja.</p><p class="small" data-i="note">Havainnollistava Bohrin malli, ei mittakaavassa. Elektronit eivät todellisuudessa kulje piirrettyjä ratoja pitkin.</p></section>
-<section class="panel"><h2 data-i="model">Kokeile itse</h2><div class="atom-workspace"><div class="atom-controls"><div class="control"><label data-i="protons">Protonit (+)</label><div class="counter"><button data-part="p" data-step="-1" aria-label="Decrease protons">−</button><output id="p">8</output><button data-part="p" data-step="1" aria-label="Increase protons">+</button></div></div><div class="control"><label data-i="neutrons">Neutronit (0)</label><div class="counter"><button data-part="n" data-step="-1" aria-label="Decrease neutrons">−</button><output id="n">8</output><button data-part="n" data-step="1" aria-label="Increase neutrons">+</button></div></div><div class="control"><label data-i="electrons">Elektronit (−)</label><div class="counter"><button data-part="e" data-step="-1" aria-label="Decrease electrons">−</button><output id="e">8</output><button data-part="e" data-step="1" aria-label="Increase electrons">+</button></div></div></div><div class="atom-visual">
-<div class="model"><svg id="atom" viewBox="0 0 380 310" role="img" aria-label="Illustrative atom diagram"></svg></div><div class="stats"><div class="stat"><span data-i="element">Alkuaine</span><strong id="element">—</strong></div><div class="stat"><span data-i="mass">Massaluku</span><strong id="mass">16</strong></div><div class="stat"><span data-i="charge">Sähkövaraus</span><strong id="charge">0</strong></div><div class="stat"><span data-i="state">Tila</span><strong id="state">—</strong></div></div><p id="explain" aria-live="polite"></p></div></div><button type="button" id="reset" data-i="reset">Palauta happi (8/8/8)</button></section>
+<section class="panel"><h2 data-i="model">Kokeile itse</h2><div class="atom-workspace"><div class="atom-left"><div class="atom-controls"><div class="control"><label data-i="protons">Protonit (+)</label><div class="counter"><button data-part="p" data-step="-1" aria-label="Decrease protons">−</button><output id="p">8</output><button data-part="p" data-step="1" aria-label="Increase protons">+</button></div></div><div class="control"><label data-i="neutrons">Neutronit (0)</label><div class="counter"><button data-part="n" data-step="-1" aria-label="Decrease neutrons">−</button><output id="n">8</output><button data-part="n" data-step="1" aria-label="Increase neutrons">+</button></div></div><div class="control"><label data-i="electrons">Elektronit (−)</label><div class="counter"><button data-part="e" data-step="-1" aria-label="Decrease electrons">−</button><output id="e">8</output><button data-part="e" data-step="1" aria-label="Increase electrons">+</button></div></div></div><div class="stats"><div class="stat"><span data-i="element">Alkuaine</span><strong id="element">—</strong></div><div class="stat"><span data-i="mass">Massaluku</span><strong id="mass">16</strong></div><div class="stat"><span data-i="charge">Sähkövaraus</span><strong id="charge">0</strong></div><div class="stat"><span data-i="state">Tila</span><strong id="state">—</strong></div></div></div><div class="atom-visual">
+<div class="model"><svg id="atom" viewBox="0 0 380 310" role="img" aria-label="Illustrative atom diagram"></svg></div><p id="explain" aria-live="polite"></p></div></div><button type="button" id="reset" data-i="reset">Palauta happi (8/8/8)</button></section>
 <section class="panel"><h2 data-i="remember">Muista</h2><p data-i="rule">Protonien määrä määrää alkuaineen. Massaluku = protonit + neutronit. Sähkövaraus = protonit − elektronit. Neutraalissa atomissa protonien ja elektronien määrä on sama.</p></section>
 </main><script>
 (function(){'use strict';
