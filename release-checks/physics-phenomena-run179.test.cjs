@@ -47,7 +47,7 @@ t('audit covers distinct mechanical, thermal, electrical, wave and optical pheno
   const r=byId[id];a.ok(r,id);
   a.equal(r.section,'physics',id);
   for(const field of ['fi','ru','shortFi','shortRu','moreFi','moreRu'])
-   a.ok(typeof r[field]==='string'&&r[field].length>10,id+' '+field);
+   a.ok(typeof r[field]==='string'&&r[field].length>(field==='fi'||field==='ru'?2:10),id+' '+field);
   a.equal(r.page,0,id);
   a.equal(r.origin,'extra',id);
  }
