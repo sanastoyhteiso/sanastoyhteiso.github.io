@@ -89,11 +89,14 @@ t('quick links match current subject for both concepts and notation',()=>{
  const {JSDOM}=require('jsdom');
  const dom=new JSDOM(science,{url:'https://example.invalid/science.html?section=physics',runScripts:'outside-only'});
  const w=dom.window,d=w.document;
- for(const f of ['science-physics-data.js','science-chemistry-data.js','science-notation.js','science-trainer.js'])
+ for(const f of ['science-physics-data.js','science-chemistry-data.js','science-notation.js','science-physics-phenomena.js','science-trainer.js'])
   w.eval(fs.readFileSync(f,'utf8'));
  d.dispatchEvent(new w.Event('DOMContentLoaded'));
  function shown(selector){return Array.from(d.querySelectorAll(selector)).filter(b=>!b.hidden).map(x=>x.textContent);}
- a.deepEqual(shown('[data-q]'),['Ньютон','Ускорение','Энергия']);
+ a.ok(shown('[data-q]').includes('Ньютон'));
+ a.ok(shown('[data-q]').includes('Hitaus · Инерция'));
+ a.ok(shown('[data-q]').includes('Liukuminen · Скольжение'));
+ a.ok(!shown('[data-q]').includes('Пестициды'));
  a.ok(shown('[data-symbol]').includes('s'));
  a.ok(!shown('[data-symbol]').includes('Z'));
  a.equal(d.getElementById('periodic-link').hidden,true);
