@@ -1,4 +1,4 @@
-/* RUN175 — independent, ES5-compatible oral-exam review. No accounts, network, Firebase or localStorage. */
+/* RUN175 — independent, ES5-compatible oral-exam review, no accounts or external services. */
 (function(w,d){
 'use strict';
 var cards=w.RS_SCIENCE_CARDS||[],byId={},sections={physics:'Физика · Fysiikka',chemistry:'Химия · Kemia',organic:'Органическая химия · Orgaaninen kemia'};
