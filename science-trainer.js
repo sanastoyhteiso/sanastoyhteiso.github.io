@@ -1,7 +1,7 @@
 /* RUN175 — independent, ES5-compatible oral-exam review, no accounts or external services. */
 (function(w,d){
 'use strict';
-var cards=w.RS_SCIENCE_CARDS||[],byId={},sections={physics:'Физика · Fysiikka',chemistry:'Химия · Kemia',organic:'Органическая химия · Orgaaninen kemia'};
+var cards=w.RS_SCIENCE_CARDS||[],notation=w.RS_SCIENCE_NOTATION||{},byId={},sections={physics:'Физика · Fysiikka',chemistry:'Химия · Kemia',organic:'Органическая химия · Orgaaninen kemia'};
 var els={},session=null,visible=[],allExpanded=false;
 function get(id){return d.getElementById(id);}
 function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -16,16 +16,52 @@ function match(x,scope,origin,query){
  if(origin==='notes'&&!(x.page>0))return false;
  if(origin==='added'&&x.page>0)return false;
  if(!query)return true;
- var hay=clean([x.fi,x.ru,x.shortFi,x.shortRu,x.moreFi,x.moreRu,x.formula,x.keywords].join(' '));
+ var n=notation[x.id]||{};
+ var hay=clean([x.fi,x.ru,x.shortFi,x.shortRu,x.moreFi,x.moreRu,x.formula,x.keywords,n.symbol,n.unit,n.fi,n.ru,(n.keys||[]).join(' ')].join(' '));
  var parts=query.split(' ');for(var i=0;i<parts.length;i++)if(parts[i]&&hay.indexOf(parts[i])<0)return false;
  return true;
 }
+function exactSymbol(x,raw){
+ var n=notation[x.id];if(!n||!n.keys)return false;
+ for(var i=0;i<n.keys.length;i++){
+  var k=n.keys[i];
+  if(k===raw||(k.length>1&&k.toLocaleLowerCase()===raw.toLocaleLowerCase()))return true;
+ }
+ return false;
+}
 function filtered(){
- var scope=els.scope.value,origin=els.origin.value,q=clean(els.query.value);
- return cards.filter(function(x){return match(x,scope,origin,q);});
+ var scope=els.scope.value,origin=els.origin.value,raw=String(els.query.value||'').trim(),q=clean(raw);
+ var selection=cards.filter(function(x){return match(x,scope,origin,'');});
+ if(raw){
+  var exact=selection.filter(function(x){return exactSymbol(x,raw);});
+  if(exact.length)return exact;
+ }
+ return selection.filter(function(x){return match(x,scope,origin,q);});
+}
+function notationLabel(n){
+ if(n.kind==='quantity')return 'Suureen tunnus / Обозначение величины';
+ if(n.kind==='unit')return 'Yksikkö / Единица';
+ if(n.kind==='ghs')return 'Varoitusmerkin koodi / Код опасности';
+ if(n.kind==='element')return 'Alkuaineen merkki / Символ элемента';
+ if(n.kind==='formula')return 'Kemiallinen kaava / Химическая формула';
+ if(n.kind==='states')return 'Olomuodon merkintä / Обозначение состояния';
+ if(n.kind==='reaction')return 'Reaktion merkintä / Запись реакции';
+ return 'Merkintä tai esimerkki / Обозначение или пример';
+}
+function notationChip(x){
+ var n=notation[x.id];
+ return n?'<span class="notation-chip" aria-label="'+esc(notationLabel(n))+'">'+esc(n.symbol)+'</span>':'';
+}
+function notationBlock(x){
+ var n=notation[x.id];if(!n)return '';
+ return '<div class="notation-box">'+
+  '<div class="notation-caption">'+esc(notationLabel(n))+'</div>'+
+  '<div class="notation-values"><strong class="notation-symbol">'+esc(n.symbol)+'</strong>'+
+  (n.unit?'<span class="notation-unit">Yksikkö / Единица: <b>'+esc(n.unit)+'</b></span>':'')+'</div>'+
+  '<p lang="fi"><b>FI:</b> '+esc(n.fi)+'</p><p lang="ru"><b>RU:</b> '+esc(n.ru)+'</p></div>';
 }
 function cardHtml(x){
- var body='<div class="card-body"><div class="langlabel">FI · LYHYT VASTAUS / КОРОТКИЙ ОТВЕТ НА ФИНСКОМ</div>'+
+ var body='<div class="card-body">'+notationBlock(x)+'<div class="langlabel">FI · LYHYT VASTAUS / КОРОТКИЙ ОТВЕТ НА ФИНСКОМ</div>'+
    '<p class="say" lang="fi">'+esc(x.shortFi)+'</p>'+
    '<div class="langlabel">RU · ПЕРЕВОД</div><p class="ruanswer" lang="ru">'+esc(x.shortRu)+'</p>'+
    (x.formula?'<div class="formula" aria-label="Формула">'+esc(x.formula)+'</div>':'')+
@@ -34,7 +70,7 @@ function cardHtml(x){
    '<p lang="ru"><b>RU:</b> '+esc(x.moreRu)+'</p></details>'+
    '<div class="meta">'+tags(x)+'</div></div>';
  return '<details class="science-card" data-card-id="'+esc(x.id)+'"><summary>'+
-   '<span><span class="term" lang="fi">'+esc(x.fi)+'</span><span class="trans" lang="ru"> · '+esc(x.ru)+'</span></span>'+
+   notationChip(x)+'<span class="science-card-names"><span class="term" lang="fi">'+esc(x.fi)+'</span><span class="trans" lang="ru"> · '+esc(x.ru)+'</span></span>'+
    '<span class="caret" aria-hidden="true">›</span></summary>'+body+'</details>';
 }
 function renderGuide(){
@@ -71,7 +107,8 @@ function renderTrain(){
  els.track.style.width=Math.round(session.index/n*100)+'%';
  els.trainBox.innerHTML='<div class="stats"><span>Вопрос / Kysymys <b>'+(session.index+1)+' / '+n+'</b></span><span>'+esc(sections[x.section])+'</span></div>'+
   '<h3 class="train-question" lang="fi">Selitä omin sanoin: '+esc(x.fi)+'</h3>'+
-  '<p class="train-sub" lang="ru">Объясни своими словами: '+esc(x.ru)+'</p>'+
+  '<p class="train-sub" lang="ru">Объясни своими словами: '+esc(x.ru)+'</p>'+ 
+  (notation[x.id]?'<div class="train-notation">'+notationChip(x)+' <span class="notation-caption">Mitä merkintä tarkoittaa? / Что означает символ?</span></div>':'')+
   '<div class="meta">'+tags(x)+'</div>'+
   '<div class="train-actions"><button type="button" class="primary" id="reveal">Показать ответ / Näytä vastaus</button></div>'+
   '<div id="reveal-answer" hidden class="train-answer"></div>';
@@ -81,7 +118,7 @@ function reveal(){
  if(!session||session.revealed)return;
  session.revealed=true;
  var x=session.items[session.index];
- var html='<div class="langlabel">FI · VASTAUS</div><p class="say" lang="fi">'+esc(x.shortFi)+'</p>'+
+ var html=notationBlock(x)+'<div class="langlabel">FI · VASTAUS</div><p class="say" lang="fi">'+esc(x.shortFi)+'</p>'+
    '<div class="langlabel">RU · ПЕРЕВОД</div><p class="ruanswer" lang="ru">'+esc(x.shortRu)+'</p>'+
    (x.formula?'<div class="formula">'+esc(x.formula)+'</div>':'')+
    '<details class="subdetails"><summary>Подробнее / Lisätiedot</summary>'+
@@ -124,6 +161,12 @@ function setup(){
  var qs=d.querySelectorAll('[data-q]');
  for(var j=0;j<qs.length;j++)qs[j].onclick=function(){
   els.query.value=this.getAttribute('data-q');showTrainTab(false);renderGuide();els.query.focus();
+ };
+ var symbolButtons=d.querySelectorAll('[data-symbol]');
+ for(var j2=0;j2<symbolButtons.length;j2++)symbolButtons[j2].onclick=function(){
+  els.scope.value='all';els.origin.value='all';els.query.value=this.getAttribute('data-symbol');
+  showTrainTab(false);renderGuide();
+  var first=els.list.querySelector('.science-card');if(first)first.open=true;
  };
  els.tabGuide.onclick=function(){showTrainTab(false);};
  els.tabTrain.onclick=function(){showTrainTab(true);};
