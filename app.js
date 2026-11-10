@@ -99,7 +99,7 @@
     return '<details class="rs-atom-explanation"><summary>⚛ Atomin rakenne · Строение атома · Interactive model</summary>'+
       '<p><b>FI:</b> Atomi koostuu ytimestä ja elektroniverhosta. Protonit ovat positiivisia, neutronit varauksettomia ja elektronit negatiivisia.</p>'+
       '<p><b>RU:</b> Атом состоит из ядра и электронной оболочки. Протоны положительные, нейтроны нейтральные, электроны отрицательные.</p>'+
-      '<iframe title="Atomin rakenne — интерактивная модель атома" loading="lazy" src="lessons/kemia/atomin-rakenne.html?embed=1&amp;lang='+encodeURIComponent(language())+'&amp;v=run-kemia-011" style="display:block;width:100%;height:clamp(350px,72vh,610px);border:1px solid #b5d7e2;border-radius:12px;background:#f4f9fb" referrerpolicy="no-referrer"></iframe>'+
+      '<iframe title="Atomin rakenne — интерактивная модель атома" loading="lazy" src="lessons/kemia/atomin-rakenne.html?embed=1&amp;lang='+encodeURIComponent(language())+'&amp;v=run-kemia-012" style="display:block;width:100%;height:clamp(350px,72vh,610px);border:1px solid #b5d7e2;border-radius:12px;background:#f4f9fb" referrerpolicy="no-referrer"></iframe>'+
       '<p><a href="lessons/kemia/atomin-rakenne.html" target="_blank" rel="noopener noreferrer">Avaa koko näkymä · Открыть на весь экран</a></p></details>';
   }
   function examNote(x){
