@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#edf5f8">
+<meta name="description" content="Интерактивная периодическая таблица 118 элементов: финский/русский, группы, периоды, поиск и тест на символы — Sanastoyhteisö 3.0">
+<title>Jaksollinen järjestelmä · Таблица Менделеева | Sanastoyhteisö</title>
+<style>
+:root{--ink:#183a46;--muted:#506a75;--accent:#166a82;--edge:#c9dde5;--page:#eaf3f6;--surface:#fff}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.48}
+.wrap{max-width:1200px;margin:auto;padding:18px 15px}
+header{background:#fff;border-bottom:1px solid var(--edge)}
+.header{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.header a{font-weight:700;color:var(--accent)}
+h1{font-size:clamp(25px,4.5vw,38px);margin:10px 0;line-height:1.18}
+h2{font-size:20px;margin:10px 0}
+h3{margin:9px 0;font-size:17px}
+p{margin:9px 0}
+.muted{color:var(--muted)}
+.eyebrow{font-weight:800;color:#35758b;letter-spacing:.06em;font-size:12px;text-transform:uppercase}
+.panel{border:1px solid var(--edge);background:#fff;border-radius:16px;padding:18px;margin:15px 0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;min-height:42px;padding:8px 13px;border-radius:10px;border:1px solid #9dbdc8;background:#fff;font-weight:650}
+button.primary,.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:focus-visible,select:focus,input:focus{outline:3px solid #d4a93b;outline-offset:1px}
+.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:end}
+.field{display:flex;flex-direction:column;gap:5px;flex:1 1 165px;max-width:100%}
+.field label{font-size:13px;font-weight:700}
+.field input,.field select{border:1px solid #a8c4cd;border-radius:10px;padding:10px;min-height:45px;background:#fff;width:100%;font-size:16px}
+.field.search{flex:2 1 230px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button[aria-selected=true]{background:var(--accent);color:white;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.legend button{font-size:12px;padding:7px 9px;min-height:34px;display:inline-flex;align-items:center;gap:7px}
+.legend button[aria-pressed=true]{outline:2px solid #175d73;outline-offset:1px;background:#eff7fa}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--category,#bfc9cc);border:1px solid rgba(0,0,0,.07)}
+.scrollhint{font-size:13px;color:var(--muted);margin-top:9px}
+.table-scroll{overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;padding:4px 1px 12px}
+.periodic-grid{width:1110px;display:grid;grid-template-columns:38px repeat(18,56px);grid-template-rows:28px repeat(7,63px) 22px repeat(2,63px);gap:2px;align-items:stretch}
+.group-number,.period-number,.series-label{display:flex;align-items:center;justify-content:center;color:#476b77;font-weight:700;font-size:12px}
+.series-label{font-size:10px;line-height:1.1;text-align:center}
+.element{--category:#e3edf1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:0;min-width:0;padding:3px 2px 4px;
+  border:1px solid rgba(19,59,70,.13);border-radius:5px;background:var(--category);color:#153746;transition:opacity .1s,transform .1s;cursor:pointer}
+.element .z{font-size:10px;line-height:1;align-self:flex-start;margin-left:3px}
+.element .symbol{font-size:22px;line-height:1.02;font-weight:850}
+.element .tinyname{font-size:8px;line-height:1.07;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.element.selected{outline:3px solid #14657f;outline-offset:-2px;border-color:#0e4e63;box-shadow:0 0 0 2px white;z-index:1}
+.element.dimmed{opacity:.22}
+.element:hover{transform:translateY(-1px)}
+.element[aria-current=true]{font-weight:900}
+.placeholder{border:1px dashed #99adbb;background:#f3f8fa;color:#38697b;border-radius:5px;font-size:10px;min-height:60px;padding:2px}
+.placeholder b{display:block;font-size:13px}
+.category-nonmetal{--category:#cce8d6}
+.category-noble{--category:#dce3fa}
+.category-alkali{--category:#f6d7c9}
+.category-alkaline{--category:#f7e8b9}
+.category-metalloid{--category:#dae8b8}
+.category-halogen{--category:#d4e9aa}
+.category-post{--category:#d5e9ef}
+.category-transition{--category:#e7d8f0}
+.category-lanthanide{--category:#f4dbe9}
+.category-actinide{--category:#efcdd7}
+.category-unknown{--category:#e6e6e6}
+.summary{font-size:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--muted)}
+.detail{scroll-margin-top:10px}
+.detail-head{display:flex;gap:17px;align-items:center;flex-wrap:wrap}
+.hero-symbol{font-size:49px;line-height:1;font-weight:850;text-align:center;width:95px;padding:11px 6px;border-radius:12px;background:var(--category,#e6f2f4);border:1px solid #c7dae1;flex-shrink:0}
+.detail-name{font-size:25px;font-weight:800;line-height:1.22}
+.detail-ru{font-size:18px;font-weight:650;color:#435f69;margin-top:4px}
+.detail-en{font-size:13px;color:#607b83}
+.statgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}
+.stat{padding:10px;border:1px solid #d8e6eb;background:#f6fbfc;border-radius:10px;min-width:0}
+.stat-label{font-size:12px;color:#587580}
+.stat-value{font-size:18px;font-weight:750;overflow-wrap:anywhere}
+.lesson{border-left:3px solid #6eb2c8;padding:5px 12px;margin:12px 0}
+.lesson .lang{font-weight:800;color:#226b82;font-size:12px;letter-spacing:.05em}
+.lesson p{line-height:1.56}
+code{font:inherit;font-weight:700}
+.note{font-size:13px;color:#526d78;background:#f3f8fa;border-radius:9px;padding:10px 13px}
+.sources{font-size:12px;color:#607580;margin-top:12px}
+.sources a{color:var(--accent)}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.actions button{flex:0 1 auto}
+.quizq{font-size:23px;font-weight:750}
+.quizanswer{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.quizanswer input{min-height:47px;border:1px solid #aacad3;border-radius:9px;padding:8px 10px;min-width:140px;max-width:320px;width:55%;font-size:19px}
+.quiz-feedback{margin-top:14px;background:#eaf6fa;border-radius:10px;padding:14px}
+.progress{background:#d9e9ee;border-radius:100px;height:8px;overflow:hidden;margin:12px 0}
+.progress>span{display:block;height:100%;background:#167e99}
+#list-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.list-tile{text-align:left;min-height:58px;display:flex;align-items:center;gap:12px;background:var(--category);border-color:rgba(0,0,0,.08)}
+.list-tile b{font-size:22px}
+.list-tile span{font-size:13px;line-height:1.25}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:12px 0 35px}
+@media(max-width:650px){.wrap{padding:14px 11px}.panel{padding:13px}.statgrid{gap:7px}.stat{padding:9px}.detail-name{font-size:22px}.hero-symbol{font-size:40px;width:75px}.tabs button{flex:1 1 130px}}
+@media print{header,.controls,.legend,.scrollhint,.tabs,#quiz,#list-results,.sources{display:none!important}.table-scroll{overflow:visible}.periodic-grid{transform:scale(.72);transform-origin:top left}.panel{border:none;box-shadow:none}}
+</style></head><body>
+<header><div class="wrap header"><a href="./index.html">✚ Sanastoyhteisö 3.0</a><a href="./science.html?section=chemistry">← Химия / Kemia</a></div></header>
+<main class="wrap">
+<div class="eyebrow">Riveria · Kemia · Алкуайнеет / Alkuaineet</div>
+<h1>Jaksollinen järjestelmä · Таблица Менделеева</h1>
+<p class="muted">Все 118 химических элементов — группы, периоды, названия FI/RU, подробные объяснения и тренировка. Выбери элемент или найди его по символу, названию либо номеру.</p>
+<div class="panel">
+<div class="tabs" role="tablist" aria-label="Режим">
+<button type="button" role="tab" id="tab-table" aria-controls="table-view" aria-selected="true">Таблица / Taulukko</button>
+<button type="button" role="tab" id="tab-list" aria-controls="list-view" aria-selected="false">Список / Luettelo</button>
+<button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false">Тренировка / Harjoitus</button>
+</div>
+<div class="controls" style="margin-top:15px">
+<div class="field search"><label for="element-search">Поиск / Haku (Fe, железо, rauta, 26)</label>
+<input id="element-search" type="search" placeholder="Fe, happi, кислород, 8…" autocomplete="off" spellcheck="false"></div>
+<div class="field"><label for="group-filter">Группа / Ryhmä</label><select id="group-filter"><option value="all">Все группы / Kaikki</option></select></div>
+<div class="field"><label for="period-filter">Период / Jakso</label><select id="period-filter"><option value="all">Все периоды / Kaikki</option></select></div>
+</div>
+<div class="summary"><span id="count" aria-live="polite">118 элементов</span><button type="button" id="clear" style="min-height:33px;font-size:12px">Сбросить / Tyhjennä</button></div>
+<div class="legend" id="legend" aria-label="Семейства / Ryhmät"></div>
+</div>
+<section id="table-view" role="tabpanel" aria-labelledby="tab-table">
+<div class="panel">
+<div class="scrollhint"><strong>Листай таблицу влево и вправо ↔</strong> / Pyyhkäise vaakasuunnassa. Группы 1–18 расположены сверху, периоды 1–7 слева.</div>
+<div class="table-scroll" id="table-scroll"><div class="periodic-grid" id="periodic-grid" aria-label="Периодическая таблица с 118 элементами"></div></div>
+<div class="note">Лантаноиды (57–71) и актиноиды (89–103) показаны в двух отдельных строках внизу, как в школьной таблице. Их положение в группе 3 может изображаться по-разному в справочниках.</div>
+</div>
+</section>
+<section class="panel" id="list-view" role="tabpanel" aria-labelledby="tab-list" hidden>
+<p class="muted">Выбирай элементы из списка — удобно на узком экране. / Valitse alkuaine luettelosta.</p>
+<div id="list-results"></div>
+</section>
+<section class="panel" id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden>
+<h2>Harjoittele · Тренировка</h2>
+<p>Выбери группу или период выше, чтобы тренироваться только по ней. 10 вопросов на названия и символы. / 10 kysymystä, käytä valittuja suodattimia.</p>
+<div class="controls">
+<div class="field"><label for="quiz-direction">Тип вопроса / Kysymystyyppi</label>
+<select id="quiz-direction">
+<option value="name-to-symbol">Финское название → символ</option>
+<option value="symbol-to-name">Символ → финское или русское название</option>
+</select></div>
+<button type="button" class="primary" id="quiz-start">Новые 10 вопросов / Aloita</button>
+</div>
+<div class="progress"><span id="quiz-progress" style="width:0%"></span></div>
+<div id="quiz-content" aria-live="polite">Выбери режим и нажми «Новые 10 вопросов».</div>
+</section>
+<section class="panel detail" id="detail" aria-live="polite"><h2>Нажми на элемент / Valitse alkuaine</h2></section>
+<section class="panel">
+<h2>Как читать таблицу / Taulukon lukeminen</h2>
+<div class="lesson"><div class="lang">FI</div>
+<p>Järjestysluku <b>Z</b> kertoo protonien määrän. Vaakasuora rivi on <b>jakso</b>, pystysuora sarake on <b>ryhmä</b>. Saman ryhmän alkuaineilla on usein samankaltaisia kemiallisia ominaisuuksia. Metallit ovat pääosin vasemmalla ja keskellä, epämetallit yläoikealla. Vety on poikkeus.</p>
+<div class="lang">RU</div>
+<p>Порядковый номер <b>Z</b> — число протонов. Горизонтальный ряд — <b>период</b>, вертикальный столбец — <b>группа</b>. У элементов одной группы часто похожие свойства. Металлы находятся преимущественно слева и в центре, неметаллы — справа вверху. Водород — исключение.</p></div>
+<p class="note">Массы указаны приближённо, в атомных единицах массы (u). Для элементов без устойчивых изотопов часто приводят массовое число одного из изотопов. Для некоторых сверхтяжёлых элементов электронные конфигурации и физические свойства пока являются расчётными, а не экспериментально подтверждёнными.</p>
+<div class="sources">Справочные источники / Lähteet:
+<a href="https://iupac.org/what-we-do/periodic-table-of-elements/" target="_blank" rel="noopener noreferrer">IUPAC</a> ·
+<a href="https://pubchem.ncbi.nlm.nih.gov/ptable/" target="_blank" rel="noopener noreferrer">PubChem</a> ·
+<a href="https://github.com/Bowserinator/Periodic-Table-JSON" target="_blank" rel="noopener noreferrer">Структурные данные</a>.
+</div>
+</section>
+</main>
+<footer>Sanastoyhteisö · 118 alkuainetta · FI / RU · Учебная таблица / Opiskelumateriaali</footer>
+<script src="./periodic-elements.js?v=run177-1"></script>
+<script src="./periodic-table.js?v=run177-1"></script>
+</body></html>
