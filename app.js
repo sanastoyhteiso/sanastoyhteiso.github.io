@@ -805,7 +805,10 @@
         '<p>Сейчас твоя локальная попытка защищена от перезаписи. '+safe('Ожидание подтверждения облака.')+'</p></div>';
       return;
     }
-    var s='<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+
+    var s='<div class="panel"><h2>Riveria · Lääkelaskut / Расчёт лекарств</h2>'+
+      '<p>47 заданий, 68 вопросов: расчёты в мг, мкг, мл, таблетках и каплях. FI / RU с разбором.</p>'+
+      '<a class="btn primary" href="./laakelaskut.html">Тренироваться / Harjoittele lääkelaskuja</a></div>'+
+      '<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+
       directionSelect('mock-dir',state.mockDirection,false)+'</label></div>'+
       '<p class="hint">Тренировочный экзамен, не официальная оценка Riveria. Один вопрос — максимум 1 балл. Ответы и правильные варианты показываются только в конце.</p>'+
       mockCloudMessage()+'</div>';

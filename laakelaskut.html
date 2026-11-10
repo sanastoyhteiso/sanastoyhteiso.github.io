@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e9f7fa">
+<title>Lääkelaskut · Расчёт лекарств — Sanastoyhteisö</title>
+<meta name="description" content="47 экзаменационных упражнений Riveria по расчёту лекарств, 68 вопросов с финским и русским текстом и разбором.">
+<style>
+*{box-sizing:border-box}
+html{background:#edf6f8}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;margin:0;color:#173d4e;line-height:1.5}
+header{background:#fff;border-bottom:1px solid #cee2e8}
+.header-wrap,.wrap{max-width:880px;margin:0 auto;padding:18px 18px}
+.header-wrap{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.brand{font-weight:800;color:#146981;text-decoration:none}
+.back{font-size:14px;color:#17687f;text-decoration:underline}
+h1{margin:0 0 8px;font-size:clamp(1.6rem,5vw,2.15rem);line-height:1.2}
+p{margin:7px 0 14px}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#4a7c8a;font-weight:800}
+.card{border:1px solid #d1e3e9;background:#fff;border-radius:17px;padding:19px 20px;margin:16px 0;box-shadow:0 2px 12px rgba(12,63,82,.04)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:6px;flex:1 1 200px}
+label{font-weight:650;font-size:14px}
+select,input{font:inherit;background:#fff;border:1px solid #aacad5;border-radius:10px;color:#193947;min-height:46px;padding:10px 12px;max-width:100%}
+input{width:100%;font-size:19px}
+input:focus,select:focus,button:focus-visible{outline:3px solid #d7a737;outline-offset:2px}
+button{font:inherit;border-radius:10px;cursor:pointer;min-height:45px;border:1px solid #8fb8c5;padding:10px 15px;font-weight:700;background:#fff;color:#17566b}
+button.primary{background:#16758d;color:#fff;border-color:#16758d}
+button:disabled{opacity:.55;cursor:default}
+.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.muted{color:#5b7480;font-size:14px}
+.status{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:14px;color:#527582}
+.progress{height:8px;border-radius:20px;background:#d9e9ee;overflow:hidden;margin:12px 0}
+.progress span{display:block;background:#2085a2;height:100%;transition:width .2s}
+.question{font-size:19px;font-weight:700;margin:11px 0}
+.translation{border-left:3px solid #9dc7d5;padding:8px 0 8px 12px;color:#345564;margin:12px 0}
+.answer-label{display:block;margin:18px 0 6px;font-weight:700}
+.unit{font-size:16px;color:#466e7b;margin-left:8px}
+.notice{border-left:3px solid #d1aa55;background:#fff9ea;padding:9px 12px;border-radius:0 8px 8px 0;font-size:14px}
+.feedback{margin-top:16px;padding:14px;border-radius:10px;background:#eef6f9}
+.feedback.ok{border:1px solid #88bcac}
+.feedback.bad{border:1px solid #d7b180}
+.calculation{font-variant-numeric:tabular-nums;white-space:pre-wrap;overflow-wrap:anywhere}
+.small{font-size:13px}
+.switch{display:flex;gap:9px;align-items:center;cursor:pointer}
+.switch input{width:17px;height:17px;min-height:17px}
+[hidden]{display:none!important}
+.result-item{margin:12px 0;border-bottom:1px solid #dbe9ed;padding-bottom:10px}
+footer{text-align:center;font-size:13px;color:#527380;padding:15px 18px 30px}
+@media(max-width:600px){.card{padding:15px}.question{font-size:17px}.header-wrap{flex-direction:column;align-items:flex-start}}
+</style>
+</head><body>
+<header><div class="header-wrap"><a class="brand" href="./index.html">✚ Sanastoyhteisö 3.0</a><a class="back" href="./index.html">← Главная / Etusivu</a></div></header>
+<main class="wrap">
+<div class="eyebrow">Riveria · Harjoituskoe</div>
+<h1>Lääkelaskut <span style="font-weight:400">· Расчёт лекарств</span></h1>
+<p>47 задач с фотографии, 68 отдельных вопросов. Финский оригинал в краткой записи, русский перевод и пошаговая проверка. / 47 tehtävää, 68 osakysymystä.</p>
+<div class="notice"><b>Только для учёбы / Vain opiskeluun.</b> Задания не являются назначениями пациентам. Перед реальным введением лекарства необходимо проверить назначение, форму препарата, допустимость деления таблетки и местные правила безопасности.</div>
+<div class="card">
+<div class="toolbar"><div class="field"><label for="group">Задания / Tehtävät</label><select id="group">
+<option value="all">Все · Kaikki (1–47)</option>
+<option value="1-11">№ 1–11 · Таблетки</option>
+<option value="12-22">№ 12–22 · Инъекции и инфузии</option>
+<option value="23-32">№ 23–32 · Единицы и растворы</option>
+<option value="33-47">№ 33–47 · Смешанные расчёты</option>
+</select></div>
+<div class="field"><label for="mode">Режим / Tila</label><select id="mode">
+<option value="practice">Тренировка · Harjoitus</option>
+<option value="exam">Пробный тест · 10 вопросов</option>
+</select></div></div>
+<div class="toolbar" style="margin-top:14px"><label class="switch"><input type="checkbox" id="hide-ru"> Скрыть перевод / Piilota venäjä</label></div>
+<div class="buttons"><button type="button" id="start" class="primary">Начать заново / Aloita</button><button type="button" id="random">Перемешать / Sekoita</button></div>
+</div>
+<div id="exercise" class="card" aria-live="polite"></div>
+<div id="results" class="card" hidden></div>
+<div class="card small"><b>Источник:</b> предоставленные владельцем фотографии учебных листов 10.11.2026; вопросы кратко переформулированы, рассчитаны независимо. В исходном примере №28 перепутана точность округления; в №29 округление до целой кишечнорастворимой таблетки нельзя считать автоматическим правилом.</div>
+</main>
+<footer>Sanastoyhteisö · Lääkelaskut · FI / RU · Ei potilastietoja</footer>
+<script src="./laakelaskut-data.js?v=20261110-1"></script>
+<script>
+(function(){
+ 'use strict';
+ var D=window.RS_MEDCALC_20261110||[], group=document.getElementById('group'), mode=document.getElementById('mode'), hideRu=document.getElementById('hide-ru'), exercise=document.getElementById('exercise'), results=document.getElementById('results');
+ var state={set:[],index:0,checked:false,records:[],finished:false};
+ var ruNotes={'8':'Только учебный расчёт — назначение обязательно перепроверяют.','15b':'Это расчёт для многодозового флакона; на практике соблюдают инструкцию конкретной упаковки.','16a':'Теоретический минимум; возможны дополнительные потери при подготовке ручки.','16b':'Расчёт без потерь на проверку подачи инсулина.','21':'Математического запаса жидкости недостаточно для решения, можно ли оставить инфузию без наблюдения.','28':'На фото в примере дано 7,13 мл, но задание требует один десятичный знак: 7,1 мл.','29':'Результат 3,8 — математический. Не округляйте до четырёх автоматически и не делите кишечнорастворимые таблетки без проверки.'};
+ function el(id){return document.getElementById(id);}
+ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+ function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+ function subset(){var v=group.value;if(v==='all')return D.slice();var p=v.split('-').map(Number);return D.filter(function(x){var n=parseInt(x[0],10);return n>=p[0]&&n<=p[1];});}
+ function fmt(n){return String(n).replace('.',',');}
+ function answer(raw,item){var target=item[3],input=String(raw||'').trim().toLowerCase();if(target==='kyllä')return /^(kyllä|k|да|yes|y)$/i.test(input);if(!input||!/^[-+]?\d+(?:[,.]\d+)?$/.test(input.replace(/\s/g,'')))return false;var n=Number(input.replace(/\s/g,'').replace(',','.'));var tol=(typeof item[7]==='number'?item[7]:0.000001);return Math.abs(n-target)<=tol+1e-10;}
+ function makeSet(random){var items=subset();if(random)items=shuffle(items);if(mode.value==='exam')items=shuffle(items).slice(0,Math.min(10,items.length));return items;}
+ function reset(random){state={set:makeSet(random),index:0,checked:false,records:[],finished:false};results.hidden=true;results.innerHTML='';render();}
+ function solution(item){return '<p class="calculation"><b>Ratkaisu / Решение:</b> '+esc(item[5])+'</p>'+(item[6]?'<p class="notice"><b>Huomio:</b> '+esc(item[6])+(ruNotes[item[0]]?'<span lang="ru"> '+esc(ruNotes[item[0]])+'</span>':'')+'</p>':'');}
+ function render(){if(state.index>=state.set.length){finish();return;}var item=state.set[state.index],pct=100*state.index/state.set.length;
+ var html='<div class="status"><span>Задание / Tehtävä <b>'+esc(item[0])+'</b></span><span>'+ (state.index+1)+' / '+state.set.length+'</span></div><div class="progress"><span style="width:'+pct+'%"></span></div>'+
+ '<div class="eyebrow">Kysymys / Вопрос</div><div class="question" lang="fi">'+esc(item[1])+'</div>'+
+ '<div class="translation" lang="ru"'+(hideRu.checked?' hidden':'')+'>'+esc(item[2])+'</div>'+
+ '<label class="answer-label" for="response">Ваш ответ / Vastauksesi</label>'+
+ '<div style="display:flex;gap:12px;align-items:center"><input id="response" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="'+(item[3]==='kyllä'?'kyllä / ei':'0,0')+'" aria-describedby="unit"><span class="unit" id="unit">'+esc(item[4])+'</span></div>'+
+ '<div class="buttons"><button type="button" id="check" class="primary">Проверить / Tarkista</button><button type="button" id="next" disabled>Следующий / Seuraava</button></div>'+
+ '<div id="feedback" aria-live="polite"></div>';
+ exercise.innerHTML=html;
+ el('check').onclick=check;el('next').onclick=next;
+ el('response').onkeydown=function(e){e=e||window.event;if(e.key==='Enter'||e.keyCode===13){if(state.checked)next();else check();}};
+ }
+ function check(){if(state.checked)return;var item=state.set[state.index],typed=el('response').value,good=answer(typed,item);if(!String(typed).trim()){el('response').focus();return;}
+ state.records.push({item:item,typed:typed,good:good});state.checked=true;el('response').disabled=true;el('check').disabled=true;el('next').disabled=false;
+ if(mode.value==='practice'){el('feedback').innerHTML='<div class="feedback '+(good?'ok':'bad')+'"><b>'+(good?'✓ Oikein · Правильно':'✕ Tarkista · Проверьте')+'</b>'+
+ '<p>Vastaus / Ответ: <b>'+esc(fmt(item[3]))+' '+esc(item[4])+'</b></p>'+solution(item)+'</div>';}
+ else {el('feedback').innerHTML='<div class="feedback">Ответ записан / Vastaus tallennettu. Решения будут показаны после 10 вопросов.</div>';}
+ el('next').focus();}
+ function next(){if(!state.checked)return;state.index++;state.checked=false;render();}
+ function finish(){var good=state.records.filter(function(a){return a.good;}).length,n=state.records.length;
+ exercise.innerHTML='<h2>Завершено / Valmis</h2><p><b>'+good+' / '+n+'</b> · '+(n?Math.round(good/n*100):0)+'%</p><button type="button" id="again" class="primary">Новая попытка / Uusi yritys</button>';
+ el('again').onclick=function(){reset(true);};
+ var h='<h2>Разбор / Ratkaisut</h2>';state.records.forEach(function(r){h+='<div class="result-item"><b>№ '+esc(r.item[0])+'</b> · '+(r.good?'✓':'✕')+' · '+esc(r.typed)+' '+esc(r.item[4])+'<p>Верно: <b>'+esc(fmt(r.item[3]))+' '+esc(r.item[4])+'</b></p>'+solution(r.item)+'</div>';});
+ results.innerHTML=h;results.hidden=false;}
+ el('start').onclick=function(){reset(false);};el('random').onclick=function(){reset(true);};group.onchange=function(){reset(false);};mode.onchange=function(){reset(true);};hideRu.onchange=function(){var t=exercise.querySelector('.translation');if(t)t.hidden=hideRu.checked;};
+ reset(false);
+})();
+</script>
+</body></html>
