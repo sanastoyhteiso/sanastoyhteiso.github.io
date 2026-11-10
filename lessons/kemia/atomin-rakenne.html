@@ -1,5 +1,60 @@
 <!doctype html><html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atomin rakenne — Kemia</title><style>
-*{box-sizing:border-box}body{font:16px/1.55 system-ui,-apple-system,Arial,sans-serif;background:#f4f9fb;color:#19374a;margin:0;padding:16px}main{max-width:860px;margin:auto}.panel{background:white;border:1px solid #d7e9ef;border-radius:16px;padding:20px;margin:12px 0}.small{color:#516b76}.row{display:flex;gap:12px;flex-wrap:wrap}.control{flex:1 1 150px;border:1px solid #cee3e9;border-radius:10px;padding:12px}.control label{display:block;font-weight:bold}button{font:inherit;border:1px solid #9bc7d5;background:#e9f6fa;color:#174456;border-radius:8px;min-width:38px;min-height:40px;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid orange}.counter{display:flex;align-items:center;justify-content:space-between;gap:7px}.counter output{font-weight:bold;font-size:22px}.model{display:flex;align-items:center;justify-content:center;min-height:270px}svg{max-width:100%;height:auto}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:#eaf6fa;border-radius:9px;padding:12px}.stat strong{display:block;font-size:24px}.languages{display:flex;gap:7px;justify-content:flex-end}.languages button[aria-pressed=true]{background:#176f89;color:white}a{color:#166b85}.atom-workspace{display:grid;grid-template-columns:minmax(190px,240px) minmax(0,1fr);gap:18px;align-items:start}.atom-controls{display:flex;flex-direction:column;gap:10px}.atom-controls .control{flex:none;width:100%}.atom-visual{min-width:0}.atom-visual .model{min-height:250px}.atom-visual svg{width:100%;max-width:380px}@media(max-width:600px){.atom-workspace{grid-template-columns:minmax(0,1fr)}.atom-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.atom-controls .control{padding:8px}.atom-controls .counter{gap:3px}.atom-controls .counter button{min-width:28px;min-height:36px}.atom-controls .counter output{font-size:18px}}@media(max-width:390px){.atom-controls{grid-template-columns:1fr}.atom-controls .control{display:flex;align-items:center;justify-content:space-between;gap:8px}.atom-controls .counter{min-width:132px}.atom-controls .counter button{min-width:36px}}@media(max-width:460px){.panel{padding:13px}.stats{grid-template-columns:1fr 1fr}}</style></head><body><main>
+*{box-sizing:border-box}body{font:16px/1.55 system-ui,-apple-system,Arial,sans-serif;background:#f4f9fb;color:#19374a;margin:0;padding:16px}main{max-width:860px;margin:auto}.panel{background:white;border:1px solid #d7e9ef;border-radius:16px;padding:20px;margin:12px 0}.small{color:#516b76}.row{display:flex;gap:12px;flex-wrap:wrap}.control{flex:1 1 150px;border:1px solid #cee3e9;border-radius:10px;padding:12px}.control label{display:block;font-weight:bold}button{font:inherit;border:1px solid #9bc7d5;background:#e9f6fa;color:#174456;border-radius:8px;min-width:38px;min-height:40px;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid orange}.counter{display:flex;align-items:center;justify-content:space-between;gap:7px}.counter output{font-weight:bold;font-size:22px}.model{display:flex;align-items:center;justify-content:center;min-height:270px}svg{max-width:100%;height:auto}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:#eaf6fa;border-radius:9px;padding:12px}.stat strong{display:block;font-size:24px}.languages{display:flex;gap:7px;justify-content:flex-end}.languages button[aria-pressed=true]{background:#176f89;color:white}a{color:#166b85}.atom-workspace{display:grid;grid-template-columns:minmax(190px,240px) minmax(0,1fr);gap:18px;align-items:start}.atom-controls{display:flex;flex-direction:column;gap:10px}.atom-controls .control{flex:none;width:100%}.atom-visual{min-width:0}.atom-visual .model{min-height:250px}.atom-visual svg{width:100%;max-width:380px}@media(max-width:600px){.atom-workspace{grid-template-columns:minmax(0,1fr)}.atom-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.atom-controls .control{padding:8px}.atom-controls .counter{gap:3px}.atom-controls .counter button{min-width:28px;min-height:36px}.atom-controls .counter output{font-size:18px}}@media(max-width:390px){.atom-controls{grid-template-columns:1fr}.atom-controls .control{display:flex;align-items:center;justify-content:space-between;gap:8px}.atom-controls .counter{min-width:132px}.atom-controls .counter button{min-width:36px}}@media(max-width:460px){.panel{padding:13px}.stats{grid-template-columns:1fr 1fr}}
+/* RUN-KEMIA-005: compact simulator; landscape automatically places controls beside atom. */
+@media(max-width:700px) and (orientation:portrait){
+ .atom-workspace{grid-template-columns:minmax(0,1fr)}
+ .atom-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .atom-controls .control{display:block;padding:5px;min-width:0}
+ .atom-controls .control label{font-size:11px;text-align:center;white-space:nowrap}
+ .atom-controls .counter{gap:1px}
+ .atom-controls .counter button{min-width:25px;min-height:34px;padding:0}
+ .atom-controls .counter output{font-size:17px}
+}
+@media(max-width:850px) and (orientation:landscape){
+ .atom-workspace{grid-template-columns:minmax(140px,190px) minmax(0,1fr);gap:8px}
+ .atom-controls{display:flex;flex-direction:column;gap:5px}
+ .atom-controls .control{padding:5px}
+ .atom-visual .model{min-height:0}
+ .atom-visual svg{max-height:150px}
+ .stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+ .stat{padding:4px;font-size:11px}
+ .stat strong{font-size:17px}
+}
+/* The embedded view is the complete interactive learning unit: no page scrolling. */
+html.embed,html.embed body{height:100%;overflow:hidden}
+html.embed body{padding:4px}
+html.embed main{max-width:none;height:100%;display:flex;flex-direction:column}
+html.embed main>p,html.embed .languages,html.embed main>section:first-of-type,
+html.embed main>section:last-of-type{display:none}
+html.embed main>.panel{margin:0;padding:6px;border:0;box-shadow:none;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+html.embed main>.panel h2{font-size:15px;margin:0 0 4px}
+html.embed .atom-workspace{flex:1;min-height:0;gap:7px;align-items:stretch}
+html.embed .atom-controls{gap:5px;min-height:0}
+html.embed .atom-controls .control{padding:6px}
+html.embed .atom-visual{display:flex;flex-direction:column;min-height:0}
+html.embed .atom-visual .model{flex:1;min-height:0;overflow:hidden}
+html.embed .atom-visual svg{height:100%;max-height:245px;max-width:100%}
+html.embed .stats{gap:4px}
+html.embed .stat{padding:5px;font-size:11px}
+html.embed .stat strong{font-size:17px}
+html.embed #explain{display:none}
+html.embed #reset{margin-top:5px;min-height:32px;font-size:12px;align-self:flex-start}
+@media(max-width:700px) and (orientation:portrait){
+ html.embed .atom-workspace{display:flex;flex-direction:column}
+ html.embed .atom-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex:none}
+ html.embed .atom-controls .control{padding:4px}
+ html.embed .atom-controls .control label{font-size:11px}
+ html.embed .atom-visual{flex:1}
+ html.embed .atom-visual svg{max-height:none}
+ html.embed .atom-visual .model{flex:1}
+ html.embed .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:850px) and (orientation:landscape){
+ html.embed .atom-workspace{display:grid;grid-template-columns:minmax(140px,190px) minmax(0,1fr)}
+ html.embed .atom-controls{display:flex;flex-direction:column}
+ html.embed .atom-visual svg{max-height:180px}
+}
+</style><script>if(location.search.indexOf("embed=1")!==-1)document.documentElement.className+=" embed";</script></head><body><main>
 <p><a href="../../index.html">← Sanastoyhteisö</a></p><div class="languages"><button type="button" data-lang="fi" aria-pressed="true">FI</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
 <section class="panel"><h1 data-i="title">Atomin rakenne</h1><p data-i="intro">Atomi koostuu ytimestä ja sitä ympäröivästä elektroniverhosta. Ytimessä on positiivisia protoneja ja varauksettomia neutroneja. Elektroniverhossa on negatiivisia elektroneja.</p><p class="small" data-i="note">Havainnollistava Bohrin malli, ei mittakaavassa. Elektronit eivät todellisuudessa kulje piirrettyjä ratoja pitkin.</p></section>
 <section class="panel"><h2 data-i="model">Kokeile itse</h2><div class="atom-workspace"><div class="atom-controls"><div class="control"><label data-i="protons">Protonit (+)</label><div class="counter"><button data-part="p" data-step="-1" aria-label="Decrease protons">−</button><output id="p">8</output><button data-part="p" data-step="1" aria-label="Increase protons">+</button></div></div><div class="control"><label data-i="neutrons">Neutronit (0)</label><div class="counter"><button data-part="n" data-step="-1" aria-label="Decrease neutrons">−</button><output id="n">8</output><button data-part="n" data-step="1" aria-label="Increase neutrons">+</button></div></div><div class="control"><label data-i="electrons">Elektronit (−)</label><div class="counter"><button data-part="e" data-step="-1" aria-label="Decrease electrons">−</button><output id="e">8</output><button data-part="e" data-step="1" aria-label="Increase electrons">+</button></div></div></div><div class="atom-visual">
