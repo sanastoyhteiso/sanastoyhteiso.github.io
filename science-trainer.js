@@ -68,7 +68,7 @@ function cardHtml(x){
    '<details class="subdetails"><summary>Подробнее и пример / Lisätiedot ja esimerkki</summary>'+
    '<p lang="fi"><b>FI:</b> '+esc(x.moreFi)+'</p>'+
    '<p lang="ru"><b>RU:</b> '+esc(x.moreRu)+'</p></details>'+
-   (x.id==='C01'?'<div class="science-atom-inline"><h3>⚛ Atomin rakenne · Интерактивная модель атома</h3><iframe src="./lessons/kemia/atomin-rakenne.html?embed=1&amp;lang=ru&amp;v=run-kemia-011" title="Atomin rakenne — протон, нейтрон, электрон" loading="lazy" style="display:block;width:100%;height:clamp(410px,70vh,590px);border:1px solid #b8d8e2;border-radius:12px;background:#f4f9fb" referrerpolicy="no-referrer"></iframe><p class="meta"><a href="./lessons/kemia/atomin-rakenne.html" target="_blank" rel="noopener noreferrer">Avaa koko oppitunti · Открыть полный урок</a></p></div>':'')+
+   (x.id==='C01'?'<div class="science-atom-inline"><h3>⚛ Atomin rakenne · Интерактивная модель атома</h3><iframe src="./lessons/kemia/atomin-rakenne.html?embed=1&amp;lang=ru&amp;v=run-kemia-012" title="Atomin rakenne — протон, нейтрон, электрон" loading="lazy" style="display:block;width:100%;height:clamp(410px,70vh,590px);border:1px solid #b8d8e2;border-radius:12px;background:#f4f9fb" referrerpolicy="no-referrer"></iframe><p class="meta"><a href="./lessons/kemia/atomin-rakenne.html" target="_blank" rel="noopener noreferrer">Avaa koko oppitunti · Открыть полный урок</a></p></div>':'')+
    (x.id==='C10'?'<p><a class="table-entry-link" href="./periodic-table.html">Открыть интерактивную таблицу / Avaa jaksollinen järjestelmä →</a></p>':'')+
    '<div class="meta">'+tags(x)+'</div></div>';
  return '<details class="science-card" data-card-id="'+esc(x.id)+'"><summary>'+
