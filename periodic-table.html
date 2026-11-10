@@ -105,6 +105,28 @@ code{font:inherit;font-weight:700}
 footer{font-size:12px;color:var(--muted);text-align:center;padding:12px 0 35px}
 @media(max-width:650px){.wrap{padding:14px 11px}.panel{padding:13px}.statgrid{gap:7px}.stat{padding:9px}.detail-name{font-size:22px}.hero-symbol{font-size:40px;width:75px}.tabs button{flex:1 1 130px}}
 @media print{header,.controls,.legend,.scrollhint,.tabs,#quiz,#list-results,.sources{display:none!important}.table-scroll{overflow:visible}.periodic-grid{transform:scale(.72);transform-origin:top left}.panel{border:none;box-shadow:none}}
+
+/* RUN-KEMIA-010: responsive electron-shell viewer within existing element details. */
+.shell-panel{margin:14px 0;border:1px solid #c5dce5;border-radius:14px;padding:13px;background:#f8fcfd}
+.shell-panel h3{margin:0 0 7px}
+.shell-layout{display:grid;grid-template-columns:minmax(190px,320px) minmax(0,1fr);gap:12px;align-items:center}
+.shell-figure{display:flex;justify-content:center;align-items:center;min-width:0}
+.shell-figure svg{width:100%;max-width:320px;max-height:320px}
+.shell-side{min-width:0}
+.shell-number{display:flex;align-items:center;gap:13px;background:#dff5ed;border:1px solid #9ed9c6;border-radius:11px;padding:10px 13px}
+.shell-number span{font-size:14px;font-weight:700;flex:1}
+.shell-number strong{font-size:33px;color:#126850}
+.shell-sequence{font-size:15px}
+.shell-info{font-size:13px;color:#285c70;min-height:38px;margin:7px 0}
+.shell-chips{display:flex;gap:6px;flex-wrap:wrap}
+.shell-chip{display:flex;flex-direction:column;align-items:center;min-width:78px;flex:1 1 78px;min-height:51px;padding:5px 7px;font-size:12px}
+.shell-chip small{font-size:10px;color:#557583}
+.shell-chip b{font-size:16px}
+.shell-chip.outer,.shell-chip[aria-pressed=true]{border-color:#2c9b7c;background:#e3f6ef}
+.shell-chip[aria-pressed=true]{outline:2px solid #72bda4;outline-offset:0}
+.shell-footnote{font-size:11px;color:#637985;margin:6px 0}
+@media(max-width:650px){.shell-layout{grid-template-columns:minmax(0,1fr);gap:3px}.shell-figure svg{max-width:280px;max-height:260px}.shell-number{padding:8px 11px}.shell-number strong{font-size:29px}}
+@media print{.shell-chip{min-height:35px}.shell-panel{break-inside:avoid}}
 </style></head><body>
 <header><div class="wrap header"><a href="./index.html">✚ Sanastoyhteisö 3.0</a><a href="./science.html?section=chemistry">← Химия / Kemia</a></div></header>
 <main class="wrap">
@@ -184,5 +206,5 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:12px 0 35px}
 </main>
 <footer>Sanastoyhteisö · 118 alkuainetta · FI / RU · Учебная таблица / Opiskelumateriaali</footer>
 <script src="./periodic-elements.js?v=run177-1"></script>
-<script src="./periodic-table.js?v=run178-1"></script>
+<script src="./periodic-table.js?v=run-kemia-010"></script>
 </body></html>
