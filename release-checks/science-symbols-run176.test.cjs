@@ -1,14 +1,14 @@
 'use strict';
 /* RUN176: verify notation is readable, physically correct, searchable, and independent of user data. */
 const test=require('node:test'), assert=require('node:assert/strict'), fs=require('node:fs'), vm=require('node:vm');
-const paths=['science-physics-data.js','science-chemistry-data.js','science-notation.js','science-trainer.js'];
+const paths=['science-physics-data.js','science-chemistry-data.js','science-notation.js','science-physics-phenomena.js','science-trainer.js'];
 const ctx={window:{RS_SCIENCE_CARDS:[]}};
-for(const path of paths.slice(0,3))vm.runInNewContext(fs.readFileSync(path,'utf8'),ctx,{filename:path});
+for(const path of paths.slice(0,4))vm.runInNewContext(fs.readFileSync(path,'utf8'),ctx,{filename:path});
 const cards=Array.from(ctx.window.RS_SCIENCE_CARDS);
 const notes=ctx.window.RS_SCIENCE_NOTATION, html=fs.readFileSync('science.html','utf8'), sw=fs.readFileSync('sw.js','utf8');
-test('94 cards have canonical symbols, units or contextual chemistry notation',()=>{
- assert.equal(cards.length,100);
- assert.equal(Object.keys(notes).length,94);
+test('113 cards have canonical symbols, units or contextual chemistry notation',()=>{
+ assert.equal(cards.length,132);
+ assert.equal(Object.keys(notes).length,113);
  const ids=new Set(cards.map(x=>x.id));
  for(const [id,n] of Object.entries(notes)){
   assert.ok(ids.has(id),id+' must exist in study notes');
@@ -44,8 +44,9 @@ test('different physical quantities and units are explicitly disambiguated',()=>
 test('markup loads notation before versioned trainer and caches it offline',()=>{
  assert.match(html,/science-notation\.js\?v=20261110-1/);
  assert.match(html,/science-trainer\.js\?v=20261110-3/);
+ assert.match(html,/science-physics-phenomena\.js\?v=run179-1/);
  assert.ok(html.indexOf('science-notation.js?v=20261110-1') < html.indexOf('science-trainer.js?v=20261110-3'));
- for(const asset of ['./science-notation.js?v=20261110-1','./science-trainer.js?v=20261110-3'])
+ for(const asset of ['./science-notation.js?v=20261110-1','./science-physics-phenomena.js?v=run179-1','./science-trainer.js?v=20261110-3'])
   assert.ok(sw.includes(asset),'SW missing '+asset);
  assert.match(html,/data-symbol="s"/);
  assert.match(html,/data-symbol="N"/);
