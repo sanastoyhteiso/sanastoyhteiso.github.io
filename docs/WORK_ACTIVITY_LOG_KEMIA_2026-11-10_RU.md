@@ -257,3 +257,7 @@ PR #66: https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/66 ус�
 - Ограничение: тест на реальном мобильном браузере не проводился, ожидается пользовательская проверка.
 
 **ЗАВЕРШИЛ (подготовка)** — изменения реализованы и проверены в `feat/periodic-shell-highlight-run-kemia-013`; готово к PR и публикации.
+
+### RUN-KEMIA-013 — ЗАВЕРШИЛ (основной код)
+
+PR #67 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/67 успешно объединён с `main` (merge SHA `43a12f1c9d488576a1c2da0a31f729ccfe883495`). Изменения опубликованы в основной ветке; фактическая визуализация после развёртывания Pages ещё требует проверки на iPhone.
