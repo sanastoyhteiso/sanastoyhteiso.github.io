@@ -181,6 +181,52 @@ function centerInTable(n){
  var left=button.offsetLeft-(container.clientWidth-button.offsetWidth)/2;
  if(isFinite(left))container.scrollLeft=Math.max(0,left);
 }
+/* RUN-KEMIA-010: interactive, read-only electron shell visualization.
+ * Grounded in existing .sh arrays of RS_PERIODIC_ELEMENTS; no invented occupations.
+ * SVG circles are teaching symbols, not electron trajectories. */
+var selectedShell=-1;
+function shellViz(e){
+ var a=e.sh;
+ if(!a||!a.length)return '<p class="note">Elektronikuorten tietoja ei ole saatavilla / Нет данных об электронных оболочках.</p>';
+ var total=0;for(var i=0;i<a.length;i++)total+=a[i];
+ var outer=a[a.length-1], maxR=135,step=a.length>1?102/(a.length-1):0;
+ var svg='<svg viewBox="0 0 320 320" role="img" aria-label="Elektronikuorten havainnollistava malli / Схема электронных оболочек"><title>'+esc(e.fi)+' · '+esc(e.ru)+'</title>';
+ for(i=a.length-1;i>=0;i--){
+  var r=33+i*step;
+  svg+='<circle cx="160" cy="160" r="'+r+'" fill="none" stroke="'+(i===a.length-1?'#1d927b':'#91bcca')+'" stroke-width="'+(i===a.length-1?'3':'1.5')+'" stroke-dasharray="'+(i===a.length-1?'none':'4 4')+'"/>';
+ }
+ for(i=0;i<a.length;i++){
+  var radius=33+i*step,number=a[i],dots=Math.min(number,32);
+  for(var j=0;j<dots;j++){
+   var ang=-Math.PI/2+2*Math.PI*j/dots+(i%2)*0.11;
+   svg+='<circle cx="'+(160+radius*Math.cos(ang)).toFixed(2)+'" cy="'+(160+radius*Math.sin(ang)).toFixed(2)+'" r="'+(i===a.length-1?'4.2':'3.2')+'" fill="'+(i===a.length-1?'#16917a':'#417cbb')+'"/>';
+  }
+ }
+ svg+='<circle cx="160" cy="160" r="20" fill="#e8b594" stroke="#b37e63"/><text x="160" y="165" text-anchor="middle" font-size="13" font-weight="800" fill="#4b281e">+'+e.n+'</text></svg>';
+ var chips='<div class="shell-chips" role="group" aria-label="Elektronikuoret / Оболочки">';
+ for(i=0;i<a.length;i++)chips+='<button type="button" class="shell-chip'+(i===a.length-1?' outer':'')+'" data-shell="'+i+'" aria-pressed="'+(i===a.length-1?'true':'false')+'"><small>'+ (i+1) +'. kuori / обол.</small><b>'+a[i]+' e⁻</b></button>';
+ chips+='</div>';
+ return '<section class="shell-panel"><h3>⚛ Elektronikuoret / Электронные оболочки</h3>'+
+  '<div class="shell-layout"><div class="shell-figure">'+svg+'</div><div class="shell-side">'+
+  '<div class="shell-number"><span>Ulkoelektronit / Внешние электроны</span><strong>'+outer+'</strong></div>'+
+  '<p class="shell-sequence"><b>Jakauma / Распределение:</b> '+a.join('–')+'</p>'+
+  '<p id="shell-info" class="shell-info" aria-live="polite">Uloimmalla kuorella on '+outer+' elektronia. / На внешней оболочке '+outer+' электронов.</p>'+
+  chips+
+  '<p class="shell-footnote">Malli on havainnollistava, ei elektronien oikea rata. / Схема условная, электроны не движутся по нарисованным орбитам.</p>'+
+  ((e.g>=3&&e.g<=12||e.c==='lanthanide'||e.c==='actinide')?'<p class="shell-footnote">Ulkoelektronit ≠ aina kaikki sidosreaktioihin osallistuvat elektronit. / Внешние электроны не всегда равны всем валентным электронам.</p>':'')+
+  ((total!==e.n)?'<p class="shell-footnote">Elektronikuorijakauma on ennuste tai epätäydellinen / Распределение предварительное или неполное.</p>':'')+
+  '</div></div></section>';
+}
+function bindShells(e){
+ var buttons=els.detail.querySelectorAll('[data-shell]'),a=e.sh||[];
+ for(var i=0;i<buttons.length;i++)buttons[i].onclick=function(){
+  var idx=Number(this.getAttribute('data-shell'));
+  if(!a.length||idx<0||idx>=a.length)return;
+  for(var j=0;j<buttons.length;j++)buttons[j].setAttribute('aria-pressed',buttons[j]===this?'true':'false');
+  var label=el('shell-info');
+  if(label)label.textContent=(idx+1)+'. kuorella on '+a[idx]+' elektronia. / На оболочке № '+(idx+1)+' находится '+a[idx]+' электронов.'+(idx===a.length-1?' Ulkokuori / Внешняя оболочка.':'');
+ };
+}
 function open(n,scroll){
  var e=byNumber[n];if(!e)return;
  current=n;
@@ -194,10 +240,12 @@ function open(n,scroll){
    stat('Olomuoto / Состояние',state[0]+' / '+state[1])+stat('Elektronikuoret / Электронные оболочки',sh||'—')+'</div>'+
    '<div class="lesson"><div class="lang">FI · LYHYT SELITYS</div><p><b>'+esc(e.fi)+'</b> on alkuaine, jonka merkki on <b>'+esc(e.s)+'</b> ja järjestysluku <b>'+e.n+'</b>. Ytimessä on '+e.n+' protonia; sähköisesti neutraalissa atomissa on '+e.n+' elektronia. Se kuuluu luokkaan '+esc(classData[0].toLocaleLowerCase())+'. '+esc(g[0])+'</p>'+
    '<div class="lang">RU · ПЕРЕВОД</div><p><b>'+esc(e.ru)+'</b> — химический элемент с символом <b>'+esc(e.s)+'</b> и порядковым номером <b>'+e.n+'</b>. В ядре '+e.n+' протонов; в нейтральном атоме '+e.n+' электронов. Класс: '+esc(classData[1].toLocaleLowerCase())+'. '+esc(g[1])+'</p></div>'+
+   shellViz(e)+
    (conf?'<p><b>Elektronikonfiguraatio / Электронная конфигурация:</b> <code>'+esc(conf)+'</code>'+(pred?' <span class="muted">(laskennallinen / расчётная)</span>':'')+'</p>':'')+
    (use?'<div class="lesson"><div class="lang">FI · ESIMERKKI</div><p>'+esc(use[0])+'</p><div class="lang">RU · ПРИМЕР</div><p>'+esc(use[1])+'</p></div>':'')+
    (e.n>=104?'<p class="note">Для сверхтяжёлых элементов часть свойств пока предполагается. / Raskaimpien alkuaineiden ominaisuudet ovat osin ennusteita.</p>':'')+
    '<div class="actions"><a href="https://pubchem.ncbi.nlm.nih.gov/element/'+encodeURIComponent(e.en)+'" target="_blank" rel="noopener noreferrer">Подробнее в PubChem / Lisää PubChemissä →</a></div>';
+ bindShells(e);
  for(var i=0;i<gridButtons.length;i++)gridButtons[i].classList.toggle('selected',Number(gridButtons[i].getAttribute('data-n'))===n);
  if(scroll&&section!=='quiz'){
   centerInTable(n);
