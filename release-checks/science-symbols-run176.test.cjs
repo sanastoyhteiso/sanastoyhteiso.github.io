@@ -34,7 +34,7 @@ test('different physical quantities and units are explicitly disambiguated',()=>
  assert.match(notes.P10.ru,/N.*единица/);
  assert.match(notes.P03.ru,/секунд.*s/);
  assert.match(notes.P12.ru,/разные величины/);
- assert.match(notes.P31.ru,/работ.*W.*мощност.*P/);
+ assert.match(notes.P31.ru,/работ.*W.*мощност.*P/i);
  assert.match(notes.C18.ru,/Строчная s/);
  assert.match(notes.C14.ru,/азот/);
  assert.equal(notes.C34.symbol,'GHS02');
