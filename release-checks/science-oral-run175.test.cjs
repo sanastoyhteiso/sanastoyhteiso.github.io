@@ -65,3 +65,34 @@ t('only separate science links added to original 40-question exam, no progress m
  for(const s of ['./science.html','./science-trainer.js?v=20261110-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
   a.ok(sw.includes(s),'offline resource missing '+s);
 });
+
+t('mobile-style guide filters and speaking practice actually render in a browser DOM',()=>{
+ const {JSDOM}=require('jsdom');
+ const dom=new JSDOM(html,{url:'https://example.invalid/science.html?section=physics',runScripts:'outside-only'});
+ const w=dom.window,d=w.document;
+ for(const p of ['science-physics-data.js','science-chemistry-data.js','science-trainer.js'])
+  w.eval(fs.readFileSync(p,'utf8'));
+ d.dispatchEvent(new w.Event('DOMContentLoaded'));
+ a.equal(d.getElementById('scope').value,'physics','deep link selects physics');
+ a.match(d.getElementById('count').textContent,/33 из 100/);
+ const search=d.getElementById('query');
+ search.value='закон ньютона';
+ search.dispatchEvent(new w.Event('input',{bubbles:true}));
+ a.equal(d.querySelectorAll('#list .science-card').length,3,'three Newton laws');
+ const first=d.querySelector('#list .science-card');
+ a.ok(first.textContent.includes('FI')&&first.textContent.includes('RU'),'both language responses');
+ d.getElementById('tab-train').click();
+ a.equal(d.getElementById('train').hidden,false);
+ d.getElementById('start-train').click();
+ a.ok(d.querySelector('#reveal'),'oral question displayed');
+ d.getElementById('reveal').click();
+ a.equal(d.getElementById('reveal-answer').hidden,false);
+ a.ok(d.querySelector('#knew')&&d.querySelector('#missed'),'self-assessment options');
+ d.getElementById('scope').value='all';
+ d.getElementById('scope').dispatchEvent(new w.Event('change'));
+ search.value='пестициды';
+ search.dispatchEvent(new w.Event('input'));
+ a.equal(d.querySelectorAll('#list .science-card').length,1,'pesticides discoverable by Russian keyword');
+ a.match(d.getElementById('list').textContent,/Из списка вопросов/);
+ w.close();
+});
