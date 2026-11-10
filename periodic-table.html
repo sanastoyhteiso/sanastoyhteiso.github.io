@@ -122,11 +122,18 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:12px 0 35px}
 .shell-chip{display:flex;flex-direction:column;align-items:center;min-width:78px;flex:1 1 78px;min-height:51px;padding:5px 7px;font-size:12px}
 .shell-chip small{font-size:10px;color:#557583}
 .shell-chip b{font-size:16px}
-.shell-chip.outer,.shell-chip[aria-pressed=true]{border-color:#2c9b7c;background:#e3f6ef}
+.shell-chip[aria-pressed=true]{border-color:#2c9b7c;background:#e3f6ef}
 .shell-chip[aria-pressed=true]{outline:2px solid #72bda4;outline-offset:0}
 .shell-footnote{font-size:11px;color:#637985;margin:6px 0}
 @media(max-width:650px){.shell-layout{grid-template-columns:minmax(0,1fr);gap:3px}.shell-figure svg{max-width:280px;max-height:260px}.shell-number{padding:8px 11px}.shell-number strong{font-size:29px}}
 @media print{.shell-chip{min-height:35px}.shell-panel{break-inside:avoid}}
+/* RUN-KEMIA-013: selected shell glows, other electrons become faint. */
+.shell-figure .shell-ring,.shell-figure .shell-dot{transition:opacity .18s ease,stroke .18s ease,fill .18s ease}
+.shell-figure .shell-ring.shell-selected{stroke:#d76a0b;stroke-width:3.6;opacity:1}
+.shell-figure .shell-ring.shell-muted{opacity:.22}
+.shell-figure .shell-dot.shell-selected{fill:#e47a1c;stroke:#fff;stroke-width:1.2;opacity:1}
+.shell-figure .shell-dot.shell-muted{opacity:.18}
+@media(prefers-reduced-motion:reduce){.shell-figure .shell-ring,.shell-figure .shell-dot{transition:none}}
 </style></head><body>
 <header><div class="wrap header"><a href="./index.html">✚ Sanastoyhteisö 3.0</a><a href="./science.html?section=chemistry">← Химия / Kemia</a></div></header>
 <main class="wrap">
@@ -206,5 +213,5 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:12px 0 35px}
 </main>
 <footer>Sanastoyhteisö · 118 alkuainetta · FI / RU · Учебная таблица / Opiskelumateriaali</footer>
 <script src="./periodic-elements.js?v=run177-1"></script>
-<script src="./periodic-table.js?v=run-kemia-010"></script>
+<script src="./periodic-table.js?v=run-kemia-013"></script>
 </body></html>
