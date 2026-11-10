@@ -125,6 +125,63 @@ html.embed .atom-visual .model{width:100%;min-height:0;flex:1}
 html.embed .atom-visual svg{width:100%;height:100%;max-width:100%;max-height:100%}
 html.embed .atom-visual #reset{flex:0 0 auto;margin:5px 0 3px;padding:5px 12px;min-height:35px;font-size:13px}
 @media(max-width:650px) and (orientation:portrait){.atom-visual .model{min-height:200px}.atom-visual svg{max-height:280px}html.embed .atom-visual .model{min-height:0}}
+/* RUN-KEMIA-011: phone fix. Two full, non-overflowing rows of atom controls. */
+@media(max-width:700px) and (orientation:portrait){
+ .atom-left .atom-controls,
+ html.embed .atom-left .atom-controls{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+  width:100%;
+  min-width:0;
+ }
+ .atom-left .atom-controls .control,
+ html.embed .atom-left .atom-controls .control{
+  width:100%;min-width:0;max-width:100%;padding:6px 7px;
+  overflow:hidden;
+ }
+ .atom-left .atom-controls .control label,
+ html.embed .atom-left .atom-controls .control label{
+  display:block;white-space:normal;overflow-wrap:break-word;
+  text-align:center;font-size:clamp(12px,3vw,14px);line-height:1.24;
+  min-height:2.4em;
+ }
+ .atom-left .atom-controls .counter,
+ html.embed .atom-left .atom-controls .counter{
+  display:grid;grid-template-columns:minmax(34px,1fr) minmax(20px,auto) minmax(34px,1fr);
+  align-items:center;gap:5px;min-width:0;
+ }
+ .atom-left .atom-controls .counter button,
+ html.embed .atom-left .atom-controls .counter button{
+  display:block;min-width:0;width:100%;min-height:38px;padding:0;
+  touch-action:manipulation;font-size:20px;
+ }
+ .atom-left .atom-controls .counter output,
+ html.embed .atom-left .atom-controls .counter output{
+  display:block;min-width:0;text-align:center;font-size:19px;
+ }
+ .atom-left .atom-controls .control:nth-child(3),
+ html.embed .atom-left .atom-controls .control:nth-child(3){
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(140px,1.25fr);
+  align-items:center;gap:8px;
+ }
+ .atom-left .atom-controls .control:nth-child(3) label,
+ html.embed .atom-left .atom-controls .control:nth-child(3) label{
+  text-align:left;min-height:0;
+ }
+}
+@media(max-width:320px) and (orientation:portrait){
+ .atom-left .atom-controls .control:nth-child(3),
+ html.embed .atom-left .atom-controls .control:nth-child(3){
+  display:block;
+ }
+ .atom-left .atom-controls .control:nth-child(3) label,
+ html.embed .atom-left .atom-controls .control:nth-child(3) label{
+  text-align:center;margin-bottom:4px;
+ }
+}
 </style><script>if(location.search.indexOf("embed=1")!==-1)document.documentElement.className+=" embed";</script></head><body><main>
 <p><a href="../../index.html">← Sanastoyhteisö</a></p><div class="languages"><button type="button" data-lang="fi" aria-pressed="true">FI</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
 <section class="panel"><h1 data-i="title">Atomin rakenne</h1><p data-i="intro">Atomi koostuu ytimestä ja sitä ympäröivästä elektroniverhosta. Ytimessä on positiivisia protoneja ja varauksettomia neutroneja. Elektroniverhossa on negatiivisia elektroneja.</p><p class="small" data-i="note">Havainnollistava Bohrin malli, ei mittakaavassa. Elektronit eivät todellisuudessa kulje piirrettyjä ratoja pitkin.</p></section>
