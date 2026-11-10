@@ -136,6 +136,8 @@ function setup(){
  get('start-train').onclick=function(){start(filtered());showTrainTab(true);};
  els.retry.onclick=function(){var retry=session?session.missed.slice():[];start(retry);};
  try{
+  var route=w.location.search.match(/[?&]section=(physics|chemistry|organic)(?:&|$)/);
+  if(route)els.scope.value=route[1];
   var m=w.location.search.match(/[?&]q=([^&]+)/);
   if(m)els.query.value=decodeURIComponent(m[1].replace(/\+/g,' ')).slice(0,100);
  }catch(e){}
