@@ -42,6 +42,22 @@ input,select{background:#fff;border:1px solid #9ebecb;border-radius:10px;min-hei
 .science-card[open]>summary{background:#f2f9fa;border-bottom:1px solid var(--line)}
 .caret{margin-left:auto;color:var(--accent);font-size:23px;transition:transform .15s}
 .science-card[open] .caret{transform:rotate(90deg)}
+.science-card-names{min-width:0;flex:1}
+.notation-chip{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-weight:850;
+ font-size:17px;display:inline-flex;align-items:center;justify-content:center;text-align:center;
+ color:#124f66;background:#e0f3f7;border:1px solid #aad2dd;letter-spacing:.01em;
+ border-radius:10px;padding:7px 9px;min-width:42px;max-width:43%;flex-shrink:0;overflow-wrap:anywhere}
+.notation-box{background:#eaf5f8;border:1px solid #d0e6eb;border-radius:11px;
+ padding:12px 14px;margin:14px 0 18px}
+.notation-caption{color:#466e79;font-size:12px;font-weight:800}
+.notation-values{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:6px 0 7px}
+.notation-symbol{font-size:22px;font-weight:850;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;color:#115b73}
+.notation-unit{color:#355762;font-size:14px}
+.notation-box p{margin:6px 0}
+.train-notation{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+.symbol-quick{margin-top:10px}
+.symbol-quick button{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:15px;min-width:38px;font-weight:800;
+ background:#eaf5f9;border-color:#a9cbd8;color:#1a5a6d}
 .term{font-weight:780;font-size:17px}
 .trans{color:#526f7b;font-size:14px}
 .card-body{padding:5px 16px 16px}
@@ -66,7 +82,7 @@ input,select{background:#fff;border:1px solid #9ebecb;border-radius:10px;min-hei
 [hidden]{display:none!important}
 footer{font-size:13px;text-align:center;color:#59727c;margin:30px 0}
 @media (max-width:600px){.wrap{padding:14px 12px}.panel{padding:14px}.science-card>summary{padding:13px 12px}.term{font-size:16px}.say{font-size:18px}.train-actions button{flex:1 1 100px}}
-@media print{header,.tabs,.controls,.quick,#train,#query,#empty,#count{display:none!important}.science-card{break-inside:avoid}.science-card>summary{border-bottom:1px solid #ccc}.science-card .card-body{display:block!important}}
+@media print{header,.tabs,.controls,.quick,.symbol-quick,#train,#query,#empty,#count{display:none!important}.science-card{break-inside:avoid}.science-card>summary{border-bottom:1px solid #ccc}.science-card .card-body{display:block!important}}
 </style>
 </head>
 <body>
@@ -108,6 +124,32 @@ footer{font-size:13px;text-align:center;color:#59727c;margin:30px 0}
 <button type="button" data-q="металлы">Металлы</button>
 <button type="button" data-q="пестициды">Пестициды</button>
 </div>
+<div class="langlabel">TUNNUKSET JA YKSIKÖT / СИМВОЛЫ И ЕДИНИЦЫ</div>
+<div class="quick symbol-quick" aria-label="Найти обозначение / Hae merkinnällä">
+<button type="button" data-symbol="s">s</button>
+<button type="button" data-symbol="v">v</button>
+<button type="button" data-symbol="t">t</button>
+<button type="button" data-symbol="a">a</button>
+<button type="button" data-symbol="m">m</button>
+<button type="button" data-symbol="F">F</button>
+<button type="button" data-symbol="N">N</button>
+<button type="button" data-symbol="E">E</button>
+<button type="button" data-symbol="T">T</button>
+<button type="button" data-symbol="I">I</button>
+<button type="button" data-symbol="U">U</button>
+<button type="button" data-symbol="R">R</button>
+<button type="button" data-symbol="Z">Z</button>
+<button type="button" data-symbol="A">A</button>
+<button type="button" data-symbol="n">n</button>
+<button type="button" data-symbol="M">M</button>
+<button type="button" data-symbol="Fe">Fe</button>
+<button type="button" data-symbol="Cu">Cu</button>
+<button type="button" data-symbol="Na">Na</button>
+<button type="button" data-symbol="pH">pH</button>
+<button type="button" data-symbol="GHS02">GHS02</button>
+<button type="button" data-symbol="−OH">−OH</button>
+</div>
+<p class="meta">Нажми на обозначение, чтобы найти и открыть его объяснение. Регистр важен: <b>S</b> — сера, <b>s</b> — путь или секунда. Обозначение величины и её единица — не одно и то же. / Kirjainkoko ja asiayhteys ovat tärkeitä.</p>
 </section>
 <section id="guide" role="tabpanel" aria-labelledby="tab-guide">
 <div class="stats"><span id="count" aria-live="polite">Загрузка тем…</span><button type="button" id="expand-all">Раскрыть все / Avaa kaikki</button></div>
@@ -125,11 +167,12 @@ footer{font-size:13px;text-align:center;color:#59727c;margin:30px 0}
 </section>
 <div class="panel" style="font-size:14px">
 <b>Как учить:</b> сначала выучи короткий финский ответ, а подробное объяснение используй, если попросят пример. В тренировке вопрос задаётся в том же виде, как его могут произнести на собеседовании.
-<p class="meta">Конспект: страницы 1–9 — физика, 10–17 — химия. Органическая химия, пестициды, закон Ома и другие обозначенные темы дополнены отдельно. Страница общедоступна, но не содержит личных данных и не сохраняет результаты в Firebase.</p>
+<p class="meta">Символы, единицы СИ, коды GHS и химические формулы — справочное дополнение, не дословная запись конспекта. Не у всех понятий есть отдельный универсальный символ (например, «пестициды»). Конспект: страницы 1–9 — физика, 10–17 — химия. Органическая химия, пестициды, закон Ома и другие обозначенные темы дополнены отдельно. Страница общедоступна, но не содержит личных данных и не сохраняет результаты в Firebase.</p>
 </div>
 </main>
 <footer>Sanastoyhteisö · Muistilista FI/RU · Учебные материалы / Opiskelumateriaali</footer>
 <script src="./science-physics-data.js?v=20261110-1"></script>
 <script src="./science-chemistry-data.js?v=20261110-1"></script>
-<script src="./science-trainer.js?v=20261110-1"></script>
+<script src="./science-notation.js?v=20261110-1"></script>
+<script src="./science-trainer.js?v=20261110-2"></script>
 </body></html>
