@@ -279,3 +279,7 @@ PR #67 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/67 усп
 - Дизайн на настоящем iPhone после развёртывания Pages ещё не проверен.
 
 **ЗАВЕРШИЛ (подготовка)** — код проверен в ветке `design/periodic-electron-contrast-run-kemia-014` и готов к публикации через PR.
+
+### RUN-KEMIA-014 — ЗАВЕРШИЛ (основной код)
+
+PR #68 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/68 объединён с `main`, merge SHA `cf4cb1074b36316bb866cb7d78452cfbb7c4bbef`. Повторно прочитаны файлы в `main`: стили ярко-синих точек и оранжевой орбиты, увеличение радиуса выбранных электронов, версия JS `run-kemia-014`, кеш `rc42` подтверждены. Отображение на настоящем iPhone остаётся подтвердить.
