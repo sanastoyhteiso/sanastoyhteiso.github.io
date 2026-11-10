@@ -2,7 +2,7 @@
 /* RUN175: source-informed physics/chemistry quick answers, no user data writes. */
 const t=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const x={window:{}};
-for(const path of ['science-physics-data.js','science-chemistry-data.js'])
+for(const path of ['science-physics-data.js','science-chemistry-data.js','science-physics-phenomena.js'])
   vm.runInNewContext(fs.readFileSync(path,'utf8'),x,{filename:path});
 const rows=Array.from(x.window.RS_SCIENCE_CARDS, v=>Object.assign({},v));
 const html=fs.readFileSync('science.html','utf8');
@@ -10,10 +10,10 @@ const js=fs.readFileSync('science-trainer.js','utf8');
 const app=fs.readFileSync('app.js','utf8');
 const sw=fs.readFileSync('sw.js','utf8');
 const byId=Object.fromEntries(rows.map(x=>[x.id,x]));
-t('100 non-duplicated FI/RU spoken-answer cards with explicit origin',()=>{
- a.equal(rows.length,100);
+t('132 non-duplicated FI/RU spoken-answer cards with explicit origin',()=>{
+ a.equal(rows.length,132);
  a.equal(new Set(rows.map(x=>x.id)).size,rows.length);
- a.equal(rows.filter(x=>x.section==='physics').length,33);
+ a.equal(rows.filter(x=>x.section==='physics').length,65);
  a.equal(rows.filter(x=>x.section==='chemistry').length,53);
  a.equal(rows.filter(x=>x.section==='organic').length,14);
  a.equal(rows.filter(x=>x.page>0).length,71);
@@ -50,6 +50,7 @@ t('independent public study and speaking practice both work without user storage
  for(const file of ['science-physics-data.js','science-chemistry-data.js','science-notation.js'])
   a.ok(html.includes(file+'?v=20261110-1'),file);
  a.ok(html.includes('science-trainer.js?v=20261110-3'));
+ a.ok(html.includes('science-physics-phenomena.js?v=run179-1'));
  a.ok(js.includes('details class="science-card"'),'tap-to-reveal cards');
  a.ok(js.includes('Selitä omin sanoin'),'speaking practice');
  a.ok(js.includes('Kertaan'),'mistake retry');
@@ -63,7 +64,7 @@ t('only separate science links added to original 40-question exam, no progress m
   a.ok(app.includes(url),url);
  a.ok(app.includes('47 заданий, 68 вопросов'),'medication calculator preserved');
  a.ok(app.includes('function renderMockExam('),'existing mock exam preserved');
- for(const s of ['./science.html','./science-trainer.js?v=20261110-3','./science-notation.js?v=20261110-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
+ for(const s of ['./science.html','./science-trainer.js?v=20261110-3','./science-notation.js?v=20261110-1','./science-physics-phenomena.js?v=run179-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
   a.ok(sw.includes(s),'offline resource missing '+s);
 });
 
@@ -71,15 +72,15 @@ t('mobile-style guide filters and speaking practice actually render in a browser
  const {JSDOM}=require('jsdom');
  const dom=new JSDOM(html,{url:'https://example.invalid/science.html?section=physics',runScripts:'outside-only'});
  const w=dom.window,d=w.document;
- for(const p of ['science-physics-data.js','science-chemistry-data.js','science-notation.js','science-trainer.js'])
+ for(const p of ['science-physics-data.js','science-chemistry-data.js','science-notation.js','science-physics-phenomena.js','science-trainer.js'])
   w.eval(fs.readFileSync(p,'utf8'));
  d.dispatchEvent(new w.Event('DOMContentLoaded'));
  a.equal(d.getElementById('scope').value,'physics','deep link selects physics');
- a.match(d.getElementById('count').textContent,/33 из 100/);
+ a.match(d.getElementById('count').textContent,/65 из 132/);
  const search=d.getElementById('query');
  search.value='закон ньютона';
  search.dispatchEvent(new w.Event('input',{bubbles:true}));
- a.equal(d.querySelectorAll('#list .science-card').length,3,'three Newton laws');
+ a.ok(d.querySelectorAll('#list .science-card').length>=3,'all Newton laws visible, plus linked inertia');
  const first=d.querySelector('#list .science-card');
  a.ok(first.textContent.includes('FI')&&first.textContent.includes('RU'),'both language responses');
  d.getElementById('tab-train').click();
