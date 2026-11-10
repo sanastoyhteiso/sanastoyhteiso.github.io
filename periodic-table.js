@@ -193,13 +193,13 @@ function shellViz(e){
  var svg='<svg viewBox="0 0 320 320" role="img" aria-label="Elektronikuorten havainnollistava malli / Схема электронных оболочек"><title>'+esc(e.fi)+' · '+esc(e.ru)+'</title>';
  for(i=a.length-1;i>=0;i--){
   var r=33+i*step;
-  svg+='<circle cx="160" cy="160" r="'+r+'" fill="none" stroke="'+(i===a.length-1?'#1d927b':'#91bcca')+'" stroke-width="'+(i===a.length-1?'3':'1.5')+'" stroke-dasharray="'+(i===a.length-1?'none':'4 4')+'"/>';
+  svg+='<circle class="shell-ring" data-shell-ring="'+i+'" cx="160" cy="160" r="'+r+'" fill="none" stroke="'+(i===a.length-1?'#1d927b':'#91bcca')+'" stroke-width="'+(i===a.length-1?'3':'1.5')+'" stroke-dasharray="'+(i===a.length-1?'none':'4 4')+'"/>';
  }
  for(i=0;i<a.length;i++){
   var radius=33+i*step,number=a[i],dots=Math.min(number,32);
   for(var j=0;j<dots;j++){
    var ang=-Math.PI/2+2*Math.PI*j/dots+(i%2)*0.11;
-   svg+='<circle cx="'+(160+radius*Math.cos(ang)).toFixed(2)+'" cy="'+(160+radius*Math.sin(ang)).toFixed(2)+'" r="'+(i===a.length-1?'4.2':'3.2')+'" fill="'+(i===a.length-1?'#16917a':'#417cbb')+'"/>';
+   svg+='<circle class="shell-dot" data-shell-electron="'+i+'" cx="'+(160+radius*Math.cos(ang)).toFixed(2)+'" cy="'+(160+radius*Math.sin(ang)).toFixed(2)+'" r="'+(i===a.length-1?'4.2':'3.2')+'" fill="'+(i===a.length-1?'#16917a':'#417cbb')+'"/>';
   }
  }
  svg+='<circle cx="160" cy="160" r="20" fill="#e8b594" stroke="#b37e63"/><text x="160" y="165" text-anchor="middle" font-size="13" font-weight="800" fill="#4b281e">+'+e.n+'</text></svg>';
@@ -217,15 +217,41 @@ function shellViz(e){
   ((total!==e.n)?'<p class="shell-footnote">Elektronikuorijakauma on ennuste tai epätäydellinen / Распределение предварительное или неполное.</p>':'')+
   '</div></div></section>';
 }
+/* RUN-KEMIA-013: highlight selected shell ring AND its electron dots.
+ * Only the existing SVG (no re-render), so the learner keeps their place. */
+function ruElectronCount(n){
+ var hundred=n%100,ten=n%10;
+ if(hundred>=11&&hundred<=14)return n+' электронов';
+ return n+(ten===1?' электрон':ten>=2&&ten<=4?' электрона':' электронов');
+}
+function focusShell(e,index){
+ var panel=els.detail.querySelector('.shell-panel'),a=e.sh||[];
+ if(!panel||index<0||index>=a.length)return;
+ selectedShell=index;
+ var btns=panel.querySelectorAll('[data-shell]');
+ for(var i=0;i<btns.length;i++)btns[i].setAttribute('aria-pressed',Number(btns[i].getAttribute('data-shell'))===index?'true':'false');
+ var dots=panel.querySelectorAll('[data-shell-electron]');
+ for(i=0;i<dots.length;i++){
+  var selected=Number(dots[i].getAttribute('data-shell-electron'))===index;
+  dots[i].classList.toggle('shell-selected',selected);
+  dots[i].classList.toggle('shell-muted',!selected);
+ }
+ var rings=panel.querySelectorAll('[data-shell-ring]');
+ for(i=0;i<rings.length;i++){
+  var active=Number(rings[i].getAttribute('data-shell-ring'))===index;
+  rings[i].classList.toggle('shell-selected',active);
+  rings[i].classList.toggle('shell-muted',!active);
+ }
+ var label=panel.querySelector('#shell-info');
+ if(label)label.textContent=(index+1)+'. kuorella on '+a[index]+' '+(a[index]===1?'elektroni':'elektronia')+'. / На оболочке № '+(index+1)+' находится '+ruElectronCount(a[index])+'.'+(index===a.length-1?' Ulkokuori / Внешняя оболочка.':'');
+}
 function bindShells(e){
  var buttons=els.detail.querySelectorAll('[data-shell]'),a=e.sh||[];
  for(var i=0;i<buttons.length;i++)buttons[i].onclick=function(){
-  var idx=Number(this.getAttribute('data-shell'));
-  if(!a.length||idx<0||idx>=a.length)return;
-  for(var j=0;j<buttons.length;j++)buttons[j].setAttribute('aria-pressed',buttons[j]===this?'true':'false');
-  var label=el('shell-info');
-  if(label)label.textContent=(idx+1)+'. kuorella on '+a[idx]+' elektronia. / На оболочке № '+(idx+1)+' находится '+a[idx]+' электронов.'+(idx===a.length-1?' Ulkokuori / Внешняя оболочка.':'');
+  focusShell(e,Number(this.getAttribute('data-shell')));
  };
+ /* Each newly opened element starts at its outer shell, matching the outer-electron total. */
+ if(a.length)focusShell(e,a.length-1);
 }
 function open(n,scroll){
  var e=byNumber[n];if(!e)return;
