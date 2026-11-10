@@ -2,7 +2,7 @@
  * Offline, ES5, iPhone/iPad Safari-compatible. No account or user data changes. */
 (function(w,d){
 'use strict';
-var entries=w.RS_PERIODIC_ELEMENTS||[],byNumber={},current=1,section='table',family='all',gridButtons=[],quiz=null;
+var entries=w.RS_PERIODIC_ELEMENTS||[],byNumber={},current=1,section='table',family='all',overview='all',gridButtons=[],quiz=null;
 var cats={
  nonmetal:['Epämetalli','Неметалл','Nonmetal','Элементы-неметаллы часто плохо проводят электричество. / Epämetallit johtavat usein sähköä huonosti.'],
  noble:['Jalokaasu','Благородный газ','Noble gas','Ryhmän 18 alkuaineet reagoivat yleensä heikosti. / Элементы группы 18 обычно химически малоактивны.'],
@@ -16,6 +16,18 @@ var cats={
  actinide:['Aktinoidi','Актиноид','Actinide','Aktinoidit kuuluvat jaksoon 7; kaikki ovat radioaktiivisia. / Актиноиды относятся к 7-му периоду; все радиоактивны.'],
  unknown:['Epävarma luokitus','Классификация уточняется','Properties uncertain','Raskaimpien alkuaineiden ominaisuuksia ei aina tunneta kokeellisesti. / У самых тяжёлых элементов многие свойства изучены недостаточно.']
 };
+var metalClasses={alkali:1,alkaline:1,transition:1,post:1,lanthanide:1,actinide:1};
+var nonmetalClasses={nonmetal:1,halogen:1,noble:1};
+var overviewHelp={
+ all:['Все 118 элементов. Выбери класс или цвет для подсветки.','Kaikki 118 alkuainetta. Valitse luokka tai väri korostaaksesi alkuaineita.'],
+ metal:['Металлы: щелочные, щёлочноземельные, переходные, другие металлы, лантаноиды и актиноиды.','Metallit: alkali-, maa-alkali- ja siirtymämetallit, muut metallit, lantanoidit ja aktinoidit.'],
+ nonmetal:['Неметаллы: обычные неметаллы, галогены и благородные газы. Водород тоже неметалл.','Epämetallit: muut epämetallit, halogeenit ja jalokaasut. Myös vety on epämetalli.'],
+ metalloid:['Полуметаллы находятся примерно вдоль ступенчатой границы между металлами и неметаллами.','Puolimetallit sijaitsevat suunnilleen metallien ja epämetallien rajalla.'],
+ gas:['Газы при комнатной температуре: это агрегатное состояние, не отдельная химическая группа.','Kaasut huoneenlämmössä: olomuoto, ei erillinen kemiallinen ryhmä.'],
+ liquid:['Жидкие при комнатной температуре элементы: Hg (ртуть) и Br (бром).','Huoneenlämmössä nestemäiset alkuaineet: Hg (elohopea) ja Br (bromi).'],
+ solid:['Твёрдые при комнатной температуре элементы. Неизвестные состояния тяжёлых элементов сюда не включены.','Huoneenlämmössä kiinteät alkuaineet. Raskaimpien alkuaineiden tuntemattomia olomuotoja ei arvata.']
+};
+var searchAliases={26:['ferrum','феррум'],79:['aurum','аурум'],29:['cuprum','купрум']};
 var usages={
 1:['Vetyä on vedessä H₂O ja tähdissä.','Водород входит в состав воды H₂O и распространён в звёздах.'],
 2:['Heliumia käytetään esimerkiksi matalan lämpötilan jäähdytyksessä.','Гелий используют, например, в криогенном охлаждении.'],
@@ -100,32 +112,56 @@ function buildOptions(){
  els.legend.innerHTML=legend;
  var btns=els.legend.querySelectorAll('[data-family]');
  for(var x=0;x<btns.length;x++)btns[x].onclick=function(){
-  family=this.getAttribute('data-family');refresh(true);
+  family=this.getAttribute('data-family');overview='all';els.search.value='';els.group.value='all';els.period.value='all';refresh(true);
  };
+}
+function overviewMatch(e){
+ if(overview==='all')return true;
+ if(overview==='metal')return !!metalClasses[e.c];
+ if(overview==='nonmetal')return !!nonmetalClasses[e.c];
+ if(overview==='metalloid')return e.c==='metalloid';
+ if(overview==='gas'||overview==='liquid'||overview==='solid')return e.st===overview;
+ return false;
 }
 function filterEntries(includeSearch){
  var g=els.group.value,p=els.period.value,q=includeSearch?norm(els.search.value):'';
  var base=entries.filter(function(e){
   if(family!=='all'&&e.c!==family)return false;
+  if(!overviewMatch(e))return false;
   if(g!=='all'&&(g==='lanthanide'||g==='actinide'?e.c!==g:String(e.g)!==g))return false;
   if(p!=='all'&&String(e.p)!==p)return false;
   return true;
  });
  if(!q)return base;
- var exact=base.filter(function(e){return String(e.n)===q||norm(e.s)===q||norm(e.fi)===q||norm(e.ru)===q||norm(e.en)===q;});
+ var exact=base.filter(function(e){
+  var aliases=searchAliases[e.n]||[];
+  return String(e.n)===q||norm(e.s)===q||norm(e.fi)===q||norm(e.ru)===q||norm(e.en)===q||
+    aliases.some(function(a){return norm(a)===q;});
+ });
  if(exact.length)return exact;
- return base.filter(function(e){return norm(e.fi).indexOf(q)>=0||norm(e.ru).indexOf(q)>=0||norm(e.en).indexOf(q)>=0||norm(e.s).indexOf(q)>=0||String(e.n).indexOf(q)>=0;});
+ return base.filter(function(e){
+  var aliases=searchAliases[e.n]||[];
+  return norm(e.fi).indexOf(q)>=0||norm(e.ru).indexOf(q)>=0||norm(e.en).indexOf(q)>=0||norm(e.s).indexOf(q)>=0||String(e.n).indexOf(q)>=0||
+    aliases.some(function(a){return norm(a).indexOf(q)>=0;});
+ });
 }
 function refresh(selectFirst){
  var found=filterEntries(true),picked={};
  for(var i=0;i<found.length;i++)picked[found[i].n]=1;
  for(var j=0;j<gridButtons.length;j++){
   var b=gridButtons[j],n=Number(b.getAttribute('data-n'));
-  b.classList.toggle('dimmed',!picked[n]);b.classList.toggle('selected',n===current);
-  b.setAttribute('aria-pressed',n===current?'true':'false');
+  b.classList.toggle('dimmed',!picked[n]);b.classList.toggle('matching',!!picked[n]&&found.length<entries.length);b.classList.toggle('selected',n===current&&!!picked[n]);
+  b.setAttribute('aria-pressed',n===current&&!!picked[n]?'true':'false');
  }
  var legendBtns=els.legend.querySelectorAll('[data-family]');
  for(var k=0;k<legendBtns.length;k++)legendBtns[k].setAttribute('aria-pressed',legendBtns[k].getAttribute('data-family')===family?'true':'false');
+ var broadBtns=el('overview').querySelectorAll('[data-overview]');
+ for(var k2=0;k2<broadBtns.length;k2++)broadBtns[k2].setAttribute('aria-pressed',broadBtns[k2].getAttribute('data-overview')===overview?'true':'false');
+ var messages=overviewHelp[overview]||overviewHelp.all;
+ el('overview-help').textContent=messages[0]+' / '+messages[1];
+ el('family-help').textContent=family==='all'?
+ 'Каждый цвет — отдельная категория. Нажми на цвет, чтобы выделить её элементы. / Jokainen väri on oma alkuaineluokkansa. Valitse väri korostaaksesi sen alkuaineet.':
+ cats[family][1]+' / '+cats[family][0]+': '+cats[family][3];
  els.count.textContent=found.length+' из 118 элементов / '+found.length+' / 118 alkuainetta';
  var list='';
  for(var z=0;z<found.length;z++){
@@ -136,7 +172,14 @@ function refresh(selectFirst){
  var buttons=els.list.querySelectorAll('[data-n]');
  for(var m=0;m<buttons.length;m++)buttons[m].onclick=function(){open(Number(this.getAttribute('data-n')),true);};
  if(found.length&&(selectFirst||!picked[current]))open(found[0].n,false);
+ if(found.length&&els.search.value.trim())centerInTable(found[0].n);
  if(!found.length){els.detail.innerHTML='<h2>Нет элементов / Ei hakutuloksia</h2><p>Измени фильтр или очисти поиск.</p>';}
+}
+function centerInTable(n){
+ var container=el('table-scroll'),button=els.grid.querySelector('.element[data-n="'+n+'"]');
+ if(!container||!button)return;
+ var left=button.offsetLeft-(container.clientWidth-button.offsetWidth)/2;
+ if(isFinite(left))container.scrollLeft=Math.max(0,left);
 }
 function open(n,scroll){
  var e=byNumber[n];if(!e)return;
@@ -157,7 +200,8 @@ function open(n,scroll){
    '<div class="actions"><a href="https://pubchem.ncbi.nlm.nih.gov/element/'+encodeURIComponent(e.en)+'" target="_blank" rel="noopener noreferrer">Подробнее в PubChem / Lisää PubChemissä →</a></div>';
  for(var i=0;i<gridButtons.length;i++)gridButtons[i].classList.toggle('selected',Number(gridButtons[i].getAttribute('data-n'))===n);
  if(scroll&&section!=='quiz'){
-  if(w.innerWidth<800)els.detail.scrollIntoView();
+  centerInTable(n);
+  if(w.innerWidth<800&&typeof els.detail.scrollIntoView==='function')els.detail.scrollIntoView();
  }
 }
 function stat(label,value){return '<div class="stat"><div class="stat-label">'+esc(label)+'</div><div class="stat-value">'+esc(value)+'</div></div>';}
@@ -211,13 +255,25 @@ function init(){
  }
  els={grid:el('periodic-grid'),legend:el('legend'),search:el('element-search'),group:el('group-filter'),period:el('period-filter'),count:el('count'),list:el('list-results'),detail:el('detail'),quizContent:el('quiz-content'),quizProgress:el('quiz-progress')};
  mkButtons();buildOptions();
+ var broadBtns=el('overview').querySelectorAll('[data-overview]');
+ for(var j=0;j<broadBtns.length;j++)broadBtns[j].onclick=function(){
+  overview=this.getAttribute('data-overview');
+  family='all';els.group.value='all';els.period.value='all';els.search.value='';
+  refresh(true);
+ };
+ el('find-fe').onclick=function(){
+  overview='all';family='all';els.group.value='all';els.period.value='all';
+  els.search.value='Fe';setTab('table');refresh(true);centerInTable(26);
+  var gridArea=el('table-view');
+  if(gridArea&&typeof gridArea.scrollIntoView==='function')gridArea.scrollIntoView();
+ };
  el('tab-table').onclick=function(){setTab('table');};
  el('tab-list').onclick=function(){setTab('list');};
  el('tab-quiz').onclick=function(){setTab('quiz');};
  els.search.oninput=function(){refresh(true);};
  els.group.onchange=function(){refresh(true);};
  els.period.onchange=function(){refresh(true);};
- el('clear').onclick=function(){els.search.value='';els.group.value='all';els.period.value='all';family='all';refresh(true);};
+ el('clear').onclick=function(){els.search.value='';els.group.value='all';els.period.value='all';family='all';overview='all';refresh(true);};
  el('quiz-start').onclick=startQuiz;
  try{var p=w.location.search.match(/[?&](?:z|element)=(\d{1,3})/);if(p&&byNumber[Number(p[1])])current=Number(p[1]);}catch(err){}
  refresh(false);open(current,false);
