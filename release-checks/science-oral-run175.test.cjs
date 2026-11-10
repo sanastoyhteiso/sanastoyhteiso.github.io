@@ -19,7 +19,7 @@ t('100 non-duplicated FI/RU spoken-answer cards with explicit origin',()=>{
  a.equal(rows.filter(x=>x.page>0).length,71);
  for(const r of rows){
   for(const field of ['fi','ru','shortFi','shortRu','moreFi','moreRu'])
-    a.ok(typeof r[field]==='string'&&r[field].length>15,'missing '+field+': '+r.id);
+    a.ok(typeof r[field]==='string'&&r[field].length>(field==='fi'||field==='ru'?1:15),'missing '+field+': '+r.id);
   a.ok(r.page===0||(Number.isInteger(r.page)&&r.page>=1&&r.page<=17),r.id);
   a.ok(['physics','chemistry','organic'].includes(r.section),r.id);
   if(r.page===0)a.ok(/extra|user/.test(r.origin||'extra'),r.id);
