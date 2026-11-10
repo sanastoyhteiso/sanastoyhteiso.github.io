@@ -805,7 +805,12 @@
         '<p>Сейчас твоя локальная попытка защищена от перезаписи. '+safe('Ожидание подтверждения облака.')+'</p></div>';
       return;
     }
-    var s='<div class="panel"><h2>Riveria · Lääkelaskut / Расчёт лекарств</h2>'+
+    var s='<div class="panel"><h2>Riveria · Fysiikka ja kemia / Физика и химия</h2>'+
+      '<p>Шпаргалка для собеседования: быстрый поиск и короткие ответы на финском и русском. Дополнительно — тренировка устных ответов.</p>'+ 
+      '<p><a class="btn primary" href="./science.html?section=physics">Физика / Fysiikka</a> '+ 
+      '<a class="btn white" href="./science.html?section=chemistry">Химия / Kemia</a> '+ 
+      '<a class="btn white" href="./science.html?section=organic">Органическая химия / Orgaaninen kemia</a></p></div>'+ 
+      '<div class="panel"><h2>Riveria · Lääkelaskut / Расчёт лекарств</h2>'+
       '<p>47 заданий, 68 вопросов: расчёты в мг, мкг, мл, таблетках и каплях. FI / RU с разбором.</p>'+
       '<a class="btn primary" href="./laakelaskut.html">Тренироваться / Harjoittele lääkelaskuja</a></div>'+
       '<div class="panel"><div class="form-row"><label class="field"><span>Направление / Suunta / Direction</span>'+

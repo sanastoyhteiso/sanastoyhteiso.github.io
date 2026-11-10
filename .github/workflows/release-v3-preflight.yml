@@ -104,6 +104,8 @@ jobs:
         run: node --test release-checks/v3-telemetry-production-config.test.cjs
       - name: Verify opt-in telemetry browser client and admin adapter (NO network)
         run: node --test release-checks/v3-telemetry-client-admin.test.cjs
+      - name: Verify 100 FI/RU physics and chemistry oral-preparation cards (NO network)
+        run: node --test release-checks/science-oral-run175.test.cjs
       - name: Verify FI/RU medication calculation practice from uploaded exam sheets
         run: node --test release-checks/laakelaskut-run174.test.cjs
       - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)
