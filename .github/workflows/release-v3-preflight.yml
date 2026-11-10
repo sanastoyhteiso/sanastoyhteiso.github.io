@@ -108,6 +108,8 @@ jobs:
         run: node --test release-checks/science-oral-run175.test.cjs
       - name: Verify common science notation, SI unit distinction and clickable lookups (NO network)
         run: node --test release-checks/science-symbols-run176.test.cjs
+      - name: RUN177 — 118-element FI/RU table, category filters, oral symbols, mobile quiz (NO network)
+        run: node --test release-checks/periodic-table-run177.test.cjs
       - name: Verify FI/RU medication calculation practice from uploaded exam sheets
         run: node --test release-checks/laakelaskut-run174.test.cjs
       - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)

@@ -113,41 +113,55 @@ footer{font-size:13px;text-align:center;color:#59727c;margin:30px 0}
 <option value="added">Только дополнительные темы</option>
 </select></div>
 </div>
-<div class="field" style="margin-top:12px"><label for="query">Поиск по-русски или по-фински / Haku</label>
+<div class="field" style="margin-top:12px"><label for="query">Поиск по-русски, по-фински или по символу / Haku</label>
 <input id="query" type="search" placeholder="Закон Ньютона, атом, metallit, энергия…" autocomplete="off" spellcheck="false"></div>
 <div class="quick" aria-label="Быстрый поиск / Pikahaku">
-<button type="button" data-q="ньютон">Ньютон</button>
-<button type="button" data-q="ускорение">Ускорение</button>
-<button type="button" data-q="энергия">Энергия</button>
-<button type="button" data-q="атом">Атом</button>
-<button type="button" data-q="таблица">Таблица Менделеева</button>
-<button type="button" data-q="металлы">Металлы</button>
-<button type="button" data-q="пестициды">Пестициды</button>
+<button type="button" data-q="ньютон" data-topics="physics">Ньютон</button>
+<button type="button" data-q="ускорение" data-topics="physics">Ускорение</button>
+<button type="button" data-q="энергия" data-topics="physics">Энергия</button>
+<button type="button" data-q="атом" data-topics="chemistry">Атом</button>
+<button type="button" data-q="таблица" data-topics="chemistry">Таблица Менделеева</button>
+<button type="button" data-q="металлы" data-topics="chemistry">Металлы</button>
+<button type="button" data-q="пестициды" data-topics="chemistry">Пестициды</button>
+<button type="button" data-q="алканы" data-topics="organic">Алканы</button>
+<button type="button" data-q="алкены" data-topics="organic">Алкены</button>
+<button type="button" data-q="спирты" data-topics="organic">Спирты</button>
+<button type="button" data-q="углеводороды" data-topics="organic">Углеводороды</button>
+</div>
+<div class="panel" id="periodic-link" style="margin:14px 0;background:#f0f8fa">
+<strong>Alkuaineiden jaksollinen järjestelmä · Интерактивная таблица Менделеева</strong>
+<p>Все 118 элементов: символы, группы, периоды и объяснения FI/RU. / Kaikki 118 alkuainetta.</p>
+<a class="table-entry-link" href="./periodic-table.html">Открыть таблицу / Avaa jaksollinen järjestelmä →</a>
 </div>
 <div class="langlabel">TUNNUKSET JA YKSIKÖT / СИМВОЛЫ И ЕДИНИЦЫ</div>
 <div class="quick symbol-quick" aria-label="Найти обозначение / Hae merkinnällä">
-<button type="button" data-symbol="s">s</button>
-<button type="button" data-symbol="v">v</button>
-<button type="button" data-symbol="t">t</button>
-<button type="button" data-symbol="a">a</button>
-<button type="button" data-symbol="m">m</button>
-<button type="button" data-symbol="F">F</button>
-<button type="button" data-symbol="N">N</button>
-<button type="button" data-symbol="E">E</button>
-<button type="button" data-symbol="T">T</button>
-<button type="button" data-symbol="I">I</button>
-<button type="button" data-symbol="U">U</button>
-<button type="button" data-symbol="R">R</button>
-<button type="button" data-symbol="Z">Z</button>
-<button type="button" data-symbol="A">A</button>
-<button type="button" data-symbol="n">n</button>
-<button type="button" data-symbol="M">M</button>
-<button type="button" data-symbol="Fe">Fe</button>
-<button type="button" data-symbol="Cu">Cu</button>
-<button type="button" data-symbol="Na">Na</button>
-<button type="button" data-symbol="pH">pH</button>
-<button type="button" data-symbol="GHS02">GHS02</button>
-<button type="button" data-symbol="−OH">−OH</button>
+<button type="button" data-symbol="s" data-topics="physics">s</button>
+<button type="button" data-symbol="v" data-topics="physics">v</button>
+<button type="button" data-symbol="t" data-topics="physics">t</button>
+<button type="button" data-symbol="a" data-topics="physics">a</button>
+<button type="button" data-symbol="m" data-topics="physics">m</button>
+<button type="button" data-symbol="F" data-topics="physics">F</button>
+<button type="button" data-symbol="N" data-topics="physics chemistry">N</button>
+<button type="button" data-symbol="E" data-topics="physics">E</button>
+<button type="button" data-symbol="T" data-topics="physics">T</button>
+<button type="button" data-symbol="I" data-topics="physics">I</button>
+<button type="button" data-symbol="U" data-topics="physics">U</button>
+<button type="button" data-symbol="R" data-topics="physics">R</button>
+<button type="button" data-symbol="Z" data-topics="chemistry">Z</button>
+<button type="button" data-symbol="A" data-topics="chemistry">A</button>
+<button type="button" data-symbol="n" data-topics="chemistry">n</button>
+<button type="button" data-symbol="M" data-topics="chemistry">M</button>
+<button type="button" data-symbol="Fe" data-topics="chemistry">Fe</button>
+<button type="button" data-symbol="Cu" data-topics="chemistry">Cu</button>
+<button type="button" data-symbol="Na" data-topics="chemistry">Na</button>
+<button type="button" data-symbol="pH" data-topics="chemistry">pH</button>
+<button type="button" data-symbol="GHS02" data-topics="chemistry">GHS02</button>
+<button type="button" data-symbol="−OH" data-topics="organic">−OH</button>
+<button type="button" data-symbol="−COOH" data-topics="organic">−COOH</button>
+<button type="button" data-symbol="C=C" data-topics="organic">C=C</button>
+<button type="button" data-symbol="C≡C" data-topics="organic">C≡C</button>
+<button type="button" data-symbol="H₂O" data-topics="chemistry">H₂O</button>
+<button type="button" data-symbol="Cl" data-topics="chemistry">Cl</button>
 </div>
 <p class="meta">Нажми на обозначение, чтобы найти и открыть его объяснение. Регистр важен: <b>S</b> — сера, <b>s</b> — путь или секунда. Обозначение величины и её единица — не одно и то же. / Kirjainkoko ja asiayhteys ovat tärkeitä.</p>
 </section>
@@ -174,5 +188,5 @@ footer{font-size:13px;text-align:center;color:#59727c;margin:30px 0}
 <script src="./science-physics-data.js?v=20261110-1"></script>
 <script src="./science-chemistry-data.js?v=20261110-1"></script>
 <script src="./science-notation.js?v=20261110-1"></script>
-<script src="./science-trainer.js?v=20261110-2"></script>
+<script src="./science-trainer.js?v=20261110-3"></script>
 </body></html>

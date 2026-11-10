@@ -49,7 +49,7 @@ t('independent public study and speaking practice both work without user storage
   a.ok(html.includes(name),name);
  for(const file of ['science-physics-data.js','science-chemistry-data.js','science-notation.js'])
   a.ok(html.includes(file+'?v=20261110-1'),file);
- a.ok(html.includes('science-trainer.js?v=20261110-2'));
+ a.ok(html.includes('science-trainer.js?v=20261110-3'));
  a.ok(js.includes('details class="science-card"'),'tap-to-reveal cards');
  a.ok(js.includes('Selitä omin sanoin'),'speaking practice');
  a.ok(js.includes('Kertaan'),'mistake retry');
@@ -63,7 +63,7 @@ t('only separate science links added to original 40-question exam, no progress m
   a.ok(app.includes(url),url);
  a.ok(app.includes('47 заданий, 68 вопросов'),'medication calculator preserved');
  a.ok(app.includes('function renderMockExam('),'existing mock exam preserved');
- for(const s of ['./science.html','./science-trainer.js?v=20261110-2','./science-notation.js?v=20261110-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
+ for(const s of ['./science.html','./science-trainer.js?v=20261110-3','./science-notation.js?v=20261110-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
   a.ok(sw.includes(s),'offline resource missing '+s);
 });
 

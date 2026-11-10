@@ -43,9 +43,9 @@ test('different physical quantities and units are explicitly disambiguated',()=>
 });
 test('markup loads notation before versioned trainer and caches it offline',()=>{
  assert.match(html,/science-notation\.js\?v=20261110-1/);
- assert.match(html,/science-trainer\.js\?v=20261110-2/);
- assert.ok(html.indexOf('science-notation.js?v=20261110-1') < html.indexOf('science-trainer.js?v=20261110-2'));
- for(const asset of ['./science-notation.js?v=20261110-1','./science-trainer.js?v=20261110-2'])
+ assert.match(html,/science-trainer\.js\?v=20261110-3/);
+ assert.ok(html.indexOf('science-notation.js?v=20261110-1') < html.indexOf('science-trainer.js?v=20261110-3'));
+ for(const asset of ['./science-notation.js?v=20261110-1','./science-trainer.js?v=20261110-3'])
   assert.ok(sw.includes(asset),'SW missing '+asset);
  assert.match(html,/data-symbol="s"/);
  assert.match(html,/data-symbol="N"/);
