@@ -219,6 +219,11 @@ function shellViz(e){
 }
 /* RUN-KEMIA-013: highlight selected shell ring AND its electron dots.
  * Only the existing SVG (no re-render), so the learner keeps their place. */
+function ruElectronCount(n){
+ var hundred=n%100,ten=n%10;
+ if(hundred>=11&&hundred<=14)return n+' электронов';
+ return n+(ten===1?' электрон':ten>=2&&ten<=4?' электрона':' электронов');
+}
 function focusShell(e,index){
  var panel=els.detail.querySelector('.shell-panel'),a=e.sh||[];
  if(!panel||index<0||index>=a.length)return;
@@ -238,7 +243,7 @@ function focusShell(e,index){
   rings[i].classList.toggle('shell-muted',!active);
  }
  var label=panel.querySelector('#shell-info');
- if(label)label.textContent=(index+1)+'. kuorella on '+a[index]+' elektronia. / На оболочке № '+(index+1)+' находится '+a[index]+' электронов.'+(index===a.length-1?' Ulkokuori / Внешняя оболочка.':'');
+ if(label)label.textContent=(index+1)+'. kuorella on '+a[index]+' '+(a[index]===1?'elektroni':'elektronia')+'. / На оболочке № '+(index+1)+' находится '+ruElectronCount(a[index])+'.'+(index===a.length-1?' Ulkokuori / Внешняя оболочка.':'');
 }
 function bindShells(e){
  var buttons=els.detail.querySelectorAll('[data-shell]'),a=e.sh||[];
