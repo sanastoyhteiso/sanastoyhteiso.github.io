@@ -35,12 +35,12 @@ t('correct traditional main rows plus f-block separately and hydrogen exception'
 });
 t('static bilingual chemistry page, fully offline and ES5 syntax',()=>{
  a.match(html,/periodic-elements\.js\?v=run177-1/);
- a.match(html,/periodic-table\.js\?v=run177-1/);
+ a.match(html,/periodic-table\.js\?v=run178-1/);
  a.match(html,/Таблица Менделеева/);
  a.match(html,/Лантаноиды/);
  a.match(js,/Электронные оболочки/);
  a.match(html,/атомных единицах массы/);
- for(const path of ['periodic-table.html','periodic-elements.js?v=run177-1','periodic-table.js?v=run177-1'])a.ok(sw.includes('./'+path),'offline cache '+path);
+ for(const path of ['periodic-table.html','periodic-elements.js?v=run177-1','periodic-table.js?v=run178-1'])a.ok(sw.includes('./'+path),'offline cache '+path);
  a.ok(science.includes('periodic-table.html'),'linked from chemistry');
  a.match(science,/science-trainer\.js\?v=20261110-3/);
  a.doesNotThrow(()=>new vm.Script(js));
