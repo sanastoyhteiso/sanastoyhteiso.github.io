@@ -112,6 +112,8 @@ jobs:
         run: node --test release-checks/periodic-table-run177.test.cjs
       - name: RUN178 — broad metals/nonmetals and phase filters, color legend, Fe shortcut (NO network)
         run: node --test release-checks/periodic-highlights-run178.test.cjs
+      - name: RUN179 — inertia, sliding, wheelchair stop and bilingual physics phenomena (NO network)
+        run: node --test release-checks/physics-phenomena-run179.test.cjs
       - name: Verify FI/RU medication calculation practice from uploaded exam sheets
         run: node --test release-checks/laakelaskut-run174.test.cjs
       - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)
