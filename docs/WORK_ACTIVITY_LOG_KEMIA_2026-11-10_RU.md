@@ -214,3 +214,7 @@ PR #64 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/64 объ
 - **Ограничение проверки:** браузерный скриншот из реального iPhone не воспроизведён автоматически; необходима проверка пользователем после публикации.
 
 **ЗАВЕРШИЛ (подготовка к публикации)** — код и запись выполнены в ветке `fix/atom-controls-mobile-two-rows-20261110`, готово к PR и слиянию.
+
+### RUN-KEMIA-011 — ЗАВЕРШИЛ (публикация исходного кода)
+
+PR #65: https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/65 успешно объединён с веткой `main` 2026-11-10, merge SHA `3a795958f149c0f7a819c1aea4e2e2e5f3633cd5`. Требуется пользовательская визуальная проверка после обновления GitHub Pages на iPhone.
