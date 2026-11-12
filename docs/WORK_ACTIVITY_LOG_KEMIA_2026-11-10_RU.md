@@ -283,3 +283,8 @@ PR #67 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/67 усп
 ### RUN-KEMIA-014 — ЗАВЕРШИЛ (основной код)
 
 PR #68 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/68 объединён с `main`, merge SHA `cf4cb1074b36316bb866cb7d78452cfbb7c4bbef`. Повторно прочитаны файлы в `main`: стили ярко-синих точек и оранжевой орбиты, увеличение радиуса выбранных электронов, версия JS `run-kemia-014`, кеш `rc42` подтверждены. Отображение на настоящем iPhone остаётся подтвердить.
+
+
+### 12.11.2026 — ретроспективная заметка по RUN-KEMIA-014 из уведомлений GitHub
+- В почте найдено уведомление о неудачном `Release V3 preflight (no deployment)` для PR #68. Открыт [run 42895482087](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42895482087): Firestore emulator и sync fail-closed gate **PASS**, но `release-preflight` упал на проверке сохранения Auth/Drive и совместимости iPad/Mediatri. Публичный код RUN-KEMIA-014 **при этом был слит** (commit `cf4cb1074b36316bb866cb7d78452cfbb7c4bbef`) и [Pages run 42895527475](https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/actions/runs/42895527475) **SUCCESS**. Нельзя объявлять, что всё протестировано в старом Safari только на основании Pages.
+- До будущих изменений проверить причину защитного шага и отсутствие ухудшения iPad/Mediatri, сохранив fail-closed проверку. Подробности: [RETRO_EMAIL_GITHUB_AUDIT_2026-11-12_RU.md](RETRO_EMAIL_GITHUB_AUDIT_2026-11-12_RU.md). Это документальная поправка; физические файлы сайта не менялись.
