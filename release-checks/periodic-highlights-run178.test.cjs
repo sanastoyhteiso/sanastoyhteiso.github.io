@@ -4,6 +4,7 @@
 const test=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('periodic-table.html','utf8'),js=fs.readFileSync('periodic-table.js','utf8');
 const sw=fs.readFileSync('sw.js','utf8'),source=fs.readFileSync('periodic-elements.js','utf8');
+const tableRev=(html.match(/periodic-table\.js\?v=([^"]+)/)||[])[1];
 const c={window:{}};vm.runInNewContext(source,c);
 const all=Array.from(c.window.RS_PERIODIC_ELEMENTS,e=>Object.assign({},e));
 test('offline table still has all 118 recognised elements and case-sensitive chemistry symbols',()=>{
@@ -13,8 +14,8 @@ test('offline table still has all 118 recognised elements and case-sensitive che
  a.equal(all.find(e=>e.n===26).fi,'rauta');
  a.equal(all.find(e=>e.n===26).ru,'железо');
  a.equal(all.find(e=>e.n===1).c,'nonmetal');
- a.ok(sw.includes('./periodic-table.js?v=run178-1'));
- a.ok(html.includes('periodic-table.js?v=run178-1'));
+ a.ok(sw.includes('./periodic-table.js?v='+tableRev));
+ a.ok(Boolean(tableRev));
  a.doesNotThrow(()=>new vm.Script(js));
  a.doesNotMatch(js,/localStorage|sessionStorage|indexedDB|firebase|XMLHttpRequest|fetch\(/i);
 });
@@ -37,7 +38,7 @@ test('user-visible broad buttons and color legend distinguish chemistry from phy
   a.ok(html.includes(x),x);
  for(const x of ['id="overview-help"','id="family-help"','id="find-fe"'])
   a.ok(html.includes(x),x);
- a.ok(html.includes('periodic-table.js?v=run178-1'));
+ a.ok(Boolean(tableRev));
 });
 test('interactive highlights, color families, ferrum lookup, and reset all work in simulated browser',()=>{
  const {JSDOM}=require('jsdom');

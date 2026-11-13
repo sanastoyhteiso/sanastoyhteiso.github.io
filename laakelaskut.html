@@ -47,6 +47,17 @@ button:disabled{opacity:.55;cursor:default}
 .result-item{margin:12px 0;border-bottom:1px solid #dbe9ed;padding-bottom:10px}
 footer{text-align:center;font-size:13px;color:#527380;padding:15px 18px 30px}
 @media(max-width:600px){.card{padding:15px}.question{font-size:17px}.header-wrap{flex-direction:column;align-items:flex-start}}
+
+/* Lääkelaskin study calculator: modal stays independent of the current exercise. */
+.calc-layer{position:fixed;inset:0;z-index:9999;display:flex;justify-content:flex-end;align-items:center;padding:12px;background:rgba(12,34,45,.40)}
+.calc-dialog{width:min(540px,100%);height:min(820px,calc(100vh - 24px));display:flex;flex-direction:column;overflow:hidden;border-radius:17px;background:#eaf3f6;box-shadow:0 8px 50px rgba(8,31,40,.35);border:1px solid #adcdd8}
+.calc-toolbar{background:#fff;min-height:58px;display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #c4dce3}
+.calc-toolbar strong{flex:1 1 auto;font-size:15px}
+.calc-toolbar button{min-height:39px;font-size:14px;padding:7px 10px}
+.calc-iframe{display:block;flex:1 1 auto;min-height:0;width:100%;border:0;background:#eaf3f6}
+.calc-layer.maximized{padding:0}
+.calc-layer.maximized .calc-dialog{width:100%;height:100vh;height:100dvh;border-radius:0}
+@media(max-width:650px){.calc-layer{padding:0}.calc-dialog{width:100%;height:100vh;height:100dvh;border-radius:0;border:0}.calc-toolbar button{min-width:40px}.calc-toolbar strong{font-size:14px}}
 </style>
 </head><body>
 <header><div class="header-wrap"><a class="brand" href="./index.html">✚ Sanastoyhteisö 3.0</a><a class="back" href="./index.html">← Главная / Etusivu</a></div></header>
@@ -68,12 +79,17 @@ footer{text-align:center;font-size:13px;color:#527380;padding:15px 18px 30px}
 <option value="exam">Пробный тест · 10 вопросов</option>
 </select></div></div>
 <div class="toolbar" style="margin-top:14px"><label class="switch"><input type="checkbox" id="hide-ru"> Скрыть перевод / Piilota venäjä</label></div>
-<div class="buttons"><button type="button" id="start" class="primary">Начать заново / Aloita</button><button type="button" id="random">Перемешать / Sekoita</button></div>
+<div class="buttons"><button type="button" id="start" class="primary">Начать заново / Aloita</button><button type="button" id="random">Перемешать / Sekoita</button><button type="button" id="open-laskin" aria-haspopup="dialog">🧮 Учебный калькулятор / Laskin</button></div>
 </div>
 <div id="exercise" class="card" aria-live="polite"></div>
 <div id="results" class="card" hidden></div>
 <div class="card small"><b>Источник:</b> предоставленные владельцем фотографии учебных листов 10.11.2026; вопросы кратко переформулированы, рассчитаны независимо. В исходном примере №28 перепутана точность округления; в №29 округление до целой кишечнорастворимой таблетки нельзя считать автоматическим правилом.</div>
 </main>
+<div class="calc-layer" id="calc-layer" hidden>
+<section id="calc-dialog" class="calc-dialog" role="dialog" aria-modal="true" aria-label="Lääkelaskin · Учебный калькулятор" tabindex="-1">
+<div class="calc-toolbar"><strong>🧮 Lääkelaskin · Расчёт лекарств</strong><button type="button" id="calc-size" aria-label="На весь экран">⛶ <span id="calc-size-label">Крупнее</span></button><button type="button" id="calc-close" aria-label="Закрыть калькулятор">✕</button></div>
+<iframe class="calc-iframe" id="calc-frame" title="Lääkelaskin · Учебный калькулятор" loading="lazy"></iframe>
+</section></div>
 <footer>Sanastoyhteisö · Lääkelaskut · FI / RU · Ei potilastietoja</footer>
 <script src="./laakelaskut-data.js?v=20261110-1"></script>
 <script>
@@ -117,6 +133,26 @@ footer{text-align:center;font-size:13px;color:#527380;padding:15px 18px 30px}
  results.innerHTML=h;results.hidden=false;}
  el('start').onclick=function(){reset(false);};el('random').onclick=function(){reset(true);};group.onchange=function(){reset(false);};mode.onchange=function(){reset(true);};hideRu.onchange=function(){var t=exercise.querySelector('.translation');if(t)t.hidden=hideRu.checked;};
  reset(false);
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var layer=document.getElementById('calc-layer'),frame=document.getElementById('calc-frame');
+var open=document.getElementById('open-laskin'),close=document.getElementById('calc-close'),size=document.getElementById('calc-size'),previousOverflow='';
+function hide(){if(layer.hidden)return;layer.hidden=true;document.body.style.overflow=previousOverflow;open.focus();}
+function show(){previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';layer.hidden=false;if(!frame.getAttribute('src'))frame.setAttribute('src','./laakelaskin.html?v=20261113-1');close.focus();}
+open.onclick=show;close.onclick=hide;
+size.onclick=function(){var full=layer.classList.toggle('maximized');size.setAttribute('aria-label',full?'Свернуть калькулятор':'На весь экран');document.getElementById('calc-size-label').textContent=full?'Свернуть':'Крупнее';};
+layer.onclick=function(e){if(e.target===layer)hide();};
+document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&!layer.hidden)hide();});
+window.addEventListener('message',function(e){
+ if(layer.hidden||e.origin!==window.location.origin||e.source!==frame.contentWindow)return;
+ if(!e.data||e.data.type!=='RS_LAAKELASKIN_ANSWER')return;
+ var value=String(e.data.value||''),input=document.getElementById('response');
+ if(!/^[-+]?\d+(?:,\d+)?$/.test(value)||!input||input.disabled)return;
+ input.value=value;hide();input.focus();
+});
 })();
 </script>
 </body></html>

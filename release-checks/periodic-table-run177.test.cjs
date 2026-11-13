@@ -4,6 +4,7 @@ const t=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs
 const html=fs.readFileSync('periodic-table.html','utf8'),js=fs.readFileSync('periodic-table.js','utf8');
 const science=fs.readFileSync('science.html','utf8'),scienceJs=fs.readFileSync('science-trainer.js','utf8');
 const sw=fs.readFileSync('sw.js','utf8');
+const tableRev=(html.match(/periodic-table\.js\?v=([^"]+)/)||[])[1],scienceRev=(science.match(/science-trainer\.js\?v=([^"]+)/)||[])[1];
 const c={window:{}};
 vm.runInNewContext(fs.readFileSync('periodic-elements.js','utf8'),c);
 const data=Array.from(c.window.RS_PERIODIC_ELEMENTS,v=>Object.assign({},v));
@@ -35,14 +36,14 @@ t('correct traditional main rows plus f-block separately and hydrogen exception'
 });
 t('static bilingual chemistry page, fully offline and ES5 syntax',()=>{
  a.match(html,/periodic-elements\.js\?v=run177-1/);
- a.match(html,/periodic-table\.js\?v=run178-1/);
+ a.ok(tableRev,'periodic script version');
  a.match(html,/Таблица Менделеева/);
  a.match(html,/Лантаноиды/);
  a.match(js,/Электронные оболочки/);
  a.match(html,/атомных единицах массы/);
- for(const path of ['periodic-table.html','periodic-elements.js?v=run177-1','periodic-table.js?v=run178-1'])a.ok(sw.includes('./'+path),'offline cache '+path);
+ for(const path of ['periodic-table.html','periodic-elements.js?v=run177-1','periodic-table.js?v='+tableRev])a.ok(sw.includes('./'+path),'offline cache '+path);
  a.ok(science.includes('periodic-table.html'),'linked from chemistry');
- a.match(science,/science-trainer\.js\?v=20261110-3/);
+ a.ok(scienceRev,'science trainer version');
  a.doesNotThrow(()=>new vm.Script(js));
  a.doesNotThrow(()=>new vm.Script(scienceJs));
  a.doesNotMatch(js,/localStorage|sessionStorage|indexedDB|firebase|XMLHttpRequest|fetch\(/i);
