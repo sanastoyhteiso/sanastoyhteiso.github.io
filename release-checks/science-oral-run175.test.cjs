@@ -9,6 +9,7 @@ const html=fs.readFileSync('science.html','utf8');
 const js=fs.readFileSync('science-trainer.js','utf8');
 const app=fs.readFileSync('app.js','utf8');
 const sw=fs.readFileSync('sw.js','utf8');
+const trainerVersion=(html.match(/science-trainer\.js\?v=([^"]+)/)||[])[1];
 const byId=Object.fromEntries(rows.map(x=>[x.id,x]));
 t('132 non-duplicated FI/RU spoken-answer cards with explicit origin',()=>{
  a.equal(rows.length,132);
@@ -49,7 +50,7 @@ t('independent public study and speaking practice both work without user storage
   a.ok(html.includes(name),name);
  for(const file of ['science-physics-data.js','science-chemistry-data.js','science-notation.js'])
   a.ok(html.includes(file+'?v=20261110-1'),file);
- a.ok(html.includes('science-trainer.js?v=20261110-3'));
+ a.ok(trainerVersion,'science trainer has a versioned URL');
  a.ok(html.includes('science-physics-phenomena.js?v=run179-1'));
  a.ok(js.includes('details class="science-card"'),'tap-to-reveal cards');
  a.ok(js.includes('Selitä omin sanoin'),'speaking practice');
@@ -64,7 +65,7 @@ t('only separate science links added to original 40-question exam, no progress m
   a.ok(app.includes(url),url);
  a.ok(app.includes('47 заданий, 68 вопросов'),'medication calculator preserved');
  a.ok(app.includes('function renderMockExam('),'existing mock exam preserved');
- for(const s of ['./science.html','./science-trainer.js?v=20261110-3','./science-notation.js?v=20261110-1','./science-physics-phenomena.js?v=run179-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
+ for(const s of ['./science.html','./science-trainer.js?v='+trainerVersion,'./science-notation.js?v=20261110-1','./science-physics-phenomena.js?v=run179-1','./science-physics-data.js?v=20261110-1','./science-chemistry-data.js?v=20261110-1'])
   a.ok(sw.includes(s),'offline resource missing '+s);
 });
 
