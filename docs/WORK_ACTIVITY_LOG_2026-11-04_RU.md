@@ -2415,3 +2415,11 @@
 **ПРОВЕРЕНО:** 21/21 статических и арифметических проверок в JS; проверка реального iOS/Pages пока не выполнена.
 **СТАТУС:** Реализация в ветке `feat/laakelaskin-study-calculator-20261113`; не считать опубликованной до подтверждения merge/deployment. Подробности `docs/LAAKELASKIN_RUN_20261113_RU.md`.
 **ЗАВЕРШИЛ:** код, проверки и документация этапа реализации записаны; публикацию зафиксировать отдельным дополнением.
+
+
+### RUN-LÄÄKELASKIN-20261113 — итог публикации
+**НАЧАЛ:** контроль PR #70, объединения кода и публикации GitHub Pages после программных проверок.
+**ИТОГ ПРОВЕРОК:** GitHub Actions Release V3 preflight run `43407624061` — три обязательных задания `release-preflight`, `sync-failclosed-release-gate`, `firestore-v3-rules-emulator`: SUCCESS. Новый набор `release-checks/laakelaskin-20261113.test.cjs` включён в preflight. В ходе подготовки также скорректированы накопившиеся устаревшие утверждения регрессионных тестов о старых версиях `app.js`, `science-trainer.js`, `periodic-table.js` и имени офлайн-кэша; исходные учебные данные не менялись.
+**ОПУБЛИКОВАНО В MAIN:** PR #70 https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/70 объединён, merge SHA `6872a6ea929e24633b0f8b03526479855a9bf794`. Проверено наличие `laakelaskin.html`, `laakelaskin-core.js`, обновлённого `laakelaskut.html` в main.
+**GITHUB PAGES:** запуск `43407830602` (`pages build and deployment`) завершён SUCCESS 13.11.2026. Предназначенный URL: https://sanastoyhteiso.github.io/laakelaskin.html ; встраивание — https://sanastoyhteiso.github.io/laakelaskut.html . Публичный URL напрямую через доступный веб-инструмент не открылся, поэтому прямой HTTP 200 не заявлен. На реальном iPhone/iPad требуется пользовательская визуальная проверка.
+**ЗАВЕРШИЛ:** код и тесты перенесены, Pages deployment подтверждён, журнал дополнен. Клиническое использование исключено; это учебная математическая помощь, без назначения лекарств.
