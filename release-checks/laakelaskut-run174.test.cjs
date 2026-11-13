@@ -64,9 +64,10 @@ test('practice UI has no external backend and executes in ES5-compatible browser
 test('existing Riveria anatomy exam unchanged, medication trainer linked and offline-cached',()=>{
   assert.match(app,/function renderMockExam\(/);
   assert.match(app,/Harjoittele lääkelaskuja/);
-  assert.match(index,/app\.js\?v=medcalc-run174-1/);
-  assert.match(sw,/app\.js\?v=medcalc-run174-1/);
+  const currentApp=index.match(/<script src="app\\.js\\?v=([^"]+)"/);
+  assert.ok(currentApp,'app.js version exists');
+  assert.ok(sw.includes('./app.js?v='+currentApp[1]),'offline cache uses current app.js version');
   assert.match(sw,/laakelaskut\.html/);
   assert.match(sw,/laakelaskut-data\.js\?v=20261110-1/);
-  assert.match(sw,/rc38/);
+  assert.match(sw,/riveria-sanasto-community-v3\\.0\\.0-rc\\d+/);
 });
