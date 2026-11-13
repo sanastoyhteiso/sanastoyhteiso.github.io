@@ -116,6 +116,8 @@ jobs:
         run: node --test release-checks/physics-phenomena-run179.test.cjs
       - name: Verify FI/RU medication calculation practice from uploaded exam sheets
         run: node --test release-checks/laakelaskut-run174.test.cjs
+      - name: Verify Lääkelaskin calculator, conversions, safe embedding and offline cache
+        run: node --test release-checks/laakelaskin-20261113.test.cjs
       - name: Verify ten Riveria anatomy topics, Latin descriptions and preserved progress (NO network)
         run: node --test release-checks/riveria-anatomy-exam.test.cjs
       - name: Verify 65 owner PDF heart/blood compound terms, preserved old progress (NO network)
