@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e5b74">
+<title>Lääkelaskin · Учебный калькулятор — Sanastoyhteisö</title>
+<meta name="description" content="Учебный калькулятор Lääkelaskut: арифметика, единицы массы и объёма, таблетки, растворы и инфузии.">
+<style>
+*{box-sizing:border-box}
+html{background:#eaf3f6}
+body{margin:0;font:16px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#153a4a}
+button,input,select{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus,select:focus{outline:3px solid #e9ad35;outline-offset:2px}
+[hidden]{display:none!important}
+.page{max-width:620px;margin:0 auto;padding:17px 16px 36px}
+.head{display:flex;gap:12px;align-items:center;justify-content:space-between}
+h1{font-size:clamp(23px,5vw,31px);line-height:1.2;margin:4px 0}
+.sub{font-size:13px;color:#466f80;margin:4px 0 15px}
+.back{font-size:14px;color:#0e647c;text-decoration:underline}
+.card{border-radius:18px;background:#fff;border:1px solid #c6dce5;box-shadow:0 4px 20px rgba(16,60,77,.05);padding:17px;margin:13px 0}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:5px;background:#dbeaf0;border-radius:14px}
+.tab{border:0;border-radius:10px;background:transparent;color:#225568;font-weight:750;min-height:48px;padding:5px 3px;font-size:14px}
+.tab[aria-selected=true]{background:#fff;color:#0e657e;box-shadow:0 2px 7px rgba(8,54,71,.14)}
+.eyebrow{font-size:13px;letter-spacing:.03em;color:#4b7381;font-weight:700}
+.display{background:#102e3d;color:#fff;border-radius:15px;padding:12px 16px;text-align:right;margin:12px 0}
+.expr{display:block;color:#cae3eb;font-size:15px;min-height:24px;overflow-wrap:anywhere}
+.screen{width:100%;border:0;background:transparent;color:#fff;font-size:clamp(28px,7vw,40px);font-variant-numeric:tabular-nums;text-align:right;padding:4px 0;min-height:54px;outline:none!important;border-radius:0}
+.result{font-size:16px;color:#a8e4da;min-height:23px;overflow-wrap:anywhere}
+.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.key{min-height:57px;border-radius:12px;border:1px solid #d3e2e7;background:#f5f9fa;font-size:24px;font-weight:650;color:#1c4b5d}
+.key.operator{background:#e5f0f5;color:#076983}
+.key.clear{background:#fff0e5;color:#944c1a}
+.key.equal{background:#167b92;color:white;border-color:#167b92}
+.key:active{transform:scale(.97)}
+.label{display:block;font-size:14px;font-weight:700;margin:12px 0 5px}
+.field{width:100%;min-height:49px;border:1px solid #aacbd6;border-radius:10px;padding:9px 11px;color:#183d4c;background:#fff;min-width:0}
+.inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pair{display:flex;gap:7px}.pair .field:first-child{flex:1 1 auto;min-width:0}.pair select{max-width:115px;flex:0 0 auto}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 2px}
+.action{flex:1 1 150px;min-height:48px;border:1px solid #9ebdca;border-radius:10px;padding:9px 11px;background:#fff;color:#13667d;font-size:14px;font-weight:750}
+.action.primary{background:#17788f;color:#fff;border-color:#17788f}
+.out{margin-top:15px;padding:13px 15px;border-radius:11px;background:#eaf6f7;border:1px solid #b7dadd;overflow-wrap:anywhere}
+.out strong{display:block;font-size:27px;color:#0e6074;margin:3px 0;font-variant-numeric:tabular-nums}
+.out small{display:block;margin-top:7px;color:#456774;white-space:normal}
+.error{background:#fff2e7;border-color:#e4b581;color:#813f18}
+.help{margin-top:14px;padding:10px 12px;border-left:3px solid #c6a05e;background:#fff9ec;font-size:13px;border-radius:0 8px 8px 0;color:#5d5545}
+.note{font-size:13px;color:#53727d;margin-top:10px}
+footer{font-size:12px;color:#577581;text-align:center;padding-top:14px}
+@media(max-width:400px){.page{padding:11px 10px 25px}.card{padding:13px;margin:10px 0}.keys{gap:7px}.key{min-height:54px}.inputs{grid-template-columns:1fr}.tab{font-size:13px}.head{align-items:flex-start}}
+@media(min-width:700px){.page{max-width:660px}}
+</style>
+</head><body>
+<main class="page">
+<div class="head"><div><div class="eyebrow">Sanastoyhteisö 3.0 · Lääkelaskut</div><h1>🧮 Lääkelaskin</h1></div><a class="back" href="./laakelaskut.html" id="back">← К заданиям</a></div>
+<p class="sub">Учебный калькулятор · Opiskelun laskin · Без регистрации и передачи данных</p>
+<nav class="tabs" aria-label="Режим калькулятора">
+<button class="tab" type="button" data-tab="math" aria-selected="true">123 · Счёт</button>
+<button class="tab" type="button" data-tab="convert" aria-selected="false">⇄ Единицы</button>
+<button class="tab" type="button" data-tab="forms" aria-selected="false">ƒ Формулы</button>
+</nav>
+<section id="panel-math" class="card">
+<div class="eyebrow">Арифметика · Peruslaskin</div>
+<div class="display"><div class="expr" id="math-history" aria-hidden="true"></div><input id="math-input" class="screen" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="none" aria-label="Математическое выражение" value=""><div class="result" id="math-status" role="status" aria-live="polite"></div></div>
+<div class="keys" id="keys">
+<button type="button" class="key clear" data-key="clear" aria-label="Очистить">AC</button><button type="button" class="key operator" data-key="(">(</button><button type="button" class="key operator" data-key=")">)</button><button type="button" class="key clear" data-key="back" aria-label="Удалить символ">⌫</button>
+<button type="button" class="key" data-key="7">7</button><button type="button" class="key" data-key="8">8</button><button type="button" class="key" data-key="9">9</button><button type="button" class="key operator" data-key="÷">÷</button>
+<button type="button" class="key" data-key="4">4</button><button type="button" class="key" data-key="5">5</button><button type="button" class="key" data-key="6">6</button><button type="button" class="key operator" data-key="×">×</button>
+<button type="button" class="key" data-key="1">1</button><button type="button" class="key" data-key="2">2</button><button type="button" class="key" data-key="3">3</button><button type="button" class="key operator" data-key="−">−</button>
+<button type="button" class="key" data-key="0">0</button><button type="button" class="key" data-key=",">,</button><button type="button" class="key equal" data-key="=">=</button><button type="button" class="key operator" data-key="+">+</button>
+</div>
+<div class="actions"><button type="button" class="action" data-use="math">Вставить результат в задачу / Vastaukseen</button></div>
+<p class="note">Скобки, десятичная запятая, сложение, вычитание, умножение и деление. Округление делай по условию задачи.</p>
+</section>
+<section id="panel-convert" class="card" hidden>
+<div class="eyebrow">Перевод единиц · Yksikkömuunnokset</div>
+<label class="label" for="convert-group">Что переводим? / Suure</label><select class="field" id="convert-group"><option value="mass">Масса · Massa</option><option value="volume">Объём · Tilavuus</option><option value="time">Время · Aika</option></select>
+<label class="label" for="convert-value">Количество / Määrä</label><input id="convert-value" class="field" type="text" inputmode="decimal" placeholder="Например: 0,75" autocomplete="off">
+<div class="inputs"><div><label class="label" for="convert-from">Из / Mistä</label><select id="convert-from" class="field"></select></div><div><label class="label" for="convert-to">В / Mihin</label><select id="convert-to" class="field"></select></div></div>
+<div class="actions"><button class="action" id="swap" type="button">⇄ Поменять местами</button><button class="action primary" id="convert-go" type="button">Перевести / Muunna</button></div>
+<div class="out" id="convert-out" role="status" aria-live="polite" hidden></div>
+<div class="actions"><button type="button" class="action" data-use="convert">Вставить результат в задачу / Vastaukseen</button></div>
+<div class="help">Важно: <b>граммы нельзя напрямую перевести в литры</b>. Для этого нужна концентрация (например, мг/мл). Для растворов открой «Формулы».</div>
+</section>
+<section id="panel-forms" class="card" hidden>
+<div class="eyebrow">Пошаговые схемы · Laskukaavat</div>
+<label class="label" for="recipe">Выбери тип задачи / Tehtävätyyppi</label>
+<select class="field" id="recipe">
+<option value="tablet">Таблетки: доза ÷ сила таблетки</option>
+<option value="liquid">Раствор: доза ÷ концентрация → мл</option>
+<option value="amount">Сколько вещества в объёме раствора</option>
+<option value="weight">Доза по массе тела (мг/кг или мкг/кг)</option>
+<option value="infusion">Инфузия: мл/ч</option>
+<option value="drops">Капельница: капель/мин</option>
+<option value="dropVolume">Капельница: объём по каплям</option>
+<option value="stock">На сколько дней хватит таблеток</option>
+<option value="mix">Разведение: концентрация смеси</option>
+<option value="percent">Раствор % (масса/объём) → мг/мл</option>
+</select>
+<div id="recipe-fields"></div>
+<label class="label" for="round">Округление по условию задачи</label>
+<select id="round" class="field"><option value="auto">Не округлять заранее</option><option value="0">До целого</option><option value="1">До 0,1</option><option value="2">До 0,01</option><option value="3">До 0,001</option></select>
+<div class="actions"><button class="action primary" type="button" id="solve">Рассчитать / Laske</button><button class="action" type="button" id="clear-form">Очистить поля</button></div>
+<div class="out" id="formula-out" role="status" aria-live="polite" hidden></div>
+<div class="actions"><button type="button" class="action" data-use="forms">Вставить результат в задачу / Vastaukseen</button></div>
+<p class="note">Если задача состоит из нескольких частей, вычисляй их по очереди. Например: сначала мг/сутки, затем мг за приём, затем мл. <b>IU/МЕ</b> не переводятся в мг без данных о конкретном веществе.</p>
+</section>
+<div class="help"><b>Только для учёбы / Vain opiskeluun.</b> Это математические упражнения, не инструмент назначения лекарств пациентам. Расчёт не проверяет показания, максимально допустимую дозу, назначение, возможность деления таблеток, свойства препарата или настройки оборудования.</div>
+<footer>Sanastoyhteisö · Lääkelaskin · FI / RU · Ei potilastietoja</footer>
+</main>
+<script src="./laakelaskin-core.js?v=20261113-1"></script>
+<script>
+(function(){
+'use strict';
+var C=window.RS_MED_CALC,last={math:null,convert:null,forms:null},active='math';
+function by(id){return document.getElementById(id);}
+function show(out,message,isError){out.hidden=false;out.className='out'+(isError?' error':'');out.textContent=message;}
+function display(out,value,unit,step,extra){
+ out.hidden=false;out.className='out';out.innerHTML='';
+ var heading=document.createElement('span');heading.textContent='Результат / Tulos';out.appendChild(heading);
+ var main=document.createElement('strong');main.textContent=C.fmt(value)+' '+unit;out.appendChild(main);
+ if(extra){var x=document.createElement('p');x.textContent=extra.label+': '+C.fmt(extra.value)+' '+extra.unit;out.appendChild(x);}
+ if(step){var small=document.createElement('small');small.textContent='Формула: '+step;out.appendChild(small);}
+}
+function setTab(name){
+ active=name;var tabs=document.querySelectorAll('[data-tab]');
+ for(var i=0;i<tabs.length;i++){var selected=tabs[i].getAttribute('data-tab')===name;tabs[i].setAttribute('aria-selected',selected?'true':'false');}
+ ['math','convert','forms'].forEach(function(t){by('panel-'+t).hidden=t!==name;});
+}
+var tabs=document.querySelectorAll('[data-tab]');
+for(var i=0;i<tabs.length;i++){tabs[i].onclick=function(){setTab(this.getAttribute('data-tab'));};}
+var math=by('math-input'),mathStatus=by('math-status'),history=by('math-history');
+function mathGo(){
+ try{var expr=math.value,ans=C.expression(expr);last.math=ans;history.textContent=expr+' =';math.value=C.fmt(ans);mathStatus.textContent='= '+C.fmt(ans);}
+ catch(e){last.math=null;mathStatus.textContent=e.message;}
+}
+by('keys').onclick=function(e){
+ var t=e.target||e.srcElement;if(!t||t.tagName!=='BUTTON')return;
+ var k=t.getAttribute('data-key');
+ if(k==='clear'){math.value='';history.textContent='';mathStatus.textContent='';last.math=null;}
+ else if(k==='back'){math.value=math.value.slice(0,-1);mathStatus.textContent='';last.math=null;}
+ else if(k==='=')mathGo();
+ else{math.value+=k;mathStatus.textContent='';last.math=null;}
+};
+math.onkeydown=function(e){e=e||window.event;if(e.key==='Enter'||e.keyCode===13){if(e.preventDefault)e.preventDefault();mathGo();}};
+math.oninput=function(){last.math=null;mathStatus.textContent='';};
+var groups={
+ mass:[['kg','кг / kg'],['g','г / g'],['mg','мг / mg'],['mcg','мкг / µg']],
+ volume:[['l','л / l'],['dl','дл / dl'],['cl','сл / cl'],['ml','мл / ml'],['ul','мкл / µl']],
+ time:[['h','ч / h'],['min','мин / min'],['s','сек / s']]
+};
+function option(select,value,name){var o=document.createElement('option');o.value=value;o.textContent=name;select.appendChild(o);}
+function groupChanged(){
+ var g=groups[by('convert-group').value],from=by('convert-from'),to=by('convert-to');
+ from.innerHTML='';to.innerHTML='';g.forEach(function(x){option(from,x[0],x[1]);option(to,x[0],x[1]);});
+ from.selectedIndex=0;to.selectedIndex=g.length-1;by('convert-out').hidden=true;last.convert=null;
+}
+by('convert-group').onchange=groupChanged;groupChanged();
+by('swap').onclick=function(){var a=by('convert-from'),b=by('convert-to'),v=a.value;a.value=b.value;b.value=v;};
+by('convert-go').onclick=function(){
+ try{var n=C.convert(by('convert-value').value,by('convert-from').value,by('convert-to').value);
+ last.convert=n;display(by('convert-out'),n,by('convert-to').options[by('convert-to').selectedIndex].text,'Перевод через коэффициенты одной физической величины');}
+ catch(e){last.convert=null;show(by('convert-out'),e.message,true);}
+};
+var specs={
+ tablet:[['dose','Назначено / Määrätty annos','unit','mg'],['strength','В одной таблетке / Tabletti','unit','mg']],
+ liquid:[['dose','Назначено / Määrätty annos','unit','mg'],['strength','Концентрация на мл / Pitoisuus','unit','mg']],
+ amount:[['volume','Объём раствора (мл) / Tilavuus','text',''],['strength','Концентрация на мл / Pitoisuus','unit','mg']],
+ weight:[['rate','Назначено на кг / mg/kg','unit','mg'],['weight','Масса тела (кг) / Paino','text',''],['doses','Количество приёмов / Annoksia','text','1'],['strength','Концентрация на мл (необязательно)','unit','mg']],
+ infusion:[['volume','Общий объём (мл) / Tilavuus','text',''],['time','Время (часы) / Aika h','text','']],
+ drops:[['volume','Объём инфузии (мл) / Tilavuus','text',''],['factor','Капель в 1 мл / Tippakerroin','text','20'],['time','Время (минуты) / Aika min','text','']],
+ dropVolume:[['rate','Скорость (капель/мин)','text',''],['time','Время (минуты) / Aika min','text',''],['factor','Капель в 1 мл','text','20']],
+ stock:[['total','Таблеток в упаковке / Tablettia','text',''],['each','Таблеток за приём','text',''],['times','Приёмов в сутки','text','']],
+ mix:[['strength','Исходная концентрация на мл','unit','mg'],['volume','Взяли раствора (мл)','text',''],['final','Итоговый объём смеси (мл)','text',''],['speed','Скорость смеси (мл/ч, необязательно)','text','']],
+ percent:[['percent','Концентрация % (m/V)','text','']]
+};
+var unitOptions=[['mcg','мкг / µg'],['mg','мг / mg'],['g','г / g'],['IU','МЕ / IU']];
+function makeFields(){
+ var recipe=by('recipe').value,wrap=by('recipe-fields');wrap.innerHTML='';
+ specs[recipe].forEach(function(f){
+  var holder=document.createElement('div'),label=document.createElement('label'),id='formula-'+f[0],line=document.createElement('div');
+  label.className='label';label.setAttribute('for',id);label.textContent=f[1];holder.appendChild(label);
+  line.className=f[2]==='unit'?'pair':'';
+  var input=document.createElement('input');input.type='text';input.inputMode='decimal';input.autocomplete='off';input.className='field';input.id=id;input.value=f[3]==='1'||f[3]==='20'?f[3]:'';input.placeholder='0,0';line.appendChild(input);
+  if(f[2]==='unit'){var u=document.createElement('select');u.id=id+'-unit';u.className='field';unitOptions.forEach(function(x){option(u,x[0],x[1]);});u.value=f[3];u.setAttribute('aria-label','Единица измерения');line.appendChild(u);}
+  holder.appendChild(line);wrap.appendChild(holder);
+ });
+ by('formula-out').hidden=true;last.forms=null;
+}
+by('recipe').onchange=makeFields;makeFields();
+by('clear-form').onclick=function(){makeFields();};
+by('solve').onclick=function(){
+ try{
+ var type=by('recipe').value,p={},spec=specs[type];spec.forEach(function(f){
+ var a=by('formula-'+f[0]);p[f[0]]=a.value;if(f[2]==='unit')p[f[0]+'Unit']=by('formula-'+f[0]+'-unit').value;
+ });
+ var result=C.solve(type,p),digits=by('round').value,rounded=result.value,step=result.detail;
+ if(digits!=='auto'){var pow=Math.pow(10,Number(digits));rounded=Math.round((result.value+1e-12)*pow)/pow;step+='; округлено до '+digits+' знаков';}
+ last.forms=rounded;display(by('formula-out'),rounded,result.unit,step,result.extra);
+ if(type==='percent'){var note=document.createElement('small');note.textContent='Только для процентов масса/объём (m/V). Не подходит автоматически для других видов %. ';by('formula-out').appendChild(note);}
+ }catch(e){last.forms=null;show(by('formula-out'),e.message,true);}
+};
+var useButtons=document.querySelectorAll('[data-use]');
+for(var j=0;j<useButtons.length;j++){useButtons[j].onclick=function(){
+ var type=this.getAttribute('data-use'),v=last[type];
+ if(v===null||!isFinite(v)){if(type==='math')mathGo();else if(type==='convert')by('convert-go').click();else by('solve').click();v=last[type];}
+ if(v===null||!isFinite(v))return;
+ if(window.parent!==window){window.parent.postMessage({type:'RS_LAAKELASKIN_ANSWER',value:C.fmt(v)},window.location.origin);}
+ else{if(type==='math')mathStatus.textContent='Результат: '+C.fmt(v)+' (вернитесь к заданию и введите ответ)';else if(type==='convert')show(by('convert-out'),'Результат: '+C.fmt(v)+' (вернитесь к заданию)',false);else show(by('formula-out'),'Результат: '+C.fmt(v)+' (вернитесь к заданию)',false);}
+ }; }
+if(window.parent!==window)by('back').hidden=true;
+})();
+</script>
+</body></html>
