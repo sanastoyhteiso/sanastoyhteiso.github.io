@@ -318,7 +318,7 @@
  function wordChoices(query){
    var all=(w.RS_DATA&&w.RS_DATA.terms||[]).slice();
    var words=row&&row.state&&row.state.words||{};
-   Object.keys(words).forEach(function(id){all.push(words[id]);});
+   Object.keys(words).forEach(function(id){if(words[id]&&!words[id].deleted)all.push(words[id]);});
    return finds.matching(all,query);
  }
  function formWord(form,topicName,noteText){
@@ -340,8 +340,14 @@
      var older=row.state.words[id];
      if(older){
        if(finds.normalize(older.fi)!==finds.normalize(fi)||
-         older.ru!==ru)throw Error('Same word already exists with a different translation');
-       return null;
+         older.ru!==ru)throw Error('Слово уже существует с другим переводом. Открой «Редактировать».');
+       if(!older.deleted)return null;
+       if(!/^E_[a-f0-9]{32}$/.test(older._revision||''))
+         throw Error('Версия удалённого слова не подтверждена.');
+       return direct('word_upsert',id,{
+         fi:fi,ru:ru,en:older.en||'',parentRevision:older._revision,
+         previousUpdatedAt:Number(older.updatedAt)||0
+       });
      }
      return direct('word_upsert',id,{fi:fi,ru:ru,en:''});
    }).then(function(){
@@ -349,6 +355,54 @@
      var x=wordChoices(fi).exact[0];
      if(!x)throw Error('New personal word not yet materialized');
      return direct('collection_set',x.id,meta);
+   });
+ }
+ function privateWord(id){
+   if(!active()||!row||!row.state||!/^W_[a-f0-9]{32}$/.test(String(id||'')))
+     throw Error('Редактировать можно только собственное слово.');
+   var word=(row.state.words||{})[id];
+   if(!word||word.deleted||!/^E_[a-f0-9]{32}$/.test(word._revision||''))
+     throw Error('Слово удалено или его версия ещё не синхронизирована.');
+   return word;
+ }
+ function updateOwnWord(id,expected,fi,ru,topic,note){
+   var old;
+   try{
+     old=privateWord(id);
+     if(old._revision!==expected)throw Error('Слово изменилось на другом устройстве. Открой редактирование заново.');
+     fi=String(fi||'').trim();ru=String(ru||'').trim();
+     if(!fi||!ru||fi.length>120||ru.length>180)
+       throw Error('Заполни слово (до 120 символов) и перевод (до 180).');
+     if(['practice','study','other'].indexOf(topic)<0||String(note||'').length>350)
+       throw Error('Неверная категория или слишком длинная заметка.');
+     if(wordChoices(fi).exact.some(function(x){return x.id!==id;}))
+       throw Error('Слово с таким написанием уже существует. Уточни написание или объедини находки.');
+   }catch(e){return Promise.reject(e);}
+   var edited=old.fi!==fi||old.ru!==ru;
+   var work=edited?direct('word_upsert',id,{
+     fi:fi,ru:ru,en:old.en||'',parentRevision:expected,
+     previousUpdatedAt:Number(old.updatedAt)||0
+   }):Promise.resolve(null);
+   return work.then(function(){
+     var current=row&&row.state&&row.state.finds&&row.state.finds[id];
+     if(!edited&&current&&current.added&&current.topic===topic&&current.note===note)
+       return true;
+     return direct('collection_set',id,{list:'finds',added:true,topic:topic,note:note});
+   });
+ }
+ function deleteOwnWord(id,expected){
+   var old,found;
+   try{
+     old=privateWord(id);
+     if(old._revision!==expected)throw Error('Слово уже изменено. Повтори действие после обновления.');
+     found=(row.state.finds||{})[id]||{topic:'other',note:''};
+   }catch(e){return Promise.reject(e);}
+   return direct('word_upsert',id,{
+     fi:old.fi,ru:old.ru,en:old.en||'',parentRevision:expected,
+     previousUpdatedAt:Number(old.updatedAt)||0,deleted:true
+   }).then(function(){
+     return direct('collection_set',id,{list:'finds',added:false,
+       topic:found.topic,note:found.note});
    });
  }
  function renderFinds(parent){
