@@ -7,7 +7,7 @@
   var root = document.getElementById('main-content');
   var state = {view:'cards', deck:[], cardIndex:0, flipped:false, filter:'all', direction:'auto', quizDirection:'auto', dictDirection:'all', cardsCount:20, quiz:null, quizResult:null, quizMode:'translate', tfQuestion:null, tfResult:null, tfSeen:{}, tfCorrect:0, tfWrong:0, matchQuestion:null, matchResult:null, matchSeen:{}, multiQuestion:null, multiResult:null, multiSeen:{}, examRuns:{}, mockRun:null, mockDirection:'auto', mockSaveOk:true, mockAttemptId:null, mockCloudStatus:'unchecked', mockDraftBlocked:false, mockCloudBusy:false, mockCloudError:'', mockCloudConflict:null, mockCloudPending:false, mockCloudSerial:0,
     medMode:'guide', medDirection:'auto', scenario:0, scenarioRevealed:false, scenarioDraft:'', phraseQuery:'', headingQuery:'', dictQuery:'', dictFilter:'all', dictIncludePhrases:false, draft:'', draftFound:false,
-    userWords:[], scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:'',latinOnly:false,latinReturnDirection:'auto'};
+    userWords:[], editingWordId:null, scores:{}, favorites:{}, persisted:true, extraSearch:false, sessionSeen:{}, reviewLearned:false, learnedQuery:'',latinOnly:false,latinReturnDirection:'auto'};
   function byId(id){return document.getElementById(id);}
   function safe(v){return String(v===undefined||v===null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
   function clean(v){return String(v||'').toLocaleLowerCase().replace(/ё/g,'е').replace(/[.,:;!?()\[\]{}«»"']/g,' ').replace(/\s+/g,' ').replace(/^\s+|\s+$/g,'');}
@@ -966,11 +966,104 @@
   }
   function renderAdd(){basePage('Добавить слово','Новые слова сохраняются только в твоём личном словаре.');root.innerHTML='<div class="banner warning"><b>Сохранение и облако</b><p>Новое слово доступно офлайн и синхронизируется только с твоим аккаунтом после восстановления интернета. Регулярно делай резервную копию. Не вводи данные настоящих пациентов.</p></div><div class="panel"><form id="add-form"><div class="two-col"><label class="field"><span>Финское слово *</span><input required maxlength="180" name="fi" class="control" placeholder="esim. inkohousut"></label><label class="field"><span>Русский перевод *</span><input required maxlength="400" name="ru" class="control" placeholder="впитывающие трусики"></label></div><div class="two-col"><label class="field"><span>Тема</span><select class="control" name="cat"><option value="Omat sanat">Мои слова</option><option value="Lääkitys">Лекарства</option><option value="Hoito">Уход</option><option value="Vointi">Состояние</option><option value="Pukeutuminen">Переодевание</option><option value="Aamutoimet">Утренний уход</option><option value="Iltatoimet">Вечерний уход</option><option value="custom">Своя тематика</option></select><input name="customCat" maxlength="90" class="control" placeholder="Например: Архитектура, Работа, Музыка" style="margin-top:8px"></label><label class="field"><span>Фраза по-фински (необязательно)</span><input maxlength="500" name="example" class="control" placeholder="Asukas oli rauhallinen."></label></div><p><button class="btn good" type="submit">＋ Сохранить слово</button></p></form></div><div class="section-title"><h2>Мои слова ('+state.userWords.length+')</h2></div><div class="dictionary-list" id="my-words">'+myWordsHtml()+'</div>';
     restoreAddDraft();
-    if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive())
+    if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()){
+      // V3 words belong to the revisioned My Finds panel; the legacy Delete
+      // button is intentionally hidden instead of misleadingly disabled.
+      var oldList=byId('my-words');
+      if(oldList){
+        var oldHeading=oldList.previousElementSibling;
+        if(oldHeading&&oldHeading.className.indexOf('section-title')>=0)
+          oldHeading.parentNode.removeChild(oldHeading);
+        oldList.parentNode.removeChild(oldList);
+      }
       window.RS_V3_RELEASE.renderFinds(root);
+    }
     restoreAddDraft();
   }
-  function myWordsHtml(){if(!state.userWords.length)return '<div class="empty">Пока нет добавленных слов.</div>';var t='';for(var i=state.userWords.length-1;i>=0;i--){var x=state.userWords[i];t+='<div class="dict-row"><div><b>'+safe(x.fi)+'</b><p>'+safe(x.ru)+'</p><small>'+safe(x.cat)+'</small></div><button class="tiny-btn" data-action="delete-word" data-value="'+safe(x.id)+'">Удалить</button></div>';}return t;}
+  function myWordsHtml(){
+    if(!state.userWords.length)return '<div class="empty">Пока нет добавленных слов.</div>';
+    var t='';
+    for(var i=state.userWords.length-1;i>=0;i--){
+      var x=state.userWords[i];
+      if(/^W_[a-f0-9]{32}$/.test(x.id)){
+        t+='<div class="dict-row"><div><b>'+safe(x.fi)+'</b><p>'+safe(x.ru)+'</p>'+
+          '<small>Слово V3 · редактирование после подключения облака</small></div></div>';
+      }else if(state.editingWordId===x.id){
+        t+='<div class="panel soft"><form id="edit-word-form" data-word-id="'+safe(x.id)+'">'+
+          '<h3>✎ Исправить слово</h3><div class="two-col">'+
+          '<label class="field"><span>Финское слово *</span><input class="control" name="fi" required maxlength="120" value="'+safe(x.fi)+'"></label>'+
+          '<label class="field"><span>Русский перевод *</span><input class="control" name="ru" required maxlength="180" value="'+safe(x.ru)+'"></label></div>'+
+          '<div class="two-col"><label class="field"><span>Тема</span><input class="control" name="cat" maxlength="90" value="'+safe(x.cat)+'"></label>'+
+          '<label class="field"><span>Пример по-фински</span><input class="control" name="example" maxlength="500" value="'+safe(x.example)+'"></label></div>'+
+          '<div class="btn-row"><button type="submit" class="btn good">✓ Сохранить исправления</button>'+
+          '<button type="button" class="btn white" data-action="cancel-edit-word">Отмена</button></div></form></div>';
+      }else{
+        t+='<div class="dict-row"><div><b>'+safe(x.fi)+'</b><p>'+safe(x.ru)+'</p><small>'+safe(x.cat)+'</small></div>'+
+          '<div class="btn-row"><button type="button" class="tiny-btn" data-action="edit-word" data-value="'+safe(x.id)+'">✎ Редактировать</button>'+
+          '<button type="button" class="tiny-btn" data-action="delete-word" data-value="'+safe(x.id)+'">Удалить</button></div></div>';
+      }
+    }
+    return t;
+  }
+  function saveEditedCustom(form){
+    var id=form.getAttribute('data-word-id'),found=null;
+    state.userWords.forEach(function(x){if(x&&x.id===id)found=x;});
+    if(!found){toast('Слово не найдено. Обнови страницу.');return;}
+    if(/^W_[a-f0-9]{32}$/.test(id)){
+      toast('Слова V3 редактируются только в подключённой панели «Мои находки».');return;
+    }
+    var fi=form.elements.fi.value.trim(),ru=form.elements.ru.value.trim();
+    var cat=form.elements.cat.value.trim()||'Мои слова',example=form.elements.example.value.trim();
+    if(!fi||!ru||fi.length>120||ru.length>180||cat.length>90||example.length>500){
+      toast('Проверь длину слова, перевода и примера.');return;
+    }
+    if(state.userWords.some(function(x){return x.id!==id&&clean(x.fi)===clean(fi);})){
+      toast('Такое финское слово уже есть в твоём словаре.');return;
+    }
+    var next=state.userWords.map(function(x){
+      if(x.id!==id)return x;
+      var y=JSON.parse(JSON.stringify(x));
+      y.fi=fi;y.ru=ru;y.cat=cat;y.example=example;
+      y.updatedAt=Math.max(Date.now(),Number(x.updatedAt||0)+1);
+      return y;
+    });
+    if(!save('rs_user_words_v1',next))return;
+    state.userWords=next;state.editingWordId=null;renderAdd();
+    toast('Слово исправлено и сохранено.');
+  }
+  function deleteLegacyWord(id){
+    var original=state.userWords.filter(function(x){return x&&x.id===id;})[0];
+    if(!original){toast('Слово не найдено.');return;}
+    if(/^W_[a-f0-9]{32}$/.test(id)){
+      toast('Удаление слова V3 доступно после восстановления соединения с V3.');return;
+    }
+    if(!window.confirm('Удалить личное слово «'+original.fi+'»?'))return;
+    var wordKey=window.RS_FAMILY&&window.RS_FAMILY.storageKey('rs_user_words_v1');
+    var delKey=window.RS_FAMILY&&window.RS_FAMILY.storageKey('rs_deleted_words_v1');
+    if(!wordKey||!delKey){toast('Войди в аккаунт для удаления.');return;}
+    var gone=value('rs_deleted_words_v1',{}),nextDeleted={},
+      nextWords=state.userWords.filter(function(x){return x.id!==id;});
+    Object.keys(gone||{}).forEach(function(k){nextDeleted[k]=gone[k];});
+    nextDeleted[id]=Math.max(Date.now(),Number(original.updatedAt||0)+1);
+    var beforeWords=null,beforeDeleted=null;
+    try{
+      beforeWords=window.localStorage.getItem(wordKey);
+      beforeDeleted=window.localStorage.getItem(delKey);
+      window.localStorage.setItem(delKey,JSON.stringify(nextDeleted));
+      window.localStorage.setItem(wordKey,JSON.stringify(nextWords));
+    }catch(e){
+      try{
+        if(beforeWords===null)window.localStorage.removeItem(wordKey);
+        else window.localStorage.setItem(wordKey,beforeWords);
+        if(beforeDeleted===null)window.localStorage.removeItem(delKey);
+        else window.localStorage.setItem(delKey,beforeDeleted);
+      }catch(ignored){}
+      toast('Удаление не сохранено. Сделай резервную копию.');return;
+    }
+    state.userWords=nextWords;state.editingWordId=null;state.persisted=true;
+    try{window.dispatchEvent(new Event('rs:datachange'));}catch(ignored){}
+    renderAdd();toast('Слово удалено из личного словаря.');
+  }
   function renderBackup(){
     basePage('Мои данные и аккаунт','Личный словарь, синхронизация и резервные копии.');
     var account=window.RS_FAMILY?window.RS_FAMILY.email:'';
@@ -1092,12 +1185,21 @@
     else if(action==='find-phrases'){state.draft=byId('draft-input').value;findPhrases();}
     else if(action==='clear-draft'){state.draft='';renderMediatri();}
     else if(action==='copy-fi'){copyText(choice);}
-    else if(action==='delete-word'){
+    else if(action==='edit-word'){
       if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()){
-        toast('В V3 удаление пока отключено: требуется безопасная история версий.');
+        toast('Открой редактирование в «Моих находках» V3.');
         return;
       }
-      if(window.confirm('Удалить это слово из памяти этого устройства?')){state.userWords=state.userWords.filter(function(x){return x.id!==choice;});var gone=value('rs_deleted_words_v1',{});gone[choice]=Date.now();save('rs_deleted_words_v1',gone);save('rs_user_words_v1',state.userWords);renderAdd();}}
+      state.editingWordId=choice;renderAdd();
+    }
+    else if(action==='cancel-edit-word'){state.editingWordId=null;renderAdd();}
+    else if(action==='delete-word'){
+      if(window.RS_V3_RELEASE&&window.RS_V3_RELEASE.isActive()){
+        toast('Используй кнопку «Удалить слово» в «Моих находках» V3.');
+        return;
+      }
+      deleteLegacyWord(choice);
+    }
     else if(action==='family-sync'){if(window.RS_FAMILY)window.RS_FAMILY.sync();}
     else if(action==='family-logout'){if(window.RS_FAMILY)window.RS_FAMILY.logout();}
     else if(action==='family-migrate'){if(window.RS_FAMILY)window.RS_FAMILY.migrate();}
@@ -1106,7 +1208,10 @@
   });
   document.addEventListener('change',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='cards-cat'){state.filter=e.target.value;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='quiz-cat'){state.filter=e.target.value;if(state.quizMode==='truefalse'){state.tfQuestion=null;state.tfSeen={};}else if(state.quizMode==='matching'){state.matchQuestion=null;state.matchSeen={};}else if(state.quizMode==='multiselect'){state.multiQuestion=null;state.multiSeen={};}else quizNew();renderQuiz();}else if(id==='cards-dir'){state.direction=e.target.value;state.flipped=false;state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='mock-dir'){var er=mockInit();if(er.answers.length===0){mockClearDraft();state.mockDirection=e.target.value;state.mockRun=null;state.mockAttemptId=null;mockInit();mockCloudRestart();}else{toast('Направление фиксируется после первого ответа. Для изменения начни новый экзамен.');}renderMockExam();}else if(id==='quiz-dir'){state.quizDirection=e.target.value;if(state.quizMode==='translate'){delete state.examRuns.translate;quizNew();}renderQuiz();}else if(id==='dict-dir'){state.dictDirection=e.target.value;renderDict();}else if(id==='med-dir'){state.medDirection=e.target.value;renderMediatri();}else if(id==='cards-count'){state.cardsCount=Number(e.target.value);state.sessionSeen={};ensureDeck(true);renderCards();}else if(id==='dict-cat'){state.dictFilter=e.target.value;renderDictItems();}else if(id==='dict-phrases'){state.dictIncludePhrases=e.target.checked;renderDictItems();}else if(id==='backup-file'){restoreFile(e.target.files[0]);}else if(id==='family-scope'){if(window.RS_FAMILY)window.RS_FAMILY.setScope(e.target.value);}});
   document.addEventListener('input',function(e){if(isAddDraftField(e.target))saveAddDraft();var id=e.target.id;if(id==='learned-search'){state.learnedQuery=e.target.value;renderLearnedItems();}else if(id==='dict-search'){state.dictQuery=e.target.value;renderDictItems();}else if(id==='med-phrase-search'){state.phraseQuery=e.target.value;renderPhraseItems();}else if(id==='heading-search'){state.headingQuery=e.target.value;renderHeadingItems();}else if(id==='draft-input'){state.draft=e.target.value;}else if(id==='scenario-input'){state.scenarioDraft=e.target.value;}});
-  document.addEventListener('submit',function(e){if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}});
+  document.addEventListener('submit',function(e){
+    if(e.target.id==='add-form'){e.preventDefault();saveCustom(e.target);}
+    else if(e.target.id==='edit-word-form'){e.preventDefault();saveEditedCustom(e.target);}
+  });
   window.addEventListener('online',function(){setStatus();if(state.view==='exam'&&state.mockRun&&state.mockCloudStatus!=='conflict'){state.mockCloudStatus='unchecked';renderMockExam();}});window.addEventListener('offline',setStatus);
   window.addEventListener('error',function(e){
     // In capture phase IMG/LINK/SCRIPT resource errors also reach window.

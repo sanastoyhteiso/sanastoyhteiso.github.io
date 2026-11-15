@@ -168,6 +168,8 @@
        value.list==='finds'&&typeof value.added==='boolean'&&
        ['practice','study','other'].indexOf(value.topic)>=0&&
        typeof value.note==='string'&&value.note.length<=350){
+       var olderFind=Number(value.previousUpdatedAt)||0;
+       if(olderFind>0&&when<=olderFind)when=olderFind+1;
        data={list:'finds',added:value.added,topic:value.topic,note:value.note};
      }
      else if(kind==='word_upsert'&&value&&typeof value==='object'&&
@@ -175,9 +177,18 @@
        value.fi.trim().length>=1&&value.ru.trim().length>=1&&
        value.fi.length<=120&&value.ru.length<=180&&
        (!value.en||typeof value.en==='string'&&value.en.length<=180)){
+       var parent=value.parentRevision,kindOfChange=value.deleted===true?'delete':'edit';
+       if(parent!==undefined&&(!/^E_[a-f0-9]{32}$/.test(String(parent))||
+          typeof value.previousUpdatedAt!=='number'||!isFinite(value.previousUpdatedAt)||
+          value.previousUpdatedAt<0))
+         throw Error('Invalid personal word parent revision');
+       if(value.deleted===true&&!parent)
+         throw Error('Deletion requires the previous personal-word revision');
+       if(parent&&when<=value.previousUpdatedAt)when=value.previousUpdatedAt+1;
        data={id:target,fi:value.fi.trim(),ru:value.ru.trim(),
          en:(value.en||'').trim(),cat:'Omat sanat',
-         catRu:'Мои слова',updatedAt:when};
+         catRu:parent?'Мои слова|'+kindOfChange+':'+parent:'Мои слова',
+         updatedAt:when};
      }else throw Error('Invalid learning action');
      var hex=opts.random();
      if(typeof hex!=='string'||!/^[a-f0-9]{32}$/.test(hex))

@@ -81,15 +81,37 @@
       }
       else if(e.kind==='word_upsert'){
         var w=copy(a);w.id=id;
-        // Same deterministic personal word ID on two devices: identical text
-        // is idempotent. Conflicting translations require an explicit review;
-        // NEVER silently apply a last-writer-wins edit.
         var previous=state.words[id];
-        if(previous){
-          if(String(previous.fi||'').replace(/\s+/g,' ').trim().toLowerCase()!==String(w.fi||'').replace(/\s+/g,' ').trim().toLowerCase()||String(previous.ru||'').replace(/\s+/g,' ').trim().toLowerCase()!==String(w.ru||'').replace(/\s+/g,' ').trim().toLowerCase()||
-             String(previous.en||'').replace(/\s+/g,' ').trim().toLowerCase()!==String(w.en||'').replace(/\s+/g,' ').trim().toLowerCase())
+        // The deployed, append-only Firestore rules already allow word_upsert
+        // with catRu up to 120 chars. An explicit edit/delete carries the
+        // parent EVENT ID inside that existing field; it adds no new schema.
+        // On materialization the marker is removed from displayed word data.
+        var marker=/^Мои слова\|(edit|delete):(E_[a-f0-9]{32})$/.exec(String(w.catRu||''));
+        if(String(w.catRu||'').indexOf('Мои слова|')===0&&!marker)
+          throw Error('Malformed personal word revision');
+        if(marker){
+          if(!/^W_[a-f0-9]{32}$/.test(id)||!previous||
+             previous._revision!==marker[2])
+            throw Error('Conflicting personal word revision; refresh required');
+          if(marker[1]==='delete'&&(previous.deleted||
+             String(previous.fi)!==String(w.fi)||String(previous.ru)!==String(w.ru)))
+            throw Error('Unsafe deletion of an altered personal word');
+          w.catRu='Мои слова';
+          w.deleted=marker[1]==='delete';
+          w._revision=e.id;
+          state.words[id]=w;
+        }else if(previous){
+          // A duplicate creation of identical wording is idempotent.
+          // It may NEVER resurrect an already deleted word.
+          if(String(previous.fi||'')!==String(w.fi||'')||
+             String(previous.ru||'')!==String(w.ru||'')||
+             String(previous.en||'')!==String(w.en||''))
             throw Error('Conflicting definitions for one personal word ID');
-        }else state.words[id]=w;
+        }else{
+          w.deleted=false;
+          w._revision=e.id;
+          state.words[id]=w;
+        }
       }
       else if(e.kind==='word_delete')delete state.words[id];
     });

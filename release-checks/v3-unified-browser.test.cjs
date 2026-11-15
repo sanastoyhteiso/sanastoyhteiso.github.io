@@ -185,6 +185,67 @@ async function run(){
  assert.equal(personalFind.data.topic,'practice');
  assert.equal(personalFind.data.note,'с моего занятия');
  assert.equal(w.localStorage.getItem(draftKey),null,'draft clears only after successful double write');
+ // Personal word edits are explicit, keep its W_ identity and sync to cloud.
+ let personalLine=[...d.querySelectorAll('#v3-find-saved .dict-row')]
+   .find(x=>x.textContent.includes('koesanasto-147'));
+ assert.ok(personalLine,'new personal word is present in My Finds');
+ let editButton=[...personalLine.querySelectorAll('button')]
+   .find(x=>x.textContent.includes('Редактировать'));
+ assert.ok(editButton,'a personal word must offer editing');
+ editButton.click();
+ let editor=d.querySelector('.v3-find-editor');
+ assert.ok(editor,'inline editor appears');
+ let inputs=editor.querySelectorAll('input');
+ assert.equal(inputs.length,3,'Finnish, Russian and personal note');
+ inputs[0].value='koesanasto-korjattu';
+ inputs[1].value='исправленный перевод';
+ inputs[2].value='значение уточнено после занятия';
+ editor.querySelector('select').value='study';
+ [...editor.querySelectorAll('button')].find(x=>x.textContent.includes('Сохранить')).click();
+ for(let i=0;i<40&&!Object.values(events).some(x=>x.kind==='word_upsert'&&
+   x.target===personalWord.target&&x.data.fi==='koesanasto-korjattu');i++)await sleep(40);
+ let corrected=Object.values(events).find(x=>x.kind==='word_upsert'&&
+   x.target===personalWord.target&&x.data.fi==='koesanasto-korjattu');
+ assert.ok(corrected,'new immutable word revision reaches mock server');
+ assert.match(corrected.data.catRu,/^Мои слова\\|edit:E_[a-f0-9]{32}$/);
+ assert.equal(w.RS_V3_RELEASE.getState().words[personalWord.target].ru,'исправленный перевод');
+ assert.equal(w.RS_V3_RELEASE.getState().words[personalWord.target]._revision,corrected.id);
+ await w.RS_V3_RELEASE.refresh();
+ assert.equal(w.RS_V3_RELEASE.getState().words[personalWord.target].fi,'koesanasto-korjattu',
+   'edit survives a server roundtrip');
+ assert.equal(w.RS_V3_RELEASE.getState().finds[personalWord.target].topic,'study',
+   'topic edit persists');
+ assert.equal(w.RS_V3_RELEASE.getState().finds[personalWord.target].note,'значение уточнено после занятия');
+
+ personalLine=[...d.querySelectorAll('#v3-find-saved .dict-row')]
+   .find(x=>x.textContent.includes('koesanasto-korjattu'));
+ assert.ok(personalLine,'edited word displayed after cloud reconciliation');
+ let removePublic=[...d.querySelectorAll('#v3-find-saved .dict-row')]
+   .find(x=>x.textContent.includes('peseytyminen'));
+ assert.ok(removePublic,'public term in My Finds');
+ [...removePublic.querySelectorAll('button')].find(x=>x.textContent.includes('Убрать')).click();
+ for(let i=0;i<25&&w.RS_V3_RELEASE.getState().finds.T00045.added;i++)await sleep(40);
+ assert.equal(w.RS_V3_RELEASE.getState().finds.T00045.added,false,
+   'remove from finds does not delete shared Riveria word');
+ assert.ok(w.RS_DATA.terms.some(x=>x.id==='T00045'));
+
+ let del=[...personalLine.querySelectorAll('button')].find(x=>x.textContent.includes('Удалить слово'));
+ assert.ok(del,'personal word has real delete action');
+ del.click();
+ for(let i=0;i<45&&!w.RS_V3_RELEASE.getState().words[personalWord.target].deleted;i++)
+   await sleep(40);
+ assert.equal(w.RS_V3_RELEASE.getState().words[personalWord.target].deleted,true,
+   'deletion saved as an immutable tombstone');
+ await w.RS_V3_RELEASE.refresh();
+ assert.equal(w.RS_V3_RELEASE.getState().words[personalWord.target].deleted,true,
+   'deleted word must not reappear on refresh');
+ assert.ok(![...d.querySelectorAll('#v3-find-saved .dict-row')]
+    .some(x=>x.textContent.includes('koesanasto-korjattu')),
+   'deleted word hidden from My Finds');
+ assert.ok(Object.values(events).some(x=>x.kind==='word_upsert'&&
+   x.target===personalWord.target&&/^Мои слова\\|delete:E_/.test(x.data.catRu)),
+   'deletion event follows deployed, already allowed word_upsert contract');
+
  // Switching Google accounts without an intermediate signed-out event must
  // invalidate the old owner. A queued old answer cannot become new-owner data.
  const beforeSwitch=Object.keys(events).length;
