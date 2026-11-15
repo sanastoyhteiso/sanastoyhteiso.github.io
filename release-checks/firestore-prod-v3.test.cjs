@@ -29,19 +29,22 @@ async function run(){
       id:wordId,fi:'testisana',ru:'тестовое слово',en:'test word',
       cat:'Omat sanat',catRu:'Мои слова',updatedAt:1793800000123
    })));
+   // Unique IDs across ALL emulator suites sharing one synthetic project.
+   const editEventId='E_'+'c'.repeat(31)+'0';
+   const deleteEventId='E_'+'c'.repeat(31)+'1';
    // Revision/tombstone use the already-deployed strict word_upsert payload,
    // not a newly privileged cloud event type.
-   await assertSucceeds(setDoc(ref(alice,'alice',E('0')),event('alice',E('0'),'word_upsert',wordId,{
+   await assertSucceeds(setDoc(ref(alice,'alice',editEventId),event('alice',editEventId,'word_upsert',wordId,{
      id:wordId,fi:'korjattu sana',ru:'исправленное слово',en:'test word',
      cat:'Omat sanat',catRu:'Мои слова|edit:'+E('d'),updatedAt:1793800000124
    })));
-   await assertSucceeds(setDoc(ref(alice,'alice',E('7')),event('alice',E('7'),'word_upsert',wordId,{
+   await assertSucceeds(setDoc(ref(alice,'alice',deleteEventId),event('alice',deleteEventId,'word_upsert',wordId,{
      id:wordId,fi:'korjattu sana',ru:'исправленное слово',en:'test word',
-     cat:'Omat sanat',catRu:'Мои слова|delete:'+E('0'),updatedAt:1793800000125
+     cat:'Omat sanat',catRu:'Мои слова|delete:'+editEventId,updatedAt:1793800000125
    })));
    await assertFails(setDoc(ref(bob,'alice',E('8')),event('alice',E('8'),'word_upsert',wordId,{
      id:wordId,fi:'unauthorized',ru:'нельзя',en:'',
-     cat:'Omat sanat',catRu:'Мои слова|edit:'+E('7'),updatedAt:1793800000126
+     cat:'Omat sanat',catRu:'Мои слова|edit:'+deleteEventId,updatedAt:1793800000126
    })));
    await assertSucceeds(setDoc(ref(alice,'alice',E('e')),event('alice',E('e'),'collection_set','T00001',{
      list:'finds',added:true,topic:'practice',note:'safe test note'
