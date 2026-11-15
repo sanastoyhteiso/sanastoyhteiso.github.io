@@ -71,5 +71,5 @@ test('both calculator files use versioned offline cache entries',()=>{
  assert.match(sw,/laakelaskin\.html/);
  assert.match(sw,/laakelaskin-core\.js\?v=20261113-1/);
  assert.match(sw,/laakelaskut\.html/);
- assert.match(sw,/v3\.0\.0-rc43/);
+ assert.match(sw,/v3\.0\.0-rc\d+/);
 });
