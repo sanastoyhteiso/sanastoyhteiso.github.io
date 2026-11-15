@@ -306,7 +306,19 @@
    if(!active())return Promise.reject(Error('V3 inactive'));
    var owner=uid,token=epoch,which=engine;
    function same(){return token===epoch&&uid===owner&&active();}
-   return orderly(function(){return which.record(kind,target,value);}).then(function(r){
+   return orderly(function(){
+     // Cloud finds use millisecond timestamps: a rapid change must be strictly
+     // newer than the saved selection, or IDB could flag a false conflict.
+     var data=value;
+     if(kind==='collection_set'){
+       var prior=row&&row.state&&row.state.finds&&row.state.finds[target];
+       if(prior){
+         data=json(value);
+         data.previousUpdatedAt=Number(prior.updatedAt)||0;
+       }
+     }
+     return which.record(kind,target,data);
+   }).then(function(r){
      if(!same())throw Error('V3 account changed during write');
      row=r;
      return which.upload().then(function(){return which.view();},function(){return r;});
