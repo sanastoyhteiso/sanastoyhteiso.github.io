@@ -985,7 +985,10 @@
     var t='';
     for(var i=state.userWords.length-1;i>=0;i--){
       var x=state.userWords[i];
-      if(state.editingWordId===x.id){
+      if(/^W_[a-f0-9]{32}$/.test(x.id)){
+        t+='<div class="dict-row"><div><b>'+safe(x.fi)+'</b><p>'+safe(x.ru)+'</p>'+
+          '<small>Слово V3 · редактирование после подключения облака</small></div></div>';
+      }else if(state.editingWordId===x.id){
         t+='<div class="panel soft"><form id="edit-word-form" data-word-id="'+safe(x.id)+'">'+
           '<h3>✎ Исправить слово</h3><div class="two-col">'+
           '<label class="field"><span>Финское слово *</span><input class="control" name="fi" required maxlength="120" value="'+safe(x.fi)+'"></label>'+
@@ -1006,6 +1009,9 @@
     var id=form.getAttribute('data-word-id'),found=null;
     state.userWords.forEach(function(x){if(x&&x.id===id)found=x;});
     if(!found){toast('Слово не найдено. Обнови страницу.');return;}
+    if(/^W_[a-f0-9]{32}$/.test(id)){
+      toast('Слова V3 редактируются только в подключённой панели «Мои находки».');return;
+    }
     var fi=form.elements.fi.value.trim(),ru=form.elements.ru.value.trim();
     var cat=form.elements.cat.value.trim()||'Мои слова',example=form.elements.example.value.trim();
     if(!fi||!ru||fi.length>120||ru.length>180||cat.length>90||example.length>500){
@@ -1028,6 +1034,9 @@
   function deleteLegacyWord(id){
     var original=state.userWords.filter(function(x){return x&&x.id===id;})[0];
     if(!original){toast('Слово не найдено.');return;}
+    if(/^W_[a-f0-9]{32}$/.test(id)){
+      toast('Удаление слова V3 доступно после восстановления соединения с V3.');return;
+    }
     if(!window.confirm('Удалить личное слово «'+original.fi+'»?'))return;
     var wordKey=window.RS_FAMILY&&window.RS_FAMILY.storageKey('rs_user_words_v1');
     var delKey=window.RS_FAMILY&&window.RS_FAMILY.storageKey('rs_deleted_words_v1');
