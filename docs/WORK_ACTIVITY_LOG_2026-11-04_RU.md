@@ -2433,3 +2433,8 @@
 **ПРОВЕРКИ:** первый полный прогон CI #43750700178 — 3/3 SUCCESS (release-preflight, sync-failclosed-release-gate, firestore-v3-rules-emulator). Затем добавлены новые точные сценарии редактирования/удаления в эмулятор Firestore; повторный CI ещё ожидается. Реальных пользовательских слов не меняли, нет прямого тестирования UI на iPhone/iPad.
 **СТАТУС:** код и журнал подготовлены в ветке `feat/my-finds-edit-delete-revisions-20261115`, PR #71: https://github.com/sanastoyhteiso/sanastoyhteiso.github.io/pull/71 . Объединение и GitHub Pages отметить здесь только после подтверждения успешного CI и deployment.
 **ЗАВЕРШИЛ:** этап реализации и предварительных проверок; публикация оформляется отдельным последующим итогом.
+
+
+### RUN-MYFINDS-EDIT-DELETE-20261115 — итоги CI и публикации
+**НАЧАЛ:** проверка обязательных workflow и публикации после редактирования личного словаря.
+**ЗАВЕРШИЛ:** PR #71 объединён с main, merge SHA `5ba56181b83ee9b837caa25008cf2bbfb3c02aa2`. GitHub Actions `Release V3 preflight (no deployment)` запуск #43751196895: все три обязательных задания SUCCESS. Продакшн-подобный эмулятор Firestore подтвердил допустимость исправлений и tombstone через неизменяемый `word_upsert`, без новых разрешений в rules; чужой UID отвергнут. GitHub Pages запуск #43751346024 для merge SHA завершился SUCCESS. Версии `app.js?v=my-finds-edit-20261115-1`, `v3-sync-core/engine/release.js?v=word-edit-20261115-1`, offline cache rc44. Подробности: `docs/MY_FINDS_EDIT_DELETE_20261115_RU.md`. Личные данные пользователя не менялись; нужен визуальный тест iPhone/iPad и проверка одной собственной записи на реальной учётной записи.
