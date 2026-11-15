@@ -168,6 +168,8 @@
        value.list==='finds'&&typeof value.added==='boolean'&&
        ['practice','study','other'].indexOf(value.topic)>=0&&
        typeof value.note==='string'&&value.note.length<=350){
+       var olderFind=Number(value.previousUpdatedAt)||0;
+       if(olderFind>0&&when<=olderFind)when=olderFind+1;
        data={list:'finds',added:value.added,topic:value.topic,note:value.note};
      }
      else if(kind==='word_upsert'&&value&&typeof value==='object'&&
