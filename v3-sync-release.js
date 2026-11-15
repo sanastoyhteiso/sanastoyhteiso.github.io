@@ -490,25 +490,102 @@
    }
    function drawSaved(){
      while(chosen.firstChild)chosen.removeChild(chosen.firstChild);
-     var found=row&&row.state&&row.state.finds||{};
-     Object.keys(found).filter(function(id){return found[id].added;}).forEach(function(id){
-       var item=(w.RS_DATA&&w.RS_DATA.terms||[]).filter(function(x){return x.id===id;})[0]||
-         (row&&row.state&&row.state.words||{})[id];
-       if(!item)return;
+     var found=row&&row.state&&row.state.finds||{},own=row&&row.state&&row.state.words||{};
+     var ids=Object.keys(found).filter(function(id){return found[id].added;});
+     ids.forEach(function(id){
+       var item=(w.RS_DATA&&w.RS_DATA.terms||[]).filter(function(x){return x.id===id;})[0]||own[id];
+       if(!item||item.deleted)return;
+       var isOwn=/^W_[a-f0-9]{32}$/.test(id),meta=found[id];
        var line=d.createElement('div');line.className='dict-row';
-       var title=d.createElement('p');
-       title.textContent=item.fi+' — '+item.ru+
-         ' · '+found[id].topic+(found[id].note?' · '+found[id].note:'');
-       line.appendChild(title);
-       var remove=d.createElement('button');remove.type='button';
-       remove.className='tiny-btn';remove.textContent='Убрать из находок';
-       remove.addEventListener('click',function(){
+       var title=d.createElement('div');
+       var name=d.createElement('strong');name.textContent=item.fi+' — '+item.ru;
+       title.appendChild(name);
+       var hint=d.createElement('p');hint.className='hint';
+       var names={practice:'Практика',study:'Учёба',other:'Другое'};
+       hint.textContent=(names[meta.topic]||meta.topic)+(meta.note?' · '+meta.note:'')+
+         (isOwn?' · Личное слово':' · Из общей библиотеки');
+       title.appendChild(hint);line.appendChild(title);
+       var actions=d.createElement('div');actions.className='btn-row';
+       function actionButton(label,style,handler){
+         var b=d.createElement('button');b.type='button';b.className='tiny-btn '+(style||'');
+         b.textContent=label;b.addEventListener('click',handler);actions.appendChild(b);return b;
+       }
+       function editor(){
+         if(line.querySelector('.v3-find-editor'))return;
+         var edit=d.createElement('div');edit.className='v3-find-editor panel soft';
+         edit.style.width='100%';
+         function field(label,value,max,readonly){
+           var holder=d.createElement('label');holder.className='field';
+           var span=d.createElement('span');span.textContent=label;holder.appendChild(span);
+           var control=d.createElement('input');control.className='control';
+           control.value=value||'';control.maxLength=max;
+           control.readOnly=!!readonly;holder.appendChild(control);edit.appendChild(holder);
+           return control;
+         }
+         var fi=field('Слово по-фински / Suomen sana',item.fi,120,!isOwn);
+         var ru=field('Перевод на русский / Venäjäksi',item.ru,180,!isOwn);
+         var label=d.createElement('label');label.className='field';
+         var cap=d.createElement('span');cap.textContent='Раздел находки';label.appendChild(cap);
+         var category=d.createElement('select');category.className='control';
+         [['practice','Практика'],['study','Учёба'],['other','Другое']].forEach(function(p){
+           var o=d.createElement('option');o.value=p[0];o.textContent=p[1];category.appendChild(o);
+         });category.value=meta.topic;label.appendChild(category);edit.appendChild(label);
+         var memo=field('Личная заметка',meta.note,350,false);
+         var ctl=d.createElement('div');ctl.className='btn-row';
+         var save=d.createElement('button');save.type='button';save.className='btn good';
+         save.textContent='✓ Сохранить исправления';ctl.appendChild(save);
+         var cancel=d.createElement('button');cancel.type='button';cancel.className='btn white';
+         cancel.textContent='Отмена';cancel.onclick=function(){line.removeChild(edit);};ctl.appendChild(cancel);
+         var result=d.createElement('p');result.className='hint';result.setAttribute('role','status');
+         edit.appendChild(ctl);edit.appendChild(result);
+         line.appendChild(edit);fi.focus();
+         var expected=isOwn?item._revision:null;
+         save.onclick=function(){
+           save.disabled=true;cancel.disabled=true;result.textContent='Сохраняем исправления…';
+           var task=isOwn?updateOwnWord(id,expected,fi.value,ru.value,category.value,memo.value):
+             direct('collection_set',id,{list:'finds',added:true,
+               topic:category.value,note:memo.value.trim()});
+           task.then(function(){
+             if(byId('v3-finds-panel')!==panel)return;
+             drawSaved();update();message('Изменения сохранены. История версий сохранена.',false);
+           },function(err){
+             if(byId('v3-finds-panel')!==panel)return;
+             save.disabled=false;cancel.disabled=false;
+             result.textContent='Не сохранено: '+String(err.message||err);
+           });
+         };
+       }
+       actionButton(isOwn?'✎ Редактировать':'✎ Раздел и заметка','',editor);
+       var remove=actionButton('Убрать из находок','',function(){
+         if(!w.confirm('Убрать «'+item.fi+'» из находок? Само слово будет сохранено.'))return;
+         remove.disabled=true;
          direct('collection_set',id,{list:'finds',added:false,
-           topic:found[id].topic,note:found[id].note}).then(function(){
-             drawSaved();update();
-           },function(e){text('Невозможно убрать: '+e.message,true);});
-       });line.appendChild(remove);chosen.appendChild(line);
+           topic:meta.topic,note:meta.note}).then(function(){
+             if(byId('v3-finds-panel')===panel){drawSaved();update();message('Убрано из находок. Само слово сохранено.',false);}
+           },function(e){
+             remove.disabled=false;message('Не удалось убрать: '+String(e.message||e),true);
+           });
+       });
+       if(isOwn){
+         var del=actionButton('Удалить слово','',function(){
+           if(!w.confirm('Удалить личное слово «'+item.fi+'»? Оно исчезнет из словаря и находок. История останется для безопасной синхронизации.'))return;
+           del.disabled=true;
+           deleteOwnWord(id,item._revision).then(function(){
+             if(byId('v3-finds-panel')===panel){drawSaved();update();message('Слово удалено из личного словаря.',false);}
+           },function(e){
+             del.disabled=false;drawSaved();
+             message('Удаление не завершено: '+String(e.message||e)+'. Повтори синхронизацию.',true);
+           });
+         });
+       }
+       line.appendChild(actions);
+       chosen.appendChild(line);
      });
+     if(!chosen.childNodes.length){
+       var empty=d.createElement('p');empty.className='hint';
+       empty.textContent='Сохранённых находок пока нет. Добавь слово через форму выше.';
+       chosen.appendChild(empty);
+     }
    }
    if(input)input.addEventListener('input',update);
    if(form&&form.elements.ru)form.elements.ru.addEventListener('input',update);
