@@ -7,7 +7,7 @@ on:
       - '.github/workflows/recovery-code-snapshot.yml'
       - 'tools/create_code_snapshot.py'
       - 'START_HERE_DISASTER_RECOVERY_RU.md'
-      - 'docs/FULL_BACKUP_IMPLEMENTATION_20261117_RU.md'
+      - 'docs/FULL_BACKUP_IMPLEMENTATION_20261117_RU.md'\n      - 'docs/BACKUP_RELEASE_POLICY_RU.md'\n      - 'docs/RECOVERY_CHANGELOG_RU.md'
   workflow_dispatch:
 permissions:
   contents: read
