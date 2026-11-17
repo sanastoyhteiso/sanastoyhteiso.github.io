@@ -1,0 +1,24 @@
+name: Recovery code snapshot (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  code-snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build and verify code archive
+        run: python3 tools/create_code_snapshot.py --site sanastoyhteiso
+      - name: Keep downloadable ZIP and checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanastoyhteiso-code-snapshot
+          path: recovery-output/
+          retention-days: 90
+          if-no-files-found: error
