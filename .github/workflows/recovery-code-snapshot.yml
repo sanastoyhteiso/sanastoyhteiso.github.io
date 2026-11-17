@@ -1,5 +1,13 @@
-name: Recovery code snapshot (manual)
+name: Recovery code snapshot
 on:
+  push:
+    branches:
+      - feature/full-recovery-backup-20261117
+    paths:
+      - '.github/workflows/recovery-code-snapshot.yml'
+      - 'tools/create_code_snapshot.py'
+      - 'START_HERE_DISASTER_RECOVERY_RU.md'
+      - 'docs/FULL_BACKUP_IMPLEMENTATION_20261117_RU.md'
   workflow_dispatch:
 permissions:
   contents: read
