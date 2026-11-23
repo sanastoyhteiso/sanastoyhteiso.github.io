@@ -101,7 +101,7 @@ function saveWord(e){
  if(!fi||!ru||!category||fi.length>120||ru.length>180||en.length>180||category.length>80){
   set('word-status',wt('invalid'));return;
  }
- var match=fi.toLocaleLowerCase('fi').normalize?fi.toLocaleLowerCase('fi').normalize('NFC'):fi.toLocaleLowerCase('fi');
+ var match=fi.toLocaleLowerCase('fi');
  if(draftWords.some(function(x){return x.id!==editingWord&&x.fi.toLocaleLowerCase('fi')===match;})){
   set('word-status',wt('duplicate'));return;
  }
@@ -116,7 +116,7 @@ function saveWord(e){
 function exportWords(){
  if(!owner||!auth||auth.currentUser!==owner)return;
  var payload={format:'opisana-vocabulary-draft',schema:1,published:false,words:draftWords};
- var blob=new Blob([JSON.stringify(payload,null,2)+'\\n'],{type:'application/json'});
+ var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
  var url=w.URL.createObjectURL(blob),a=d.createElement('a');a.href=url;a.download='opisana-words-draft.json';
  d.body.appendChild(a);a.click();d.body.removeChild(a);w.setTimeout(function(){w.URL.revokeObjectURL(url);},1000);
  set('word-status',t('exported'));
