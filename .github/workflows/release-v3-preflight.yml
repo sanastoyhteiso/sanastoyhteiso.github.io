@@ -158,6 +158,8 @@ jobs:
         run: node --test release-checks/v3-sync-backup-e2e.test.cjs
       - name: Check classic Safari 12-compatible script syntax (static, no device)
         run: node release-checks/ios12-syntax.test.cjs
+      - name: Verify iPhone bottom navigation visual viewport anchor and Android fallback
+        run: node --test release-checks/ios-bottom-nav-viewport-20261123.test.cjs
       - name: Exercise unified UI, Google account stub and offline V3 storage
         run: node release-checks/v3-unified-browser.test.cjs
       - name: Verify owner-only My Finds editing and tombstone conflict guards

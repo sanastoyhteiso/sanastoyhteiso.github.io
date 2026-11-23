@@ -34,6 +34,57 @@
     else if(item.right>box.right-3)s.scrollLeft+=(item.right-box.right+3);
     updateArrows();
   }
+  /* WebKit iOS 26+ may paint a bottom:0 fixed bar above the visible
+     viewport during reverse/momentum scrolling. On iPhone anchor by the
+     visual viewport TOP instead; keep the CSS bottom:0 fallback for
+     Android, desktop and older Safari without visualViewport. */
+  function needsViewportAnchor() {
+    return /iPhone|iPod/i.test(navigator.userAgent||'')&&!!window.visualViewport;
+  }
+  var anchorPending=false;
+  function anchorToVisibleBottom() {
+    var nav=document.querySelector('.mobile-nav'),vv=window.visualViewport;
+    if(!nav||!vv)return;
+    var width=window.innerWidth||document.documentElement.clientWidth;
+    if(width>900){
+      nav.style.top='';
+      nav.style.bottom='';
+      return;
+    }
+    var height=nav.offsetHeight;
+    if(!height)return;
+    var bottom=vv.offsetTop+vv.height;
+    if(!isFinite(bottom)||bottom<=height)return;
+    /* top anchoring avoids WebKit's bottom-fixed viewport mismatch. */
+    var top=Math.round(bottom-height);
+    nav.style.bottom='auto';
+    nav.style.top=top+'px';
+  }
+  function scheduleAnchor() {
+    if(anchorPending)return;
+    anchorPending=true;
+    var frame=window.requestAnimationFrame||function(fn){return window.setTimeout(fn,16);};
+    frame(function(){
+      anchorPending=false;
+      anchorToVisibleBottom();
+    });
+  }
+  function installViewportAnchor() {
+    if(!needsViewportAnchor())return;
+    var vv=window.visualViewport;
+    vv.addEventListener('resize',scheduleAnchor);
+    vv.addEventListener('scroll',scheduleAnchor);
+    window.addEventListener('scroll',scheduleAnchor);
+    window.addEventListener('resize',scheduleAnchor);
+    window.addEventListener('pageshow',scheduleAnchor);
+    window.addEventListener('orientationchange',function(){
+      scheduleAnchor();
+      window.setTimeout(scheduleAnchor,300);
+    });
+    document.addEventListener('focusin',scheduleAnchor);
+    document.addEventListener('focusout',scheduleAnchor);
+    scheduleAnchor();
+  }
   function init() {
     var s=strip(),prev=el('mobile-nav-prev'),next=el('mobile-nav-next');
     if(!s||!prev||!next)return;
@@ -48,6 +99,7 @@
     window.addEventListener('resize',updateArrows);
     window.addEventListener('orientationchange',function(){window.setTimeout(updateArrows,250);});
     window.setTimeout(function(){revealSelected();updateArrows();},100);
+    installViewportAnchor();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
   else init();
