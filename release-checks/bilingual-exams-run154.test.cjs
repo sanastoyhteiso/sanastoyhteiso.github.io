@@ -103,8 +103,17 @@ test('ES5 new code, versioned cache and Safari 12 readable font fallbacks',()=>{
  assert.doesNotMatch(app,/=>|\?\./);
  assert.match(html,/app\.js\?v=[\w.-]+/);
  assert.match(html,/riveria-true-false\.js\?v=run156-en-1/);
- assert.match(html,/style\.css\?v=heart-run166-1/);
+ const cssUrl=html.match(/style\\.css\\?v=[\\w.-]+/);
+ assert.ok(cssUrl,'stylesheet URL has a cache-busting version');
+ assert.ok(sw.includes('./'+cssUrl[0]),'offline cache uses the same stylesheet version');
  assert.match(sw,/v3\.0\.0-rc\d+/);
  assert.match(sw,/riveria-true-false\.js\?v=run156-en-1/);
  assert.ok(css.includes('font-size:25px;font-size:clamp'));
+});
+
+
+test('V3 saved-find mobile action row cannot squeeze word text into a narrow column',()=>{
+ const css=read('style.css');
+ assert.match(css,/#v3-find-saved \\.dict-row\\s*\\{\\s*flex-direction:\\s*column;/);
+ assert.match(css,/#v3-find-saved \\.dict-row > \\.btn-row\\s*\\{[\\s\\S]*?flex-wrap:\\s*wrap;/);
 });
