@@ -194,3 +194,36 @@ body.rs-heart-modal-open{overflow:hidden}
 .rs-heart-modal-controls{display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 12px 20px;background:rgba(9,24,32,.96)}
 .rs-heart-modal-control{font:inherit;font-size:17px;font-weight:700;color:white;background:#294957;border:1px solid #7899a8;border-radius:9px;min-width:46px;min-height:44px;cursor:pointer}
 .rs-heart-modal-scale{min-width:62px;font-variant-numeric:tabular-nums;text-align:center}
+
+/* V3 "My finds": keep saved word and translation readable on small screens.
+   Action buttons belong below the text, never beside a one-letter-wide column. */
+@media (max-width: 900px) {
+  #v3-find-saved .dict-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  #v3-find-saved .dict-row > div:first-child {
+    width: 100%;
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+  #v3-find-saved .dict-row > .btn-row {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  #v3-find-saved .dict-row > .btn-row .tiny-btn {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: center;
+  }
+  #v3-find-saved .dict-row > .v3-find-editor {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+}
