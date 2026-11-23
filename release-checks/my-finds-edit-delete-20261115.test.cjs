@@ -83,5 +83,8 @@ test('the current browser uses a real editor and separate semantic remove/delete
  assert.match(app,/window\.RS_V3_RELEASE\.renderFinds\(root\)/);
  assert.match(sw,/v3-sync-core\.js\?v=word-edit-20261115-1/);
  assert.match(sw,/v3-sync-engine\.js\?v=word-edit-20261115-1/);
- assert.match(sw,/v3-sync-release\.js\?v=word-edit-20261115-1/);
+ assert.match(sw,/v3-sync-release\.js\?v=[\w.-]+/);
+ const html=fs.readFileSync('index.html','utf8');
+ const live=html.match(/v3-sync-release\.js\?v=[\w.-]+/);
+ assert.ok(live&&sw.includes('./'+live[0]),'HTML and offline bundle use identical release version');
 });
