@@ -117,3 +117,13 @@ test('V3 saved-find mobile action row cannot squeeze word text into a narrow col
  assert.match(css,/#v3-find-saved \.dict-row\s*\{\s*flex-direction:\s*column;/);
  assert.match(css,/#v3-find-saved \.dict-row > \.btn-row\s*\{[\s\S]*?flex-wrap:\s*wrap;/);
 });
+
+test('V3 My finds actions use one selected language and avoid duplicate delete controls',()=>{
+ const i18n=read('i18n.js'),release=read('v3-sync-release.js');
+ assert.ok(i18n.includes('["✎ Раздел и заметка","✎ Aihe ja muistiinpano","✎ Topic and note"]'));
+ assert.ok(i18n.includes('["Удалить слово","Poista sana","Delete word"]'));
+ assert.ok(i18n.includes('["Убрать из находок","Poista omista löydöistä","Remove from my finds"]'));
+ assert.ok(release.includes('b.textContent=localAction(label)'));
+ assert.ok(release.includes("del.className='tiny-btn v3-find-delete-word'"));
+ assert.doesNotMatch(release,/actionButton\('Удалить слово'/);
+});
