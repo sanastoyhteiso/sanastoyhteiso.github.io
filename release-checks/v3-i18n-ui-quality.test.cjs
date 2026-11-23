@@ -62,8 +62,9 @@ test('Finnish absorbent underwear is correctly spelled',()=>{
 test('localized preview version is synchronized in HTML and offline cache',()=>{
   const index=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(index,/i18n\.js\?v=v3-approved-ui-4/);
-  assert.match(sw,/i18n\.js\?v=v3-approved-ui-4/);
+  const i18nUrl=index.match(/i18n\.js\?v=[\w.-]+/);
+  assert.ok(i18nUrl,'localized interface script must be versioned');
+  assert.ok(sw.includes('./'+i18nUrl[0]),'HTML and offline cache use the same i18n version');
   const cache=sw.match(/CACHE_NAME='(riveria-sanasto-community-v3\.0\.0-rc\d+)'/);
   assert.ok(cache,'TEST cache namespace must be content-addressed for old Safari; see study-offline-cache-version.test.cjs');
   // The separate offline regression recomputes the digest from every cached asset.
