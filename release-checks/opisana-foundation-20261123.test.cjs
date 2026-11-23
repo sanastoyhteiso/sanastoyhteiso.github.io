@@ -86,7 +86,7 @@ test('admin can independently draft new shared vocabulary without touching stude
   assert.equal(b.d.querySelectorAll('#word-list li').length,1);
   b.emit(null);await flush();
   assert.equal(b.d.getElementById('admin-area').hidden,true);
-  assert.equal(b.d.querySelectorAll('#word-list li').length,1); // not visible under auth-gated root
+  assert.equal(b.d.querySelectorAll('#word-list li').length,0);
  }finally{b.dom.window.close();}
 });
 test('new pages remain unlinked from existing public navigation and have no cloud writes',function(){
