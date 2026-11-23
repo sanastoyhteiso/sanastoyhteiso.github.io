@@ -4,7 +4,7 @@
  */
 (function(w,d){
 'use strict';
-var cfg=w.RS_FIREBASE_CONFIG||{},auth=null,session=0,owner=null,language='ru',draft=[];
+var cfg=w.RS_FIREBASE_CONFIG||{},auth=null,session=0,owner=null,language='ru',draft=[],draftWords=[],editingWord='';
 var groups=['learning','library','community','system'];
 var ids=['cards','practice','exam','dictionary','mediatri','add','libraries','users','backup'];
 var groupFor={cards:'learning',practice:'learning',exam:'learning',dictionary:'library',mediatri:'learning',add:'library',libraries:'library',users:'community',backup:'system'};
@@ -43,6 +43,84 @@ var strings={
   learning:'Learning',library:'Materials',community:'Community',system:'System',
   cards:'Flashcards',practice:'Tests',exam:'Exam',dictionary:'Dictionary',mediatri:'Mediatri',add:'New word',libraries:'Library',users:'Users',backup:'Data'}
 };
+var wordLabels={
+ ru:{title:'Черновики новых слов',warning:'Личные слова учащихся здесь не используются. Слова пока остаются неопубликованными черновиками владельца.',fi:'Финское слово',ru:'Перевод на русский',en:'Английский перевод (необязательно)',category:'Раздел / тема',save:'Сохранить черновик',update:'Сохранить изменение',cancel:'Отменить правку',export:'Скачать JSON слов',empty:'Черновиков слов пока нет.',added:'Слово сохранено только в локальном черновике.',deleted:'Черновик удалён.',duplicate:'Это финское слово уже есть в черновиках. Открой его для редактирования.',limit:'Не более 200 слов в одном черновике.',invalid:'Проверь финское слово, русский перевод и тему.',edit:'Изменить',remove:'Удалить',confirm:'Удалить только этот локальный черновик?'},
+ fi:{title:'Uusien sanojen luonnokset',warning:'Oppilaiden henkilökohtaisia sanoja ei käytetä. Sanat ovat vain omistajan julkaisemattomia luonnoksia.',fi:'Suomenkielinen sana',ru:'Venäjänkielinen käännös',en:'Englanninkielinen käännös (valinnainen)',category:'Osio / aihe',save:'Tallenna luonnos',update:'Tallenna muutos',cancel:'Peruuta muokkaus',export:'Lataa sanojen JSON',empty:'Sanaluonnoksia ei vielä ole.',added:'Sana tallennettu vain paikalliseen luonnokseen.',deleted:'Luonnos poistettu.',duplicate:'Suomenkielinen sana on jo luonnoksessa. Muokkaa nykyistä.',limit:'Enintään 200 sanaa yhdessä luonnoksessa.',invalid:'Tarkista suomen sana, venäjän käännös ja aihe.',edit:'Muokkaa',remove:'Poista',confirm:'Poistetaanko vain tämä paikallinen luonnos?'},
+ en:{title:'New vocabulary drafts',warning:'Students’ personal words are never used here. These are the owner’s unpublished local drafts only.',fi:'Finnish word',ru:'Russian translation',en:'English translation (optional)',category:'Section / topic',save:'Save draft',update:'Save changes',cancel:'Cancel edit',export:'Download words JSON',empty:'No word drafts yet.',added:'Word saved only in the local draft.',deleted:'Draft deleted.',duplicate:'That Finnish word is already in the draft. Edit the existing entry.',limit:'Up to 200 words per draft.',invalid:'Check the Finnish term, Russian translation and topic.',edit:'Edit',remove:'Remove',confirm:'Delete only this local draft?'}
+};
+function wt(key){return (wordLabels[language]||wordLabels.ru)[key]||key;}
+function wordKey(){return owner&&/^[A-Za-z0-9_-]{1,128}$/.test(owner.uid)?'rs_opisana_word_draft_v1_'+owner.uid:null;}
+function validWord(x){return x&&typeof x.id==='string'&&/^[a-zA-Z0-9-]{1,40}$/.test(x.id)&&typeof x.fi==='string'&&x.fi.length>0&&x.fi.length<=120&&
+ typeof x.ru==='string'&&x.ru.length>0&&x.ru.length<=180&&typeof x.en==='string'&&x.en.length<=180&&typeof x.category==='string'&&x.category.length>0&&x.category.length<=80;}
+function loadWords(){
+ draftWords=[];editingWord='';
+ try{var data=JSON.parse(w.localStorage.getItem(wordKey())||'null');
+  if(Array.isArray(data)&&data.length<=200&&data.every(validWord)){
+   var idsSeen={};if(data.every(function(x){if(idsSeen[x.id])return false;idsSeen[x.id]=true;return true;}))
+    draftWords=data.map(function(x){return {id:x.id,fi:x.fi,ru:x.ru,en:x.en,category:x.category};});
+  }}catch(ignore){}
+}
+function storeWords(){
+ if(!owner||!wordKey())return false;
+ try{w.localStorage.setItem(wordKey(),JSON.stringify(draftWords));return true;}catch(ignore){set('word-status',t('storage'));return false;}
+}
+function wordField(name){return el('word-draft-form').elements.namedItem(name);}
+function resetWordForm(){el('word-draft-form').reset();wordField('category').value='Yleinen';editingWord='';el('word-cancel').hidden=true;set('word-save',wt('save'));}
+function renderWords(){
+ if(!owner)return;
+ var names={'words-title':'title','words-warning':'warning','label-fi':'fi','label-ru':'ru','label-en':'en',
+  'label-category':'category','word-export':'export','word-cancel':'cancel'};
+ Object.keys(names).forEach(function(id){set(id,wt(names[id]));});
+ set('word-save',editingWord?wt('update'):wt('save'));
+ var list=el('word-list');while(list.firstChild)list.removeChild(list.firstChild);
+ if(!draftWords.length){list.appendChild(element('li','',wt('empty')));return;}
+ draftWords.forEach(function(word){
+  var li=element('li',''),label=element('div'),action=element('div','actions');
+  label.appendChild(element('strong','',word.fi+' — '+word.ru));
+  label.appendChild(element('small','',word.category+(word.en?' • '+word.en:'')));
+  li.appendChild(label);
+  action.appendChild(button(wt('edit'),wt('edit')+' '+word.fi,false,function(){
+   editingWord=word.id;wordField('fi').value=word.fi;wordField('ru').value=word.ru;
+   wordField('en').value=word.en;wordField('category').value=word.category;
+   el('word-cancel').hidden=false;set('word-save',wt('update'));wordField('fi').focus();
+  }));
+  action.appendChild(button(wt('remove'),wt('remove')+' '+word.fi,false,function(){
+   if(!w.confirm(wt('confirm')))return;
+   draftWords=draftWords.filter(function(x){return x.id!==word.id;});
+   if(editingWord===word.id)resetWordForm();
+   if(storeWords()){renderWords();set('word-status',wt('deleted'));}
+  }));
+  li.appendChild(action);list.appendChild(li);
+ });
+}
+function saveWord(e){
+ if(e)e.preventDefault();
+ if(!owner||!auth||auth.currentUser!==owner)return;
+ var fi=wordField('fi').value.trim(),ru=wordField('ru').value.trim(),en=wordField('en').value.trim(),
+ category=wordField('category').value.trim();
+ if(!fi||!ru||!category||fi.length>120||ru.length>180||en.length>180||category.length>80){
+  set('word-status',wt('invalid'));return;
+ }
+ var match=fi.toLocaleLowerCase('fi').normalize?fi.toLocaleLowerCase('fi').normalize('NFC'):fi.toLocaleLowerCase('fi');
+ if(draftWords.some(function(x){return x.id!==editingWord&&x.fi.toLocaleLowerCase('fi')===match;})){
+  set('word-status',wt('duplicate'));return;
+ }
+ if(!editingWord&&draftWords.length>=200){set('word-status',wt('limit'));return;}
+ if(editingWord){
+  var existing=draftWords.filter(function(x){return x.id===editingWord;})[0];if(!existing)return;
+  existing.fi=fi;existing.ru=ru;existing.en=en;existing.category=category;
+ }else draftWords.push({id:'D'+Date.now().toString(36)+'-'+Math.floor(Math.random()*1e9).toString(36),
+  fi:fi,ru:ru,en:en,category:category});
+ if(storeWords()){resetWordForm();renderWords();set('word-status',wt('added'));}
+}
+function exportWords(){
+ if(!owner||!auth||auth.currentUser!==owner)return;
+ var payload={format:'opisana-vocabulary-draft',schema:1,published:false,words:draftWords};
+ var blob=new Blob([JSON.stringify(payload,null,2)+'\\n'],{type:'application/json'});
+ var url=w.URL.createObjectURL(blob),a=d.createElement('a');a.href=url;a.download='opisana-words-draft.json';
+ d.body.appendChild(a);a.click();d.body.removeChild(a);w.setTimeout(function(){w.URL.revokeObjectURL(url);},1000);
+ set('word-status',t('exported'));
+}
 function el(x){return d.getElementById(x);}
 function t(x){return (strings[language]||strings.ru)[x]||x;}
 function set(x,v){var e=el(x);if(e)e.textContent=v;}
@@ -66,10 +144,10 @@ function store(){
  catch(ignore){set('result',t('storage'));}
 }
 function clear(){
- owner=null;draft=[];
+ owner=null;draft=[];draftWords=[];editingWord='';
  el('admin-area').hidden=true;el('status').hidden=false;
  var r=el('layout-rows');while(r.firstChild)r.removeChild(r.firstChild);
- set('result','');
+ set('result','');set('word-status','');
 }
 function element(tag,cls,content){
  var n=d.createElement(tag);if(cls)n.className=cls;
@@ -106,6 +184,7 @@ function render(){
  var b=d.querySelectorAll('[data-lang]');for(var i=0;i<b.length;i++)b[i].setAttribute('aria-pressed',b[i].getAttribute('data-lang')===language?'true':'false');
  var root=el('layout-rows');while(root.firstChild)root.removeChild(root.firstChild);
  draft.forEach(function(item,index){root.appendChild(line(item,index));});
+ renderWords();
 }
 function download(){
  if(!owner)return;
@@ -122,7 +201,7 @@ function onToken(user){
  try{user.getIdTokenResult(true).then(function(result){
   if(ticket!==session||!auth||auth.currentUser!==user)return;
   if(!result||!result.claims||result.claims.admin!==true){set('status',t('denied'));return;}
-  owner=user;load();el('admin-area').hidden=false;el('status').hidden=true;render();
+  owner=user;load();loadWords();el('admin-area').hidden=false;el('status').hidden=true;render();
  },function(){if(ticket===session)set('status',t('error'));});
  }catch(ignore){if(ticket===session)set('status',t('error'));}
 }
@@ -133,6 +212,9 @@ function boot(){
    set('back',t('back'));set('title',t('title'));set('subtitle',t('sub'));set('footer-note',t('footer'));
    set('status',t('check'));}});
  el('export-btn').addEventListener('click',download);
+ el('word-draft-form').addEventListener('submit',saveWord);
+ el('word-cancel').addEventListener('click',function(){resetWordForm();set('word-status','');});
+ el('word-export').addEventListener('click',exportWords);
  el('reset-btn').addEventListener('click',function(){if(!owner)return;draft=original();store();render();set('result',t('resetDone'));});
  set('back',t('back'));set('title',t('title'));set('subtitle',t('sub'));set('status',t('check'));
  if(!cfg||cfg.projectId!=='riveria-sanasto-community-test'||
