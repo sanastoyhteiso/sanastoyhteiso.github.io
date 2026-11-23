@@ -147,6 +147,8 @@ function clear(){
  owner=null;draft=[];draftWords=[];editingWord='';
  el('admin-area').hidden=true;el('status').hidden=false;
  var r=el('layout-rows');while(r.firstChild)r.removeChild(r.firstChild);
+ var list=el('word-list');while(list.firstChild)list.removeChild(list.firstChild);
+ el('word-draft-form').reset();el('word-cancel').hidden=true;
  set('result','');set('word-status','');
 }
 function element(tag,cls,content){
