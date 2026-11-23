@@ -68,6 +68,27 @@ test('admin menu planner is denied without signed admin claim and never publishe
   assert.equal(b.d.querySelectorAll('[data-section-id]').length,0);
  }finally{b.dom.window.close();}
 });
+test('admin can independently draft new shared vocabulary without touching student words',async function(){
+ const b=setup('admin/layout/index.html','admin/layout/layout.js');
+ try{
+  b.emit(user('site-owner',true));await flush();
+  const form=b.d.getElementById('word-draft-form');
+  form.elements.namedItem('fi').value='vuodesuoja';
+  form.elements.namedItem('ru').value='впитывающая пелёнка';
+  form.elements.namedItem('category').value='Hoiva';
+  form.dispatchEvent(new b.w.Event('submit',{bubbles:true,cancelable:true}));
+  const stored=JSON.parse(b.w.localStorage.getItem('rs_opisana_word_draft_v1_site-owner'));
+  assert.equal(stored.length,1);
+  assert.equal(stored[0].fi,'vuodesuoja');
+  assert.equal(stored[0].ru,'впитывающая пелёнка');
+  assert.equal(b.w.localStorage.getItem('rs_family_v1_site-owner__rs_user_words_v1'),null);
+  assert.equal(b.w.localStorage.getItem('rs_opisana_word_draft_v1_ordinary-student'),null);
+  assert.equal(b.d.querySelectorAll('#word-list li').length,1);
+  b.emit(null);await flush();
+  assert.equal(b.d.getElementById('admin-area').hidden,true);
+  assert.equal(b.d.querySelectorAll('#word-list li').length,1); // not visible under auth-gated root
+ }finally{b.dom.window.close();}
+});
 test('new pages remain unlinked from existing public navigation and have no cloud writes',function(){
  const index=read('index.html'),admin=read('admin/index.html');
  assert.doesNotMatch(index,/href=["'](?:\.\/)?cabinet\//);
