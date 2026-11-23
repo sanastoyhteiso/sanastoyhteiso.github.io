@@ -103,8 +103,27 @@ test('ES5 new code, versioned cache and Safari 12 readable font fallbacks',()=>{
  assert.doesNotMatch(app,/=>|\?\./);
  assert.match(html,/app\.js\?v=[\w.-]+/);
  assert.match(html,/riveria-true-false\.js\?v=run156-en-1/);
- assert.match(html,/style\.css\?v=heart-run166-1/);
+ const cssUrl=html.match(/style\.css\?v=[\w.-]+/);
+ assert.ok(cssUrl,'stylesheet URL has a cache-busting version');
+ assert.ok(sw.includes('./'+cssUrl[0]),'offline cache uses the same stylesheet version');
  assert.match(sw,/v3\.0\.0-rc\d+/);
  assert.match(sw,/riveria-true-false\.js\?v=run156-en-1/);
  assert.ok(css.includes('font-size:25px;font-size:clamp'));
+});
+
+
+test('V3 saved-find mobile action row cannot squeeze word text into a narrow column',()=>{
+ const css=read('style.css');
+ assert.match(css,/#v3-find-saved \.dict-row\s*\{\s*flex-direction:\s*column;/);
+ assert.match(css,/#v3-find-saved \.dict-row > \.btn-row\s*\{[\s\S]*?flex-wrap:\s*wrap;/);
+});
+
+test('V3 My finds actions use one selected language and avoid duplicate delete controls',()=>{
+ const i18n=read('i18n.js'),release=read('v3-sync-release.js');
+ assert.ok(i18n.includes('["✎ Раздел и заметка","✎ Aihe ja muistiinpano","✎ Topic and note"]'));
+ assert.ok(i18n.includes('["Удалить слово","Poista sana","Delete word"]'));
+ assert.ok(i18n.includes('["Убрать из находок","Poista omista löydöistä","Remove from my finds"]'));
+ assert.ok(release.includes('b.textContent=localAction(label)'));
+ assert.ok(release.includes("del.className='tiny-btn v3-find-delete-word'"));
+ assert.doesNotMatch(release,/actionButton\('Удалить слово'/);
 });

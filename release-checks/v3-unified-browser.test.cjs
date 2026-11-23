@@ -229,8 +229,14 @@ async function run(){
    'remove from finds does not delete shared Riveria word');
  assert.ok(w.RS_DATA.terms.some(x=>x.id==='T00045'));
 
- let del=[...personalLine.querySelectorAll('button')].find(x=>x.textContent.includes('Удалить слово'));
- assert.ok(del,'personal word has real delete action');
+ assert.equal(personalLine.querySelectorAll('.v3-find-delete-word').length,0,
+   'personal word delete is not duplicated in the saved-find action row');
+ let openEditor=[...personalLine.querySelectorAll('button')]
+   .find(x=>x.textContent.includes('Редактировать'));
+ assert.ok(openEditor,'personal word retains editing');
+ openEditor.click();
+ let del=personalLine.querySelector('.v3-find-editor .v3-find-delete-word');
+ assert.ok(del,'permanent deletion remains available inside personal-word editor');
  del.click();
  for(let i=0;i<45&&!w.RS_V3_RELEASE.getState().words[personalWord.target].deleted;i++)
    await sleep(40);

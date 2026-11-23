@@ -500,6 +500,15 @@
        });
      }
    }
+   function localAction(ru){
+     return w.RS_I18N&&typeof w.RS_I18N.translate==='function'?
+       w.RS_I18N.translate(ru):ru;
+   }
+   function localMessage(ru,fi,en){
+     var lang=w.RS_I18N&&typeof w.RS_I18N.getLanguage==='function'?
+       w.RS_I18N.getLanguage():'ru';
+     return lang==='fi'?fi:lang==='en'?en:ru;
+   }
    function drawSaved(){
      while(chosen.firstChild)chosen.removeChild(chosen.firstChild);
      var found=row&&row.state&&row.state.finds||{},own=row&&row.state&&row.state.words||{};
@@ -520,7 +529,7 @@
        var actions=d.createElement('div');actions.className='btn-row';
        function actionButton(label,style,handler){
          var b=d.createElement('button');b.type='button';b.className='tiny-btn '+(style||'');
-         b.textContent=label;b.addEventListener('click',handler);actions.appendChild(b);return b;
+         b.textContent=localAction(label);b.addEventListener('click',handler);actions.appendChild(b);return b;
        }
        function editor(){
          if(line.querySelector('.v3-find-editor'))return;
@@ -545,11 +554,34 @@
          var memo=field('Личная заметка',meta.note,350,false);
          var ctl=d.createElement('div');ctl.className='btn-row';
          var save=d.createElement('button');save.type='button';save.className='btn good';
-         save.textContent='✓ Сохранить исправления';ctl.appendChild(save);
+         save.textContent=localAction('✓ Сохранить исправления');ctl.appendChild(save);
          var cancel=d.createElement('button');cancel.type='button';cancel.className='btn white';
-         cancel.textContent='Отмена';cancel.onclick=function(){line.removeChild(edit);};ctl.appendChild(cancel);
+         cancel.textContent=localAction('Отмена');cancel.onclick=function(){line.removeChild(edit);};ctl.appendChild(cancel);
          var result=d.createElement('p');result.className='hint';result.setAttribute('role','status');
          edit.appendChild(ctl);edit.appendChild(result);
+         /* A permanent word deletion is a separate, destructive action.
+            Show it only inside personal-word editing, not as a second
+            removal button beside "Remove from My finds". */
+         if(isOwn){
+           var del=d.createElement('button');del.type='button';
+           del.className='tiny-btn v3-find-delete-word';
+           del.textContent=localAction('Удалить слово');
+           del.addEventListener('click',function(){
+             if(!w.confirm(localMessage(
+               'Удалить личное слово «'+item.fi+'»? Оно исчезнет из словаря и находок. История останется для безопасной синхронизации.',
+               'Poistetaanko oma sana «'+item.fi+'» pysyvästi sanastosta ja löydöistä? Muutoshistoria säilyy turvallista synkronointia varten.',
+               'Permanently delete your word «'+item.fi+'» from the dictionary and My finds? Revision history will be kept for safe sync.'
+             )))return;
+             del.disabled=true;
+             deleteOwnWord(id,item._revision).then(function(){
+               if(byId('v3-finds-panel')===panel){drawSaved();update();message('Слово удалено из личного словаря.',false);}
+             },function(e){
+               del.disabled=false;drawSaved();
+               message('Удаление не завершено: '+String(e.message||e)+'. Повтори синхронизацию.',true);
+             });
+           });
+           edit.appendChild(del);
+         }
          line.appendChild(edit);fi.focus();
          var expected=isOwn?item._revision:null;
          save.onclick=function(){
@@ -569,7 +601,11 @@
        }
        actionButton(isOwn?'✎ Редактировать':'✎ Раздел и заметка','',editor);
        var remove=actionButton('Убрать из находок','',function(){
-         if(!w.confirm('Убрать «'+item.fi+'» из находок? Само слово будет сохранено.'))return;
+         if(!w.confirm(localMessage(
+           'Убрать «'+item.fi+'» из находок? Само слово будет сохранено.',
+           'Poistetaanko «'+item.fi+'» omista löydöistä? Sana säilyy sanastossa.',
+           'Remove «'+item.fi+'» from My finds? The word will remain in the dictionary.'
+         )))return;
          remove.disabled=true;
          direct('collection_set',id,{list:'finds',added:false,
            topic:meta.topic,note:meta.note}).then(function(){
@@ -578,18 +614,6 @@
              remove.disabled=false;message('Не удалось убрать: '+String(e.message||e),true);
            });
        });
-       if(isOwn){
-         var del=actionButton('Удалить слово','',function(){
-           if(!w.confirm('Удалить личное слово «'+item.fi+'»? Оно исчезнет из словаря и находок. История останется для безопасной синхронизации.'))return;
-           del.disabled=true;
-           deleteOwnWord(id,item._revision).then(function(){
-             if(byId('v3-finds-panel')===panel){drawSaved();update();message('Слово удалено из личного словаря.',false);}
-           },function(e){
-             del.disabled=false;drawSaved();
-             message('Удаление не завершено: '+String(e.message||e)+'. Повтори синхронизацию.',true);
-           });
-         });
-       }
        line.appendChild(actions);
        chosen.appendChild(line);
      });
