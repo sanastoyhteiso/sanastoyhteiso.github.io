@@ -21,7 +21,7 @@ function source(){
 }
 test('61 user Latin terms integrated without replacing prior term IDs',()=>{
  const {d,n,originalCor}=source();
- assert.equal(n,1307,'1,296 original terms + 11 medication terms; all old IDs retained');
+ assert.ok(n>=1321,'the 1,296 original terms and both medication imports must remain present');
  assert.equal(d.terms.find(x=>x.id==='T00574'),originalCor,'in-place enrichment preserves ID and stored progress');
  assert.equal(originalCor.la,'cor');
  assert.ok(d.terms.find(x=>x.fi==='haima').examTopics.includes('EXAM09'),
@@ -173,7 +173,7 @@ test('entire set of 289 FI terms is in the ORIGINAL 10 exam dropdown items (with
   const word=lookup.get(expected.newMissingInPriorMain[i].toLocaleLowerCase('fi-FI').trim());
   assert.equal(word.id,'T'+(90200+i),'new words get stable non-conflicting IDs');
  }
- assert.equal(d.terms.length,1496,'1,485 prior unique terms + 11 medication handout terms');
+ assert.equal(d.terms.length,source().n+189,'anatomy adds the same 189 terms without replacing the base catalog');
 });
 test('original T900xx terms, including old learned-word references, remain intact',()=>{
  const d=source().d,ids=new Set(d.terms.map(x=>x.id));

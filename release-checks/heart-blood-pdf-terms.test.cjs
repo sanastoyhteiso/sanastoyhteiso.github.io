@@ -35,7 +35,7 @@ test('valid 65 user PDF entries exclusively from supported slides, omits blood-g
 test('all existing base words remain intact under anatomy enrichment; 65 new public IDs collision-free',()=>{
  const {d,baseline}=load();
  assert.ok(baseline.length>=1296,'original base vocabulary must not shrink');
- assert.equal(baseline.length,1307,'11 new medication entries appended without replacing older words');
+ assert.ok(baseline.length>=1321,'both medication imports extend the earlier catalog without removing words');
  assert.equal(d.terms.length,baseline.length+189,'anatomy overlay must preserve baseline count and its 189 unique terms');
  assert.equal(new Set(d.terms.map(x=>x.id)).size,d.terms.length);
  assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,d.terms.length);

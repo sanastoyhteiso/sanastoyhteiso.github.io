@@ -165,6 +165,8 @@ jobs:
           node --check cabinet/cabinet.js
           node --check admin/layout/layout.js
           node --test release-checks/opisana-foundation-20261123.test.cjs
+      - name: Validate 24 new photo terms and preserved student word IDs
+        run: node --test release-checks/laakehoito-handout-24-20261124.test.cjs
       - name: Validate 16 corrected medication terms and offline dictionary cache
         run: node --test release-checks/laakehoito-handout-20261124.test.cjs
       - name: Exercise unified UI, Google account stub and offline V3 storage

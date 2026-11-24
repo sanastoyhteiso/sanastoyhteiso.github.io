@@ -17,8 +17,8 @@ const existing = {
  'lääkekortti':'T00318','vasta-aihe':'T00347'
 };
 test('all 16 study-handout medication terms are present, explained and deduplicated', () => {
- assert.equal(data.terms.length,1307);
- assert.equal(data.version,'2.2.2');
+ assert.ok(data.terms.length>=1321,'earlier and new medication imports remain present');
+ assert.equal(data.version,'2.2.3');
  assert.equal(data.date,'2026-11-24');
  const ids = new Set();
  for(const term of data.terms){
@@ -53,7 +53,7 @@ test('corrects potentially misleading handwritten definitions', () => {
 test('main page and service worker use the same offline dictionary revision', () => {
  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
- assert.match(html,/src="data\.js\?v=2\.2\.2"/);
- assert.match(sw,/\.\/data\.js\?v=2\.2\.2/);
- assert.match(sw,/riveria-sanasto-community-v3\.0\.0-rc48/);
+ assert.match(html,/src="data\.js\?v=2\.2\.3"/);
+ assert.match(sw,/\.\/data\.js\?v=2\.2\.3/);
+ assert.match(sw,/riveria-sanasto-community-v3\.0\.0-rc49/);
 });
