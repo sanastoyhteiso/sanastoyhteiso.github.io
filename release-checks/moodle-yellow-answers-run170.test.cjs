@@ -52,8 +52,8 @@ test('all 11 yellow Moodle Latin matches exist on original IDs and 3 languages',
 });
 test('28 genuinely new Moodle terms use consecutive non-colliding IDs, FI RU EN, helpful notes and same 10 topics',()=>{
  const {base,terms,topics}=load();
- assert.equal(base.length,1307);
- assert.equal(terms.length,1496);
+ assert.ok(base.length>=1321,'base vocabulary must include both medicine handout imports');
+ assert.equal(terms.length,base.length+189,'the anatomy overlay must stay additive');
  assert.equal(new Set(terms.map(x=>x.id)).size,terms.length);
  assert.equal(new Set(terms.map(x=>x.fi.toLocaleLowerCase('fi').trim())).size,terms.length);
  const byId=new Map(terms.map(x=>[x.id,x]));
