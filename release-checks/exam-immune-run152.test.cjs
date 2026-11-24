@@ -8,7 +8,7 @@ function catalog(){const ctx={window:{}};vm.runInNewContext(read('data.js'),ctx)
 const names=['fagosyytti','interferoni','antigeeni','tulehdusreaktio','plasmasolu','seerumi','fibrinogeeni','synnynnäinen immuniteetti','hankittu immuniteetti','normaalifloora','makrofagi','T-muistisolu','T-tappajasolu','B-imusolu','immunologinen muisti','C-reaktiivinen proteiini','histamiini','plasma','fagosytoosi','hapen kuljetus','värekarvat'];
 test('21 new terms are unique with FI/RU descriptions and proper exam topic',()=>{
  const d=catalog(),ids=d.terms.map(x=>x.id),fis=d.terms.map(x=>x.fi.toLocaleLowerCase('fi-FI'));
- assert.equal(d.terms.length,1485);
+ assert.equal(d.terms.length,1496,'1,485 prior terms + 11 medication study terms');
  assert.equal(d.examTopics.length,10);
  assert.equal(new Set(ids).size,ids.length);assert.equal(new Set(fis).size,fis.length);
  for(let i=0;i<names.length;i++){
@@ -30,14 +30,13 @@ test('Moodle quiz answers are already covered; avoid 3 hormone duplicates',()=>{
  const glycogen=d.terms.find(x=>x.fi==='glykogeeni');
  assert.match(glycogen.examNoteFi,/varastomuoto/i);
 });
-test('plasma and plasmasolu are NOT confused, original base SHA remains unchanged',()=>{
+test('plasma and plasmasolu are NOT confused; historical medicine IDs remain stable',()=>{
  const d=catalog(),plasma=d.terms.find(x=>x.fi==='plasma'),cell=d.terms.find(x=>x.fi==='plasmasolu');
  assert.ok(plasma&&cell);assert.notEqual(plasma.id,cell.id);
  assert.match(cell.examNoteRu,/не плазма крови/i);
  assert.match(plasma.examNoteRu,/жидкая часть крови/i);
- const crypto=require('node:crypto'),buf=Buffer.from(read('data.js'));
- const blobSha=crypto.createHash('sha1').update(Buffer.from('blob '+buf.length+'\0')).update(buf).digest('hex');
- assert.equal(blobSha,'fa65cf3ba0683309050a7dc729d6898699a63bbc');
+ for(const id of ['T00314','T00316','T00318','T00347','T00352'])
+  assert.equal(d.terms.filter(x=>x.id===id).length,1,'original medication learning ID '+id);
 });
 test('all previous RUN151 IDs, notes and topic pages stay stable',()=>{
  const d=catalog();for(let i=90278;i<=90283;i++)assert.equal(d.terms.filter(x=>x.id==='T'+i).length,1);

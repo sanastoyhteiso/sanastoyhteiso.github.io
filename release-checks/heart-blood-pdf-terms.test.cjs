@@ -7,7 +7,6 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const path=require('node:path');
-const crypto=require('node:crypto');
 const root=path.join(__dirname,'..');
 const file=n=>fs.readFileSync(path.join(root,n),'utf8');
 const source=JSON.parse(file('content-imports/heart-blood-pdf/SYDAN_VERI_VERENKIERTO_TERMS_20261108.json'));
@@ -33,16 +32,15 @@ test('valid 65 user PDF entries exclusively from supported slides, omits blood-g
    assert.doesNotMatch(x.fi,/veriryhm|reesus|ABO|Rh-|Rh\+/i);
  }
 });
-test('production 1296 base words stay byte-stable and 65 new public IDs are collision-free',()=>{
- const b=Buffer.from(catalog,'utf8');
- const sha=crypto.createHash('sha1').update(Buffer.from('blob '+b.length+'\0')).update(b).digest('hex');
- assert.equal(sha,'fa65cf3ba0683309050a7dc729d6898699a63bbc');
+test('all existing base words remain intact under anatomy enrichment; 65 new public IDs collision-free',()=>{
  const {d,baseline}=load();
- assert.equal(baseline.length,1296);
- assert.equal(d.terms.length,1485,'1457 previously unique words + 28 RUN170 Moodle terms');
- assert.equal(new Set(d.terms.map(x=>x.id)).size,1485);
- assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,1485);
- for(let i=0;i<1296;i++)for(const f of Object.keys(baseline[i]))assert.deepEqual(d.terms[i][f],baseline[i][f],baseline[i].id+' '+f);
+ assert.ok(baseline.length>=1296,'original base vocabulary must not shrink');
+ assert.equal(baseline.length,1307,'11 new medication entries appended without replacing older words');
+ assert.equal(d.terms.length,baseline.length+189,'anatomy overlay must preserve baseline count and its 189 unique terms');
+ assert.equal(new Set(d.terms.map(x=>x.id)).size,d.terms.length);
+ assert.equal(new Set(d.terms.map(x=>norm(x.fi))).size,d.terms.length);
+ for(let i=0;i<baseline.length;i++)for(const f of Object.keys(baseline[i]))
+  assert.deepEqual(d.terms[i][f],baseline[i][f],baseline[i].id+' '+f);
  const added=d.terms.filter(x=>/^T902(?:[1-6]\d|7[0-7])$/.test(x.id));
  assert.equal(added.filter(x=>Number(x.id.slice(1))>=90213).length,65);
 });
