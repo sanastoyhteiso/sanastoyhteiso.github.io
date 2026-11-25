@@ -215,6 +215,7 @@
       }
       s+='</optgroup>';
     }
+    if(allTerms().some(function(x){return !!x.medication;})){s+='<optgroup label="Lääkkeet · Лекарства"><option value="Lääkkeet ja lääkeryhmät"'+(current==='Lääkkeet ja lääkeryhmät'?' selected':'')+'>Lääkkeet ja lääkeryhmät — Лекарства и группы препаратов</option></optgroup>';cats=cats.filter(function(c){return c[0]!=='Lääkkeet ja lääkeryhmät';});}
     s+='<optgroup label="Остальные словари">';
     for(var i=0;i<cats.length;i++)s+='<option value="'+safe(cats[i][0])+'"'+(current===cats[i][0]?' selected':'')+'>'+safe(cats[i][1])+'</option>';
     return s+'</optgroup></select>';
